@@ -9,6 +9,5 @@ bevy_egui = "0.15"
 rand = "0.8.5"
 serde = "1.0"
 ldtk2 = "0.7"
-lerp = "0.2"
 asset_struct = { path = "./crates/asset_struct" }
 global_state = { path = "./crates/global_state" }

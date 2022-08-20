@@ -52,7 +52,7 @@ fn boat_spawn(mut ev_spawn: EventReader<BoatSpawnEvent>, mut commands: Commands)
                 speed: 150.,
                 shoot: false,
             })
-            .insert(YDepth);
+            .insert(YDepth::default());
     }
 }
 

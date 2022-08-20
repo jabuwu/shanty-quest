@@ -95,7 +95,7 @@ fn player_enter_island(
             } else {
                 continue;
             };
-            if player_position.distance(island_position) < 30. {
+            if player_position.distance(island_position) < 20. {
                 game_state.town = island.town.clone();
                 app_state.set(AppState::GameTown).unwrap();
                 break 'outer;

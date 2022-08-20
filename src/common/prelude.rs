@@ -1,6 +1,7 @@
 pub use super::app_state::AppState;
 pub use super::asset_library::AssetLibrary;
 pub use super::assets::ldtk::LdtkAsset;
+pub use super::game_math::GameMath;
 pub use super::label::Label;
 pub use super::ldtk::{Ldtk, LdtkSpawnEvent};
 pub use super::menu_bar::MenuBar;

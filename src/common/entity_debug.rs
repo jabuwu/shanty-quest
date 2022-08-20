@@ -34,6 +34,14 @@ fn entity_debug(
                                 -1000.0..=1000.0,
                             ));
                         });
+                        ui.horizontal(|ui| {
+                            ui.label(format!(
+                                "Depth Layer: {:?} ({}) = {}",
+                                transform2.depth_layer,
+                                transform2.depth,
+                                transform2.depth_f32()
+                            ));
+                        });
                     }
                 }
             });

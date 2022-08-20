@@ -1,3 +1,4 @@
+use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
@@ -25,15 +26,19 @@ fn island_spawn(mut ev_spawn: EventReader<IslandSpawnEvent>, mut commands: Comma
             .entity(event.entity)
             .insert_bundle(SpriteBundle {
                 sprite: Sprite {
-                    custom_size: Vec2::new(32., 32.).into(),
+                    custom_size: Vec2::new(32., 128.).into(),
                     color: Color::SEA_GREEN,
                     ..Default::default()
                 },
-                transform: Transform::from_translation(event.town.position.extend(0.1)),
                 ..Default::default()
             })
+            .insert(
+                Transform2::from_translation(event.town.position)
+                    .with_depth((DepthLayer::Entity, 0.)),
+            )
             .insert(Island {
                 town: event.town.clone(),
-            });
+            })
+            .insert(YDepth::default());
     }
 }
