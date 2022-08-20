@@ -14,19 +14,26 @@ impl Plugin for CommonPlugin {
             .add_plugin(ldtk::LdtkPlugin)
             .add_plugin(entity_debug::EntityDebugPlugin)
             .add_plugin(y_depth::YDepthPlugin)
+            .add_plugin(collision::CollisionPlugin)
             .add_global_state::<app_state::AppState>()
-            .init_resource::<asset_library::AssetLibrary>();
+            .init_resource::<asset_library::AssetLibrary>()
+            .add_startup_system(asset_hot_reloading);
     }
+}
+
+fn asset_hot_reloading(asset_server: Res<AssetServer>) {
+    asset_server.watch_for_changes().unwrap();
 }
 
 pub mod app_state;
 pub mod asset_library;
 pub mod assets;
+pub mod collision;
 pub mod entity_debug;
 pub mod facing;
-pub mod game_math;
 pub mod label;
 pub mod ldtk;
+pub mod math;
 pub mod menu_bar;
 pub mod mouse;
 pub mod prelude;
