@@ -1,4 +1,5 @@
 use crate::common::prelude::*;
+use crate::game::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
@@ -9,6 +10,7 @@ impl Plugin for PlayerPlugin {
         app.add_event::<PlayerSpawnEvent>()
             .add_system(player_spawn)
             .add_system(player_move)
+            .add_system(player_enter_island)
             .add_system(player_debug);
     }
 }
@@ -26,10 +28,11 @@ fn player_spawn(mut ev_spawn: EventReader<PlayerSpawnEvent>, mut commands: Comma
         commands
             .spawn_bundle(SpriteBundle {
                 sprite: Sprite {
-                    custom_size: Vec2::new(32., 32.).into(),
-                    color: Color::RED,
+                    custom_size: Vec2::new(32., 48.).into(),
+                    color: Color::rgb(0.4, 0.3, 0.1),
                     ..Default::default()
                 },
+                transform: Transform::from_translation(Vec3::new(0., 0., 0.3)),
                 ..Default::default()
             })
             .insert(Player { speed: 300. });
@@ -61,6 +64,34 @@ fn player_move(
         movement = movement.normalize() * time.delta_seconds();
         for (mut transform, player) in query.iter_mut() {
             transform.translation += movement.extend(0.) * player.speed;
+        }
+    }
+}
+
+fn player_enter_island(
+    mut app_state: ResMut<State<AppState>>,
+    mut game_state: ResMut<GameState>,
+    island_query: Query<(Entity, &Island)>,
+    player_query: Query<Entity, With<Player>>,
+    transform_query: Query<&GlobalTransform>,
+) {
+    'outer: for (island_entity, island) in island_query.iter() {
+        let island_position = if let Ok(island_transform) = transform_query.get(island_entity) {
+            island_transform.translation().truncate()
+        } else {
+            continue;
+        };
+        for player_entity in player_query.iter() {
+            let player_position = if let Ok(player_transform) = transform_query.get(player_entity) {
+                player_transform.translation().truncate()
+            } else {
+                continue;
+            };
+            if player_position.distance(island_position) < 30. {
+                game_state.goto_town = Some(island.town.clone());
+                app_state.set(AppState::GameTown).unwrap();
+                break 'outer;
+            }
         }
     }
 }

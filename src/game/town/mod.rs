@@ -1,22 +1,17 @@
 use crate::common::prelude::*;
-use asset_struct::AssetStruct;
+use crate::game::prelude::*;
 use bevy::prelude::*;
 
-pub struct LoadingPlugin;
+pub struct TownPlugin;
 
-impl Plugin for LoadingPlugin {
+impl Plugin for TownPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(AppState::Loading).with_system(loading_init))
-            .add_system_set(SystemSet::on_update(AppState::Loading).with_system(loading_update));
+        app.add_system_set(SystemSet::on_enter(AppState::GameTown).with_system(town_init))
+            .add_system_set(SystemSet::on_update(AppState::GameTown).with_system(town_update));
     }
 }
 
-fn loading_init(
-    mut commands: Commands,
-    mut asset_library: ResMut<AssetLibrary>,
-    asset_server: Res<AssetServer>,
-) {
-    asset_library.load_assets(&asset_server);
+fn town_init(mut commands: Commands, asset_library: Res<AssetLibrary>, game_state: Res<GameState>) {
     commands.spawn_bundle(Camera2dBundle::default());
     commands
         .spawn_bundle(NodeBundle {
@@ -41,7 +36,10 @@ fn loading_init(
                     ..Default::default()
                 },
                 text: Text::from_section(
-                    "Loading!",
+                    format!(
+                        "In town: {}\n\nPress space to exit",
+                        game_state.goto_town.clone().unwrap().name,
+                    ),
                     TextStyle {
                         font: asset_library.font_default.clone(),
                         font_size: 42.0,
@@ -57,19 +55,9 @@ fn loading_init(
         });
 }
 
-pub fn loading_update(
-    mut app_state: ResMut<State<AppState>>,
-    asset_library: Res<AssetLibrary>,
-    asset_server: Res<AssetServer>,
-) {
-    use bevy::asset::LoadState;
-    match asset_library.load_state(&asset_server) {
-        LoadState::Failed => {
-            panic!("Failed to load assets.");
-        }
-        LoadState::Loaded => {
-            app_state.set(AppState::MainMenu).unwrap();
-        }
-        _ => {}
+fn town_update(mut keys: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
+    if keys.just_pressed(KeyCode::Space) {
+        app_state.set(AppState::GameOverworld).unwrap();
+        keys.reset(KeyCode::Space);
     }
 }

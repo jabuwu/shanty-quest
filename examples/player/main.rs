@@ -13,7 +13,7 @@ fn main() {
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
         .add_plugins(DefaultPlugins)
         .add_plugin(jam::common::CommonPlugin)
-        .add_plugin(jam::game::player::PlayerPlugin)
+        .add_plugin(jam::game::overworld::player::PlayerPlugin)
         .add_startup_system(init)
         .run();
 }

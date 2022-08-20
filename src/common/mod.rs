@@ -1,4 +1,4 @@
-use app_state::prelude::*;
+use global_state::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 
@@ -9,13 +9,13 @@ impl Plugin for CommonPlugin {
         app.add_plugin(EguiPlugin)
             .add_plugin(menu_bar::MenuBarPlugin)
             .add_plugin(mouse::MousePlugin)
-            .add_app_state::<game_state::GameState>()
+            .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>();
     }
 }
 
 pub mod asset_library;
-pub mod game_state;
+pub mod app_state;
 pub mod menu_bar;
 pub mod mouse;
 pub mod prelude;

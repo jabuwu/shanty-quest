@@ -5,8 +5,8 @@ pub struct MainMenuPlugin;
 
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(GameState::MainMenu).with_system(setup))
-            .add_system_set(SystemSet::on_update(GameState::MainMenu).with_system(button_system));
+        app.add_system_set(SystemSet::on_enter(AppState::MainMenu).with_system(setup))
+            .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(button_system));
     }
 }
 
@@ -30,7 +30,7 @@ fn button_system(
         ),
         (Changed<Interaction>, With<Button>),
     >,
-    mut game_state: ResMut<State<GameState>>,
+    mut app_state: ResMut<State<AppState>>,
     mut exit: EventWriter<AppExit>,
 ) {
     for (interaction, mut color, start_game, quit) in &mut interaction_query {
@@ -41,7 +41,7 @@ fn button_system(
             Interaction::Hovered => {
                 if color.0 == PRESSED_BUTTON {
                     if start_game.is_some() {
-                        game_state.set(GameState::Game).unwrap();
+                        app_state.set(AppState::GameOverworld).unwrap();
                     }
                     if quit.is_some() {
                         exit.send(AppExit);
