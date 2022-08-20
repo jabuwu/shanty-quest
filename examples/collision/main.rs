@@ -1,0 +1,122 @@
+use asset_struct::prelude::*;
+use bevy::prelude::*;
+use jam::common::prelude::*;
+
+#[derive(Component)]
+pub struct Editable;
+
+fn main() {
+    App::new()
+        .insert_resource(WindowDescriptor {
+            title: "Collision".to_string(),
+            width: 1280.,
+            height: 720.,
+            resizable: false,
+            ..default()
+        })
+        .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
+        .add_plugins(DefaultPlugins)
+        .add_plugin(jam::common::CommonPlugin)
+        .add_startup_system(init)
+        .add_system(player_update)
+        .run();
+}
+
+#[derive(Component)]
+pub struct Player;
+
+pub fn init(
+    mut commands: Commands,
+    mut asset_library: ResMut<AssetLibrary>,
+    asset_server: Res<AssetServer>,
+) {
+    asset_library.load_assets(&asset_server);
+    commands.spawn_bundle(Camera2dBundle::default());
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                custom_size: Vec2::new(32., 32.).into(),
+                color: Color::GREEN,
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Transform2::from_xy(0., 0.))
+        .insert(Collision {
+            shape: CollisionShape::Rect {
+                size: Vec2::new(32., 32.),
+            },
+            flags: 1,
+        })
+        .insert(Player);
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                custom_size: Vec2::new(32., 32.).into(),
+                color: Color::RED,
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Transform2::from_xy(100., 0.))
+        .insert(Collision {
+            shape: CollisionShape::Rect {
+                size: Vec2::new(32., 32.),
+            },
+            flags: 1,
+        });
+}
+
+fn player_update(
+    mut query: Query<(Entity, &mut Transform2, &Collision), With<Player>>,
+    collision_query: Res<CollisionQuery>,
+    input: Res<Input<KeyCode>>,
+    time: Res<Time>,
+) {
+    for (entity, mut transform, collision) in query.iter_mut() {
+        let mut velocity = Vec2::new(0., 0.);
+        if input.pressed(KeyCode::W) {
+            velocity.y += 1.;
+        }
+        if input.pressed(KeyCode::S) {
+            velocity.y -= 1.;
+        }
+        if input.pressed(KeyCode::A) {
+            velocity.x -= 1.;
+        }
+        if input.pressed(KeyCode::D) {
+            velocity.x += 1.;
+        }
+        if velocity.length_squared() > 0. {
+            velocity = velocity.normalize() * 200. * time.delta_seconds();
+            let velocity_x = Vec2::X * velocity;
+            let velocity_y = Vec2::Y * velocity;
+            let collision_filters = CollisionFilter {
+                exclude_entity: entity,
+                flags: 1,
+            };
+            if collision_query
+                .check_moving(
+                    transform.translation,
+                    velocity_x,
+                    collision.shape,
+                    Some(collision_filters),
+                )
+                .is_none()
+            {
+                transform.translation += velocity_x;
+            }
+            if collision_query
+                .check_moving(
+                    transform.translation,
+                    velocity_y,
+                    collision.shape,
+                    Some(collision_filters),
+                )
+                .is_none()
+            {
+                transform.translation += velocity_y;
+            }
+        }
+    }
+}
