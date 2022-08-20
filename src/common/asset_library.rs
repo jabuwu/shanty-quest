@@ -17,4 +17,6 @@ pub struct AssetLibrary {
 
     #[asset("sprites/Ship1.png")]
     pub sprite_ship: Handle<Image>,
+    #[asset("sprites/WaterOverlay.png")]
+    pub sprite_water_overlay: Handle<Image>,
 }

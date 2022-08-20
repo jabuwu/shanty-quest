@@ -55,7 +55,7 @@ fn boat_spawn(
             .insert(
                 Transform2::from_translation(event.position)
                     .with_depth((DepthLayer::Entity, 0.))
-                    .with_scale(Vec2::new(0.5, 0.5)),
+                    .with_scale(Vec2::new(0.75, 0.75)),
             )
             .insert(Boat {
                 movement: Vec2::ZERO,
