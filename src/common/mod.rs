@@ -1,6 +1,6 @@
-use global_state::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
+use global_state::prelude::*;
 
 pub struct CommonPlugin;
 
@@ -14,8 +14,9 @@ impl Plugin for CommonPlugin {
     }
 }
 
-pub mod asset_library;
 pub mod app_state;
+pub mod asset_library;
+pub mod label;
 pub mod menu_bar;
 pub mod mouse;
 pub mod prelude;

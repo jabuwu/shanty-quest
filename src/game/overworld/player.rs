@@ -1,7 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
-use bevy_egui::{egui, EguiContext};
 
 pub struct PlayerPlugin;
 
@@ -10,8 +9,8 @@ impl Plugin for PlayerPlugin {
         app.add_event::<PlayerSpawnEvent>()
             .add_system(player_spawn)
             .add_system(player_move)
-            .add_system(player_enter_island)
-            .add_system(player_debug);
+            .add_system(player_shoot)
+            .add_system(player_enter_island);
     }
 }
 
@@ -19,34 +18,29 @@ impl Plugin for PlayerPlugin {
 pub struct PlayerSpawnEvent;
 
 #[derive(Component)]
-pub struct Player {
-    speed: f32,
-}
+pub struct Player;
 
 fn player_spawn(
     mut ev_spawn: EventReader<PlayerSpawnEvent>,
+    mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
     mut commands: Commands,
     game_state: Res<GameState>,
 ) {
     for _ in ev_spawn.iter() {
-        commands
-            .spawn_bundle(SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Vec2::new(32., 48.).into(),
-                    color: Color::rgb(0.4, 0.3, 0.1),
-                    ..Default::default()
-                },
-                transform: Transform::from_translation(
-                    (game_state.town.position + Vec2::new(-50., 0.)).extend(0.3),
-                ),
-                ..Default::default()
-            })
-            .insert(Player { speed: 300. });
+        let entity = commands
+            .spawn()
+            .insert(Player)
+            .insert(Label("Player".to_owned()))
+            .id();
+        ev_boat_spawn.send(BoatSpawnEvent {
+            entity: Some(entity),
+            position: game_state.town.position + Vec2::new(-50., 0.),
+        });
     }
 }
 
 fn player_move(
-    mut query: Query<(&mut Transform, &Player)>,
+    mut query: Query<&mut Boat, With<Player>>,
     input: Res<Input<KeyCode>>,
     time: Res<Time>,
 ) {
@@ -68,8 +62,16 @@ fn player_move(
     }
     if movement.length_squared() > 0. {
         movement = movement.normalize() * time.delta_seconds();
-        for (mut transform, player) in query.iter_mut() {
-            transform.translation += movement.extend(0.) * player.speed;
+    }
+    for mut boat in query.iter_mut() {
+        boat.movement = movement;
+    }
+}
+
+fn player_shoot(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
+    if input.just_pressed(KeyCode::Space) {
+        for mut boat in query.iter_mut() {
+            boat.shoot = true;
         }
     }
 }
@@ -100,23 +102,4 @@ fn player_enter_island(
             }
         }
     }
-}
-
-fn player_debug(
-    mut egui_context: ResMut<EguiContext>,
-    mut menu_bar: ResMut<MenuBar>,
-    mut query: Query<&mut Player>,
-) {
-    menu_bar.item("Player", |open| {
-        egui::Window::new("Player")
-            .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
-                for mut player in query.iter_mut() {
-                    ui.horizontal(|ui| {
-                        ui.label("Speed");
-                        ui.add(egui::Slider::new(&mut player.speed, 0.0..=1000.0));
-                    });
-                }
-            });
-    });
 }
