@@ -27,7 +27,7 @@ fn island_spawn(mut ev_spawn: EventReader<IslandSpawnEvent>, mut commands: Comma
             .insert_bundle(SpriteBundle {
                 sprite: Sprite {
                     custom_size: Vec2::new(32., 128.).into(),
-                    color: Color::SEA_GREEN,
+                    color: Color::BEIGE,
                     ..Default::default()
                 },
                 ..Default::default()

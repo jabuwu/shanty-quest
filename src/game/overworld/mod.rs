@@ -12,6 +12,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(boat::BoatPlugin)
             .add_plugin(enemy::EnemyPlugin)
             .add_plugin(cannon_ball::CannonBallPlugin)
+            .add_plugin(ocean::OceanPlugin)
             .add_system_set(
                 SystemSet::on_enter(AppState::GameOverworld).with_system(overworld_init),
             )
@@ -26,14 +27,18 @@ pub fn overworld_init(
     mut ev_player_spawn: EventWriter<PlayerSpawnEvent>,
     mut ev_enemy_spawn: EventWriter<EnemySpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
-    mut ev_spawn_ldtk: EventWriter<LdtkSpawnEvent>,
+    mut ev_ldtk_spawn: EventWriter<LdtkSpawnEvent>,
+    mut ev_ocean_spawn: EventWriter<OceanSpawnEvent>,
     asset_library: Res<AssetLibrary>,
 ) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands
+        .spawn_bundle(Camera2dBundle::default())
+        .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     ev_player_spawn.send_default();
     ev_enemy_spawn.send_default();
     ev_world_load.send_default();
-    ev_spawn_ldtk.send(LdtkSpawnEvent {
+    ev_ocean_spawn.send_default();
+    ev_ldtk_spawn.send(LdtkSpawnEvent {
         entity: None,
         asset: asset_library.level_test.clone(),
         position: Vec2::new(-800., 350.),
@@ -51,5 +56,6 @@ pub mod boat;
 pub mod cannon_ball;
 pub mod enemy;
 pub mod island;
+pub mod ocean;
 pub mod player;
 pub mod world;

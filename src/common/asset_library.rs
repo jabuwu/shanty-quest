@@ -11,6 +11,10 @@ pub struct AssetLibrary {
     pub level_test: Handle<LdtkAsset>,
     #[asset("levels/IslandTilemap.png")]
     pub level_test_island_tilemap: Handle<Image>,
+
     #[asset("levels/WaterTileMap.png")]
     pub level_test_water_tilemap: Handle<Image>,
+
+    #[asset("sprites/Ship1.png")]
+    pub sprite_ship: Handle<Image>,
 }

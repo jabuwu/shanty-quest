@@ -106,6 +106,9 @@ fn ldtk_load(
                         .enumerate()
                         .rev()
                     {
+                        if layer.identifier == "BG" {
+                            continue;
+                        }
                         let layer_entity = commands
                             .spawn_bundle(Transform2Bundle {
                                 transform2: Transform2::from_xy(0.0, 0.0).with_depth((
@@ -161,7 +164,6 @@ fn ldtk_load(
                     }
                 }
                 ldtk.state = LdtkState::Loaded;
-                println!("loaded ldtk!");
             }
         }
     }

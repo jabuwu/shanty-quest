@@ -21,17 +21,6 @@ fn world_spawn(
     mut ev_spawn_island: EventWriter<IslandSpawnEvent>,
 ) {
     for _ in ev_spawn.iter() {
-        commands
-            .spawn_bundle(SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Vec2::new(50000., 50000.).into(),
-                    color: Color::rgb(0.5, 0.7, 1.),
-                    ..Default::default()
-                },
-                ..Default::default()
-            })
-            .insert(World);
-
         let island_entity = commands.spawn().id();
         ev_spawn_island.send(IslandSpawnEvent {
             entity: island_entity,
