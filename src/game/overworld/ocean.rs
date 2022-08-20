@@ -3,8 +3,8 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
-const OCEAN_WIDTH: f32 = 200.;
-const OCEAN_HEIGHT: f32 = 200.;
+const OCEAN_WIDTH: f32 = 320.;
+const OCEAN_HEIGHT: f32 = 320.;
 
 pub struct OceanPlugin;
 

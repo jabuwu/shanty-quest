@@ -28,7 +28,7 @@ pub struct AssetLibrary {
 impl AssetLibrary {
     pub fn create_texture_atlases(&mut self, texture_atlas_assets: &mut Assets<TextureAtlas>) {
         let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_ship.clone(), Vec2::new(250., 350.), 3, 1);
+            TextureAtlas::from_grid(self.sprite_ship.clone(), Vec2::new(250., 350.), 5, 1);
         self.sprite_ship_atlas = texture_atlas_assets.add(texture_atlas);
     }
 }

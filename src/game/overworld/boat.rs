@@ -62,7 +62,7 @@ fn boat_spawn(
                 movement: Vec2::ZERO,
                 speed: 200.,
                 shoot: false,
-                facing: Facing::Right,
+                facing: Facing::East,
             })
             .insert(YDepth::default());
     }
@@ -82,14 +82,8 @@ fn boat_update(
         if boat.movement.length_squared() > 0. {
             let movement = boat.movement.normalize() * time.delta_seconds();
             transform.translation += movement * boat.speed;
-            if movement.x > 0. {
-                boat.facing = Facing::Left;
-            } else if movement.x < 0. {
-                boat.facing = Facing::Right;
-            } else if movement.y > 0. {
-                boat.facing = Facing::Up;
-            } else if movement.y < 0. {
-                boat.facing = Facing::Down;
+            if let Some(facing) = Facing::from_vec(boat.movement) {
+                boat.facing = facing;
             }
         }
         if boat.shoot {
@@ -107,18 +101,32 @@ fn boat_update(
         }
         transform.scale.x = transform.scale.x.abs();
         match boat.facing {
-            Facing::Up => {
+            Facing::North => {
+                atlas.index = 3;
+            }
+            Facing::NorthEast => {
                 atlas.index = 1;
+                transform.scale.x *= -1.;
             }
-            Facing::Down => {
+            Facing::East => {
                 atlas.index = 2;
+                transform.scale.x *= -1.;
             }
-            Facing::Left => {
+            Facing::SouthEast => {
                 atlas.index = 0;
                 transform.scale.x *= -1.;
             }
-            Facing::Right => {
+            Facing::South => {
+                atlas.index = 4;
+            }
+            Facing::SouthWest => {
                 atlas.index = 0;
+            }
+            Facing::West => {
+                atlas.index = 2;
+            }
+            Facing::NorthWest => {
+                atlas.index = 1;
             }
         }
     }
