@@ -14,7 +14,7 @@ impl Plugin for OceanPlugin {
             .add_system(ocean_spawn)
             .add_system(ocean_update.after(PlayerSystems::Camera))
             .add_system(ocean_overlay_update)
-            .add_system(ocean_overlay_debug);
+            .add_system(ocean_debug);
     }
 }
 
@@ -155,17 +155,25 @@ fn ocean_overlay_update(
     }
 }
 
-fn ocean_overlay_debug(
+fn ocean_debug(
     mut egui_context: ResMut<EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
-    mut query: Query<(&mut OceanOverlay, &Children)>,
+    mut ocean_query: Query<&mut Transform2, With<Ocean>>,
+    mut overlay_query: Query<(&mut OceanOverlay, &Children)>,
     mut children_query: Query<&mut Sprite>,
 ) {
-    menu_bar.item("Ocean Overlay", |open| {
-        egui::Window::new("Ocean Overlay")
+    menu_bar.item("Ocean", |open| {
+        egui::Window::new("Ocean")
             .open(open)
             .show(egui_context.ctx_mut(), |ui| {
-                for (i, (mut overlay, children)) in query.iter_mut().enumerate() {
+                for mut ocean_transform in ocean_query.iter_mut() {
+                    ui.horizontal(|ui| {
+                        ui.label("Scale");
+                        ui.add(egui::Slider::new(&mut ocean_transform.scale.x, 0.05..=2.0));
+                        ocean_transform.scale.y = ocean_transform.scale.x;
+                    });
+                }
+                for (i, (mut overlay, children)) in overlay_query.iter_mut().enumerate() {
                     ui.label(format!("Ocean Overlay {}", i + 1));
                     ui.horizontal(|ui| {
                         ui.label("Wavey");
