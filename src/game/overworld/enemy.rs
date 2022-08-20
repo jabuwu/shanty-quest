@@ -1,3 +1,4 @@
+use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
@@ -24,7 +25,11 @@ fn enemy_spawn(
     mut commands: Commands,
 ) {
     for _ in ev_spawn.iter() {
-        let entity = commands.spawn().insert(Enemy).id();
+        let entity = commands
+            .spawn()
+            .insert(Enemy)
+            .insert(Label("Enemy".to_owned()))
+            .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: Vec2::new(-600., 0.),

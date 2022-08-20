@@ -65,6 +65,22 @@ pub fn init(
             },
             flags: 1,
         });
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                custom_size: Vec2::new(32., 32.).into(),
+                color: Color::RED,
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Transform2::from_xy(30., 40.))
+        .insert(Collision {
+            shape: CollisionShape::Rect {
+                size: Vec2::new(32., 32.),
+            },
+            flags: 1,
+        });
 }
 
 fn player_update(
@@ -89,34 +105,32 @@ fn player_update(
         }
         if velocity.length_squared() > 0. {
             velocity = velocity.normalize() * 200. * time.delta_seconds();
-            let velocity_x = Vec2::X * velocity;
-            let velocity_y = Vec2::Y * velocity;
+            let mut velocity_x = Vec2::X * velocity;
+            let mut velocity_y = Vec2::Y * velocity;
             let collision_filters = CollisionFilter {
                 exclude_entity: entity,
                 flags: 1,
             };
-            if collision_query
-                .check_moving(
-                    transform.translation,
-                    velocity_x,
-                    collision.shape,
-                    Some(collision_filters),
-                )
-                .is_none()
-            {
-                transform.translation += velocity_x;
+            if let Some((_, distance)) = collision_query.check_moving(
+                transform.translation,
+                velocity_x,
+                collision.shape,
+                Some(collision_filters),
+            ) {
+                velocity_x *= distance;
+                velocity_x.x -= 0.001_f32.copysign(velocity_x.x);
             }
-            if collision_query
-                .check_moving(
-                    transform.translation,
-                    velocity_y,
-                    collision.shape,
-                    Some(collision_filters),
-                )
-                .is_none()
-            {
-                transform.translation += velocity_y;
+            transform.translation += velocity_x;
+            if let Some((_, distance)) = collision_query.check_moving(
+                transform.translation,
+                velocity_y,
+                collision.shape,
+                Some(collision_filters),
+            ) {
+                velocity_y *= distance;
+                velocity_y.y -= 0.001_f32.copysign(velocity_y.y);
             }
+            transform.translation += velocity_y;
         }
     }
 }
