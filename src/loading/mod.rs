@@ -14,9 +14,11 @@ impl Plugin for LoadingPlugin {
 fn loading_init(
     mut commands: Commands,
     mut asset_library: ResMut<AssetLibrary>,
+    mut texture_atlas_assets: ResMut<Assets<TextureAtlas>>,
     asset_server: Res<AssetServer>,
 ) {
     asset_library.load_assets(&asset_server);
+    asset_library.create_texture_atlases(texture_atlas_assets.as_mut());
     commands.spawn_bundle(Camera2dBundle::default());
     commands
         .spawn_bundle(NodeBundle {

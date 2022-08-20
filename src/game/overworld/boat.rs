@@ -34,6 +34,7 @@ pub struct Boat {
     pub movement: Vec2,
     pub speed: f32,
     pub shoot: bool,
+    pub facing: Facing,
 }
 
 fn boat_spawn(
@@ -48,8 +49,8 @@ fn boat_spawn(
             commands.spawn()
         };
         boat_entity
-            .insert_bundle(SpriteBundle {
-                texture: asset_library.sprite_ship.clone(),
+            .insert_bundle(SpriteSheetBundle {
+                texture_atlas: asset_library.sprite_ship_atlas.clone(),
                 ..Default::default()
             })
             .insert(
@@ -61,20 +62,35 @@ fn boat_spawn(
                 movement: Vec2::ZERO,
                 speed: 200.,
                 shoot: false,
+                facing: Facing::Right,
             })
             .insert(YDepth::default());
     }
 }
 
 fn boat_update(
-    mut query: Query<(&mut Transform2, &GlobalTransform, &mut Boat)>,
+    mut query: Query<(
+        &mut Transform2,
+        &GlobalTransform,
+        &mut Boat,
+        &mut TextureAtlasSprite,
+    )>,
     time: Res<Time>,
     mut ev_cannon_ball_spawn: EventWriter<CannonBallSpawnEvent>,
 ) {
-    for (mut transform, global_transform, mut boat) in query.iter_mut() {
+    for (mut transform, global_transform, mut boat, mut atlas) in query.iter_mut() {
         if boat.movement.length_squared() > 0. {
             let movement = boat.movement.normalize() * time.delta_seconds();
             transform.translation += movement * boat.speed;
+            if movement.x > 0. {
+                boat.facing = Facing::Left;
+            } else if movement.x < 0. {
+                boat.facing = Facing::Right;
+            } else if movement.y > 0. {
+                boat.facing = Facing::Up;
+            } else if movement.y < 0. {
+                boat.facing = Facing::Down;
+            }
         }
         if boat.shoot {
             boat.shoot = false;
@@ -88,6 +104,22 @@ fn boat_update(
                 position: global_transform.translation().truncate(),
                 velocity: Vec2::X * -700.,
             });
+        }
+        transform.scale.x = transform.scale.x.abs();
+        match boat.facing {
+            Facing::Up => {
+                atlas.index = 1;
+            }
+            Facing::Down => {
+                atlas.index = 2;
+            }
+            Facing::Left => {
+                atlas.index = 0;
+                transform.scale.x *= -1.;
+            }
+            Facing::Right => {
+                atlas.index = 0;
+            }
         }
     }
 }
@@ -107,6 +139,7 @@ fn boat_debug(
                         ui.label("Speed");
                         ui.add(egui::Slider::new(&mut boat.speed, 0.0..=1000.0));
                     });
+                    ui.label(format!("Facing: {:?}", boat.facing));
                 }
             });
     });

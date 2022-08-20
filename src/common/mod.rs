@@ -23,6 +23,7 @@ pub mod app_state;
 pub mod asset_library;
 pub mod assets;
 pub mod entity_debug;
+pub mod facing;
 pub mod game_math;
 pub mod label;
 pub mod ldtk;
