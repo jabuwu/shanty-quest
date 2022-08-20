@@ -26,11 +26,18 @@ pub fn overworld_init(
     mut ev_player_spawn: EventWriter<PlayerSpawnEvent>,
     mut ev_enemy_spawn: EventWriter<EnemySpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
+    mut ev_spawn_ldtk: EventWriter<LdtkSpawnEvent>,
+    asset_library: Res<AssetLibrary>,
 ) {
     commands.spawn_bundle(Camera2dBundle::default());
     ev_player_spawn.send_default();
     ev_enemy_spawn.send_default();
     ev_world_load.send_default();
+    ev_spawn_ldtk.send(LdtkSpawnEvent {
+        entity: None,
+        asset: asset_library.level_test.clone(),
+        position: Vec2::new(-800., 350.),
+    });
 }
 
 pub fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {

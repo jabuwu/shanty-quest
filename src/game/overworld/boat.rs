@@ -42,22 +42,25 @@ fn boat_spawn(mut ev_spawn: EventReader<BoatSpawnEvent>, mut commands: Commands)
                     color: Color::rgb(0.4, 0.3, 0.1),
                     ..Default::default()
                 },
-                transform: Transform::from_translation(event.position.extend(0.3)),
                 ..Default::default()
             })
+            .insert(
+                Transform2::from_translation(event.position).with_depth((DepthLayer::Entity, 0.)),
+            )
             .insert(Boat {
                 movement: Vec2::ZERO,
                 speed: 150.,
                 shoot: false,
-            });
+            })
+            .insert(YDepth);
     }
 }
 
-fn boat_move(mut query: Query<(&mut Transform, &Boat)>, time: Res<Time>) {
+fn boat_move(mut query: Query<(&mut Transform2, &Boat)>, time: Res<Time>) {
     for (mut transform, boat) in query.iter_mut() {
         if boat.movement.length_squared() > 0. {
             let movement = boat.movement.normalize() * time.delta_seconds();
-            transform.translation += movement.extend(0.) * boat.speed;
+            transform.translation += movement * boat.speed;
         }
     }
 }

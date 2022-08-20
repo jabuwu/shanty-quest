@@ -24,6 +24,7 @@ pub fn derive_asset_struct(input: TokenStream) -> TokenStream {
     let name = input.ident;
     let mut load_quotes = vec![];
     let mut loaded_quotes = vec![];
+    let mut loaded_match_quotes = vec![];
     match input.data {
         Data::Struct(a) => {
             for field in a.fields.iter() {
@@ -43,6 +44,9 @@ pub fn derive_asset_struct(input: TokenStream) -> TokenStream {
                     loaded_quotes.push(quote! {
                         self.#field_ident.clone_untyped()
                     });
+                    loaded_match_quotes.push(quote! {
+                        #path => self.#field_ident.clone_untyped().typed()
+                    });
                 }
             }
         }
@@ -58,6 +62,12 @@ pub fn derive_asset_struct(input: TokenStream) -> TokenStream {
                     #(#loaded_quotes,)*
                 ];
                 asset_server.get_group_load_state(assets.iter().map(|h| h.id))
+            }
+            fn from_filename<T: bevy::asset::Asset>(&self, path: &str) -> Handle<T> {
+                match path {
+                    #(#loaded_match_quotes,)*
+                    _ => panic!("asset not found: {}", path),
+                }
             }
         }
     };
