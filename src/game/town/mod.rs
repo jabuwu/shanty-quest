@@ -38,7 +38,7 @@ fn town_init(mut commands: Commands, asset_library: Res<AssetLibrary>, game_stat
                 text: Text::from_section(
                     format!(
                         "In town: {}\n\nPress space to exit",
-                        game_state.goto_town.clone().unwrap().name,
+                        game_state.town.clone().name,
                     ),
                     TextStyle {
                         font: asset_library.font_default.clone(),

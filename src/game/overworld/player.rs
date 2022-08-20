@@ -23,7 +23,11 @@ pub struct Player {
     speed: f32,
 }
 
-fn player_spawn(mut ev_spawn: EventReader<PlayerSpawnEvent>, mut commands: Commands) {
+fn player_spawn(
+    mut ev_spawn: EventReader<PlayerSpawnEvent>,
+    mut commands: Commands,
+    game_state: Res<GameState>,
+) {
     for _ in ev_spawn.iter() {
         commands
             .spawn_bundle(SpriteBundle {
@@ -32,7 +36,9 @@ fn player_spawn(mut ev_spawn: EventReader<PlayerSpawnEvent>, mut commands: Comma
                     color: Color::rgb(0.4, 0.3, 0.1),
                     ..Default::default()
                 },
-                transform: Transform::from_translation(Vec3::new(0., 0., 0.3)),
+                transform: Transform::from_translation(
+                    (game_state.town.position + Vec2::new(-50., 0.)).extend(0.3),
+                ),
                 ..Default::default()
             })
             .insert(Player { speed: 300. });
@@ -88,7 +94,7 @@ fn player_enter_island(
                 continue;
             };
             if player_position.distance(island_position) < 30. {
-                game_state.goto_town = Some(island.town.clone());
+                game_state.town = island.town.clone();
                 app_state.set(AppState::GameTown).unwrap();
                 break 'outer;
             }

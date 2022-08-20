@@ -1,4 +1,4 @@
-use crate::common::prelude::*;
+use crate::{common::prelude::*, game::state::GameState};
 use bevy::{app::AppExit, prelude::*};
 
 pub struct MainMenuPlugin;
@@ -32,6 +32,7 @@ fn button_system(
     >,
     mut app_state: ResMut<State<AppState>>,
     mut exit: EventWriter<AppExit>,
+    mut game_state: ResMut<GameState>,
 ) {
     for (interaction, mut color, start_game, quit) in &mut interaction_query {
         match *interaction {
@@ -41,6 +42,7 @@ fn button_system(
             Interaction::Hovered => {
                 if color.0 == PRESSED_BUTTON {
                     if start_game.is_some() {
+                        *game_state.as_mut() = GameState::default();
                         app_state.set(AppState::GameOverworld).unwrap();
                     }
                     if quit.is_some() {
