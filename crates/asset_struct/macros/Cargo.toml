@@ -1,0 +1,12 @@
+[package]
+name = "asset_struct_macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0"
+syn = "1.0"
+proc-macro2 = { version = "1.0.40", default-features = false }

@@ -1,0 +1,8 @@
+debug/
+target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+wasm/
+.DS_Store
+ghpages/

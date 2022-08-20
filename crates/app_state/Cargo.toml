@@ -1,0 +1,10 @@
+[package]
+name = "app_state"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quote = "1.0"
+syn = "1.0"
+app_state_macros = { path = "./macros" }
+bevy = { version = "0.8.0", default-features = false }
