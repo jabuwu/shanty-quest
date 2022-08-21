@@ -1,6 +1,7 @@
 use crate::common::prelude::*;
 use asset_struct::AssetStruct;
 use bevy::prelude::*;
+use bevy_kira_audio::AudioSource;
 
 #[derive(Default, AssetStruct)]
 pub struct AssetLibrary {
@@ -26,6 +27,9 @@ pub struct AssetLibrary {
 
     #[asset("sprites/WaterRingVFX.png")]
     pub sprite_water_ring_vfx: Handle<Image>,
+
+    #[asset("music/ye_old_pirate_rave.ogg")]
+    pub music_pirate_rave: Handle<AudioSource>,
 }
 
 impl AssetLibrary {

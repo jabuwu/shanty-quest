@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
@@ -13,7 +14,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<PlayerSpawnEvent>()
             .add_system(player_spawn)
-            .add_system(player_move.before(BoatSystems::Update))
+            .add_system(player_controls.before(BoatSystems::Update))
             .add_system(player_shoot.before(BoatSystems::Update))
             .add_system(player_enter_island)
             .add_system(player_camera.label(PlayerSystems::Camera));
@@ -29,6 +30,7 @@ pub struct Player;
 fn player_spawn(
     mut ev_spawn: EventReader<PlayerSpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
+    mut ev_band_jam_spawn: EventWriter<BandJamSpawnEvent>,
     mut commands: Commands,
     game_state: Res<GameState>,
 ) {
@@ -37,16 +39,20 @@ fn player_spawn(
             .spawn()
             .insert(Player)
             .insert(Label("Player".to_owned()))
+            .insert(AudioPlusListener)
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: game_state.town.position + game_state.town.spawn_offset,
         });
+        ev_band_jam_spawn.send(BandJamSpawnEvent {
+            entity: Some(entity),
+        });
     }
 }
 
-fn player_move(
-    mut query: Query<&mut Boat, With<Player>>,
+fn player_controls(
+    mut query: Query<(&mut Boat, &mut BandJam), With<Player>>,
     input: Res<Input<KeyCode>>,
     time: Res<Time>,
 ) {
@@ -69,8 +75,9 @@ fn player_move(
     if movement.length_squared() > 0. {
         movement = movement.normalize() * time.delta_seconds();
     }
-    for mut boat in query.iter_mut() {
+    for (mut boat, mut band_jam) in query.iter_mut() {
         boat.movement = movement;
+        band_jam.jamming = input.pressed(KeyCode::Space);
     }
 }
 

@@ -21,6 +21,7 @@ impl Plugin for BoatPlugin {
                     .label(BoatSystems::Update)
                     .label(CharacterControllerSystems::Update),
             )
+            .add_system(boat_jam)
             .add_system(boat_debug);
     }
 }
@@ -102,7 +103,9 @@ fn boat_update(
     mut ev_cannon_ball_spawn: EventWriter<CannonBallSpawnEvent>,
     mut ev_water_ring_spawn: EventWriter<WaterRingSpawnEvent>,
 ) {
-    for (transform, mut character_controller, global_transform, mut boat, mut atlas) in query.iter_mut() {
+    for (transform, mut character_controller, global_transform, mut boat, mut atlas) in
+        query.iter_mut()
+    {
         character_controller.movement = boat.movement;
         character_controller.speed = boat.speed;
         if let Some(facing) = Facing::from_vec(boat.movement) {
@@ -178,6 +181,12 @@ fn boat_update(
         } else {
             boat.ring_timer = RING_SPAWN_INTEVAL; // reset
         }
+    }
+}
+
+fn boat_jam(mut query: Query<(&mut Transform2, &BandJam), With<Boat>>) {
+    for (mut transform, band_jam) in query.iter_mut() {
+        transform.scale = Vec2::new(0.6, 0.6) + Vec2::new(0.1, 0.1) * band_jam.intensity;
     }
 }
 

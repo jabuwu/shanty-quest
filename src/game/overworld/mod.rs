@@ -16,6 +16,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(ocean::OceanPlugin)
             .add_plugin(healthbar::HealthbarPlugin)
             .add_plugin(character_controller::CharacterControllerPlugin)
+            .add_plugin(band_jam::BandJamPlugin)
             .add_system_set(
                 SystemSet::on_enter(AppState::GameOverworld).with_system(overworld_init),
             )
@@ -46,6 +47,7 @@ pub fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut
     }
 }
 
+pub mod band_jam;
 pub mod boat;
 pub mod cannon_ball;
 pub mod character_controller;

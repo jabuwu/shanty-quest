@@ -1,3 +1,4 @@
+use audio_plus::AudioPlusPlugin;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use global_state::prelude::*;
@@ -7,6 +8,7 @@ pub struct CommonPlugin;
 impl Plugin for CommonPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(EguiPlugin)
+            .add_plugin(AudioPlusPlugin)
             .add_plugin(menu_bar::MenuBarPlugin)
             .add_plugin(mouse::MousePlugin)
             .add_plugin(assets::AssetsPlugin)
