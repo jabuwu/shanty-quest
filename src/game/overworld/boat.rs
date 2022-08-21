@@ -38,6 +38,7 @@ pub struct Boat {
     pub speed: f32,
     pub facing: Facing,
     pub ring_timer: f32,
+    pub attack: Attack,
 }
 
 fn boat_spawn(
@@ -67,6 +68,7 @@ fn boat_spawn(
                 speed: 200.,
                 facing: Facing::East,
                 ring_timer: RING_SPAWN_INTEVAL,
+                attack: Attack::ShotgunCannons,
             })
             .insert(YDepth::default())
             .insert(Collision {
@@ -159,11 +161,29 @@ fn boat_update(
     }
 }
 
-fn boat_jam(mut query: Query<(&mut Transform2, &mut BandJam, &mut Shockwave), With<Boat>>) {
-    for (mut transform, mut band_jam, mut shockwave) in query.iter_mut() {
+fn boat_jam(
+    mut query: Query<
+        (
+            &mut Transform2,
+            &mut BandJam,
+            &Boat,
+            &mut ShotgunCannons,
+            &mut Shockwave,
+            &mut DashAttack,
+        ),
+        With<Boat>,
+    >,
+) {
+    for (mut transform, mut band_jam, boat, mut shotgun_cannons, mut shockwave, mut dash_attack) in
+        query.iter_mut()
+    {
         transform.scale = Vec2::new(0.6, 0.6) + Vec2::new(0.1, 0.1) * band_jam.intensity;
         if band_jam.cannons {
-            shockwave.shoot = true;
+            match boat.attack {
+                Attack::ShotgunCannons => shotgun_cannons.shoot = true,
+                Attack::Shockwave => shockwave.shoot = true,
+                Attack::DashAttack => dash_attack.shoot = true,
+            }
             band_jam.cannons = false;
         }
     }
@@ -172,19 +192,31 @@ fn boat_jam(mut query: Query<(&mut Transform2, &mut BandJam, &mut Shockwave), Wi
 fn boat_debug(
     mut egui_context: ResMut<EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
-    mut query: Query<(&mut Boat, &Label)>,
+    mut query: Query<(&mut Boat, &Label, Entity)>,
 ) {
     menu_bar.item("Boats", |open| {
         egui::Window::new("Boats")
             .open(open)
             .show(egui_context.ctx_mut(), |ui| {
-                for (mut boat, label) in query.iter_mut() {
+                for (mut boat, label, entity) in query.iter_mut() {
                     ui.label(&label.0);
                     ui.horizontal(|ui| {
                         ui.label("Speed");
                         ui.add(egui::Slider::new(&mut boat.speed, 0.0..=1000.0));
                     });
                     ui.label(format!("Facing: {:?}", boat.facing));
+                    ui.label("Attack");
+                    egui::ComboBox::new(format!("{}", entity.id()), "")
+                        .selected_text(format!("{:?}", boat.attack))
+                        .show_ui(ui, |ui| {
+                            ui.selectable_value(
+                                &mut boat.attack,
+                                Attack::ShotgunCannons,
+                                "ShotgunCannons",
+                            );
+                            ui.selectable_value(&mut boat.attack, Attack::Shockwave, "Shockwave");
+                            ui.selectable_value(&mut boat.attack, Attack::DashAttack, "DashAttack");
+                        });
                 }
             });
     });

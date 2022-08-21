@@ -1,7 +1,12 @@
 pub use super::{
     data::town_data::TownData,
     overworld::{
-        attacks::{shockwave::Shockwave, shotgun_cannons::ShotgunCannons},
+        attacks::{
+            dash_attack::{Dash, DashAttack},
+            shockwave::Shockwave,
+            shotgun_cannons::ShotgunCannons,
+            Attack,
+        },
         band_jam::{BandJam, BandJamSpawnEvent},
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         character_controller::{CharacterController, CharacterControllerSystems},

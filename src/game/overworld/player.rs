@@ -16,7 +16,8 @@ impl Plugin for PlayerPlugin {
             .add_system(player_spawn)
             .add_system(player_controls.before(BoatSystems::Update))
             .add_system(player_enter_island)
-            .add_system(player_camera.label(PlayerSystems::Camera));
+            .add_system(player_camera.label(PlayerSystems::Camera))
+            .add_system(player_set_attack);
     }
 }
 
@@ -41,6 +42,7 @@ fn player_spawn(
             .insert(AudioPlusListener)
             .insert(ShotgunCannons::default())
             .insert(Shockwave::default())
+            .insert(DashAttack::default())
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
@@ -129,6 +131,20 @@ fn player_camera(
             if let Ok(mut camera_transform) = transform_query.get_mut(camera_entity) {
                 camera_transform.translation = player_position;
             }
+        }
+    }
+}
+
+fn player_set_attack(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
+    for mut boat in query.iter_mut() {
+        if input.just_pressed(KeyCode::Key1) {
+            boat.attack = Attack::ShotgunCannons;
+        }
+        if input.just_pressed(KeyCode::Key2) {
+            boat.attack = Attack::Shockwave;
+        }
+        if input.just_pressed(KeyCode::Key3) {
+            boat.attack = Attack::DashAttack;
         }
     }
 }
