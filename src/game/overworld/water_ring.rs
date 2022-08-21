@@ -23,10 +23,13 @@ impl Plugin for WaterRingPlugin {
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct WaterRingSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
+    pub scale: Vec2,
+    pub angle: f32,
+    pub face: Facing,
 }
 
 #[derive(Component)]
@@ -42,20 +45,25 @@ fn water_ring_spawn(
     water_ring_settings: ResMut<WaterRingSettings>,
 ) {
     for event in ev_spawn.iter() {
+        let offset = match event.face {
+            Facing::West => water_ring_settings.spawn_offset,
+            Facing::East => water_ring_settings.spawn_offset,
+            _ => Vec2::ZERO,
+        };
         let mut entity = if let Some(entity) = event.entity {
             commands.entity(entity)
         } else {
             commands.spawn()
         };
-
         entity
             .insert_bundle(SpriteBundle {
                 texture: asset_library.sprite_water_ring_vfx.clone(),
                 ..Default::default()
             })
             .insert(
-                Transform2::from_translation(event.position + water_ring_settings.spawn_offset)
+                Transform2::from_translation(event.position + (event.scale * offset))
                     .with_scale(Vec2::ZERO)
+                    .with_rotation(event.angle)
                     .with_depth((DepthLayer::Environment, 0.015)),
             )
             .insert(WaterRing {

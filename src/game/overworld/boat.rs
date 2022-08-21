@@ -160,6 +160,9 @@ fn boat_update(
                 ev_water_ring_spawn.send(WaterRingSpawnEvent {
                     entity: None,
                     position: global_transform.translation().truncate(),
+                    scale: transform.scale,
+                    angle: Vec2::X.angle_between(boat.facing.to_vec()),
+                    face: boat.facing,
                 });
             }
         } else {
