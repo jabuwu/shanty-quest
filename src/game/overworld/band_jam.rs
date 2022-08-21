@@ -22,6 +22,7 @@ pub struct BandJamSpawnEvent {
 pub struct BandJam {
     pub jamming: bool,
     pub intensity: f32,
+    pub cannons: bool,
     last_jamming: bool,
     jam_time: f32,
 }
@@ -41,6 +42,7 @@ fn band_jam_spawn(
             .insert(BandJam {
                 jamming: false,
                 intensity: 0.,
+                cannons: false,
                 last_jamming: false,
                 jam_time: 0.,
             })
@@ -64,6 +66,7 @@ fn band_jam_update(mut query: Query<(&mut BandJam, &mut AudioPlusSource)>, time:
             }
         }
         if jam.jam_time > 0.4588 {
+            jam.cannons = true;
             jam.intensity = 1.;
             jam.jam_time = 0.;
         }
