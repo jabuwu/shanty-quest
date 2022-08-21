@@ -3,11 +3,12 @@ pub use super::{
     overworld::{
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         cannon_ball::{CannonBall, CannonBallSpawnEvent},
-        water_ring::{WaterRing, WaterRingSpawnEvent},
+        character_controller::{CharacterController, CharacterControllerSystems},
         enemy::{Enemy, EnemySpawnEvent},
         island::{Island, IslandSpawnEvent},
         ocean::{Ocean, OceanSpawnEvent},
         player::{Player, PlayerSpawnEvent, PlayerSystems},
+        water_ring::{WaterRing, WaterRingSpawnEvent},
         world::{World, WorldLoadEvent},
         OverworldPlugin,
     },

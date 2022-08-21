@@ -77,7 +77,7 @@ pub fn init(
             shape: CollisionShape::Rect {
                 size: Vec2::new(32., 32.),
             },
-            flags: 1,
+            flags: COLLISION_FLAG,
         })
         .insert(CharacterController {
             movement: Vec2::ZERO,
@@ -98,7 +98,7 @@ pub fn init(
             shape: CollisionShape::Rect {
                 size: Vec2::new(32., 32.),
             },
-            flags: 1,
+            flags: COLLISION_FLAG,
         })
         .insert(CharacterController {
             movement: Vec2::ZERO,

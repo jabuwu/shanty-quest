@@ -2,6 +2,8 @@ use bevy::prelude::*;
 use bevy::transform::TransformSystem;
 use shape::CollisionShape;
 
+pub const COLLISION_FLAG: u32 = 1;
+
 pub struct CollisionPlugin;
 
 impl Plugin for CollisionPlugin {

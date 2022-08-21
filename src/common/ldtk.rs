@@ -195,5 +195,11 @@ fn ldtk_spawn_tile(
             tile.px[0] as f32,
             tile.px[1] as f32 * -1.0,
         ))
+        .insert(Collision {
+            shape: CollisionShape::Rect {
+                size: Vec2::new(100., 100.),
+            },
+            flags: COLLISION_FLAG,
+        })
         .id()
 }

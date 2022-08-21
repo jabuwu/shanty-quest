@@ -1,7 +1,9 @@
 pub use super::app_state::AppState;
 pub use super::asset_library::AssetLibrary;
 pub use super::assets::ldtk::LdtkAsset;
-pub use super::collision::{shape::CollisionShape, Collision, CollisionFilter, CollisionQuery};
+pub use super::collision::{
+    shape::CollisionShape, Collision, CollisionFilter, CollisionQuery, COLLISION_FLAG,
+};
 pub use super::facing::Facing;
 pub use super::label::Label;
 pub use super::ldtk::{Ldtk, LdtkSpawnEvent};

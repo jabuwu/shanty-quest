@@ -17,7 +17,7 @@ impl Plugin for BoatPlugin {
             .add_system(
                 boat_update
                     .label(BoatSystems::Update)
-                    .before(PlayerSystems::Camera),
+                    .label(CharacterControllerSystems::Update),
             )
             .add_system(boat_debug);
     }
@@ -35,7 +35,7 @@ pub struct Boat {
     pub speed: f32,
     pub shoot: bool,
     pub facing: Facing,
-    pub ring_timer: f32
+    pub ring_timer: f32,
 }
 
 fn boat_spawn(
@@ -66,13 +66,24 @@ fn boat_spawn(
                 facing: Facing::East,
                 ring_timer: 0.2,
             })
-            .insert(YDepth::default());
+            .insert(YDepth::default())
+            .insert(Collision {
+                shape: CollisionShape::Rect {
+                    size: Vec2::new(100., 100.),
+                },
+                flags: COLLISION_FLAG,
+            })
+            .insert(CharacterController {
+                movement: Vec2::ZERO,
+                speed: 200.,
+            });
     }
 }
 
 fn boat_update(
     mut query: Query<(
         &mut Transform2,
+        &mut CharacterController,
         &GlobalTransform,
         &mut Boat,
         &mut TextureAtlasSprite,
@@ -81,14 +92,11 @@ fn boat_update(
     mut ev_cannon_ball_spawn: EventWriter<CannonBallSpawnEvent>,
     mut ev_water_ring_spawn: EventWriter<WaterRingSpawnEvent>,
 ) {
-    for (mut transform, global_transform, mut boat, mut atlas) in query.iter_mut() {
-        if boat.movement.length_squared() > 0. {
-            let movement = boat.movement.normalize() * time.delta_seconds();
-            transform.translation += movement * boat.speed;
-            if let Some(facing) = Facing::from_vec(boat.movement) {
-                boat.facing = facing;
-            }
-        }
+    for (mut transform, mut character_controller, global_transform, mut boat, mut atlas) in
+        query.iter_mut()
+    {
+        character_controller.movement = boat.movement;
+        character_controller.speed = boat.speed;
         if boat.shoot {
             boat.shoot = false;
             ev_cannon_ball_spawn.send(CannonBallSpawnEvent {
@@ -103,6 +111,9 @@ fn boat_update(
             });
         }
         transform.scale.x = transform.scale.x.abs();
+        if let Some(facing) = Facing::from_vec(boat.movement) {
+            boat.facing = facing;
+        }
         match boat.facing {
             Facing::North => {
                 atlas.index = 3;
@@ -142,8 +153,7 @@ fn boat_update(
                     position: global_transform.translation().truncate(),
                 });
             }
-        }
-        else {
+        } else {
             boat.ring_timer = 0.1; // reset
         }
     }

@@ -1,11 +1,21 @@
 use crate::common::prelude::*;
+use crate::game::prelude::*;
 use bevy::prelude::*;
+
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+pub enum CharacterControllerSystems {
+    Update,
+}
 
 pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(character_controller_update);
+        app.add_system(
+            character_controller_update
+                .label(CharacterControllerSystems::Update)
+                .before(PlayerSystems::Camera),
+        );
     }
 }
 
