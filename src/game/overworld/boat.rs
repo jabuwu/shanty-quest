@@ -42,6 +42,7 @@ pub struct Boat {
 fn boat_spawn(
     mut ev_spawn: EventReader<BoatSpawnEvent>,
     mut commands: Commands,
+    mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
     asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_spawn.iter() {
@@ -58,7 +59,7 @@ fn boat_spawn(
             .insert(
                 Transform2::from_translation(event.position)
                     .with_depth((DepthLayer::Entity, 0.))
-                    .with_scale(Vec2::new(0.75, 0.75)),
+                    .with_scale(Vec2::new(0.6, 0.6)),
             )
             .insert(Boat {
                 movement: Vec2::ZERO,
@@ -78,13 +79,17 @@ fn boat_spawn(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: 200.,
-            });
+            })
+            .insert(Health::new(100.));
+        ev_healthbar_spawn.send(HealthbarSpawnEvent {
+            entity: Some(boat_entity.id()),
+            offset: Vec2::new(0., 195.),
+        });
     }
 }
 
 fn boat_update(
     mut query: Query<(
-        &mut Transform2,
         &mut CharacterController,
         &GlobalTransform,
         &mut Boat,
@@ -94,9 +99,7 @@ fn boat_update(
     mut ev_cannon_ball_spawn: EventWriter<CannonBallSpawnEvent>,
     mut ev_water_ring_spawn: EventWriter<WaterRingSpawnEvent>,
 ) {
-    for (mut transform, mut character_controller, global_transform, mut boat, mut atlas) in
-        query.iter_mut()
-    {
+    for (mut character_controller, global_transform, mut boat, mut atlas) in query.iter_mut() {
         character_controller.movement = boat.movement;
         character_controller.speed = boat.speed;
         if let Some(facing) = Facing::from_vec(boat.movement) {
@@ -122,34 +125,38 @@ fn boat_update(
         }
         boat.shoot_port = false;
         boat.shoot_starboard = false;
-        transform.scale.x = transform.scale.x.abs();
         match boat.facing {
             Facing::North => {
                 atlas.index = 3;
+                atlas.flip_x = false;
             }
             Facing::NorthEast => {
                 atlas.index = 1;
-                transform.scale.x *= -1.;
+                atlas.flip_x = true;
             }
             Facing::East => {
                 atlas.index = 2;
-                transform.scale.x *= -1.;
+                atlas.flip_x = true;
             }
             Facing::SouthEast => {
                 atlas.index = 0;
-                transform.scale.x *= -1.;
+                atlas.flip_x = true;
             }
             Facing::South => {
                 atlas.index = 4;
+                atlas.flip_x = false;
             }
             Facing::SouthWest => {
                 atlas.index = 0;
+                atlas.flip_x = false;
             }
             Facing::West => {
                 atlas.index = 2;
+                atlas.flip_x = false;
             }
             Facing::NorthWest => {
                 atlas.index = 1;
+                atlas.flip_x = false;
             }
         }
 

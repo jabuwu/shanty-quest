@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
 fn main() {
-    println!("{}", Vec2::new(1., 1.).normalize());
     App::new()
         .insert_resource(WindowDescriptor {
             title: "Bevy Jam 2".to_string(),

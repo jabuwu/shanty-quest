@@ -5,6 +5,8 @@ pub use super::{
         cannon_ball::{CannonBall, CannonBallSpawnEvent},
         character_controller::{CharacterController, CharacterControllerSystems},
         enemy::{Enemy, EnemySpawnEvent},
+        health::Health,
+        healthbar::{Healthbar, HealthbarSpawnEvent},
         ocean::{Ocean, OceanSpawnEvent},
         player::{Player, PlayerSpawnEvent, PlayerSystems},
         town::{Town, TownSpawnEvent},
