@@ -10,6 +10,7 @@ pub use super::ldtk::{Ldtk, LdtkSpawnEvent};
 pub use super::math::{Lerp, Rect};
 pub use super::menu_bar::MenuBar;
 pub use super::mouse::Mouse;
+pub use super::time_to_live::TimeToLive;
 pub use super::transform2::{DepthLayer, Transform2, Transform2Bundle};
 pub use super::y_depth::YDepth;
 pub use super::CommonPlugin;

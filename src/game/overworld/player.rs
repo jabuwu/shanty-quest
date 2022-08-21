@@ -40,7 +40,7 @@ fn player_spawn(
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
-            position: game_state.town.position + Vec2::new(-50., 0.),
+            position: game_state.town.position + game_state.town.spawn_offset,
         });
     }
 }
@@ -75,9 +75,14 @@ fn player_move(
 }
 
 fn player_shoot(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
-    if input.just_pressed(KeyCode::Space) {
+    if input.just_pressed(KeyCode::J) {
         for mut boat in query.iter_mut() {
-            boat.shoot = true;
+            boat.shoot_port = true;
+        }
+    }
+    if input.just_pressed(KeyCode::K) {
+        for mut boat in query.iter_mut() {
+            boat.shoot_starboard = true;
         }
     }
 }
@@ -85,7 +90,7 @@ fn player_shoot(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyC
 fn player_enter_island(
     mut app_state: ResMut<State<AppState>>,
     mut game_state: ResMut<GameState>,
-    island_query: Query<(Entity, &Island)>,
+    island_query: Query<(Entity, &Town)>,
     player_query: Query<Entity, With<Player>>,
     transform_query: Query<&GlobalTransform>,
 ) {
@@ -101,7 +106,7 @@ fn player_enter_island(
             } else {
                 continue;
             };
-            if player_position.distance(island_position) < 20. {
+            if player_position.distance(island_position) < 200. {
                 game_state.town = island.town.clone();
                 app_state.set(AppState::GameTown).unwrap();
                 break 'outer;

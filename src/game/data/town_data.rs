@@ -4,6 +4,7 @@ use bevy::prelude::*;
 pub struct TownData {
     pub name: String,
     pub position: Vec2,
+    pub spawn_offset: Vec2,
 }
 
 impl Default for TownData {
@@ -11,6 +12,7 @@ impl Default for TownData {
         Self {
             name: "Dummy Town".to_owned(),
             position: Vec2::new(0., 0.),
+            spawn_offset: Vec2::new(0., -100.),
         }
     }
 }

@@ -33,7 +33,8 @@ pub struct BoatSpawnEvent {
 pub struct Boat {
     pub movement: Vec2,
     pub speed: f32,
-    pub shoot: bool,
+    pub shoot_port: bool,
+    pub shoot_starboard: bool,
     pub facing: Facing,
     pub ring_timer: f32,
 }
@@ -62,7 +63,8 @@ fn boat_spawn(
             .insert(Boat {
                 movement: Vec2::ZERO,
                 speed: 200.,
-                shoot: false,
+                shoot_port: false,
+                shoot_starboard: false,
                 facing: Facing::East,
                 ring_timer: 0.2,
             })
@@ -97,23 +99,30 @@ fn boat_update(
     {
         character_controller.movement = boat.movement;
         character_controller.speed = boat.speed;
-        if boat.shoot {
-            boat.shoot = false;
-            ev_cannon_ball_spawn.send(CannonBallSpawnEvent {
-                entity: None,
-                position: global_transform.translation().truncate(),
-                velocity: Vec2::X * 700.,
-            });
-            ev_cannon_ball_spawn.send(CannonBallSpawnEvent {
-                entity: None,
-                position: global_transform.translation().truncate(),
-                velocity: Vec2::X * -700.,
-            });
-        }
-        transform.scale.x = transform.scale.x.abs();
         if let Some(facing) = Facing::from_vec(boat.movement) {
             boat.facing = facing;
         }
+        for shoot_side in 0..2 {
+            if (shoot_side == 0 && boat.shoot_port) || (shoot_side == 1 && boat.shoot_starboard) {
+                let forward = boat.facing.to_vec();
+                let mult = if shoot_side == 0 { 1. } else { -1. };
+                let side = forward.perp() * mult;
+                for i in -1..=1 {
+                    let mut angle = Vec2::X.angle_between(side);
+                    angle -= std::f32::consts::PI * 0.1 * i as f32 * mult;
+                    ev_cannon_ball_spawn.send(CannonBallSpawnEvent {
+                        entity: None,
+                        position: global_transform.translation().truncate()
+                            + forward * 20. * i as f32
+                            + side * 50.,
+                        velocity: Vec2::from_angle(angle) * 900.,
+                    });
+                }
+            }
+        }
+        boat.shoot_port = false;
+        boat.shoot_starboard = false;
+        transform.scale.x = transform.scale.x.abs();
         match boat.facing {
             Facing::North => {
                 atlas.index = 3;

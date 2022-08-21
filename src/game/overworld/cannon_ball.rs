@@ -1,3 +1,4 @@
+use crate::common::prelude::*;
 use bevy::prelude::*;
 
 pub struct CannonBallPlugin;
@@ -41,7 +42,8 @@ fn cannon_ball_spawn(mut ev_spawn: EventReader<CannonBallSpawnEvent>, mut comman
             })
             .insert(CannonBall {
                 velocity: event.velocity,
-            });
+            })
+            .insert(TimeToLive::new(0.5));
     }
 }
 

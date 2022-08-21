@@ -51,8 +51,11 @@ fn enemy_move(mut query: Query<&mut Boat, With<Enemy>>) {
 
 fn enemy_shoot(mut query: Query<&mut Boat, With<Enemy>>) {
     for mut boat in query.iter_mut() {
-        if rand::random::<f32>() < 0.05 {
-            boat.shoot = true;
+        if rand::random::<f32>() < 0.01 {
+            boat.shoot_port = true;
+        }
+        if rand::random::<f32>() < 0.01 {
+            boat.shoot_starboard = true;
         }
     }
 }
