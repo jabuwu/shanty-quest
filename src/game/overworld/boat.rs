@@ -160,8 +160,8 @@ fn boat_update(
 }
 
 fn boat_jam(mut query: Query<(&mut Transform2, &mut BandJam, &mut Shockwave), With<Boat>>) {
-    for (mut transform, mut band_jam, mut shockwave) in query.iter_mut() {
-        transform.scale = Vec2::new(0.6, 0.6) + Vec2::new(0.1, 0.1) * band_jam.intensity;
+    for (mut _transform, mut band_jam, mut shockwave) in query.iter_mut() {
+        //transform.scale = Vec2::new(0.6, 0.6) + Vec2::new(0.1, 0.1) * band_jam.intensity;
         if band_jam.cannons {
             shockwave.shoot = true;
             band_jam.cannons = false;
