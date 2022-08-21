@@ -3,8 +3,8 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
-const OCEAN_WIDTH: f32 = 320.;
-const OCEAN_HEIGHT: f32 = 320.;
+const OCEAN_WIDTH: f32 = 420.;
+const OCEAN_HEIGHT: f32 = 420.;
 
 pub struct OceanPlugin;
 
@@ -55,7 +55,7 @@ fn ocean_spawn(
                             &asset_library.sprite_water_overlay,
                             Vec2::new(30., 30.),
                             0.14,
-                            0.2,
+                            0.58,
                             0.,
                         )
                     } else {
@@ -63,7 +63,7 @@ fn ocean_spawn(
                             &asset_library.sprite_water_overlay2,
                             Vec2::new(0., 0.),
                             0.14,
-                            0.3,
+                            0.60,
                             -0.05,
                         )
                     };
