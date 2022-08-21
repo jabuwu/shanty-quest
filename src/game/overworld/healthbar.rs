@@ -2,7 +2,7 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
-const HEALTHBAR_SIZE: Vec2 = Vec2::new(256., 24.);
+const HEALTHBAR_SIZE: Vec2 = Vec2::new(200., 12.);
 const HEALTHBAR_BORDER: Vec2 = Vec2::new(8., 8.);
 
 pub struct HealthbarPlugin;

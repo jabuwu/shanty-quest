@@ -41,6 +41,9 @@ pub struct Boat {
     pub attack: Attack,
 }
 
+#[derive(Component)]
+pub struct BoatSprite;
+
 fn boat_spawn(
     mut ev_spawn: EventReader<BoatSpawnEvent>,
     mut commands: Commands,
@@ -48,21 +51,27 @@ fn boat_spawn(
     asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_spawn.iter() {
+        let sprite_entity = commands
+            .spawn_bundle(SpriteSheetBundle {
+                texture_atlas: asset_library.sprite_ship_atlas.clone(),
+                ..Default::default()
+            })
+            .insert(
+                Transform2::new()
+                    .with_depth((DepthLayer::Entity, 0.))
+                    .with_scale(Vec2::new(0.6, 0.6)),
+            )
+            .insert(BoatSprite)
+            .id();
         let mut boat_entity = if let Some(entity) = event.entity {
             commands.entity(entity)
         } else {
             commands.spawn()
         };
         boat_entity
-            .insert_bundle(SpriteSheetBundle {
-                texture_atlas: asset_library.sprite_ship_atlas.clone(),
-                ..Default::default()
-            })
-            .insert(
-                Transform2::from_translation(event.position)
-                    .with_depth((DepthLayer::Entity, 0.))
-                    .with_scale(Vec2::new(0.6, 0.6)),
-            )
+            .insert_bundle(TransformBundle::default())
+            .insert_bundle(VisibilityBundle::default())
+            .insert(Transform2::from_translation(event.position))
             .insert(Boat {
                 movement: Vec2::ZERO,
                 speed: 200.,
@@ -81,10 +90,11 @@ fn boat_spawn(
                 movement: Vec2::ZERO,
                 speed: 200.,
             })
-            .insert(Health::new(100.));
+            .insert(Health::new(100.))
+            .add_child(sprite_entity);
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
             entity: Some(boat_entity.id()),
-            offset: Vec2::new(0., 195.),
+            offset: Vec2::new(0., 125.),
         });
     }
 }
@@ -95,12 +105,13 @@ fn boat_update(
         &mut CharacterController,
         &GlobalTransform,
         &mut Boat,
-        &mut TextureAtlasSprite,
+        &Children,
     )>,
+    mut children_query: Query<&mut TextureAtlasSprite, With<BoatSprite>>,
     time: Res<Time>,
     mut ev_water_ring_spawn: EventWriter<WaterRingSpawnEvent>,
 ) {
-    for (transform, mut character_controller, global_transform, mut boat, mut atlas) in
+    for (transform, mut character_controller, global_transform, mut boat, children) in
         query.iter_mut()
     {
         character_controller.movement = boat.movement;
@@ -108,38 +119,42 @@ fn boat_update(
         if let Some(facing) = Facing::from_vec(boat.movement) {
             boat.facing = facing;
         }
-        match boat.facing {
-            Facing::North => {
-                atlas.index = 3;
-                atlas.flip_x = false;
-            }
-            Facing::NorthEast => {
-                atlas.index = 1;
-                atlas.flip_x = true;
-            }
-            Facing::East => {
-                atlas.index = 2;
-                atlas.flip_x = true;
-            }
-            Facing::SouthEast => {
-                atlas.index = 0;
-                atlas.flip_x = true;
-            }
-            Facing::South => {
-                atlas.index = 4;
-                atlas.flip_x = false;
-            }
-            Facing::SouthWest => {
-                atlas.index = 0;
-                atlas.flip_x = false;
-            }
-            Facing::West => {
-                atlas.index = 2;
-                atlas.flip_x = false;
-            }
-            Facing::NorthWest => {
-                atlas.index = 1;
-                atlas.flip_x = false;
+        for child in children.iter() {
+            if let Ok(mut atlas) = children_query.get_mut(*child) {
+                match boat.facing {
+                    Facing::North => {
+                        atlas.index = 3;
+                        atlas.flip_x = false;
+                    }
+                    Facing::NorthEast => {
+                        atlas.index = 1;
+                        atlas.flip_x = true;
+                    }
+                    Facing::East => {
+                        atlas.index = 2;
+                        atlas.flip_x = true;
+                    }
+                    Facing::SouthEast => {
+                        atlas.index = 0;
+                        atlas.flip_x = true;
+                    }
+                    Facing::South => {
+                        atlas.index = 4;
+                        atlas.flip_x = false;
+                    }
+                    Facing::SouthWest => {
+                        atlas.index = 0;
+                        atlas.flip_x = false;
+                    }
+                    Facing::West => {
+                        atlas.index = 2;
+                        atlas.flip_x = false;
+                    }
+                    Facing::NorthWest => {
+                        atlas.index = 1;
+                        atlas.flip_x = false;
+                    }
+                }
             }
         }
 
@@ -164,20 +179,25 @@ fn boat_update(
 fn boat_jam(
     mut query: Query<
         (
-            &mut Transform2,
             &mut BandJam,
             &Boat,
             &mut ShotgunCannons,
             &mut Shockwave,
             &mut DashAttack,
+            &Children,
         ),
         With<Boat>,
     >,
+    mut children_query: Query<&mut Transform2, With<BoatSprite>>,
 ) {
-    for (mut transform, mut band_jam, boat, mut shotgun_cannons, mut shockwave, mut dash_attack) in
+    for (mut band_jam, boat, mut shotgun_cannons, mut shockwave, mut dash_attack, children) in
         query.iter_mut()
     {
-        transform.scale = Vec2::new(0.6, 0.6) + Vec2::new(0.1, 0.1) * band_jam.intensity;
+        for child in children.iter() {
+            if let Ok(mut transform) = children_query.get_mut(*child) {
+                transform.scale = Vec2::new(0.6, 0.6) + Vec2::new(0.1, 0.1) * band_jam.intensity;
+            }
+        }
         if band_jam.cannons {
             match boat.attack {
                 Attack::ShotgunCannons => shotgun_cannons.shoot = true,
