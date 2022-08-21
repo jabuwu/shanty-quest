@@ -28,6 +28,9 @@ pub struct AssetLibrary {
     #[asset("sprites/WaterRingVFX.png")]
     pub sprite_water_ring_vfx: Handle<Image>,
 
+    #[asset("sprites/ShockwaveVFX.png")]
+    pub sprite_shockwave_vfx: Handle<Image>,
+
     #[asset("music/ye_old_pirate_rave.ogg")]
     pub music_pirate_rave: Handle<AudioSource>,
 }
