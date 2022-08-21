@@ -75,6 +75,13 @@ impl Transform2 {
         }
     }
 
+    pub fn with_rotation(self, rotation: f32) -> Self {
+        Self {
+            rotation: rotation,
+            ..self
+        }
+    }
+
     pub fn with_depth(self, depth: (DepthLayer, f32)) -> Self {
         Self {
             depth_layer: depth.0,
