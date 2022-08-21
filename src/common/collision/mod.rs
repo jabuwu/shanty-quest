@@ -114,21 +114,25 @@ impl CollisionQuery {
         }
         vec
     }
+
+    pub fn update(&mut self, query: &Query<(Entity, &GlobalTransform, &Collision)>) {
+        self.entries.clear();
+        for (entity, transform, collision) in query.iter() {
+            self.entries.push(CollisionQueryEntry {
+                entity,
+                position: transform.translation().truncate(),
+                shape: collision.shape,
+                flags: collision.flags,
+            });
+        }
+    }
 }
 
 fn update_collision_query(
-    query: Query<(Entity, &GlobalTransform, &Collision)>,
     mut collision_query: ResMut<CollisionQuery>,
+    query: Query<(Entity, &GlobalTransform, &Collision)>,
 ) {
-    collision_query.entries.clear();
-    for (entity, transform, collision) in query.iter() {
-        collision_query.entries.push(CollisionQueryEntry {
-            entity,
-            position: transform.translation().truncate(),
-            shape: collision.shape,
-            flags: collision.flags,
-        });
-    }
+    collision_query.update(&query);
 }
 
 pub mod shape;
