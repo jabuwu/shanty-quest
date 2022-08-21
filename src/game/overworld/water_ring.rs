@@ -6,6 +6,7 @@ pub struct WaterRingPlugin;
 
 #[derive(Default)]
 pub struct WaterRingSettings {
+    pub start_scale: f32,
     pub max_life_time: f32,
     pub spawn_offset: Vec2,
 }
@@ -13,6 +14,7 @@ pub struct WaterRingSettings {
 impl Plugin for WaterRingPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(WaterRingSettings {
+            start_scale: 0.45,
             max_life_time: 0.8,
             spawn_offset: Vec2::new(-10.0, -20.0),
         })
@@ -34,6 +36,7 @@ pub struct WaterRingSpawnEvent {
 
 #[derive(Component)]
 pub struct WaterRing {
+    pub start_scale: f32,
     pub life_time: f32,
     pub max_life_time: f32,
 }
@@ -62,11 +65,15 @@ fn water_ring_spawn(
             })
             .insert(
                 Transform2::from_translation(event.position + (event.scale * offset))
-                    .with_scale(Vec2::ZERO)
+                    .with_scale(Vec2::new(
+                        water_ring_settings.start_scale,
+                        water_ring_settings.start_scale,
+                    ))
                     .with_rotation(event.angle)
                     .with_depth((DepthLayer::Environment, 0.015)),
             )
             .insert(WaterRing {
+                start_scale: water_ring_settings.start_scale,
                 life_time: water_ring_settings.max_life_time,
                 max_life_time: water_ring_settings.max_life_time,
             });
@@ -82,11 +89,13 @@ fn water_ring_update(
         water_ring.life_time -= time.delta_seconds();
         if water_ring.life_time <= 0.0 {
             commands.entity(entity).despawn();
-            return;
+            continue;
         }
         let interp = water_ring.life_time / water_ring.max_life_time;
         sprite.color.set_a(interp);
-        transform.scale = Vec2::ONE * (1.0 - interp);
+
+        let start_scale = Vec2::new(water_ring.start_scale, water_ring.start_scale);
+        transform.scale = water_ring.start_scale + (1.0 - start_scale) * (1.0 - interp);
     }
 }
 
@@ -104,6 +113,13 @@ fn water_ring_debug(
                     ui.add(egui::Slider::new(
                         &mut water_ring_settings.max_life_time,
                         0.0..=10.0,
+                    ));
+                });
+                ui.horizontal(|ui| {
+                    ui.label("Start Scale");
+                    ui.add(egui::Slider::new(
+                        &mut water_ring_settings.start_scale,
+                        0.0..=1.0,
                     ));
                 });
                 ui.horizontal(|ui| {

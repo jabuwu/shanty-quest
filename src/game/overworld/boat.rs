@@ -3,6 +3,8 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
+const RING_SPAWN_INTEVAL: f32 = 0.15;
+
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
 pub enum BoatSystems {
     Update,
@@ -67,7 +69,7 @@ fn boat_spawn(
                 shoot_port: false,
                 shoot_starboard: false,
                 facing: Facing::East,
-                ring_timer: 0.2,
+                ring_timer: RING_SPAWN_INTEVAL,
             })
             .insert(YDepth::default())
             .insert(Collision {
@@ -164,7 +166,7 @@ fn boat_update(
         if boat.movement.length_squared() > 0. {
             boat.ring_timer -= time.delta_seconds();
             if boat.ring_timer <= 0.0 {
-                boat.ring_timer = 0.2;
+                boat.ring_timer = RING_SPAWN_INTEVAL;
                 ev_water_ring_spawn.send(WaterRingSpawnEvent {
                     entity: None,
                     position: global_transform.translation().truncate(),
@@ -174,7 +176,7 @@ fn boat_update(
                 });
             }
         } else {
-            boat.ring_timer = 0.1; // reset
+            boat.ring_timer = RING_SPAWN_INTEVAL; // reset
         }
     }
 }
