@@ -41,7 +41,7 @@ fn ocean_spawn(
             .spawn_bundle(SpriteBundle {
                 sprite: Sprite {
                     custom_size: Vec2::new(50000., 50000.).into(),
-                    color: Color::rgb_u8(0, 158, 179),
+                    color: Color::rgb_u8(0, 167, 217),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -54,7 +54,7 @@ fn ocean_spawn(
                         (
                             &asset_library.sprite_water_overlay,
                             Vec2::new(30., 30.),
-                            0.1,
+                            0.14,
                             0.2,
                             0.,
                         )
@@ -62,7 +62,7 @@ fn ocean_spawn(
                         (
                             &asset_library.sprite_water_overlay2,
                             Vec2::new(0., 0.),
-                            0.1,
+                            0.14,
                             0.3,
                             -0.05,
                         )

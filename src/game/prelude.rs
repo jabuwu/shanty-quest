@@ -3,6 +3,7 @@ pub use super::{
     overworld::{
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         cannon_ball::{CannonBall, CannonBallSpawnEvent},
+        water_ring::{WaterRing, WaterRingSpawnEvent},
         enemy::{Enemy, EnemySpawnEvent},
         island::{Island, IslandSpawnEvent},
         ocean::{Ocean, OceanSpawnEvent},

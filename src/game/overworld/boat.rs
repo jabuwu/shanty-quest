@@ -35,6 +35,7 @@ pub struct Boat {
     pub speed: f32,
     pub shoot: bool,
     pub facing: Facing,
+    pub ring_timer: f32
 }
 
 fn boat_spawn(
@@ -63,6 +64,7 @@ fn boat_spawn(
                 speed: 200.,
                 shoot: false,
                 facing: Facing::East,
+                ring_timer: 0.2,
             })
             .insert(YDepth::default());
     }
@@ -77,6 +79,7 @@ fn boat_update(
     )>,
     time: Res<Time>,
     mut ev_cannon_ball_spawn: EventWriter<CannonBallSpawnEvent>,
+    mut ev_water_ring_spawn: EventWriter<WaterRingSpawnEvent>,
 ) {
     for (mut transform, global_transform, mut boat, mut atlas) in query.iter_mut() {
         if boat.movement.length_squared() > 0. {
@@ -128,6 +131,20 @@ fn boat_update(
             Facing::NorthWest => {
                 atlas.index = 1;
             }
+        }
+
+        if boat.movement.length_squared() > 0. {
+            boat.ring_timer -= time.delta_seconds();
+            if boat.ring_timer <= 0.0 {
+                boat.ring_timer = 0.2;
+                ev_water_ring_spawn.send(WaterRingSpawnEvent {
+                    entity: None,
+                    position: global_transform.translation().truncate(),
+                });
+            }
+        }
+        else {
+            boat.ring_timer = 0.1; // reset
         }
     }
 }

@@ -12,6 +12,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(boat::BoatPlugin)
             .add_plugin(enemy::EnemyPlugin)
             .add_plugin(cannon_ball::CannonBallPlugin)
+            .add_plugin(water_ring::WaterRingPlugin)
             .add_plugin(ocean::OceanPlugin)
             .add_plugin(character_controller::CharacterControllerPlugin)
             .add_system_set(
@@ -56,6 +57,7 @@ pub fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut
 pub mod boat;
 pub mod cannon_ball;
 pub mod character_controller;
+pub mod water_ring;
 pub mod enemy;
 pub mod island;
 pub mod ocean;
