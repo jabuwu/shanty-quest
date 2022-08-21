@@ -128,10 +128,7 @@ fn player_move(
     }
 }
 
-fn box_move(
-    mut query: Query<(&mut CharacterController, &mut MovingBox, &GlobalTransform)>,
-    input: Res<Input<KeyCode>>,
-) {
+fn box_move(mut query: Query<(&mut CharacterController, &mut MovingBox, &GlobalTransform)>) {
     for (mut character_controller, mut moving_box, transform) in query.iter_mut() {
         character_controller.movement = Vec2::ZERO;
         if moving_box.right {
