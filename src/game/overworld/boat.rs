@@ -36,8 +36,6 @@ pub struct BoatSpawnEvent {
 pub struct Boat {
     pub movement: Vec2,
     pub speed: f32,
-    pub shoot_port: bool,
-    pub shoot_starboard: bool,
     pub facing: Facing,
     pub ring_timer: f32,
 }
@@ -67,8 +65,6 @@ fn boat_spawn(
             .insert(Boat {
                 movement: Vec2::ZERO,
                 speed: 200.,
-                shoot_port: false,
-                shoot_starboard: false,
                 facing: Facing::East,
                 ring_timer: RING_SPAWN_INTEVAL,
             })
@@ -100,7 +96,6 @@ fn boat_update(
         &mut TextureAtlasSprite,
     )>,
     time: Res<Time>,
-    mut ev_cannon_ball_spawn: EventWriter<CannonBallSpawnEvent>,
     mut ev_water_ring_spawn: EventWriter<WaterRingSpawnEvent>,
 ) {
     for (transform, mut character_controller, global_transform, mut boat, mut atlas) in
@@ -111,26 +106,6 @@ fn boat_update(
         if let Some(facing) = Facing::from_vec(boat.movement) {
             boat.facing = facing;
         }
-        for shoot_side in 0..2 {
-            if (shoot_side == 0 && boat.shoot_port) || (shoot_side == 1 && boat.shoot_starboard) {
-                let forward = boat.facing.to_vec();
-                let mult = if shoot_side == 0 { 1. } else { -1. };
-                let side = forward.perp() * mult;
-                for i in -1..=1 {
-                    let mut angle = Vec2::X.angle_between(side);
-                    angle -= std::f32::consts::PI * 0.1 * i as f32 * mult;
-                    ev_cannon_ball_spawn.send(CannonBallSpawnEvent {
-                        entity: None,
-                        position: global_transform.translation().truncate()
-                            + forward * 20. * i as f32
-                            + side * 50.,
-                        velocity: Vec2::from_angle(angle) * 900.,
-                    });
-                }
-            }
-        }
-        boat.shoot_port = false;
-        boat.shoot_starboard = false;
         match boat.facing {
             Facing::North => {
                 atlas.index = 3;
@@ -184,12 +159,11 @@ fn boat_update(
     }
 }
 
-fn boat_jam(mut query: Query<(&mut Transform2, &mut BandJam, &mut Boat)>) {
-    for (mut transform, mut band_jam, mut boat) in query.iter_mut() {
+fn boat_jam(mut query: Query<(&mut Transform2, &mut BandJam, &mut Shockwave), With<Boat>>) {
+    for (mut transform, mut band_jam, mut shockwave) in query.iter_mut() {
         transform.scale = Vec2::new(0.6, 0.6) + Vec2::new(0.1, 0.1) * band_jam.intensity;
         if band_jam.cannons {
-            boat.shoot_port = true;
-            boat.shoot_starboard = true;
+            shockwave.shoot = true;
             band_jam.cannons = false;
         }
     }

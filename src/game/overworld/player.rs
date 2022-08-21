@@ -15,7 +15,6 @@ impl Plugin for PlayerPlugin {
         app.add_event::<PlayerSpawnEvent>()
             .add_system(player_spawn)
             .add_system(player_controls.before(BoatSystems::Update))
-            .add_system(player_shoot.before(BoatSystems::Update))
             .add_system(player_enter_island)
             .add_system(player_camera.label(PlayerSystems::Camera));
     }
@@ -40,6 +39,8 @@ fn player_spawn(
             .insert(Player)
             .insert(Label("Player".to_owned()))
             .insert(AudioPlusListener)
+            .insert(ShotgunCannons::default())
+            .insert(Shockwave::default())
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
@@ -78,19 +79,6 @@ fn player_controls(
     for (mut boat, mut band_jam) in query.iter_mut() {
         boat.movement = movement;
         band_jam.jamming = input.pressed(KeyCode::Space);
-    }
-}
-
-fn player_shoot(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
-    if input.just_pressed(KeyCode::J) {
-        for mut boat in query.iter_mut() {
-            boat.shoot_port = true;
-        }
-    }
-    if input.just_pressed(KeyCode::K) {
-        for mut boat in query.iter_mut() {
-            boat.shoot_starboard = true;
-        }
     }
 }
 

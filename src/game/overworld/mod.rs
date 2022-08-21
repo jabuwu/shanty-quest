@@ -11,12 +11,12 @@ impl Plugin for OverworldPlugin {
             .add_plugin(town::TownPlugin)
             .add_plugin(boat::BoatPlugin)
             .add_plugin(enemy::EnemyPlugin)
-            .add_plugin(cannon_ball::CannonBallPlugin)
             .add_plugin(water_ring::WaterRingPlugin)
             .add_plugin(ocean::OceanPlugin)
             .add_plugin(healthbar::HealthbarPlugin)
             .add_plugin(character_controller::CharacterControllerPlugin)
             .add_plugin(band_jam::BandJamPlugin)
+            .add_plugin(attacks::AttacksPlugin)
             .add_system_set(
                 SystemSet::on_enter(AppState::GameOverworld).with_system(overworld_init),
             )
@@ -47,10 +47,11 @@ pub fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut
     }
 }
 
+pub mod attacks;
 pub mod band_jam;
 pub mod boat;
-pub mod cannon_ball;
 pub mod character_controller;
+pub mod depth_layers;
 pub mod enemy;
 pub mod health;
 pub mod healthbar;

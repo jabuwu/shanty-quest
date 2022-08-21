@@ -52,7 +52,7 @@ fn town_spawn(
                             event.town.name.clone(),
                             TextStyle {
                                 font: asset_library.font_default.clone(),
-                                font_size: 24.0,
+                                font_size: 32.0,
                                 color: Color::WHITE,
                             },
                         )

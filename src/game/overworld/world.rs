@@ -36,7 +36,7 @@ fn world_spawn(
             entity: island_entity,
             town: TownData {
                 name: "Tortuga".to_string(),
-                position: Vec2::new(-200., -880.),
+                position: Vec2::new(-220., -880.),
                 spawn_offset: Vec2::new(300., 0.),
             },
         });

@@ -2,6 +2,8 @@ use crate::common::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
+use super::depth_layers::DEPTH_LAYER_BOAT_TRAIL;
+
 pub struct WaterRingPlugin;
 
 #[derive(Default)]
@@ -70,7 +72,7 @@ fn water_ring_spawn(
                         water_ring_settings.start_scale,
                     ))
                     .with_rotation(event.angle)
-                    .with_depth((DepthLayer::Environment, 0.015)),
+                    .with_depth(DEPTH_LAYER_BOAT_TRAIL),
             )
             .insert(WaterRing {
                 start_scale: water_ring_settings.start_scale,

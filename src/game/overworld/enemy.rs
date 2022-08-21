@@ -8,8 +8,7 @@ impl Plugin for EnemyPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<EnemySpawnEvent>()
             .add_system(enemy_spawn)
-            .add_system(enemy_move)
-            .add_system(enemy_shoot);
+            .add_system(enemy_move);
     }
 }
 
@@ -46,16 +45,5 @@ fn enemy_move(mut query: Query<&mut Boat, With<Enemy>>) {
         angle += rand::random::<f32>() * 0.2;
         angle -= rand::random::<f32>() * 0.2;
         boat.movement = Vec2::from_angle(-angle);
-    }
-}
-
-fn enemy_shoot(mut query: Query<&mut Boat, With<Enemy>>) {
-    for mut boat in query.iter_mut() {
-        if rand::random::<f32>() < 0.01 {
-            boat.shoot_port = true;
-        }
-        if rand::random::<f32>() < 0.01 {
-            boat.shoot_starboard = true;
-        }
     }
 }

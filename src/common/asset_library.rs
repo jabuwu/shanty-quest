@@ -5,7 +5,7 @@ use bevy_kira_audio::AudioSource;
 
 #[derive(Default, AssetStruct)]
 pub struct AssetLibrary {
-    #[asset("fonts/FiraSans-Bold.ttf")]
+    #[asset("fonts/IMFellDoublePica-Regular.ttf")]
     pub font_default: Handle<Font>,
 
     #[asset("levels/test.ldtk")]

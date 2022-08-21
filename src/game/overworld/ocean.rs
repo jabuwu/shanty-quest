@@ -46,7 +46,7 @@ fn ocean_spawn(
                 },
                 ..Default::default()
             })
-            .insert(Transform2::from_xy(0., 0.).with_depth((DepthLayer::Environment, 0.0)))
+            .insert(Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_OCEAN))
             .insert(Ocean)
             .with_children(|parent| {
                 for layer in 0..=1 {
@@ -94,7 +94,7 @@ fn ocean_spawn(
                                                 x as f32 * OCEAN_WIDTH + offset.x,
                                                 y as f32 * OCEAN_HEIGHT + offset.y,
                                             )
-                                            .with_depth((DepthLayer::Environment, 0.01)),
+                                            .with_depth(DEPTH_LAYER_OCEAN_OVERLAY),
                                         );
                                 }
                             }
