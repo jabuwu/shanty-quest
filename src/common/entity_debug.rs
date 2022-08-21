@@ -24,15 +24,18 @@ fn entity_debug(
                     if let Some(transform2) = transform2.as_mut() {
                         ui.horizontal(|ui| {
                             ui.label("X");
-                            ui.add(egui::Slider::new(
-                                &mut transform2.translation.x,
-                                -1000.0..=1000.0,
-                            ));
+                            ui.add(
+                                egui::DragValue::new(&mut transform2.translation.x)
+                                    .speed(1)
+                                    .clamp_range(-99999.0..=99999.0),
+                            );
+
                             ui.label("Y");
-                            ui.add(egui::Slider::new(
-                                &mut transform2.translation.y,
-                                -1000.0..=1000.0,
-                            ));
+                            ui.add(
+                                egui::DragValue::new(&mut transform2.translation.y)
+                                    .speed(1)
+                                    .clamp_range(-99999.0..=99999.0),
+                            );
                         });
                         ui.horizontal(|ui| {
                             ui.label(format!(

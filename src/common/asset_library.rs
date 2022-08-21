@@ -31,6 +31,21 @@ pub struct AssetLibrary {
     #[asset("sprites/ShockwaveVFX.png")]
     pub sprite_shockwave_vfx: Handle<Image>,
 
+    #[asset("sprites/BandSelection_BG.png")]
+    pub sprite_band_selection_bg: Handle<Image>,
+    #[asset("sprites/BandSelectionGUI_LockedSlot.png")]
+    pub sprite_band_selection_slot_locked: Handle<Image>,
+    #[asset("sprites/BandSelectionGUI_Slot_Guitar_Active.png")]
+    pub sprite_band_selection_slot_guitar_active: Handle<Image>,
+    #[asset("sprites/BandSelectionGUI_Slot_Guitar_Inactive.png")]
+    pub sprite_band_selection_slot_guitar_inactive: Handle<Image>,
+    #[asset("sprites/BandSelectionGUI_Slot_Drums_Active.png")]
+    pub sprite_band_selection_slot_drums_active: Handle<Image>,
+    #[asset("sprites/BandSelectionGUI_Slot_Drums_Inactive.png")]
+    pub sprite_band_selection_slot_drums_inactive: Handle<Image>,
+    #[asset("sprites/AbilityIcon_Shotgun.png")]
+    pub sprite_band_selection_slot_ability_shotgun: Handle<Image>,
+
     #[asset("music/ye_old_pirate_rave.ogg")]
     pub music_pirate_rave: Handle<AudioSource>,
 }

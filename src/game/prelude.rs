@@ -1,5 +1,5 @@
 pub use super::{
-    data::town_data::TownData,
+    data::{band_members::BandMember, town_data::TownData},
     overworld::{
         attacks::{
             dash_attack::{Dash, DashAttack},
@@ -22,4 +22,5 @@ pub use super::{
         OverworldPlugin,
     },
     state::GameState,
+    town::band_selection::BandSelectionSpawnEvent,
 };

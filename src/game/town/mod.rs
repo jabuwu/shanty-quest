@@ -61,3 +61,5 @@ fn town_update(mut keys: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<App
         keys.reset(KeyCode::Space);
     }
 }
+
+pub mod band_selection;
