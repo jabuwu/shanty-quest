@@ -90,6 +90,7 @@ fn boat_spawn(
 
 fn boat_update(
     mut query: Query<(
+        &Transform2,
         &mut CharacterController,
         &GlobalTransform,
         &mut Boat,
@@ -99,7 +100,7 @@ fn boat_update(
     mut ev_cannon_ball_spawn: EventWriter<CannonBallSpawnEvent>,
     mut ev_water_ring_spawn: EventWriter<WaterRingSpawnEvent>,
 ) {
-    for (mut character_controller, global_transform, mut boat, mut atlas) in query.iter_mut() {
+    for (transform, mut character_controller, global_transform, mut boat, mut atlas) in query.iter_mut() {
         character_controller.movement = boat.movement;
         character_controller.speed = boat.speed;
         if let Some(facing) = Facing::from_vec(boat.movement) {
