@@ -24,6 +24,7 @@ struct ShotgunCannonBall {
 fn shotgun_cannons_fire(
     mut query: Query<(&mut ShotgunCannons, &Boat, &GlobalTransform)>,
     mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
 ) {
     for (mut shotgun_cannons, boat, global_transform) in query.iter_mut() {
         if shotgun_cannons.shoot {
@@ -45,6 +46,7 @@ fn shotgun_cannons_fire(
                                 color: Color::BLACK,
                                 ..Default::default()
                             },
+                            texture: asset_library.sprite_bullet_note.clone(),
                             ..Default::default()
                         })
                         .insert(
