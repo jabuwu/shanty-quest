@@ -20,13 +20,17 @@ pub struct Town {
     pub town: TownData,
 }
 
-fn town_spawn(mut ev_spawn: EventReader<TownSpawnEvent>, mut commands: Commands) {
+fn town_spawn(
+    mut ev_spawn: EventReader<TownSpawnEvent>,
+    mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
+) {
     for event in ev_spawn.iter() {
         commands
             .entity(event.entity)
             .insert_bundle(SpriteBundle {
                 sprite: Sprite {
-                    custom_size: Vec2::new(32., 128.).into(),
+                    custom_size: Vec2::new(64., 64.).into(),
                     color: Color::BEIGE,
                     ..Default::default()
                 },
@@ -40,6 +44,25 @@ fn town_spawn(mut ev_spawn: EventReader<TownSpawnEvent>, mut commands: Commands)
                 town: event.town.clone(),
             })
             .insert(YDepth::default())
-            .insert(Label(format!("Town: {}", event.town.name)));
+            .insert(Label(format!("Town: {}", event.town.name)))
+            .with_children(|parent| {
+                parent
+                    .spawn_bundle(Text2dBundle {
+                        text: Text::from_section(
+                            event.town.name.clone(),
+                            TextStyle {
+                                font: asset_library.font_default.clone(),
+                                font_size: 24.0,
+                                color: Color::WHITE,
+                            },
+                        )
+                        .with_alignment(TextAlignment {
+                            horizontal: HorizontalAlign::Center,
+                            vertical: VerticalAlign::Center,
+                        }),
+                        ..Default::default()
+                    })
+                    .insert(Transform2::from_xy(0., 50.).with_depth((DepthLayer::Front, 0.)));
+            });
     }
 }
