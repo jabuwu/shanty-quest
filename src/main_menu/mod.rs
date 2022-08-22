@@ -9,21 +9,26 @@ const BUTTON_SCALE: Vec2 = Vec2::new(0.72, 0.72);
 const BUTTON_POSITION: Vec2 = Vec2::new(30., -200.);
 const BUTTON_TEXT_SCALE: Vec2 = Vec2::new(0.8, 0.8);
 
+#[derive(Default)]
+struct MenuState {
+    play: bool,
+}
+
 pub struct MainMenuPlugin;
 
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(AppState::MainMenu).with_system(menu_setup))
+        app.init_resource::<MenuState>()
+            .add_system_set(SystemSet::on_enter(AppState::MainMenu).with_system(menu_setup))
+            .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(menu_fade))
             .add_system(menu_logo)
             .add_system(menu_shine)
-            .add_system(menu_button)
-            .add_system(menu_fade);
+            .add_system(menu_button);
     }
 }
 
 #[derive(Component)]
 struct Button {
-    disabled: bool,
     shape: CollisionShape,
     last_hover: bool,
     clicked: bool,
@@ -53,10 +58,13 @@ struct Shine {
 }
 
 fn menu_setup(
+    mut menu_state: ResMut<MenuState>,
     mut screen_fade: ResMut<ScreenFade>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
+    *menu_state = MenuState::default();
+    screen_fade.set(1.);
     screen_fade.fade_in(1.);
     commands.spawn_bundle(Camera2dBundle::default());
     commands
@@ -136,7 +144,6 @@ fn menu_setup(
             ..Default::default()
         })
         .insert(Button {
-            disabled: false,
             shape: CollisionShape::Rect {
                 size: Vec2::new(406., 159.) * BUTTON_SCALE,
             },
@@ -217,9 +224,10 @@ fn menu_button(
     sound_query: Query<Entity, With<Sound>>,
     mouse: Res<Mouse>,
     input: Res<Input<MouseButton>>,
+    mut menu_state: ResMut<MenuState>,
 ) {
     for (mut button, transform, children, mut transform2) in button_query.iter_mut() {
-        let hover = !button.disabled
+        let hover = !menu_state.play
             && button.shape.overlaps(
                 transform.translation().truncate(),
                 CollisionShape::Point,
@@ -242,7 +250,7 @@ fn menu_button(
                         source.stop();
                     }
                 }
-                button.disabled = true;
+                menu_state.play = true;
                 play_sound(button.audio_click_confirm, &mut sfx_query);
                 screen_fade.fade_out(1.8);
             }
@@ -267,15 +275,13 @@ fn menu_button(
 }
 
 fn menu_fade(
-    button_query: Query<&Button>,
+    menu_state: Res<MenuState>,
     mut game_state: ResMut<GameState>,
     mut app_state: ResMut<State<AppState>>,
     screen_fade: Res<ScreenFade>,
 ) {
-    if let Ok(button) = button_query.get_single() {
-        if button.disabled && screen_fade.faded_out() {
-            *game_state = GameState::default();
-            app_state.set(AppState::IntroCutscene).unwrap();
-        }
+    if menu_state.play && screen_fade.faded_out() {
+        *game_state = GameState::default();
+        app_state.set(AppState::IntroCutscene).unwrap();
     }
 }
