@@ -26,6 +26,16 @@ impl BandMember {
         }
     }
 
+    pub fn index(&self) -> usize {
+        match *self {
+            Self::Guitar => 0,
+            Self::Drums => 1,
+            Self::Flute => 2,
+            Self::Accordion => 3,
+            Self::Harmonica => 4,
+        }
+    }
+
     pub fn selection_active_image(&self, asset_library: &AssetLibrary) -> Handle<Image> {
         match *self {
             Self::Guitar => asset_library

@@ -26,10 +26,11 @@ impl Plugin for BoatPlugin {
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct BoatSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
+    pub attack: Attack,
 }
 
 #[derive(Component)]

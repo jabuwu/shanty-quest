@@ -32,6 +32,7 @@ fn enemy_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: Vec2::new(-600., 0.),
+            attack: Attack::ShotgunCannons,
         });
     }
 }

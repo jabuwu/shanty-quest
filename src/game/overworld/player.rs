@@ -47,6 +47,7 @@ fn player_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: game_state.town.position + game_state.town.spawn_offset,
+            attack: game_state.band_attack_type(),
         });
         ev_band_jam_spawn.send(BandJamSpawnEvent {
             entity: Some(entity),

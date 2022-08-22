@@ -10,7 +10,7 @@ impl Plugin for AttacksPlugin {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Attack {
     ShotgunCannons,
     Shockwave,
