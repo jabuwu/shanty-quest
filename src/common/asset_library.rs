@@ -52,6 +52,8 @@ pub struct AssetLibrary {
 
     #[asset("sprites/City1_BG.png")]
     pub sprite_town_bg: Handle<Image>,
+    #[asset("sprites/City1_BG_Hole.png")]
+    pub sprite_town_bg_hole: Handle<Image>,
     #[asset("sprites/City1_Tavern_Outline.png")]
     pub sprite_town_tavern_outline: Handle<Image>,
     #[asset("sprites/City1_Mayor_Outline.png")]

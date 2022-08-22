@@ -17,11 +17,9 @@ impl Plugin for OverworldPlugin {
             .add_plugin(character_controller::CharacterControllerPlugin)
             .add_plugin(band_jam::BandJamPlugin)
             .add_plugin(attacks::AttacksPlugin)
+            .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
             .add_system_set(
-                SystemSet::on_enter(AppState::GameOverworld).with_system(overworld_init),
-            )
-            .add_system_set(
-                SystemSet::on_update(AppState::GameOverworld).with_system(overworld_update),
+                SystemSet::on_update(AppState::Overworld).with_system(overworld_update),
             );
     }
 }

@@ -201,7 +201,7 @@ fn menu_fade(
         sprite.color.set_a(fade.opacity);
         if fade.out && fade.opacity == 1. {
             *game_state = GameState::default();
-            app_state.set(AppState::GameOverworld).unwrap();
+            app_state.set(AppState::TownOutside).unwrap();
         }
     }
 }

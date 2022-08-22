@@ -2,6 +2,7 @@ use asset_struct::prelude::*;
 use bevy::prelude::*;
 use jam::common::prelude::*;
 use jam::game::prelude::*;
+use jam::game::town::concert_hall::band_selection::*;
 
 #[derive(Component)]
 pub struct Editable;
@@ -19,7 +20,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(CommonPlugin)
         .init_resource::<GameState>()
-        .add_plugin(jam::game::town::band_selection::BandSelectionPlugin)
+        .add_plugin(BandSelectionPlugin)
         .add_startup_system(init)
         .run();
 }

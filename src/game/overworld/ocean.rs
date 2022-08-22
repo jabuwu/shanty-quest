@@ -19,7 +19,9 @@ impl Plugin for OceanPlugin {
 }
 
 #[derive(Default, Clone, Copy)]
-pub struct OceanSpawnEvent;
+pub struct OceanSpawnEvent {
+    pub entity: Option<Entity>,
+}
 
 #[derive(Component, Clone, Copy)]
 pub struct Ocean;
@@ -36,9 +38,14 @@ fn ocean_spawn(
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for _ in ev_spawn.iter() {
-        commands
-            .spawn_bundle(SpriteBundle {
+    for event in ev_spawn.iter() {
+        let mut ocean_entity = if let Some(entity) = event.entity {
+            commands.entity(entity)
+        } else {
+            commands.spawn()
+        };
+        ocean_entity
+            .insert_bundle(SpriteBundle {
                 sprite: Sprite {
                     custom_size: Vec2::new(50000., 50000.).into(),
                     color: Color::rgb_u8(0, 167, 217),

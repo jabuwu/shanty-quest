@@ -48,7 +48,7 @@ pub struct BoatSprite;
 fn boat_spawn(
     mut ev_spawn: EventReader<BoatSpawnEvent>,
     mut commands: Commands,
-    mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
+    mut _ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
     asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_spawn.iter() {
@@ -78,7 +78,7 @@ fn boat_spawn(
                 speed: 200.,
                 facing: Facing::East,
                 ring_timer: RING_SPAWN_INTEVAL,
-                attack: Attack::ShotgunCannons,
+                attack: event.attack,
             })
             .insert(YDepth::default())
             .insert(Collision {
@@ -92,11 +92,14 @@ fn boat_spawn(
                 speed: 200.,
             })
             .insert(Health::new(100.))
+            .insert(ShotgunCannons::default())
+            .insert(Shockwave::default())
+            .insert(DashAttack::default())
             .add_child(sprite_entity);
-        ev_healthbar_spawn.send(HealthbarSpawnEvent {
+        /*ev_healthbar_spawn.send(HealthbarSpawnEvent {
             entity: Some(boat_entity.id()),
             offset: Vec2::new(0., 125.),
-        });
+        });*/
     }
 }
 

@@ -40,9 +40,6 @@ fn player_spawn(
             .insert(Player)
             .insert(Label("Player".to_owned()))
             .insert(AudioPlusListener)
-            .insert(ShotgunCannons::default())
-            .insert(Shockwave::default())
-            .insert(DashAttack::default())
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
@@ -106,7 +103,7 @@ fn player_enter_island(
             };
             if player_position.distance(island_position) < 200. {
                 game_state.town = island.town.clone();
-                app_state.set(AppState::GameTown).unwrap();
+                app_state.set(AppState::TownOutside).unwrap();
                 break 'outer;
             }
         }
@@ -137,6 +134,7 @@ fn player_camera(
 }
 
 fn player_set_attack(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
+    // TODO: remove debug
     for mut boat in query.iter_mut() {
         if input.just_pressed(KeyCode::Key1) {
             boat.attack = Attack::ShotgunCannons;

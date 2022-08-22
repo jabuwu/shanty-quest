@@ -22,5 +22,4 @@ pub use super::{
         OverworldPlugin,
     },
     state::GameState,
-    town::band_selection::BandSelectionSpawnEvent,
 };

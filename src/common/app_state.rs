@@ -5,6 +5,9 @@ pub enum AppState {
     #[default]
     Loading,
     MainMenu,
-    GameOverworld,
-    GameTown,
+    Overworld,
+    TownOutside,
+    TownTavern,
+    TownMayor,
+    TownConcertHall,
 }
