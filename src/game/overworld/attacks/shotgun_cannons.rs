@@ -1,13 +1,16 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 pub struct ShotgunCannonsPlugin;
 
 impl Plugin for ShotgunCannonsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(shotgun_cannons_fire)
-            .add_system(shotgun_cannon_ball_move);
+        app.add_component_child::<ShotgunCannons, ShotgunCannonsSound>()
+            .add_system(shotgun_cannons_fire)
+            .add_system(shotgun_cannon_ball_move)
+            .add_system(shotgun_cannons_sound);
     }
 }
 
@@ -21,13 +24,34 @@ struct ShotgunCannonBall {
     pub velocity: Vec2,
 }
 
+#[derive(Component, Default)]
+struct ShotgunCannonsSound;
+
+fn shotgun_cannons_sound(
+    mut commands: Commands,
+    mut ev_created: EventReader<ComponentChildCreatedEvent<ShotgunCannonsSound>>,
+    asset_library: Res<AssetLibrary>,
+) {
+    for event in ev_created.iter() {
+        commands.entity(event.entity).insert(AudioPlusSource::new(
+            asset_library.sound_effects.sfx_placeholder_sound.clone(),
+        ));
+    }
+}
+
 fn shotgun_cannons_fire(
-    mut query: Query<(&mut ShotgunCannons, &Boat, &GlobalTransform)>,
+    mut query: Query<(&mut ShotgunCannons, &Boat, &GlobalTransform, &Children)>,
+    mut sound_query: Query<&mut AudioPlusSource, With<ShotgunCannonsSound>>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (mut shotgun_cannons, boat, global_transform) in query.iter_mut() {
+    for (mut shotgun_cannons, boat, global_transform, children) in query.iter_mut() {
         if shotgun_cannons.shoot {
+            for child in children.iter() {
+                if let Ok(mut sound) = sound_query.get_mut(*child) {
+                    sound.play();
+                }
+            }
             for shoot_side in 0..2 {
                 let forward = boat.facing.to_vec();
                 let mult = if shoot_side == 0 { 1. } else { -1. };

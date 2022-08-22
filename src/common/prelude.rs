@@ -6,6 +6,7 @@ pub use super::{
     collision::{
         shape::CollisionShape, Collision, CollisionFilter, CollisionQuery, COLLISION_FLAG,
     },
+    component_child::{ComponentChild, ComponentChildCreatedEvent},
     easing::*,
     facing::Facing,
     label::Label,

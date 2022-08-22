@@ -1,12 +1,16 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 pub struct ShockwavePlugin;
 
 impl Plugin for ShockwavePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(shockwave_fire).add_system(shockwave_update);
+        app.add_component_child::<Shockwave, ShockwaveSound>()
+            .add_system(shockwave_fire)
+            .add_system(shockwave_update)
+            .add_system(shockwave_sound);
     }
 }
 
@@ -21,13 +25,34 @@ struct ShockwaveWave {
     _velocity: Vec2,
 }
 
+#[derive(Component, Default)]
+struct ShockwaveSound;
+
+fn shockwave_sound(
+    mut commands: Commands,
+    mut ev_created: EventReader<ComponentChildCreatedEvent<ShockwaveSound>>,
+    asset_library: Res<AssetLibrary>,
+) {
+    for event in ev_created.iter() {
+        commands.entity(event.entity).insert(AudioPlusSource::new(
+            asset_library.sound_effects.sfx_placeholder_sound.clone(),
+        ));
+    }
+}
+
 fn shockwave_fire(
-    mut query: Query<(&mut Shockwave, &Boat, Entity)>,
+    mut query: Query<(&mut Shockwave, &Boat, Entity, &Children)>,
+    mut sound_query: Query<&mut AudioPlusSource, With<ShockwaveSound>>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (mut shockwave, boat, entity) in query.iter_mut() {
+    for (mut shockwave, boat, entity, children) in query.iter_mut() {
         if shockwave.shoot {
+            for child in children.iter() {
+                if let Ok(mut sound) = sound_query.get_mut(*child) {
+                    sound.play();
+                }
+            }
             let velocity = boat.facing.to_vec() * 200.;
             let child_entity = commands
                 .spawn_bundle(SpriteBundle {

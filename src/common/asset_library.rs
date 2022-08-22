@@ -13,6 +13,8 @@ pub struct AssetLibrary {
      ***************/
     #[asset("audio/sfx/placeholder.ogg")]
     pub audio_sfx_placeholder: Handle<AudioSource>,
+    #[asset("audio/music/placeholder.ogg")]
+    pub audio_music_placeholder: Handle<AudioSource>,
 
     /***********
      * Generic *

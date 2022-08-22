@@ -34,6 +34,7 @@ pub mod asset_library;
 pub mod assets;
 pub mod clickable;
 pub mod collision;
+pub mod component_child;
 pub mod easing;
 pub mod entity_debug;
 pub mod facing;

@@ -3,6 +3,10 @@ pub use audio_plus::prelude::*;
 
 #[derive(Default)]
 pub struct SoundEffects {
+    // placeholder
+    pub sfx_placeholder_music: AudioPlusSoundEffect,
+    pub sfx_placeholder_sound: AudioPlusSoundEffect,
+
     // main menu
     pub sfx_menu_ambient: AudioPlusSoundEffect,
     pub sfx_menu_music: AudioPlusSoundEffect,
@@ -21,6 +25,16 @@ pub struct SoundEffects {
 
 pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
     SoundEffects {
+        sfx_placeholder_music: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_music_placeholder.clone()],
+            volume: 1.0,
+            ..Default::default()
+        },
+        sfx_placeholder_sound: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            volume: 1.0,
+            ..Default::default()
+        },
         sfx_menu_ambient: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_sea.clone()],
             volume: 0.5,
