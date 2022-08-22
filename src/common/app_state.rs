@@ -5,6 +5,7 @@ pub enum AppState {
     #[default]
     Loading,
     MainMenu,
+    IntroCutscene,
     Overworld,
     TownOutside,
     TownTavern,
@@ -17,6 +18,7 @@ impl AppState {
         match *self {
             Self::Loading => false,
             Self::MainMenu => false,
+            Self::IntroCutscene => false,
             Self::Overworld => false,
             Self::TownOutside => true,
             Self::TownTavern => true,

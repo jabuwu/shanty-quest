@@ -14,6 +14,7 @@ pub use super::{
     math::{Lerp, Rect},
     menu_bar::MenuBar,
     mouse::Mouse,
+    screen_fade::ScreenFade,
     time_to_live::TimeToLive,
     transform2::{DepthLayer, Transform2, Transform2Bundle},
     y_depth::YDepth,

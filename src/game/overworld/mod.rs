@@ -25,11 +25,13 @@ impl Plugin for OverworldPlugin {
 }
 
 pub fn overworld_init(
+    mut screen_fade: ResMut<ScreenFade>,
     mut commands: Commands,
     mut ev_player_spawn: EventWriter<PlayerSpawnEvent>,
     mut ev_enemy_spawn: EventWriter<EnemySpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
 ) {
+    screen_fade.fade_in(1.);
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));

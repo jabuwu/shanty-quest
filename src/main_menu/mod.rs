@@ -22,12 +22,6 @@ impl Plugin for MainMenuPlugin {
 }
 
 #[derive(Component)]
-struct Fade {
-    opacity: f32,
-    out: bool,
-}
-
-#[derive(Component)]
 struct Button {
     disabled: bool,
     shape: CollisionShape,
@@ -58,7 +52,12 @@ struct Shine {
     x: f32,
 }
 
-fn menu_setup(mut commands: Commands, asset_library: Res<AssetLibrary>) {
+fn menu_setup(
+    mut screen_fade: ResMut<ScreenFade>,
+    mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
+) {
+    screen_fade.fade_in(1.);
     commands.spawn_bundle(Camera2dBundle::default());
     commands
         .spawn()
@@ -93,20 +92,6 @@ fn menu_setup(mut commands: Commands, asset_library: Res<AssetLibrary>) {
                 .clone(),
         ))
         .id();
-    commands
-        .spawn_bundle(SpriteBundle {
-            sprite: Sprite {
-                custom_size: Some(Vec2::ONE * 50000.),
-                color: Color::BLACK,
-                ..Default::default()
-            },
-            ..Default::default()
-        })
-        .insert(Transform2::new().with_depth((DepthLayer::Front, 1.)))
-        .insert(Fade {
-            opacity: 1.,
-            out: false,
-        });
     commands
         .spawn_bundle(SpriteBundle {
             texture: asset_library.menu_sprite_back.clone(),
@@ -225,10 +210,10 @@ fn play_sound(entity: Entity, sfx_query: &mut Query<&mut AudioPlusSource>) {
 }
 
 fn menu_button(
+    mut screen_fade: ResMut<ScreenFade>,
     mut button_query: Query<(&mut Button, &GlobalTransform, &Children, &mut Transform2)>,
     mut text_query: Query<(&ButtonText, &mut Handle<Image>)>,
     mut sfx_query: Query<&mut AudioPlusSource>,
-    mut fade_query: Query<&mut Fade>,
     sound_query: Query<Entity, With<Sound>>,
     mouse: Res<Mouse>,
     input: Res<Input<MouseButton>>,
@@ -259,9 +244,7 @@ fn menu_button(
                 }
                 button.disabled = true;
                 play_sound(button.audio_click_confirm, &mut sfx_query);
-                if let Ok(mut fade) = fade_query.get_single_mut() {
-                    fade.out = true;
-                }
+                screen_fade.fade_out(1.8);
             }
             button.clicked = false;
         }
@@ -284,22 +267,15 @@ fn menu_button(
 }
 
 fn menu_fade(
-    mut query: Query<(&mut Fade, &mut Sprite)>,
-    time: Res<Time>,
+    button_query: Query<&Button>,
     mut game_state: ResMut<GameState>,
     mut app_state: ResMut<State<AppState>>,
+    screen_fade: Res<ScreenFade>,
 ) {
-    for (mut fade, mut sprite) in query.iter_mut() {
-        if fade.out {
-            fade.opacity += time.delta_seconds() / 2.5;
-        } else {
-            fade.opacity -= time.delta_seconds() * 2.;
-        }
-        fade.opacity = fade.opacity.clamp(0., 1.);
-        sprite.color.set_a(ease(Easing::SineInOut, fade.opacity));
-        if fade.out && fade.opacity == 1. {
+    if let Ok(button) = button_query.get_single() {
+        if button.disabled && screen_fade.faded_out() {
             *game_state = GameState::default();
-            app_state.set(AppState::Overworld).unwrap();
+            app_state.set(AppState::IntroCutscene).unwrap();
         }
     }
 }

@@ -19,6 +19,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(collision::CollisionPlugin)
             .add_plugin(time_to_live::TimeToLivePlugin)
             .add_plugin(clickable::ClickablePlugin)
+            .add_plugin(screen_fade::ScreenFadePlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_startup_system(asset_hot_reloading);
@@ -44,6 +45,7 @@ pub mod math;
 pub mod menu_bar;
 pub mod mouse;
 pub mod prelude;
+pub mod screen_fade;
 pub mod sound_effects;
 pub mod time_to_live;
 pub mod transform2;

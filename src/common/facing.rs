@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use std::f32::consts::{PI, TAU};
 
 const NORMALIZED_DIAGONAL: f32 = 0.70710677;
 
@@ -17,25 +18,23 @@ pub enum Facing {
 impl Facing {
     pub fn from_vec(direction: Vec2) -> Option<Self> {
         if direction.length_squared() > 0. {
-            let angle = direction.angle_between(Vec2::X);
-            if angle > std::f32::consts::PI * 4. / 5. {
+            let angle = (direction.angle_between(Vec2::X) + PI) / TAU + 1. / 16.;
+            if angle < 1. / 8. {
                 Some(Self::West)
-            } else if angle > std::f32::consts::PI * 3. / 5. {
-                Some(Self::SouthWest)
-            } else if angle > std::f32::consts::PI * 2. / 5. {
-                Some(Self::South)
-            } else if angle > std::f32::consts::PI * 1. / 5. {
-                Some(Self::SouthEast)
-            } else if angle > -std::f32::consts::PI * 1. / 5. {
-                Some(Self::East)
-            } else if angle > -std::f32::consts::PI * 2. / 5. {
-                Some(Self::NorthEast)
-            } else if angle > -std::f32::consts::PI * 3. / 5. {
-                Some(Self::North)
-            } else if angle > -std::f32::consts::PI * 4. / 5. {
+            } else if angle < 2. / 8. {
                 Some(Self::NorthWest)
+            } else if angle < 3. / 8. {
+                Some(Self::North)
+            } else if angle < 4. / 8. {
+                Some(Self::NorthEast)
+            } else if angle < 5. / 8. {
+                Some(Self::East)
+            } else if angle < 6. / 8. {
+                Some(Self::SouthEast)
+            } else if angle < 7. / 8. {
+                Some(Self::South)
             } else {
-                Some(Self::West)
+                Some(Self::SouthWest)
             }
         } else {
             None
