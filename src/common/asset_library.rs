@@ -82,6 +82,12 @@ pub struct AssetLibrary {
 
     #[asset("music/ye_old_pirate_rave.ogg")]
     pub music_pirate_rave: Handle<AudioSource>,
+    #[asset("music/guitar_drums.ogg")]
+    pub music_guitar_drums: Handle<AudioSource>,
+    #[asset("music/guitar_flute.ogg")]
+    pub music_guitar_flute: Handle<AudioSource>,
+    #[asset("music/drums_flute.ogg")]
+    pub music_drums_flute: Handle<AudioSource>,
 
     #[asset("audio/sfx/placeholder.ogg")]
     pub audio_sfx_placeholder: Handle<AudioSource>,

@@ -8,7 +8,9 @@ pub struct SoundEffects {
     pub sfx_menu_button_click: AudioPlusSoundEffect,
     pub sfx_menu_button_click_confirm: AudioPlusSoundEffect,
     pub sfx_overworld_ambient: AudioPlusSoundEffect,
-    pub sfx_jam_test: AudioPlusSoundEffect,
+    pub sfx_jam_guitar_drums: AudioPlusSoundEffect,
+    pub sfx_jam_guitar_flute: AudioPlusSoundEffect,
+    pub sfx_jam_drums_flute: AudioPlusSoundEffect,
 }
 
 pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
@@ -38,8 +40,18 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             volume: 0.2,
             ..Default::default()
         },
-        sfx_jam_test: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.music_pirate_rave.clone()],
+        sfx_jam_guitar_drums: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.music_guitar_drums.clone()],
+            volume: 0.2,
+            ..Default::default()
+        },
+        sfx_jam_guitar_flute: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.music_guitar_flute.clone()],
+            volume: 0.2,
+            ..Default::default()
+        },
+        sfx_jam_drums_flute: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.music_drums_flute.clone()],
             volume: 0.2,
             ..Default::default()
         },

@@ -1,4 +1,4 @@
-use crate::common::prelude::*;
+use crate::{common::prelude::*, game::prelude::*};
 use audio_plus::source::AudioPlusSource;
 use bevy::prelude::*;
 
@@ -30,6 +30,7 @@ fn band_jam_spawn(
     mut ev_spawn: EventReader<BandJamSpawnEvent>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
+    game_state: Res<GameState>,
 ) {
     for event in ev_spawn.iter() {
         let mut entity = if let Some(entity) = event.entity {
@@ -46,7 +47,7 @@ fn band_jam_spawn(
                 jam_time: 0.,
             })
             .insert(AudioPlusSource::new(
-                asset_library.sound_effects.sfx_jam_test.clone(),
+                game_state.sfx_jam(asset_library.as_ref()),
             ));
     }
 }
@@ -63,7 +64,7 @@ fn band_jam_update(mut query: Query<(&mut BandJam, &mut AudioPlusSource)>, time:
                 jam.intensity = 0.;
             }
         }
-        if jam.jam_time > 0.4588 {
+        if jam.jam_time > 0.5339 {
             jam.cannons = true;
             jam.intensity = 1.;
             jam.jam_time = 0.;

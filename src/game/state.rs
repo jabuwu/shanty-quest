@@ -1,4 +1,6 @@
+use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 
 pub struct GameState {
     pub town: TownData,
@@ -43,6 +45,42 @@ impl GameState {
             },
             BandMember::Drums => match band_member_b {
                 BandMember::Flute => Attack::Shockwave,
+                BandMember::Accordion => unimplemented!(),
+                BandMember::Harmonica => unimplemented!(),
+                _ => unreachable!(),
+            },
+            BandMember::Flute => match band_member_b {
+                BandMember::Accordion => unimplemented!(),
+                BandMember::Harmonica => unimplemented!(),
+                _ => unreachable!(),
+            },
+            BandMember::Accordion => match band_member_b {
+                BandMember::Harmonica => unimplemented!(),
+                _ => unreachable!(),
+            },
+            BandMember::Harmonica => {
+                unreachable!();
+            }
+        }
+    }
+
+    pub fn sfx_jam(&self, asset_library: &AssetLibrary) -> AudioPlusSoundEffect {
+        let (band_member_a, band_member_b) =
+            if self.band_members[0].index() < self.band_members[1].index() {
+                (self.band_members[0], self.band_members[1])
+            } else {
+                (self.band_members[1], self.band_members[0])
+            };
+        match band_member_a {
+            BandMember::Guitar => match band_member_b {
+                BandMember::Drums => asset_library.sound_effects.sfx_jam_guitar_drums.clone(),
+                BandMember::Flute => asset_library.sound_effects.sfx_jam_guitar_flute.clone(),
+                BandMember::Accordion => unimplemented!(),
+                BandMember::Harmonica => unimplemented!(),
+                _ => unreachable!(),
+            },
+            BandMember::Drums => match band_member_b {
+                BandMember::Flute => asset_library.sound_effects.sfx_jam_drums_flute.clone(),
                 BandMember::Accordion => unimplemented!(),
                 BandMember::Harmonica => unimplemented!(),
                 _ => unreachable!(),
