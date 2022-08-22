@@ -36,7 +36,15 @@ pub fn overworld_init(
         .spawn_bundle(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     ev_player_spawn.send_default();
-    ev_enemy_spawn.send_default();
+    ev_enemy_spawn.send(EnemySpawnEvent {
+        position: Vec2::new(100., -300.),
+    });
+    ev_enemy_spawn.send(EnemySpawnEvent {
+        position: Vec2::new(500., -400.),
+    });
+    ev_enemy_spawn.send(EnemySpawnEvent {
+        position: Vec2::new(300., -600.),
+    });
     ev_world_load.send_default();
 }
 

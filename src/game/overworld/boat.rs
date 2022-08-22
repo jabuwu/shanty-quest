@@ -103,7 +103,7 @@ fn boat_spawn(
             .insert(ShotgunCannons::default())
             .insert(Shockwave::default())
             .insert(DashAttack::default())
-            .insert(Health::new(100.))
+            .insert(Health::new(10.))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(100., 100.),
@@ -115,7 +115,7 @@ fn boat_spawn(
             ev_healthbar_spawn.send(HealthbarSpawnEvent {
                 entity: Some(boat_entity.id()),
                 offset: Vec2::new(0., 125.),
-                size: Vec2::new(100., 20.),
+                size: Vec2::new(120., 8.),
             });
         }
     }

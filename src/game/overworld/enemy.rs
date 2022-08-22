@@ -13,7 +13,9 @@ impl Plugin for EnemyPlugin {
 }
 
 #[derive(Default, Clone, Copy)]
-pub struct EnemySpawnEvent;
+pub struct EnemySpawnEvent {
+    pub position: Vec2,
+}
 
 #[derive(Component)]
 pub struct Enemy;
@@ -23,7 +25,7 @@ fn enemy_spawn(
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
     mut commands: Commands,
 ) {
-    for _ in ev_spawn.iter() {
+    for event in ev_spawn.iter() {
         let entity = commands
             .spawn()
             .insert(Enemy)
@@ -31,7 +33,7 @@ fn enemy_spawn(
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
-            position: Vec2::new(600., 600.),
+            position: event.position,
             special_attack: SpecialAttack::ShotgunCannons,
             healthbar: true,
         });
@@ -47,6 +49,7 @@ fn enemy_move(mut query: Query<&mut Boat, With<Enemy>>) {
         angle += rand::random::<f32>() * 0.2;
         angle -= rand::random::<f32>() * 0.2;
         boat.movement = Vec2::from_angle(angle);
+        boat.movement = Vec2::ZERO;
         boat.direction = angle;
     }
 }
