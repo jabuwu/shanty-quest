@@ -42,7 +42,6 @@ fn shotgun_cannons_fire(
                     commands
                         .spawn_bundle(SpriteBundle {
                             sprite: Sprite {
-                                custom_size: Vec2::new(8., 8.).into(),
                                 color: Color::BLACK,
                                 ..Default::default()
                             },
