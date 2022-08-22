@@ -11,7 +11,7 @@ impl Default for GameState {
         Self {
             town: TownData::default(),
             band_members: [BandMember::from_index(0), BandMember::from_index(1)],
-            band_unlocked_count: 4,
+            band_unlocked_count: 3,
         }
     }
 }

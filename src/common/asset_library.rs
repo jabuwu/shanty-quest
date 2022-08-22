@@ -62,12 +62,18 @@ pub struct AssetLibrary {
     pub sprite_band_selection_slot_drums_active: Handle<Image>,
     #[asset("sprites/BandSelectionGUI_Slot_Drums_Inactive.png")]
     pub sprite_band_selection_slot_drums_inactive: Handle<Image>,
+    #[asset("sprites/BandSelectionGUI_Slot_Flute_Active.png")]
+    pub sprite_band_selection_slot_flute_active: Handle<Image>,
+    #[asset("sprites/BandSelectionGUI_Slot_Flute_Inactive.png")]
+    pub sprite_band_selection_slot_flute_inactive: Handle<Image>,
     #[asset("sprites/AbilityIcon_Shotgun.png")]
     pub sprite_band_selection_slot_ability_shotgun: Handle<Image>,
 
     #[asset("music/ye_old_pirate_rave.ogg")]
     pub music_pirate_rave: Handle<AudioSource>,
 
+    #[asset("audio/sfx/placeholder.ogg")]
+    pub audio_sfx_placeholder: Handle<AudioSource>,
     #[asset("audio/sfx/amb_sea_01.ogg")]
     pub audio_sfx_sea: Handle<AudioSource>,
 }

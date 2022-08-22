@@ -35,7 +35,7 @@ impl BandMember {
                 .sprite_band_selection_slot_drums_active
                 .clone(),
             Self::Flute => asset_library
-                .sprite_band_selection_slot_guitar_active
+                .sprite_band_selection_slot_flute_active
                 .clone(),
             Self::Accordion => asset_library
                 .sprite_band_selection_slot_guitar_active
@@ -55,7 +55,7 @@ impl BandMember {
                 .sprite_band_selection_slot_drums_inactive
                 .clone(),
             Self::Flute => asset_library
-                .sprite_band_selection_slot_guitar_inactive
+                .sprite_band_selection_slot_flute_inactive
                 .clone(),
             Self::Accordion => asset_library
                 .sprite_band_selection_slot_guitar_inactive
