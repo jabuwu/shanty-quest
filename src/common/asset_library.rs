@@ -1,10 +1,13 @@
 use crate::common::prelude::*;
+use crate::common::sound_effects::{sound_effects_create, SoundEffects};
 use asset_struct::AssetStruct;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioSource;
 
 #[derive(Default, AssetStruct)]
 pub struct AssetLibrary {
+    pub sound_effects: SoundEffects,
+
     #[asset("fonts/IMFellDoublePica-Regular.ttf")]
     pub font_default: Handle<Font>,
 
@@ -71,5 +74,9 @@ impl AssetLibrary {
         let texture_atlas =
             TextureAtlas::from_grid(self.sprite_ship.clone(), Vec2::new(250., 350.), 5, 1);
         self.sprite_ship_atlas = texture_atlas_assets.add(texture_atlas);
+    }
+
+    pub fn create_sound_effects(&mut self) {
+        self.sound_effects = sound_effects_create(&self);
     }
 }

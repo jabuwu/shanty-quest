@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 pub struct WorldPlugin;
@@ -25,6 +26,10 @@ fn world_spawn(
     asset_library: Res<AssetLibrary>,
 ) {
     for _ in ev_spawn.iter() {
+        commands.spawn().insert(
+            AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_ambient.clone())
+                .as_looping(),
+        );
         ev_ocean_spawn.send_default();
         ev_ldtk_spawn.send(LdtkSpawnEvent {
             entity: None,

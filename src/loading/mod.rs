@@ -19,6 +19,7 @@ fn loading_init(
 ) {
     asset_library.load_assets(&asset_server);
     asset_library.create_texture_atlases(texture_atlas_assets.as_mut());
+    asset_library.create_sound_effects();
     commands.spawn_bundle(Camera2dBundle::default());
     commands
         .spawn_bundle(NodeBundle {

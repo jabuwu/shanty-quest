@@ -27,10 +27,7 @@ struct ButtonText {
 fn menu_setup(mut commands: Commands, asset_library: Res<AssetLibrary>) {
     commands.spawn_bundle(Camera2dBundle::default());
     commands.spawn().insert(
-        AudioPlusSource::new(AudioPlusSoundEffect::single(
-            asset_library.audio_sfx_sea.clone(),
-        ))
-        .as_looping(),
+        AudioPlusSource::new(asset_library.sound_effects.sfx_menu_ambient.clone()).as_looping(),
     );
     commands
         .spawn_bundle(SpriteBundle {

@@ -4,18 +4,18 @@ use crate::mixer::AudioPlusMixerChannel;
 
 #[derive(Clone)]
 pub struct AudioPlusSoundEffect {
-    pub(crate) audio_sources: Vec<Handle<bevy_kira_audio::AudioSource>>,
-    pub(crate) voices: usize,
-    pub(crate) positional: bool,
-    pub(crate) volume: f32,
-    pub(crate) volume_variation: f32,
-    pub(crate) pitch: f32,
-    pub(crate) pitch_variation: f32,
-    pub(crate) distance: f32,
-    pub(crate) chance: f32,
-    pub(crate) fade_in: f32,
-    pub(crate) fade_out: f32,
-    pub(crate) channel: AudioPlusMixerChannel,
+    pub audio_sources: Vec<Handle<bevy_kira_audio::AudioSource>>,
+    pub voices: usize,
+    pub positional: bool,
+    pub volume: f32,
+    pub volume_variation: f32,
+    pub pitch: f32,
+    pub pitch_variation: f32,
+    pub distance: f32,
+    pub chance: f32,
+    pub fade_in: f32,
+    pub fade_out: f32,
+    pub channel: AudioPlusMixerChannel,
 }
 
 impl Default for AudioPlusSoundEffect {

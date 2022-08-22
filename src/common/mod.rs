@@ -40,6 +40,7 @@ pub mod math;
 pub mod menu_bar;
 pub mod mouse;
 pub mod prelude;
+pub mod sound_effects;
 pub mod time_to_live;
 pub mod transform2;
 pub mod y_depth;

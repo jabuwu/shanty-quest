@@ -1,5 +1,4 @@
 use crate::common::prelude::*;
-use audio_plus::prelude::AudioPlusSoundEffect;
 use audio_plus::source::AudioPlusSource;
 use bevy::prelude::*;
 
@@ -47,8 +46,7 @@ fn band_jam_spawn(
                 jam_time: 0.,
             })
             .insert(AudioPlusSource::new(
-                AudioPlusSoundEffect::single(asset_library.music_pirate_rave.clone())
-                    .with_volume(0.03, 0.),
+                asset_library.sound_effects.sfx_jam_test.clone(),
             ));
     }
 }
