@@ -3,7 +3,7 @@ use bevy::prelude::*;
 fn main() {
     App::new()
         .insert_resource(WindowDescriptor {
-            title: "Bevy Jam 2".to_string(),
+            title: "Shanty Quest: Treble at Sea".to_string(),
             width: 1280.,
             height: 768.,
             resizable: false,

@@ -16,6 +16,19 @@ pub struct AssetLibrary {
     #[asset("levels/WaterTileMap.png")]
     pub level_test_water_tilemap: Handle<Image>,
 
+    #[asset("sprites/back_menu.png")]
+    pub menu_back: Handle<Image>,
+    #[asset("sprites/logo.png")]
+    pub menu_logo: Handle<Image>,
+    #[asset("sprites/but_back_a.png")]
+    pub menu_button_back: Handle<Image>,
+    #[asset("sprites/but_play_normal.png")]
+    pub menu_button_play_normal: Handle<Image>,
+    #[asset("sprites/but_play_hover.png")]
+    pub menu_button_play_hover: Handle<Image>,
+    #[asset("sprites/but_play_press.png")]
+    pub menu_button_play_press: Handle<Image>,
+
     #[asset("sprites/Ship1.png")]
     pub sprite_ship: Handle<Image>,
     pub sprite_ship_atlas: Handle<TextureAtlas>,
@@ -48,6 +61,9 @@ pub struct AssetLibrary {
 
     #[asset("music/ye_old_pirate_rave.ogg")]
     pub music_pirate_rave: Handle<AudioSource>,
+
+    #[asset("audio/sfx/amb_sea_01.ogg")]
+    pub audio_sfx_sea: Handle<AudioSource>,
 }
 
 impl AssetLibrary {

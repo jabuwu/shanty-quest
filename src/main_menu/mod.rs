@@ -1,137 +1,118 @@
-use crate::{common::prelude::*, game::state::GameState};
-use bevy::{app::AppExit, prelude::*};
+use crate::common::prelude::*;
+use audio_plus::prelude::*;
+use bevy::prelude::*;
 
 pub struct MainMenuPlugin;
 
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(AppState::MainMenu).with_system(setup))
-            .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(button_system));
+        app.add_system_set(SystemSet::on_enter(AppState::MainMenu).with_system(menu_setup))
+            .add_system(menu_button);
     }
 }
 
 #[derive(Component)]
-pub struct StartGameButton;
+struct Button {
+    shape: CollisionShape,
+    clicked: bool,
+}
 
 #[derive(Component)]
-pub struct QuitButton;
+struct ButtonText {
+    normal: Handle<Image>,
+    hover: Handle<Image>,
+    press: Handle<Image>,
+}
 
-const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
-const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
-const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
+fn menu_setup(mut commands: Commands, asset_library: Res<AssetLibrary>) {
+    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn().insert(
+        AudioPlusSource::new(AudioPlusSoundEffect::single(
+            asset_library.audio_sfx_sea.clone(),
+        ))
+        .as_looping(),
+    );
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: asset_library.menu_back.clone(),
+            ..Default::default()
+        })
+        .insert(
+            Transform2::new()
+                .with_scale(Vec2::ONE * 0.71)
+                .with_depth((DepthLayer::Front, 0.)),
+        );
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: asset_library.menu_logo.clone(),
+            ..Default::default()
+        })
+        .insert(Transform2::from_xy(0., 90.).with_depth((DepthLayer::Front, 0.)))
+        .insert(Label("Logo".to_owned()));
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: asset_library.menu_button_back.clone(),
+            ..Default::default()
+        })
+        .insert(Button {
+            shape: CollisionShape::Rect {
+                size: Vec2::new(406., 159.),
+            },
+            clicked: false,
+        })
+        .insert(Transform2::from_xy(0., -280.).with_depth((DepthLayer::Front, 0.1)))
+        .insert(Label("Play Button".to_owned()))
+        .with_children(|parent| {
+            parent
+                .spawn_bundle(SpriteBundle {
+                    texture: asset_library.menu_button_play_normal.clone(),
+                    ..Default::default()
+                })
+                .insert(Transform2::new().with_depth((DepthLayer::Front, 0.2)))
+                .insert(ButtonText {
+                    normal: asset_library.menu_button_play_normal.clone(),
+                    hover: asset_library.menu_button_play_hover.clone(),
+                    press: asset_library.menu_button_play_press.clone(),
+                });
+        });
+}
 
-fn button_system(
-    mut interaction_query: Query<
-        (
-            &Interaction,
-            &mut UiColor,
-            Option<&StartGameButton>,
-            Option<&QuitButton>,
-        ),
-        (Changed<Interaction>, With<Button>),
-    >,
+fn menu_button(
+    mut button_query: Query<(&mut Button, &GlobalTransform, &Children, &mut Transform2)>,
+    mut text_query: Query<(&ButtonText, &mut Handle<Image>)>,
+    mouse: Res<Mouse>,
+    input: Res<Input<MouseButton>>,
     mut app_state: ResMut<State<AppState>>,
-    mut exit: EventWriter<AppExit>,
-    mut game_state: ResMut<GameState>,
 ) {
-    for (interaction, mut color, start_game, quit) in &mut interaction_query {
-        match *interaction {
-            Interaction::Clicked => {
-                *color = PRESSED_BUTTON.into();
+    for (mut button, transform, children, mut transform2) in button_query.iter_mut() {
+        let hover = button.shape.overlaps(
+            transform.translation().truncate(),
+            CollisionShape::Point,
+            mouse.position,
+        );
+        if hover && input.just_pressed(MouseButton::Left) {
+            button.clicked = true;
+        }
+        if button.clicked && input.just_released(MouseButton::Left) {
+            if hover {
+                app_state.set(AppState::GameOverworld).unwrap();
             }
-            Interaction::Hovered => {
-                if color.0 == PRESSED_BUTTON {
-                    if start_game.is_some() {
-                        *game_state.as_mut() = GameState::default();
-                        app_state.set(AppState::GameOverworld).unwrap();
-                    }
-                    if quit.is_some() {
-                        exit.send(AppExit);
-                    }
+            button.clicked = false;
+        }
+        transform2.translation = Vec2::new(0., -280.);
+        if button.clicked && hover {
+            transform2.translation += Vec2::new(-2., -2.);
+        }
+        for child in children.iter() {
+            if let Ok((text, mut image)) = text_query.get_mut(*child) {
+                if button.clicked && hover {
+                    *image = text.press.clone();
+                } else if hover {
+                    *image = text.hover.clone();
+                } else {
+                    *image = text.normal.clone();
                 }
-                *color = HOVERED_BUTTON.into();
-            }
-            Interaction::None => {
-                *color = NORMAL_BUTTON.into();
             }
         }
     }
-}
-
-fn setup(mut commands: Commands, asset_library: Res<AssetLibrary>) {
-    commands.spawn_bundle(Camera2dBundle::default());
-    commands
-        .spawn_bundle(NodeBundle {
-            style: Style {
-                flex_direction: FlexDirection::Column,
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                ..default()
-            },
-            color: Color::NONE.into(),
-            ..default()
-        })
-        .with_children(|parent| {
-            parent
-                .spawn_bundle(NodeBundle {
-                    style: Style {
-                        flex_direction: FlexDirection::ColumnReverse,
-                        size: Size::new(Val::Percent(30.0), Val::Percent(30.0)),
-                        justify_content: JustifyContent::SpaceBetween,
-                        align_items: AlignItems::Center,
-                        ..default()
-                    },
-                    color: Color::NONE.into(),
-                    ..default()
-                })
-                .with_children(|parent| {
-                    parent
-                        .spawn_bundle(ButtonBundle {
-                            style: Style {
-                                size: Size::new(Val::Px(250.0), Val::Px(65.0)),
-                                margin: UiRect::all(Val::Auto),
-                                justify_content: JustifyContent::Center,
-                                align_items: AlignItems::Center,
-                                ..default()
-                            },
-                            color: NORMAL_BUTTON.into(),
-                            ..default()
-                        })
-                        .insert(StartGameButton)
-                        .with_children(|parent| {
-                            parent.spawn_bundle(TextBundle::from_section(
-                                "Start Game",
-                                TextStyle {
-                                    font: asset_library.font_default.clone(),
-                                    font_size: 40.0,
-                                    color: Color::rgb(0.9, 0.9, 0.9),
-                                },
-                            ));
-                        });
-                    parent
-                        .spawn_bundle(ButtonBundle {
-                            style: Style {
-                                size: Size::new(Val::Px(250.0), Val::Px(65.0)),
-                                margin: UiRect::all(Val::Auto),
-                                justify_content: JustifyContent::Center,
-                                align_items: AlignItems::Center,
-                                ..default()
-                            },
-                            color: NORMAL_BUTTON.into(),
-                            ..default()
-                        })
-                        .insert(QuitButton)
-                        .with_children(|parent| {
-                            parent.spawn_bundle(TextBundle::from_section(
-                                "Quit",
-                                TextStyle {
-                                    font: asset_library.font_default.clone(),
-                                    font_size: 40.0,
-                                    color: Color::rgb(0.9, 0.9, 0.9),
-                                },
-                            ));
-                        });
-                });
-        });
 }
