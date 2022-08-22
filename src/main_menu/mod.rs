@@ -1,4 +1,4 @@
-use crate::common::prelude::*;
+use crate::{common::prelude::*, game::state::GameState};
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
@@ -82,6 +82,7 @@ fn menu_button(
     mut text_query: Query<(&ButtonText, &mut Handle<Image>)>,
     mouse: Res<Mouse>,
     input: Res<Input<MouseButton>>,
+    mut game_state: ResMut<GameState>,
     mut app_state: ResMut<State<AppState>>,
 ) {
     for (mut button, transform, children, mut transform2) in button_query.iter_mut() {
@@ -95,6 +96,7 @@ fn menu_button(
         }
         if button.clicked && input.just_released(MouseButton::Left) {
             if hover {
+                *game_state = GameState::default();
                 app_state.set(AppState::GameOverworld).unwrap();
             }
             button.clicked = false;
