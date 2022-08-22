@@ -30,6 +30,10 @@ fn world_spawn(
             AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_ambient.clone())
                 .as_looping(),
         );
+        commands.spawn().insert(
+            AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_music.clone())
+                .as_looping(),
+        );
         ev_ocean_spawn.send_default();
         ev_ldtk_spawn.send(LdtkSpawnEvent {
             entity: None,

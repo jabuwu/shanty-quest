@@ -53,31 +53,15 @@ fn player_spawn(
 }
 
 fn player_controls(
-    mut query: Query<(&mut Boat, &mut BandJam), With<Player>>,
+    mut query: Query<(&mut Boat, &mut BandJam, &GlobalTransform), With<Player>>,
     input: Res<Input<KeyCode>>,
-    time: Res<Time>,
+    mouse: Res<Mouse>,
 ) {
     if query.is_empty() {
         return;
     }
-    let mut movement = Vec2::ZERO;
-    if input.pressed(KeyCode::W) {
-        movement.y += 1.;
-    }
-    if input.pressed(KeyCode::S) {
-        movement.y -= 1.;
-    }
-    if input.pressed(KeyCode::A) {
-        movement.x -= 1.;
-    }
-    if input.pressed(KeyCode::D) {
-        movement.x += 1.;
-    }
-    if movement.length_squared() > 0. {
-        movement = movement.normalize() * time.delta_seconds();
-    }
-    for (mut boat, mut band_jam) in query.iter_mut() {
-        boat.movement = movement;
+    for (mut boat, mut band_jam, global_transform) in query.iter_mut() {
+        boat.movement = (mouse.position - global_transform.translation().truncate()) / 200.;
         band_jam.jamming = input.pressed(KeyCode::Space);
     }
 }

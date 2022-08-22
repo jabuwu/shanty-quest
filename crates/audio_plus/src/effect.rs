@@ -38,6 +38,10 @@ impl Default for AudioPlusSoundEffect {
 }
 
 impl AudioPlusSoundEffect {
+    pub fn none() -> Self {
+        Self::default()
+    }
+
     pub fn single(audio_source: Handle<bevy_kira_audio::AudioSource>) -> Self {
         Self::multiple(vec![audio_source])
     }

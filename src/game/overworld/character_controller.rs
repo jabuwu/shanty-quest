@@ -46,9 +46,10 @@ fn character_controller_update(
             queries.p0().get_mut(entity)
         {
             let mut velocity = character_controller.movement;
-            if velocity.length_squared() > 0. {
-                velocity = velocity.normalize() * 200. * time.delta_seconds();
+            if velocity.length_squared() > 1. {
+                velocity = velocity.normalize();
             }
+            velocity *= 200. * time.delta_seconds();
             if let Some(dash) = dash {
                 velocity += dash.velocity * time.delta_seconds();
             }
