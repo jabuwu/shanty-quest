@@ -65,16 +65,10 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_overworld_ambient: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_sea.clone()],
-            volume: 1.0,
+            volume: 0.4,
             ..Default::default()
         },
-        sfx_overworld_music: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.menu_music.clone()],
-            volume: 0.2,
-            fade_in: 0.2,
-            fade_out: 0.2,
-            ..Default::default()
-        },
+        sfx_overworld_music: AudioPlusSoundEffect::none(),
         sfx_town_ambient: AudioPlusSoundEffect::none(),
         sfx_town_music: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.menu_music.clone()],

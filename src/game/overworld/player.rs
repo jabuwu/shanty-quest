@@ -43,7 +43,7 @@ fn player_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: game_state.town.position + game_state.town.spawn_offset,
-            attack: game_state.band_attack_type(),
+            special_attack: game_state.band_special_attack_type(),
         });
     }
 }
@@ -52,14 +52,26 @@ fn player_controls(
     mut query: Query<(&mut Boat, &GlobalTransform), With<Player>>,
     mouse: Res<Mouse>,
     input: Res<Input<MouseButton>>,
+    keys: Res<Input<KeyCode>>,
 ) {
     if query.is_empty() {
         return;
     }
     for (mut boat, global_transform) in query.iter_mut() {
-        boat.movement = (mouse.position - global_transform.translation().truncate()) / 200.;
-        if input.just_pressed(MouseButton::Left) {
+        let mut mouse_aim = (mouse.position - global_transform.translation().truncate()) / 200.;
+        if mouse_aim.length_squared() == 0. {
+            mouse_aim = Vec2::new(0.1, 0.);
+        }
+        boat.direction = Vec2::X.angle_between(mouse_aim);
+        boat.movement = mouse_aim;
+        if !input.pressed(MouseButton::Left) {
+            boat.movement *= 0.05;
+        }
+        if keys.just_pressed(KeyCode::F) {
             boat.shoot = true;
+        }
+        if keys.just_pressed(KeyCode::D) {
+            boat.special_shoot = true;
         }
     }
 }
@@ -119,13 +131,13 @@ fn player_set_attack(mut query: Query<&mut Boat, With<Player>>, input: Res<Input
     // TODO: remove debug
     for mut boat in query.iter_mut() {
         if input.just_pressed(KeyCode::Key1) {
-            boat.attack = Attack::ShotgunCannons;
+            boat.special_attack = SpecialAttack::ShotgunCannons;
         }
         if input.just_pressed(KeyCode::Key2) {
-            boat.attack = Attack::Shockwave;
+            boat.special_attack = SpecialAttack::Shockwave;
         }
         if input.just_pressed(KeyCode::Key3) {
-            boat.attack = Attack::DashAttack;
+            boat.special_attack = SpecialAttack::DashAttack;
         }
     }
 }

@@ -40,12 +40,18 @@ fn shotgun_cannons_sound(
 }
 
 fn shotgun_cannons_fire(
-    mut query: Query<(&mut ShotgunCannons, &Boat, &GlobalTransform, &Children)>,
+    mut query: Query<(
+        Entity,
+        &mut ShotgunCannons,
+        &Boat,
+        &GlobalTransform,
+        &Children,
+    )>,
     mut sound_query: Query<&mut AudioPlusSource, With<ShotgunCannonsSound>>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (mut shotgun_cannons, boat, global_transform, children) in query.iter_mut() {
+    for (boat_entity, mut shotgun_cannons, boat, global_transform, children) in query.iter_mut() {
         if shotgun_cannons.shoot {
             for child in children.iter() {
                 if let Ok(mut sound) = sound_query.get_mut(*child) {
@@ -72,6 +78,13 @@ fn shotgun_cannons_fire(
                             },
                             texture: asset_library.sprite_bullet_note.clone(),
                             ..Default::default()
+                        })
+                        .insert(Hurtbox {
+                            shape: CollisionShape::Rect {
+                                size: Vec2::new(32., 32.),
+                            },
+                            for_entity: Some(boat_entity),
+                            auto_despawn: true,
                         })
                         .insert(
                             Transform2::from_translation(position)

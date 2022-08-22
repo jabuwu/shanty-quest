@@ -31,8 +31,8 @@ fn enemy_spawn(
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
-            position: Vec2::new(-600., 0.),
-            attack: Attack::ShotgunCannons,
+            position: Vec2::new(600., 600.),
+            special_attack: SpecialAttack::ShotgunCannons,
         });
     }
 }
@@ -42,9 +42,10 @@ fn enemy_move(mut query: Query<&mut Boat, With<Enemy>>) {
         if boat.movement.length_squared() == 0. {
             boat.movement = Vec2::new(1., 0.);
         }
-        let mut angle = boat.movement.angle_between(Vec2::X);
+        let mut angle = Vec2::X.angle_between(boat.movement);
         angle += rand::random::<f32>() * 0.2;
         angle -= rand::random::<f32>() * 0.2;
-        boat.movement = Vec2::from_angle(-angle);
+        boat.movement = Vec2::from_angle(angle);
+        boat.direction = angle;
     }
 }

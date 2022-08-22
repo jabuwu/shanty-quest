@@ -26,7 +26,7 @@ impl GameState {
         false
     }
 
-    pub fn band_attack_type(&self) -> Attack {
+    pub fn band_special_attack_type(&self) -> SpecialAttack {
         let (band_member_a, band_member_b) =
             if self.band_members[0].index() < self.band_members[1].index() {
                 (self.band_members[0], self.band_members[1])
@@ -35,14 +35,14 @@ impl GameState {
             };
         match band_member_a {
             BandMember::Guitar => match band_member_b {
-                BandMember::Drums => Attack::ShotgunCannons,
-                BandMember::Flute => Attack::DashAttack,
+                BandMember::Drums => SpecialAttack::ShotgunCannons,
+                BandMember::Flute => SpecialAttack::DashAttack,
                 BandMember::Accordion => unimplemented!(),
                 BandMember::Harmonica => unimplemented!(),
                 _ => unreachable!(),
             },
             BandMember::Drums => match band_member_b {
-                BandMember::Flute => Attack::Shockwave,
+                BandMember::Flute => SpecialAttack::Shockwave,
                 BandMember::Accordion => unimplemented!(),
                 BandMember::Harmonica => unimplemented!(),
                 _ => unreachable!(),

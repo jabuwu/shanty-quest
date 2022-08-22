@@ -10,4 +10,12 @@ impl Health {
     pub fn new(max: f32) -> Self {
         Self { max, value: max }
     }
+
+    pub fn damage(&mut self, amt: f32) {
+        self.value = (self.value - amt).clamp(0., self.max);
+    }
+
+    pub fn dead(&mut self) -> bool {
+        self.value == 0.
+    }
 }

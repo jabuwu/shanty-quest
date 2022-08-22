@@ -3,12 +3,14 @@ pub use super::{
     overworld::{
         attacks::{
             dash_attack::{Dash, DashAttack},
+            forward_cannons::ForwardCannons,
             shockwave::Shockwave,
             shotgun_cannons::ShotgunCannons,
-            Attack,
+            SpecialAttack,
         },
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         character_controller::{CharacterController, CharacterControllerSystems},
+        damage::{DamageEvent, Hitbox, Hurtbox},
         depth_layers::*,
         enemy::{Enemy, EnemySpawnEvent},
         health::Health,

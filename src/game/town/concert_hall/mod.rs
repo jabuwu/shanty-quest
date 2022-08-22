@@ -46,7 +46,7 @@ fn concert_hall_init(
             ev_boat_spawn.send(BoatSpawnEvent {
                 entity: Some(boat_entity),
                 position: Vec2::ZERO,
-                attack: Attack::Shockwave,
+                special_attack: SpecialAttack::Shockwave,
             });
             let ocean_entity = parent.spawn().id();
             ev_ocean_spawn.send(OceanSpawnEvent {
@@ -115,16 +115,7 @@ pub struct ConcertHallBoatPreviewState {
 }
 
 fn concert_hall_boat_preview(
-    mut query: Query<
-        (
-            Entity,
-            &Parent,
-            &mut ShotgunCannons,
-            &mut Shockwave,
-            &mut DashAttack,
-        ),
-        With<BoatPreview>,
-    >,
+    mut query: Query<(Entity, &Parent, &mut Boat), With<BoatPreview>>,
     mut state: Local<ConcertHallBoatPreviewState>,
     mut transform_query: Query<&mut Transform2>,
     time: Res<Time>,
@@ -137,22 +128,13 @@ fn concert_hall_boat_preview(
     } else {
         false
     };
-    for (entity, parent, mut shotgun_cannons, mut shockwave, mut dash_attack) in query.iter_mut() {
+    for (entity, parent, mut boat) in query.iter_mut() {
         if spawn {
             if let Ok(mut transform) = transform_query.get_mut(entity) {
                 transform.translation = Vec2::ZERO;
             }
-            match game_state.band_attack_type() {
-                Attack::ShotgunCannons => {
-                    shotgun_cannons.shoot = true;
-                }
-                Attack::Shockwave => {
-                    shockwave.shoot = true;
-                }
-                Attack::DashAttack => {
-                    dash_attack.shoot = true;
-                }
-            }
+            boat.special_attack = game_state.band_special_attack_type();
+            boat.special_shoot = true;
         }
         let translation = if spawn {
             Vec2::ZERO

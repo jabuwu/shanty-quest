@@ -4,19 +4,21 @@ pub struct AttacksPlugin;
 
 impl Plugin for AttacksPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(shotgun_cannons::ShotgunCannonsPlugin)
+        app.add_plugin(forward_cannons::ForwardCannonsPlugin)
+            .add_plugin(shotgun_cannons::ShotgunCannonsPlugin)
             .add_plugin(shockwave::ShockwavePlugin)
             .add_plugin(dash_attack::DashAttackPlugin);
     }
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-pub enum Attack {
+pub enum SpecialAttack {
     ShotgunCannons,
     Shockwave,
     DashAttack,
 }
 
 pub mod dash_attack;
+pub mod forward_cannons;
 pub mod shockwave;
 pub mod shotgun_cannons;

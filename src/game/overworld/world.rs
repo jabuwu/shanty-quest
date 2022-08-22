@@ -55,7 +55,7 @@ fn world_spawn(
             town: TownData {
                 name: "Raven Rock".to_string(),
                 position: Vec2::new(70., 250.),
-                spawn_offset: Vec2::new(0., 300.),
+                spawn_offset: Vec2::new(0., -300.),
             },
         });
     }

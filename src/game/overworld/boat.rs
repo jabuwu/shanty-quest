@@ -21,7 +21,7 @@ impl Plugin for BoatPlugin {
                     .label(BoatSystems::Update)
                     .label(CharacterControllerSystems::Update),
             )
-            .add_system(boat_jam)
+            .add_system(boat_attack)
             .add_system(boat_debug);
     }
 }
@@ -30,16 +30,18 @@ impl Plugin for BoatPlugin {
 pub struct BoatSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
-    pub attack: Attack,
+    pub special_attack: SpecialAttack,
 }
 
 #[derive(Component)]
 pub struct Boat {
     pub movement: Vec2,
+    pub direction: f32,
     pub speed: f32,
     pub facing: Facing,
     pub ring_timer: f32,
-    pub attack: Attack,
+    pub special_attack: SpecialAttack,
+    pub special_shoot: bool,
     pub shoot: bool,
 }
 
@@ -49,7 +51,7 @@ pub struct BoatSprite;
 fn boat_spawn(
     mut ev_spawn: EventReader<BoatSpawnEvent>,
     mut commands: Commands,
-    mut _ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
+    mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
     asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_spawn.iter() {
@@ -78,10 +80,12 @@ fn boat_spawn(
             .insert(Transform2::from_translation(event.position))
             .insert(Boat {
                 movement: Vec2::ZERO,
+                direction: 0.,
                 speed: 200.,
                 facing: Facing::East,
                 ring_timer: RING_SPAWN_INTEVAL,
-                attack: event.attack,
+                special_attack: event.special_attack,
+                special_shoot: false,
                 shoot: false,
             })
             .insert(Collision {
@@ -94,15 +98,23 @@ fn boat_spawn(
                 movement: Vec2::ZERO,
                 speed: 200.,
             })
-            .insert(Health::new(100.))
+            .insert(ForwardCannons::default())
             .insert(ShotgunCannons::default())
             .insert(Shockwave::default())
             .insert(DashAttack::default())
+            .insert(Health::new(100.))
+            .insert(Hitbox {
+                shape: CollisionShape::Rect {
+                    size: Vec2::new(100., 100.),
+                },
+                for_entity: None,
+            })
             .add_child(sprite_entity);
-        /*ev_healthbar_spawn.send(HealthbarSpawnEvent {
+        ev_healthbar_spawn.send(HealthbarSpawnEvent {
             entity: Some(boat_entity.id()),
             offset: Vec2::new(0., 125.),
-        });*/
+            size: Vec2::new(100., 20.),
+        });
     }
 }
 
@@ -123,7 +135,7 @@ fn boat_update(
     {
         character_controller.movement = boat.movement;
         character_controller.speed = boat.speed;
-        if let Some(facing) = Facing::from_vec(boat.movement) {
+        if let Some(facing) = Facing::from_vec(Vec2::from_angle(boat.direction)) {
             boat.facing = facing;
         }
         for child in children.iter() {
@@ -183,22 +195,29 @@ fn boat_update(
     }
 }
 
-fn boat_jam(
+fn boat_attack(
     mut query: Query<(
         &mut Boat,
+        &mut ForwardCannons,
         &mut ShotgunCannons,
         &mut Shockwave,
         &mut DashAttack,
     )>,
 ) {
-    for (mut boat, mut shotgun_cannons, mut shockwave, mut dash_attack) in query.iter_mut() {
+    for (mut boat, mut forward_cannons, mut shotgun_cannons, mut shockwave, mut dash_attack) in
+        query.iter_mut()
+    {
         if boat.shoot {
-            match boat.attack {
-                Attack::ShotgunCannons => shotgun_cannons.shoot = true,
-                Attack::Shockwave => shockwave.shoot = true,
-                Attack::DashAttack => dash_attack.shoot = true,
-            }
             boat.shoot = false;
+            forward_cannons.shoot = true;
+        }
+        if boat.special_shoot {
+            boat.special_shoot = false;
+            match boat.special_attack {
+                SpecialAttack::ShotgunCannons => shotgun_cannons.shoot = true,
+                SpecialAttack::Shockwave => shockwave.shoot = true,
+                SpecialAttack::DashAttack => dash_attack.shoot = true,
+            }
         }
     }
 }
@@ -221,15 +240,23 @@ fn boat_debug(
                     ui.label(format!("Facing: {:?}", boat.facing));
                     ui.label("Attack");
                     egui::ComboBox::new(format!("{}", entity.id()), "")
-                        .selected_text(format!("{:?}", boat.attack))
+                        .selected_text(format!("{:?}", boat.special_attack))
                         .show_ui(ui, |ui| {
                             ui.selectable_value(
-                                &mut boat.attack,
-                                Attack::ShotgunCannons,
+                                &mut boat.special_attack,
+                                SpecialAttack::ShotgunCannons,
                                 "ShotgunCannons",
                             );
-                            ui.selectable_value(&mut boat.attack, Attack::Shockwave, "Shockwave");
-                            ui.selectable_value(&mut boat.attack, Attack::DashAttack, "DashAttack");
+                            ui.selectable_value(
+                                &mut boat.special_attack,
+                                SpecialAttack::Shockwave,
+                                "Shockwave",
+                            );
+                            ui.selectable_value(
+                                &mut boat.special_attack,
+                                SpecialAttack::DashAttack,
+                                "DashAttack",
+                            );
                         });
                 }
             });
