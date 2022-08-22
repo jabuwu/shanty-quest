@@ -7,7 +7,6 @@ pub use super::{
             shotgun_cannons::ShotgunCannons,
             Attack,
         },
-        band_jam::{BandJam, BandJamSpawnEvent},
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         character_controller::{CharacterController, CharacterControllerSystems},
         depth_layers::*,

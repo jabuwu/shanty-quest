@@ -11,3 +11,17 @@ pub enum AppState {
     TownMayor,
     TownConcertHall,
 }
+
+impl AppState {
+    pub fn is_town(&self) -> bool {
+        match *self {
+            Self::Loading => false,
+            Self::MainMenu => false,
+            Self::Overworld => false,
+            Self::TownOutside => true,
+            Self::TownTavern => true,
+            Self::TownMayor => true,
+            Self::TownConcertHall => true,
+        }
+    }
+}

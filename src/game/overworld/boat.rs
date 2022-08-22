@@ -40,6 +40,7 @@ pub struct Boat {
     pub facing: Facing,
     pub ring_timer: f32,
     pub attack: Attack,
+    pub shoot: bool,
 }
 
 #[derive(Component)]
@@ -79,6 +80,7 @@ fn boat_spawn(
                 facing: Facing::East,
                 ring_timer: RING_SPAWN_INTEVAL,
                 attack: event.attack,
+                shoot: false,
             })
             .insert(YDepth::default())
             .insert(Collision {
@@ -181,34 +183,21 @@ fn boat_update(
 }
 
 fn boat_jam(
-    mut query: Query<
-        (
-            &mut BandJam,
-            &Boat,
-            &mut ShotgunCannons,
-            &mut Shockwave,
-            &mut DashAttack,
-            &Children,
-        ),
-        With<Boat>,
-    >,
-    mut children_query: Query<&mut Transform2, With<BoatSprite>>,
+    mut query: Query<(
+        &mut Boat,
+        &mut ShotgunCannons,
+        &mut Shockwave,
+        &mut DashAttack,
+    )>,
 ) {
-    for (mut band_jam, boat, mut shotgun_cannons, mut shockwave, mut dash_attack, children) in
-        query.iter_mut()
-    {
-        for child in children.iter() {
-            if let Ok(mut transform) = children_query.get_mut(*child) {
-                transform.scale = Vec2::new(0.6, 0.6) + Vec2::new(0.1, 0.1) * band_jam.intensity;
-            }
-        }
-        if band_jam.cannons {
+    for (mut boat, mut shotgun_cannons, mut shockwave, mut dash_attack) in query.iter_mut() {
+        if boat.shoot {
             match boat.attack {
                 Attack::ShotgunCannons => shotgun_cannons.shoot = true,
                 Attack::Shockwave => shockwave.shoot = true,
                 Attack::DashAttack => dash_attack.shoot = true,
             }
-            band_jam.cannons = false;
+            boat.shoot = false;
         }
     }
 }

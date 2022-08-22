@@ -13,9 +13,6 @@ pub struct SoundEffects {
     // overworld
     pub sfx_overworld_ambient: AudioPlusSoundEffect,
     pub sfx_overworld_music: AudioPlusSoundEffect,
-    pub sfx_jam_guitar_drums: AudioPlusSoundEffect,
-    pub sfx_jam_guitar_flute: AudioPlusSoundEffect,
-    pub sfx_jam_drums_flute: AudioPlusSoundEffect,
 
     // town
     pub sfx_town_ambient: AudioPlusSoundEffect,
@@ -54,26 +51,23 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_overworld_ambient: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_sea.clone()],
-            volume: 0.2,
+            volume: 1.0,
             ..Default::default()
         },
-        sfx_overworld_music: AudioPlusSoundEffect::none(),
-        sfx_jam_guitar_drums: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.music_guitar_drums.clone()],
+        sfx_overworld_music: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.menu_music.clone()],
             volume: 0.2,
-            ..Default::default()
-        },
-        sfx_jam_guitar_flute: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.music_guitar_flute.clone()],
-            volume: 0.2,
-            ..Default::default()
-        },
-        sfx_jam_drums_flute: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.music_drums_flute.clone()],
-            volume: 0.2,
+            fade_in: 0.2,
+            fade_out: 0.2,
             ..Default::default()
         },
         sfx_town_ambient: AudioPlusSoundEffect::none(),
-        sfx_town_music: AudioPlusSoundEffect::none(),
+        sfx_town_music: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.menu_music.clone()],
+            volume: 0.2,
+            fade_in: 0.2,
+            fade_out: 0.2,
+            ..Default::default()
+        },
     }
 }

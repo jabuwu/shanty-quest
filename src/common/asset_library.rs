@@ -40,7 +40,7 @@ pub struct AssetLibrary {
     pub menu_sprite_back: Handle<Image>,
     #[asset("sprites/logo.png")]
     pub menu_sprite_logo: Handle<Image>,
-    #[asset("sprites/Vfx_shine.png")]
+    #[asset("sprites/vfx_shine.png")]
     pub menu_sprite_shine: Handle<Image>,
     #[asset("sprites/but_back_a.png")]
     pub menu_sprite_button_back: Handle<Image>,
@@ -84,13 +84,6 @@ pub struct AssetLibrary {
 
     #[asset("sprites/ShockwaveVFX.png")]
     pub sprite_shockwave_vfx: Handle<Image>,
-
-    #[asset("music/guitar_drums.ogg")]
-    pub music_guitar_drums: Handle<AudioSource>,
-    #[asset("music/guitar_flute.ogg")]
-    pub music_guitar_flute: Handle<AudioSource>,
-    #[asset("music/drums_flute.ogg")]
-    pub music_drums_flute: Handle<AudioSource>,
 
     /********
      * Town *

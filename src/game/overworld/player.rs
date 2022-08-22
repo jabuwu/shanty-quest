@@ -30,7 +30,6 @@ pub struct Player;
 fn player_spawn(
     mut ev_spawn: EventReader<PlayerSpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
-    mut ev_band_jam_spawn: EventWriter<BandJamSpawnEvent>,
     mut commands: Commands,
     game_state: Res<GameState>,
 ) {
@@ -46,23 +45,22 @@ fn player_spawn(
             position: game_state.town.position + game_state.town.spawn_offset,
             attack: game_state.band_attack_type(),
         });
-        ev_band_jam_spawn.send(BandJamSpawnEvent {
-            entity: Some(entity),
-        });
     }
 }
 
 fn player_controls(
-    mut query: Query<(&mut Boat, &mut BandJam, &GlobalTransform), With<Player>>,
-    input: Res<Input<KeyCode>>,
+    mut query: Query<(&mut Boat, &GlobalTransform), With<Player>>,
     mouse: Res<Mouse>,
+    input: Res<Input<MouseButton>>,
 ) {
     if query.is_empty() {
         return;
     }
-    for (mut boat, mut band_jam, global_transform) in query.iter_mut() {
+    for (mut boat, global_transform) in query.iter_mut() {
         boat.movement = (mouse.position - global_transform.translation().truncate()) / 200.;
-        band_jam.jamming = input.pressed(KeyCode::Space);
+        if input.just_pressed(MouseButton::Left) {
+            boat.shoot = true;
+        }
     }
 }
 
