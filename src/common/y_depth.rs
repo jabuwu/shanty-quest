@@ -12,8 +12,8 @@ impl Plugin for YDepthPlugin {
 #[derive(Default, Component)]
 pub struct YDepth;
 
-pub fn y_depth(mut query: Query<&mut Transform2, With<YDepth>>) {
-    for mut transform in query.iter_mut() {
-        transform.depth = 0.5 - transform.translation.y / 10000.;
+pub fn y_depth(mut query: Query<(&mut Transform2, &GlobalTransform), With<YDepth>>) {
+    for (mut transform, global_transform) in query.iter_mut() {
+        transform.depth = 0.5 - global_transform.translation().y / 10000.;
     }
 }

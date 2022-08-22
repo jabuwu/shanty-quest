@@ -3,10 +3,11 @@ use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 const LOGO_POSITION: Vec2 = Vec2::new(0., 115.);
-const LOGO_SCALE: Vec2 = Vec2::new(0.80, 0.80);
+const LOGO_SCALE: Vec2 = Vec2::new(0.84, 0.84);
 const LOGO_MOVEMENT_GROW: Vec2 = Vec2::new(1., 1.4);
-const BUTTON_SCALE: Vec2 = Vec2::new(0.57, 0.57);
+const BUTTON_SCALE: Vec2 = Vec2::new(0.72, 0.72);
 const BUTTON_POSITION: Vec2 = Vec2::new(30., -200.);
+const BUTTON_TEXT_SCALE: Vec2 = Vec2::new(0.8, 0.8);
 
 pub struct MainMenuPlugin;
 
@@ -172,7 +173,11 @@ fn menu_setup(mut commands: Commands, asset_library: Res<AssetLibrary>) {
                     texture: asset_library.menu_sprite_button_play_normal.clone(),
                     ..Default::default()
                 })
-                .insert(Transform2::new().with_depth((DepthLayer::Front, 0.4)))
+                .insert(
+                    Transform2::new()
+                        .with_scale(BUTTON_TEXT_SCALE)
+                        .with_depth((DepthLayer::Front, 0.4)),
+                )
                 .insert(ButtonText {
                     normal: asset_library.menu_sprite_button_play_normal.clone(),
                     hover: asset_library.menu_sprite_button_play_hover.clone(),

@@ -49,7 +49,7 @@ fn character_controller_update(
             if velocity.length_squared() > 1. {
                 velocity = velocity.normalize();
             }
-            velocity *= 200. * time.delta_seconds();
+            velocity *= character_controller.speed * time.delta_seconds();
             if let Some(dash) = dash {
                 velocity += dash.velocity * time.delta_seconds();
             }

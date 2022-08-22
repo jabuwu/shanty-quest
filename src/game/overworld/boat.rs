@@ -64,6 +64,8 @@ fn boat_spawn(
                     .with_scale(Vec2::new(0.6, 0.6)),
             )
             .insert(BoatSprite)
+            .insert(YDepth::default())
+            .insert(Label("Boat Sprite".into()))
             .id();
         let mut boat_entity = if let Some(entity) = event.entity {
             commands.entity(entity)
@@ -82,7 +84,6 @@ fn boat_spawn(
                 attack: event.attack,
                 shoot: false,
             })
-            .insert(YDepth::default())
             .insert(Collision {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(100., 100.),
