@@ -50,6 +50,15 @@ pub struct AssetLibrary {
     #[asset("sprites/ShockwaveVFX.png")]
     pub sprite_shockwave_vfx: Handle<Image>,
 
+    #[asset("sprites/City1_BG.png")]
+    pub sprite_town_bg: Handle<Image>,
+    #[asset("sprites/City1_Tavern_Outline.png")]
+    pub sprite_town_tavern_outline: Handle<Image>,
+    #[asset("sprites/City1_Mayor_Outline.png")]
+    pub sprite_town_mayor_outline: Handle<Image>,
+    #[asset("sprites/City1_ConcertHall_Outline.png")]
+    pub sprite_town_concert_hall_outline: Handle<Image>,
+
     #[asset("sprites/BandSelection_BG.png")]
     pub sprite_band_selection_bg: Handle<Image>,
     #[asset("sprites/BandSelectionGUI_LockedSlot.png")]

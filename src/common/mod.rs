@@ -18,6 +18,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(y_depth::YDepthPlugin)
             .add_plugin(collision::CollisionPlugin)
             .add_plugin(time_to_live::TimeToLivePlugin)
+            .add_plugin(clickable::ClickablePlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_startup_system(asset_hot_reloading);
@@ -31,6 +32,7 @@ fn asset_hot_reloading(asset_server: Res<AssetServer>) {
 pub mod app_state;
 pub mod asset_library;
 pub mod assets;
+pub mod clickable;
 pub mod collision;
 pub mod entity_debug;
 pub mod facing;

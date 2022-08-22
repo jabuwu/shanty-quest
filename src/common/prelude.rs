@@ -2,6 +2,7 @@ pub use super::{
     app_state::AppState,
     asset_library::AssetLibrary,
     assets::ldtk::LdtkAsset,
+    clickable::Clickable,
     collision::{
         shape::CollisionShape, Collision, CollisionFilter, CollisionQuery, COLLISION_FLAG,
     },
