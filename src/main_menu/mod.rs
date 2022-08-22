@@ -141,11 +141,12 @@ fn menu_button(
     input: Res<Input<MouseButton>>,
 ) {
     for (mut button, transform, children, mut transform2) in button_query.iter_mut() {
-        let hover = button.shape.overlaps(
-            transform.translation().truncate(),
-            CollisionShape::Point,
-            mouse.position,
-        );
+        let hover = !button.disabled
+            && button.shape.overlaps(
+                transform.translation().truncate(),
+                CollisionShape::Point,
+                mouse.position,
+            );
         if hover != button.last_hover {
             if hover && !button.clicked {
                 play_sound(button.audio_hover, &mut sfx_query);
