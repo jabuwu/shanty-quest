@@ -31,6 +31,7 @@ pub struct BoatSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
     pub attack: Attack,
+    pub healthbar: bool,
 }
 
 #[derive(Component)]
@@ -49,7 +50,7 @@ pub struct BoatSprite;
 fn boat_spawn(
     mut ev_spawn: EventReader<BoatSpawnEvent>,
     mut commands: Commands,
-    mut _ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
+    mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
     asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_spawn.iter() {
@@ -99,10 +100,12 @@ fn boat_spawn(
             .insert(Shockwave::default())
             .insert(DashAttack::default())
             .add_child(sprite_entity);
-        /*ev_healthbar_spawn.send(HealthbarSpawnEvent {
-            entity: Some(boat_entity.id()),
-            offset: Vec2::new(0., 125.),
-        });*/
+        if event.healthbar {
+            ev_healthbar_spawn.send(HealthbarSpawnEvent {
+                entity: Some(boat_entity.id()),
+                offset: Vec2::new(0., 125.),
+            });
+        }
     }
 }
 

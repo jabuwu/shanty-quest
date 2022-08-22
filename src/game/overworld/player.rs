@@ -44,6 +44,7 @@ fn player_spawn(
             entity: Some(entity),
             position: game_state.town.position + game_state.town.spawn_offset,
             attack: game_state.band_attack_type(),
+            healthbar: false,
         });
     }
 }
