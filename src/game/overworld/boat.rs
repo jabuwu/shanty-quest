@@ -31,6 +31,7 @@ pub struct BoatSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
     pub special_attack: SpecialAttack,
+    pub healthbar: bool,
 }
 
 #[derive(Component)]
@@ -110,11 +111,13 @@ fn boat_spawn(
                 for_entity: None,
             })
             .add_child(sprite_entity);
-        ev_healthbar_spawn.send(HealthbarSpawnEvent {
-            entity: Some(boat_entity.id()),
-            offset: Vec2::new(0., 125.),
-            size: Vec2::new(100., 20.),
-        });
+        if event.healthbar {
+            ev_healthbar_spawn.send(HealthbarSpawnEvent {
+                entity: Some(boat_entity.id()),
+                offset: Vec2::new(0., 125.),
+                size: Vec2::new(100., 20.),
+            });
+        }
     }
 }
 

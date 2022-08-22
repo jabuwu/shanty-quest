@@ -33,6 +33,7 @@ fn enemy_spawn(
             entity: Some(entity),
             position: Vec2::new(600., 600.),
             special_attack: SpecialAttack::ShotgunCannons,
+            healthbar: true,
         });
     }
 }
