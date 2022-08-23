@@ -31,7 +31,7 @@ pub fn init(
     commands.spawn_bundle(Camera2dBundle::default());
     ev_spawn_ldtk.send(LdtkSpawnEvent {
         entity: None,
-        asset: asset_library.level_test.clone(),
+        asset: asset_library.level.clone(),
         position: Vec2::new(-800., 350.),
     });
 }
