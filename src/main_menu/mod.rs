@@ -23,7 +23,8 @@ impl Plugin for MainMenuPlugin {
             .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(menu_fade))
             .add_system(menu_logo)
             .add_system(menu_shine)
-            .add_system(menu_button);
+            .add_system(menu_button)
+            .add_system(menu_background_move);
     }
 }
 
@@ -56,6 +57,9 @@ struct Logo {
 struct Shine {
     x: f32,
 }
+
+#[derive(Component)]
+struct Background;
 
 fn menu_setup(
     mut menu_state: ResMut<MenuState>,
@@ -107,9 +111,11 @@ fn menu_setup(
         })
         .insert(
             Transform2::new()
-                .with_scale(Vec2::ONE * 0.71)
-                .with_depth((DepthLayer::Front, 0.)),
-        );
+                .with_scale(Vec2::ONE * 0.73)
+                .with_depth((DepthLayer::Front, 0.))
+                .without_pixel_perfect(),
+        )
+        .insert(Background);
     commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
@@ -283,5 +289,18 @@ fn menu_fade(
     if menu_state.play && screen_fade.faded_out() {
         *game_state = GameState::default();
         app_state.set(AppState::IntroCutscene).unwrap();
+    }
+}
+
+fn menu_background_move(mut query: Query<&mut Transform2, With<Background>>, time: Res<Time>) {
+    for mut transform in query.iter_mut() {
+        let time = time.time_since_startup().as_secs_f32();
+        let time_x = (time * 0.1) % 2.;
+        let time_y = (time * 0.12) % 2.;
+        let baf_x = if time_x < 1. { time_x } else { 2.0 - time_x };
+        let baf_y = if time_y < 1. { time_y } else { 2.0 - time_y };
+        let x = ease(Easing::BackInOut, baf_x) * 10. - 5.;
+        let y = ease(Easing::BackInOut, baf_y) * 10. - 5.;
+        transform.translation = Vec2::new(x, y);
     }
 }
