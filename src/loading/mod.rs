@@ -64,6 +64,7 @@ pub fn loading_update(
     mut app_state: ResMut<State<AppState>>,
     asset_library: Res<AssetLibrary>,
     asset_server: Res<AssetServer>,
+    mut screen_fade: ResMut<ScreenFade>,
 ) {
     use bevy::asset::LoadState;
     match asset_library.load_state(&asset_server) {
@@ -71,6 +72,7 @@ pub fn loading_update(
             panic!("Failed to load assets.");
         }
         LoadState::Loaded => {
+            screen_fade.enable();
             app_state.set(AppState::MainMenu).unwrap();
         }
         _ => {}

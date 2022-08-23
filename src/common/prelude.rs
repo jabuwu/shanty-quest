@@ -8,7 +8,8 @@ pub use super::{
     },
     component_child::{ComponentChild, ComponentChildCreatedEvent},
     cutscene::{
-        AddAppCutscene, Cutscene, CutsceneBuilder, CutsceneContinueEvent, CutsceneStartEvent,
+        AddAppCutscene, Cutscene, CutsceneBuilder, CutsceneContinueEvent, CutsceneSkipEvent,
+        CutsceneStartEvent,
     },
     easing::*,
     facing::Facing,
