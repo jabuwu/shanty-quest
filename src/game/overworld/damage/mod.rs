@@ -101,7 +101,7 @@ fn damage_auto_die(
         if let Ok((entity, mut health, mut auto_damage)) = crate_query.get_mut(event.hit) {
             if auto_damage.invincibility == 0. {
                 health.damage(1.);
-                auto_damage.invincibility = 1.;
+                auto_damage.invincibility = 0.3;
             }
             if health.dead() {
                 commands.entity(entity).despawn_recursive();
