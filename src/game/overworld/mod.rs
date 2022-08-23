@@ -19,6 +19,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(attacks::AttacksPlugin)
             .add_plugin(damage::DamagePlugin)
             .add_plugin(cutscenes::CutscenesPlugin)
+            .add_plugin(octopus::OctopusPlugin)
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
             .add_system_set(SystemSet::on_update(AppState::Overworld).with_system(overworld_update))
@@ -37,6 +38,7 @@ fn overworld_init(
     mut commands: Commands,
     mut ev_player_spawn: EventWriter<PlayerSpawnEvent>,
     mut ev_enemy_spawn: EventWriter<EnemySpawnEvent>,
+    mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
     asset_library: Res<AssetLibrary>,
     mut ev_cutscene_example_dialogue: EventWriter<CutsceneStartEvent<ExampleDialogueCutscene>>,
@@ -48,13 +50,10 @@ fn overworld_init(
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     ev_player_spawn.send_default();
     ev_enemy_spawn.send(EnemySpawnEvent {
-        position: Vec2::new(100., -300.),
-    });
-    ev_enemy_spawn.send(EnemySpawnEvent {
         position: Vec2::new(500., -400.),
     });
-    ev_enemy_spawn.send(EnemySpawnEvent {
-        position: Vec2::new(300., -600.),
+    ev_octopus_spawn.send(OctopusSpawnEvent {
+        position: Vec2::new(100., -400.),
     });
     ev_world_load.send_default();
     commands
@@ -105,6 +104,7 @@ pub mod enemy;
 pub mod health;
 pub mod healthbar;
 pub mod ocean;
+pub mod octopus;
 pub mod player;
 pub mod town;
 pub mod water_ring;

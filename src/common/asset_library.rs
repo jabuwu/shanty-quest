@@ -90,6 +90,10 @@ pub struct AssetLibrary {
     #[asset("sprites/ShockwaveVFX.png")]
     pub sprite_shockwave_vfx: Handle<Image>,
 
+    #[asset("sprites/Octopus.png")]
+    pub sprite_octopus: Handle<Image>,
+    pub sprite_octopus_atlas: Handle<TextureAtlas>,
+
     /********
      * Town *
      ********/
@@ -132,6 +136,10 @@ impl AssetLibrary {
         let texture_atlas =
             TextureAtlas::from_grid(self.sprite_ship.clone(), Vec2::new(250., 350.), 5, 1);
         self.sprite_ship_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_octopus.clone(), Vec2::new(162., 130.), 2, 1);
+        self.sprite_octopus_atlas = texture_atlas_assets.add(texture_atlas);
     }
 
     pub fn create_sound_effects(&mut self) {

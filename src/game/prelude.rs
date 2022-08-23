@@ -17,6 +17,7 @@ pub use super::{
         health::Health,
         healthbar::{Healthbar, HealthbarSpawnEvent},
         ocean::{Ocean, OceanSpawnEvent},
+        octopus::{Octopus, OctopusSpawnEvent},
         player::{Player, PlayerSpawnEvent, PlayerSystems},
         town::{Town, TownSpawnEvent},
         water_ring::{WaterRing, WaterRingSpawnEvent},
