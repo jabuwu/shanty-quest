@@ -1,7 +1,7 @@
-use std::collections::VecDeque;
-
 use crate::common::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
+use std::collections::VecDeque;
 
 pub struct DialoguePlugin;
 
@@ -63,6 +63,9 @@ fn dialogue_init(
                 color: Color::rgba(0., 0., 0., 0.97).into(),
                 ..Default::default()
             })
+            .insert(AudioPlusSource::new(
+                asset_library.sound_effects.sfx_dialogue_progress.clone(),
+            ))
             .insert(DialogueBack)
             .insert(Persistent)
             .with_children(|parent| {
@@ -100,10 +103,14 @@ fn dialogue_update(
     mut dialogue: ResMut<Dialogue>,
     mut back_query: Query<&mut Visibility, With<DialogueBack>>,
     mut text_query: Query<&mut Text, With<DialogueText>>,
+    mut sound_query: Query<&mut AudioPlusSource, With<DialogueBack>>,
     input: Res<Input<KeyCode>>,
 ) {
     if input.just_pressed(KeyCode::Space) {
         dialogue.texts.pop_front();
+        for mut sound in sound_query.iter_mut() {
+            sound.play();
+        }
     }
     if let Some(text) = dialogue.texts.get(0) {
         for mut back_visibility in back_query.iter_mut() {

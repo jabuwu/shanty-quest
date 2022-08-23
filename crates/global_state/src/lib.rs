@@ -37,7 +37,7 @@ where
     T: Resource,
 {
     pub fn just_entered(&self) -> bool {
-        self.time < 0.5
+        self.time < 0.1
     }
 }
 

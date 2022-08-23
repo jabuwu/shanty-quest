@@ -59,7 +59,7 @@ pub fn loading_update(
                 screen_fade.fade_out(0.1);
             }
             if screen_fade.faded_out() {
-                app_state.set(AppState::Overworld).unwrap();
+                app_state.set(AppState::MainMenu).unwrap();
                 ev_dialogue_init.send_default();
             }
         }

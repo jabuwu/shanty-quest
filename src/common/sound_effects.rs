@@ -7,6 +7,9 @@ pub struct SoundEffects {
     pub sfx_placeholder_music: AudioPlusSoundEffect,
     pub sfx_placeholder_sound: AudioPlusSoundEffect,
 
+    // generic
+    pub sfx_dialogue_progress: AudioPlusSoundEffect,
+
     // main menu
     pub sfx_menu_ambient: AudioPlusSoundEffect,
     pub sfx_menu_music: AudioPlusSoundEffect,
@@ -23,6 +26,8 @@ pub struct SoundEffects {
     // town
     pub sfx_town_ambient: AudioPlusSoundEffect,
     pub sfx_town_music: AudioPlusSoundEffect,
+    pub sfx_town_outside_hover: AudioPlusSoundEffect,
+    pub sfx_town_outside_click: AudioPlusSoundEffect,
 }
 
 pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
@@ -33,6 +38,11 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             ..Default::default()
         },
         sfx_placeholder_sound: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            volume: 1.0,
+            ..Default::default()
+        },
+        sfx_dialogue_progress: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
             volume: 1.0,
             ..Default::default()
@@ -89,6 +99,16 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             volume: 0.2,
             fade_in: 0.2,
             fade_out: 0.2,
+            ..Default::default()
+        },
+        sfx_town_outside_hover: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.menu_sfx_button_hover.clone()],
+            volume: 1.,
+            ..Default::default()
+        },
+        sfx_town_outside_click: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.menu_sfx_button_click.clone()],
+            volume: 1.,
             ..Default::default()
         },
     }

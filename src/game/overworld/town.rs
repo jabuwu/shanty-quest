@@ -48,8 +48,8 @@ fn town_spawn(
                             event.town.name.clone(),
                             TextStyle {
                                 font: asset_library.font_default.clone(),
-                                font_size: 32.0,
-                                color: Color::WHITE,
+                                font_size: 48.0,
+                                color: Color::BLACK,
                             },
                         )
                         .with_alignment(TextAlignment {
@@ -58,7 +58,7 @@ fn town_spawn(
                         }),
                         ..Default::default()
                     })
-                    .insert(Transform2::from_xy(0., 50.).with_depth((DepthLayer::Front, 0.)));
+                    .insert(Transform2::from_xy(0., 130.).with_depth((DepthLayer::Front, 0.)));
             });
     }
 }

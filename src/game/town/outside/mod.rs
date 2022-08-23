@@ -1,12 +1,20 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
+
+#[derive(Default)]
+pub struct OutsideState {
+    leave: bool,
+}
 
 pub struct OutsidePlugin;
 
 impl Plugin for OutsidePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(AppState::TownOutside).with_system(outside_init))
+        app.init_resource::<OutsideState>()
+            .add_system_set(SystemSet::on_enter(AppState::TownOutside).with_system(outside_init))
+            .add_system_set(SystemSet::on_update(AppState::TownOutside).with_system(outside_leave))
             .add_system(outside_click);
     }
 }
@@ -15,6 +23,7 @@ impl Plugin for OutsidePlugin {
 struct ClickableItem {
     click_priority: i32,
     action: ClickableAction,
+    last_hover: bool,
 }
 
 #[derive(PartialEq, Eq, Debug)]
@@ -25,12 +34,32 @@ enum ClickableAction {
     Leave,
 }
 
+#[derive(Component)]
+struct HoverSound;
+
+#[derive(Component)]
+struct ClickSound;
+
 fn outside_init(
+    mut state: ResMut<OutsideState>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
     game_state: Res<GameState>,
 ) {
+    *state = OutsideState::default();
     commands.spawn_bundle(Camera2dBundle::default());
+    commands
+        .spawn()
+        .insert(AudioPlusSource::new(
+            asset_library.sound_effects.sfx_town_outside_hover.clone(),
+        ))
+        .insert(HoverSound);
+    commands
+        .spawn()
+        .insert(AudioPlusSource::new(
+            asset_library.sound_effects.sfx_town_outside_click.clone(),
+        ))
+        .insert(ClickSound);
     commands
         .spawn_bundle(SpriteBundle {
             texture: asset_library.sprite_town_bg.clone(),
@@ -51,6 +80,7 @@ fn outside_init(
         .insert(ClickableItem {
             click_priority: 1,
             action: ClickableAction::Tavern,
+            last_hover: false,
         })
         .insert(Clickable::new(CollisionShape::Rect {
             size: Vec2::new(300., 350.),
@@ -73,6 +103,7 @@ fn outside_init(
         .insert(ClickableItem {
             click_priority: 0,
             action: ClickableAction::Mayor,
+            last_hover: false,
         })
         .insert(Clickable::new(CollisionShape::Rect {
             size: Vec2::new(550., 300.),
@@ -95,6 +126,7 @@ fn outside_init(
         .insert(ClickableItem {
             click_priority: 0,
             action: ClickableAction::ConcertHall,
+            last_hover: false,
         })
         .insert(Clickable::new(CollisionShape::Rect {
             size: Vec2::new(500., 425.),
@@ -129,6 +161,7 @@ fn outside_init(
         .insert(ClickableItem {
             click_priority: 0,
             action: ClickableAction::Leave,
+            last_hover: false,
         })
         .insert(Transform2::from_xy(470., -330.).with_depth((DepthLayer::Front, 0.2)));
     commands
@@ -154,25 +187,49 @@ fn outside_click(
     mut query: Query<(
         &mut Visibility,
         &Clickable,
-        &ClickableItem,
+        &mut ClickableItem,
         Option<&mut Text>,
     )>,
     mut app_state: ResMut<State<AppState>>,
     mut input: ResMut<Input<MouseButton>>,
+    mut screen_fade: ResMut<ScreenFade>,
+    mut state: ResMut<OutsideState>,
+    mut sound_query: ParamSet<(
+        Query<&mut AudioPlusSource, With<HoverSound>>,
+        Query<&mut AudioPlusSource, With<ClickSound>>,
+    )>,
+    state_time: Res<StateTime<AppState>>,
 ) {
+    if state_time.just_entered() || state.leave {
+        return;
+    }
     let mut highest_priority = -1;
     for (_, clickable, clickable_item, _) in query.iter_mut() {
         if clickable.hovered && clickable_item.click_priority > highest_priority {
             highest_priority = clickable_item.click_priority;
         }
     }
-    for (mut visibility, clickable, clickable_item, mut text) in query.iter_mut() {
+    for (mut visibility, clickable, mut clickable_item, mut text) in query.iter_mut() {
         if let Some(text) = text.as_mut() {
             text.sections[0].style.color = Color::BLACK;
         } else {
             visibility.is_visible = false;
         }
-        if clickable.hovered && highest_priority == clickable_item.click_priority {
+        let hovered = clickable.hovered && highest_priority == clickable_item.click_priority;
+        if hovered != clickable_item.last_hover {
+            clickable_item.last_hover = hovered;
+            if hovered {
+                for mut sound in sound_query.p0().iter_mut() {
+                    sound.play();
+                }
+            }
+        }
+        if hovered && clickable.just_clicked() {
+            for mut sound in sound_query.p1().iter_mut() {
+                sound.play();
+            }
+        }
+        if hovered {
             if let Some(text) = text.as_mut() {
                 text.sections[0].style.color = Color::WHITE;
             } else {
@@ -191,10 +248,21 @@ fn outside_click(
                         app_state.set(AppState::TownConcertHall).unwrap();
                     }
                     ClickableAction::Leave => {
-                        app_state.set(AppState::Overworld).unwrap();
+                        screen_fade.fade_out(1.);
+                        state.leave = true;
                     }
                 }
             }
         }
+    }
+}
+
+fn outside_leave(
+    state: Res<OutsideState>,
+    screen_fade: Res<ScreenFade>,
+    mut app_state: ResMut<State<AppState>>,
+) {
+    if state.leave && screen_fade.faded_out() {
+        app_state.set(AppState::Overworld).unwrap();
     }
 }

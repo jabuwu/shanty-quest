@@ -6,7 +6,7 @@ const LOGO_POSITION: Vec2 = Vec2::new(0., 115.);
 const LOGO_SCALE: Vec2 = Vec2::new(0.84, 0.84);
 const LOGO_MOVEMENT_GROW: Vec2 = Vec2::new(1., 1.4);
 const BUTTON_SCALE: Vec2 = Vec2::new(0.72, 0.72);
-const BUTTON_POSITION: Vec2 = Vec2::new(30., -200.);
+const BUTTON_POSITION: Vec2 = Vec2::new(80., -200.);
 const BUTTON_TEXT_SCALE: Vec2 = Vec2::new(0.8, 0.8);
 
 #[derive(Default)]
@@ -72,7 +72,6 @@ fn menu_setup(
     *menu_state = MenuState::default();
     cutscenes.clear();
     dialogue.clear();
-    screen_fade.set(1.);
     screen_fade.fade_in(1.);
     commands.spawn_bundle(Camera2dBundle::default());
     commands
@@ -191,7 +190,7 @@ fn menu_setup(
                     ..Default::default()
                 })
                 .insert(
-                    Transform2::from_xy(-220., 12.)
+                    Transform2::from_xy(-210., 12.)
                         .with_scale(Vec2::ONE * 1.2)
                         .with_depth((DepthLayer::Front, 0.4)),
                 );

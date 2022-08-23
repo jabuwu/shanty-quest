@@ -93,8 +93,10 @@ fn screen_fade_update(
                 .set_a(ease(Easing::CubicInOut, screen_fade.opacity));
             if screen_fade.opacity == 1. {
                 screen_fade.state = ScreenFadeState::FadedOut;
+                screen_fade.speed = 0.;
             } else if screen_fade.opacity == 0. {
                 screen_fade.state = ScreenFadeState::FadedIn;
+                screen_fade.speed = 0.;
             } else {
                 screen_fade.state = ScreenFadeState::Fading;
             }
