@@ -107,9 +107,10 @@ fn dialogue_update(
     input: Res<Input<KeyCode>>,
 ) {
     if input.just_pressed(KeyCode::Space) {
-        dialogue.texts.pop_front();
-        for mut sound in sound_query.iter_mut() {
-            sound.play();
+        if dialogue.texts.pop_front().is_some() {
+            for mut sound in sound_query.iter_mut() {
+                sound.play();
+            }
         }
     }
     if let Some(text) = dialogue.texts.get(0) {
