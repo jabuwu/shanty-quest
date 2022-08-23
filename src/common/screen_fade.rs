@@ -50,6 +50,10 @@ impl ScreenFade {
         matches!(self.state, ScreenFadeState::FadedOut)
     }
 
+    pub fn fading(&mut self) -> bool {
+        self.speed != 0.
+    }
+
     pub fn set(&mut self, opacity: f32) {
         self.opacity = opacity;
     }

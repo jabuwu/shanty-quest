@@ -22,42 +22,22 @@ fn loading_init(
     asset_library.create_sound_effects();
     commands.spawn_bundle(Camera2dBundle::default());
     commands
-        .spawn_bundle(NodeBundle {
-            style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::Center,
-                position_type: PositionType::Absolute,
-                ..Default::default()
-            },
-            color: Color::NONE.into(),
+        .spawn_bundle(Text2dBundle {
+            text: Text::from_section(
+                "Loading".to_owned(),
+                TextStyle {
+                    font: asset_library.font_default.clone(),
+                    font_size: 68.0,
+                    color: Color::WHITE,
+                },
+            )
+            .with_alignment(TextAlignment {
+                horizontal: HorizontalAlign::Center,
+                vertical: VerticalAlign::Center,
+            }),
             ..Default::default()
         })
-        .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
-                style: Style {
-                    align_self: AlignSelf::Center,
-                    position_type: PositionType::Relative,
-                    position: UiRect {
-                        top: Val::Px(-50.),
-                        ..Default::default()
-                    },
-                    ..Default::default()
-                },
-                text: Text::from_section(
-                    "Loading!",
-                    TextStyle {
-                        font: asset_library.font_default.clone(),
-                        font_size: 42.0,
-                        color: Color::WHITE,
-                    },
-                )
-                .with_alignment(TextAlignment {
-                    horizontal: HorizontalAlign::Center,
-                    vertical: VerticalAlign::Center,
-                }),
-                ..Default::default()
-            });
-        });
+        .insert(Transform2::new().with_depth((DepthLayer::Front, 0.)));
 }
 
 pub fn loading_update(
@@ -72,8 +52,14 @@ pub fn loading_update(
             panic!("Failed to load assets.");
         }
         LoadState::Loaded => {
-            screen_fade.enable();
-            app_state.set(AppState::MainMenu).unwrap();
+            if !screen_fade.fading() {
+                screen_fade.enable();
+                screen_fade.set(0.);
+                screen_fade.fade_out(0.1);
+            }
+            if screen_fade.faded_out() {
+                app_state.set(AppState::MainMenu).unwrap();
+            }
         }
         _ => {}
     }

@@ -22,9 +22,9 @@ pub struct IntroCutscene;
 
 impl Cutscene for IntroCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_timed_step(step1, 3.);
-        cutscene.add_timed_step(step2, 3.);
-        cutscene.add_timed_step(step3, 3.);
+        cutscene.add_timed_step(step1, 2.5);
+        cutscene.add_timed_step(step2, 2.5);
+        cutscene.add_timed_step(step3, 2.5);
         cutscene.add_quick_step(cleanup);
     }
 }
@@ -102,7 +102,7 @@ fn step3(
         text.sections[0].value = "Enjoy the game".to_owned();
     }
     cutscene_state.proceed = true;
-    screen_fade.fade_out(3.0);
+    screen_fade.fade_out(2.5);
 }
 
 fn cleanup(mut app_state: ResMut<State<AppState>>) {
