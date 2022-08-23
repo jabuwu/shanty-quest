@@ -34,6 +34,7 @@ fn player_spawn(
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
     mut commands: Commands,
     game_state: Res<GameState>,
+    mut ev_cutscene_exit_town: EventWriter<CutsceneStartEvent<ExitTownCutscene>>,
 ) {
     for _ in ev_spawn.iter() {
         let entity = commands
@@ -48,6 +49,13 @@ fn player_spawn(
             special_attack: game_state.band_special_attack_type(),
             healthbar: false,
         });
+        if game_state.town.name != "Dummy Town" {
+            ev_cutscene_exit_town.send(CutsceneStartEvent(ExitTownCutscene {
+                boat: Some(entity),
+                to: game_state.town.position + game_state.town.spawn_offset,
+                from: game_state.town.position + Vec2::new(-10., -100.),
+            }));
+        }
     }
 }
 
@@ -90,7 +98,12 @@ fn player_enter_town(
     mut player_query: Query<(Entity, &mut Player)>,
     transform_query: Query<&GlobalTransform>,
     mut ev_cutscene_enter_town: EventWriter<CutsceneStartEvent<EnterTownCutscene>>,
+    cutscenes: Res<Cutscenes>,
+    state_time: Res<StateTime<AppState>>,
 ) {
+    if cutscenes.running() || state_time.just_entered() {
+        return;
+    }
     'outer: for (town_entity, island) in island_query.iter() {
         let town_position = if let Ok(town_transform) = transform_query.get(town_entity) {
             town_transform.translation().truncate()

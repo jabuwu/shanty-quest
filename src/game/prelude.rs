@@ -10,7 +10,10 @@ pub use super::{
         },
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         character_controller::{CharacterController, CharacterControllerSystems},
-        cutscenes::{enter_town::EnterTownCutscene, example_dialogue::ExampleDialogueCutscene},
+        cutscenes::{
+            enter_town::EnterTownCutscene, example_dialogue::ExampleDialogueCutscene,
+            exit_town::ExitTownCutscene,
+        },
         damage::{DamageEvent, Hitbox, Hurtbox},
         depth_layers::*,
         enemy::{Enemy, EnemySpawnEvent},

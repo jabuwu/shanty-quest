@@ -1,1 +1,1 @@
-pub use super::{AddGlobalState, GlobalState, Persistent};
+pub use super::{AddGlobalState, GlobalState, Persistent, StateTime};

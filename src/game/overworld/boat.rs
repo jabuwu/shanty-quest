@@ -81,9 +81,9 @@ fn boat_spawn(
             .insert(Transform2::from_translation(event.position))
             .insert(Boat {
                 movement: Vec2::ZERO,
-                direction: 0.,
+                direction: std::f32::consts::PI * -0.5,
                 speed: 200.,
-                facing: Facing::East,
+                facing: Facing::South,
                 ring_timer: RING_SPAWN_INTEVAL,
                 special_attack: event.special_attack,
                 special_shoot: false,

@@ -27,6 +27,10 @@ impl Dialogue {
         self.texts.push_back(text);
     }
 
+    pub fn clear(&mut self) {
+        self.texts = VecDeque::new();
+    }
+
     pub fn visible(&self) -> bool {
         self.texts.len() > 0
     }

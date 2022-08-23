@@ -66,8 +66,12 @@ fn menu_setup(
     mut screen_fade: ResMut<ScreenFade>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
+    mut cutscenes: ResMut<Cutscenes>,
+    mut dialogue: ResMut<Dialogue>,
 ) {
     *menu_state = MenuState::default();
+    cutscenes.clear();
+    dialogue.clear();
     screen_fade.set(1.);
     screen_fade.fade_in(1.);
     commands.spawn_bundle(Camera2dBundle::default());

@@ -26,4 +26,4 @@ pub use super::{
     CommonPlugin,
 };
 
-pub use global_state::Persistent;
+pub use global_state::{Persistent, StateTime};

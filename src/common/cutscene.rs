@@ -46,6 +46,11 @@ impl Cutscenes {
     pub fn running(&self) -> bool {
         !matches!(self.running_cutscene, None)
     }
+
+    pub fn clear(&mut self) {
+        self.running_cutscene = None;
+        self.backlog_cutscenes = VecDeque::new();
+    }
 }
 
 #[derive(Debug)]

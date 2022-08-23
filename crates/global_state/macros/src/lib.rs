@@ -12,6 +12,8 @@ pub fn derive_global_state(input: TokenStream) -> TokenStream {
             let variant_ident = &variant.ident;
             quotes.push(quote! {
                 app.add_system_set(bevy::ecs::schedule::SystemSet::on_exit(#ident::#variant_ident).with_system(global_state::cleanup_entities));
+                app.add_system_set(bevy::ecs::schedule::SystemSet::on_exit(#ident::#variant_ident).with_system(global_state::reset_state_time::<#ident>));
+                app.add_system_set(bevy::ecs::schedule::SystemSet::on_update(#ident::#variant_ident).with_system(global_state::update_state_time::<#ident>));
             });
         }
     }
@@ -19,6 +21,7 @@ pub fn derive_global_state(input: TokenStream) -> TokenStream {
         impl GlobalState for #ident {
             fn init_global_state(app: &mut bevy::app::App) {
                 app.add_state(#ident::default());
+                app.init_resource::<global_state::StateTime<#ident>>();
                 #(#quotes)*
             }
         }
