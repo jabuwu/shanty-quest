@@ -17,17 +17,28 @@ impl Plugin for JagerossaPlugin {
 pub struct JagerossaSpawnEvent;
 
 #[derive(Component)]
-pub struct Jagerossa;
+pub struct Jagerossa {
+    target: Vec2,
+}
 
 fn jagerossa_spawn(
     mut ev_spawn: EventReader<JagerossaSpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
     mut commands: Commands,
+    player_query: Query<&GlobalTransform, With<Player>>,
+    world_locations: Res<WorldLocations>,
 ) {
+    let spawn_position = if let Ok(player_transform) = player_query.get_single() {
+        player_transform.translation().truncate() + Vec2::new(710., -450.)
+    } else {
+        Vec2::ZERO
+    };
     for _ in ev_spawn.iter() {
         let entity = commands
             .spawn()
-            .insert(Jagerossa)
+            .insert(Jagerossa {
+                target: world_locations.get_single_position("JagerossaMoveTo"),
+            })
             .insert(Label("Jagerossa".to_owned()))
             .insert(AutoDamage {
                 despawn: true,
@@ -36,17 +47,25 @@ fn jagerossa_spawn(
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
-            position: Vec2::new(200., -200.),
+            position: spawn_position,
             special_attack: SpecialAttack::ShotgunCannons,
             healthbar: true,
         });
     }
 }
 
-fn jagerossa_move(mut query: Query<&mut Boat, With<Jagerossa>>) {
-    for mut boat in query.iter_mut() {
-        boat.movement = Vec2::ZERO;
-        boat.direction = std::f32::consts::PI;
+fn jagerossa_move(mut query: Query<(&mut Boat, &GlobalTransform, &Jagerossa)>) {
+    for (mut boat, global_transform, jagerossa) in query.iter_mut() {
+        boat.movement = (jagerossa.target - global_transform.translation().truncate()) / 100.;
+        if boat.movement.x.abs() < 0.1 {
+            boat.movement.x = 0.
+        }
+        if boat.movement.y.abs() < 0.1 {
+            boat.movement.y = 0.
+        }
+        if boat.movement.length_squared() > 0. {
+            boat.direction = Vec2::X.angle_between(boat.movement);
+        }
     }
 }
 

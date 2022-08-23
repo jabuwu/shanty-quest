@@ -20,7 +20,10 @@ pub struct Quests {
 
 impl Quests {
     pub fn block_town_enter(&self) -> bool {
-        false
+        match self.active_quest {
+            Quest::Jagerossa(..) => true,
+            _ => false,
+        }
     }
 
     pub fn block_town_exit_cutscene(&self) -> bool {

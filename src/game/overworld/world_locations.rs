@@ -44,7 +44,7 @@ impl WorldLocations {
         }
     }
 
-    pub fn get_single_positions(&self, name: &str) -> Vec2 {
+    pub fn get_single_position(&self, name: &str) -> Vec2 {
         if let Some(vec) = self.positions.get(name) {
             vec[0].position
         } else {
