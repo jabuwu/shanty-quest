@@ -47,7 +47,7 @@ fn jagerossa_trigger_check(
             if let Quest::Jagerossa(quest) = &mut game_state.quests.active_quest {
                 if matches!(quest.stage, JagerossaQuestStage::ControlsTutorial) {
                     ev_cutscene_jagerossa1.send_default();
-                    quest.stage = JagerossaQuestStage::Fight;
+                    quest.stage = JagerossaQuestStage::Dialogue1;
                 }
             }
         }

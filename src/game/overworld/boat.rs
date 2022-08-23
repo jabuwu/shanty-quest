@@ -105,7 +105,7 @@ fn boat_spawn(
             .insert(ShotgunCannons::default())
             .insert(Shockwave::default())
             .insert(DashAttack::default())
-            .insert(Health::new(10.))
+            .insert(Health::new(3.))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(100., 100.),

@@ -49,10 +49,12 @@ fn overworld_init(
     mut ev_player_spawn: EventWriter<PlayerSpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
     mut ev_ui_spawn: EventWriter<OverworldUiSpawnEvent>,
+    mut overworld_camera: ResMut<OverworldCamera>,
     asset_library: Res<AssetLibrary>,
 ) {
     screen_fade.fade_in(1.);
     ev_overworld_enter.send_default();
+    overworld_camera.reset();
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));

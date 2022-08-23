@@ -2,6 +2,8 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
+use super::{Jagerossa2Cutscene, JagerossaQuestStage};
+
 pub struct JagerossaPlugin;
 
 impl Plugin for JagerossaPlugin {
@@ -9,7 +11,8 @@ impl Plugin for JagerossaPlugin {
         app.add_event::<JagerossaSpawnEvent>()
             .add_system(jagerossa_spawn)
             .add_system(jagerossa_move)
-            .add_system(jagerossa_invincibility);
+            .add_system(jagerossa_invincibility)
+            .add_system(jagerossa_death_check);
     }
 }
 
@@ -76,5 +79,20 @@ fn jagerossa_invincibility(mut query: Query<(&mut Boat, &AutoDamage), With<Jager
         } else {
             1.
         };
+    }
+}
+
+fn jagerossa_death_check(
+    query: Query<Entity, With<Jagerossa>>,
+    mut game_state: ResMut<GameState>,
+    mut ev_cutscene_jagerossa2: EventWriter<CutsceneStartEvent<Jagerossa2Cutscene>>,
+) {
+    if query.is_empty() {
+        if let Quest::Jagerossa(quest) = &mut game_state.quests.active_quest {
+            if matches!(quest.stage, JagerossaQuestStage::Fight) {
+                ev_cutscene_jagerossa2.send_default();
+                quest.stage = JagerossaQuestStage::Dialogue2;
+            }
+        }
     }
 }
