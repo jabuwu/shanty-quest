@@ -49,5 +49,23 @@ fn world_spawn(
                 spawn_offset: Vec2::new(0., -300.),
             },
         });
+
+        commands
+            .spawn_bundle(Text2dBundle {
+                text: Text::from_section(
+                    "Hold left mouse button to move\nPress F to fire your cannons",
+                    TextStyle {
+                        font: asset_library.font_default.clone(),
+                        font_size: 48.0,
+                        color: Color::BLACK,
+                    },
+                )
+                .with_alignment(TextAlignment {
+                    horizontal: HorizontalAlign::Center,
+                    vertical: VerticalAlign::Center,
+                }),
+                ..Default::default()
+            })
+            .insert(Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_CONTROLS));
     }
 }

@@ -21,12 +21,19 @@ impl Plugin for OverworldPlugin {
             .add_plugin(cutscenes::CutscenesPlugin)
             .add_plugin(octopus::OctopusPlugin)
             .add_plugin(ui::OverworldUiPlugin)
+            .add_plugin(camera::OverworldCameraPlugin)
+            .add_plugin(entities::EntitiesPlugin)
+            .add_plugin(trigger::TriggerPlugin)
+            .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
             .add_system_set(SystemSet::on_update(AppState::Overworld).with_system(overworld_update))
             .add_system(overworld_sound_stop);
     }
 }
+
+#[derive(Default, Clone)]
+pub struct OverworldEnterEvent;
 
 #[derive(Default, Clone)]
 pub struct WorldAmbienceSoundStopEvent;
@@ -37,28 +44,24 @@ pub struct WorldAmbienceSound;
 fn overworld_init(
     mut screen_fade: ResMut<ScreenFade>,
     mut commands: Commands,
+    mut ev_overworld_enter: EventWriter<OverworldEnterEvent>,
     mut ev_player_spawn: EventWriter<PlayerSpawnEvent>,
-    mut ev_enemy_spawn: EventWriter<EnemySpawnEvent>,
-    mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
     mut ev_ui_spawn: EventWriter<OverworldUiSpawnEvent>,
+    mut ev_rubble_spawn: EventWriter<RubbleSpawnEvent>,
     asset_library: Res<AssetLibrary>,
-    mut ev_cutscene_jagerossa1: EventWriter<CutsceneStartEvent<JagerossaCutscene>>,
-    mut game_state: ResMut<GameState>,
 ) {
     screen_fade.fade_in(1.);
+    ev_overworld_enter.send_default();
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     ev_player_spawn.send_default();
-    ev_enemy_spawn.send(EnemySpawnEvent {
-        position: Vec2::new(500., -400.),
-    });
-    ev_octopus_spawn.send(OctopusSpawnEvent {
-        position: Vec2::new(100., -400.),
-    });
     ev_world_load.send_default();
     ev_ui_spawn.send_default();
+    ev_rubble_spawn.send(RubbleSpawnEvent {
+        position: Vec2::new(409., -402.),
+    });
     commands
         .spawn()
         .insert(
@@ -73,10 +76,6 @@ fn overworld_init(
                 .as_looping(),
         )
         .insert(WorldAmbienceSound);
-    if !game_state.showed_example_text {
-        ev_cutscene_jagerossa1.send_default();
-        game_state.showed_example_text = true;
-    }
 }
 
 fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
@@ -99,17 +98,20 @@ fn overworld_sound_stop(
 
 pub mod attacks;
 pub mod boat;
+pub mod camera;
 pub mod character_controller;
 pub mod cutscenes;
 pub mod damage;
 pub mod depth_layers;
 pub mod enemy;
+pub mod entities;
 pub mod health;
 pub mod healthbar;
 pub mod ocean;
 pub mod octopus;
 pub mod player;
 pub mod town;
+pub mod trigger;
 pub mod ui;
 pub mod water_ring;
 pub mod world;

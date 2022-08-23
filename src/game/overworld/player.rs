@@ -3,11 +3,6 @@ use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
-pub enum PlayerSystems {
-    Camera,
-}
-
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -16,7 +11,6 @@ impl Plugin for PlayerPlugin {
             .add_system(player_spawn)
             .add_system(player_controls.before(BoatSystems::Update))
             .add_system(player_enter_town)
-            .add_system(player_camera.label(PlayerSystems::Camera))
             .add_system(player_set_attack)
             .add_system(player_invincibility)
             .add_system(player_damage);
@@ -55,7 +49,7 @@ fn player_spawn(
             special_attack: game_state.band_special_attack_type(),
             healthbar: false,
         });
-        if game_state.town.name != "Dummy Town" {
+        if !game_state.quests.block_town_exit_cutscene() {
             ev_cutscene_exit_town.send(CutsceneStartEvent(ExitTownCutscene {
                 boat: Some(entity),
                 to: game_state.town.position + game_state.town.spawn_offset,
@@ -107,7 +101,7 @@ fn player_enter_town(
     cutscenes: Res<Cutscenes>,
     state_time: Res<StateTime<AppState>>,
 ) {
-    if cutscenes.running() || state_time.just_entered() {
+    if cutscenes.running() || state_time.just_entered() || game_state.quests.block_town_enter() {
         return;
     }
     'outer: for (town_entity, island) in island_query.iter() {
@@ -134,29 +128,6 @@ fn player_enter_town(
                 }));
                 game_state.town = island.town.clone();
                 break 'outer;
-            }
-        }
-    }
-}
-
-fn player_camera(
-    player_query: Query<Entity, With<Player>>,
-    camera_query: Query<Entity, With<Camera>>,
-    mut transform_query: Query<&mut Transform2>,
-) {
-    let player_position = if let Ok(player_entity) = player_query.get_single() {
-        if let Ok(player_transform) = transform_query.get(player_entity) {
-            Some(player_transform.translation)
-        } else {
-            None
-        }
-    } else {
-        None
-    };
-    if let Some(player_position) = player_position {
-        for camera_entity in camera_query.iter() {
-            if let Ok(mut camera_transform) = transform_query.get_mut(camera_entity) {
-                camera_transform.translation = player_position;
             }
         }
     }

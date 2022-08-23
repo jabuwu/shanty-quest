@@ -14,7 +14,7 @@ impl Plugin for CharacterControllerPlugin {
         app.add_system(
             character_controller_update
                 .label(CharacterControllerSystems::Update)
-                .before(PlayerSystems::Camera),
+                .before(OverworldCameraSystems::Update),
         );
     }
 }

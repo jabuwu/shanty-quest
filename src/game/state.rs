@@ -5,6 +5,7 @@ pub struct GameState {
     pub band_members: [BandMember; 2],
     pub band_unlocked_count: usize,
     pub showed_example_text: bool,
+    pub quests: Quests,
 }
 
 impl Default for GameState {
@@ -14,6 +15,7 @@ impl Default for GameState {
             band_members: [BandMember::from_index(0), BandMember::from_index(1)],
             band_unlocked_count: 3,
             showed_example_text: false,
+            quests: Quests::default(),
         }
     }
 }

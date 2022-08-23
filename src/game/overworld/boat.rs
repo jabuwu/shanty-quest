@@ -138,6 +138,7 @@ fn boat_update(
     for (transform, mut character_controller, global_transform, mut boat, children) in
         query.iter_mut()
     {
+        boat.movement = boat.movement.clamp(Vec2::NEG_ONE, Vec2::ONE);
         character_controller.movement = boat.movement;
         character_controller.speed = boat.speed;
         if let Some(facing) = Facing::from_vec(Vec2::from_angle(boat.direction)) {
@@ -183,7 +184,7 @@ fn boat_update(
             }
         }
 
-        if boat.movement.length_squared() > 0. {
+        if boat.movement.length() > 0.5 {
             boat.ring_timer -= time.delta_seconds();
             if boat.ring_timer <= 0.0 {
                 boat.ring_timer = RING_SPAWN_INTEVAL;

@@ -2,11 +2,17 @@ use crate::common::prelude::*;
 use asset_struct::AssetStruct;
 use bevy::prelude::*;
 
+#[derive(Default)]
+struct LoadingState {
+    fading: bool,
+}
+
 pub struct LoadingPlugin;
 
 impl Plugin for LoadingPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(AppState::Loading).with_system(loading_init))
+        app.init_resource::<LoadingState>()
+            .add_system_set(SystemSet::on_enter(AppState::Loading).with_system(loading_init))
             .add_system_set(SystemSet::on_update(AppState::Loading).with_system(loading_update));
     }
 }
@@ -40,12 +46,13 @@ fn loading_init(
         .insert(Transform2::new().with_depth((DepthLayer::Front, 0.)));
 }
 
-pub fn loading_update(
+fn loading_update(
     mut app_state: ResMut<State<AppState>>,
     asset_library: Res<AssetLibrary>,
     asset_server: Res<AssetServer>,
     mut screen_fade: ResMut<ScreenFade>,
     mut ev_dialogue_init: EventWriter<DialogueInitEvent>,
+    mut state: ResMut<LoadingState>,
 ) {
     use bevy::asset::LoadState;
     match asset_library.load_state(&asset_server) {
@@ -53,14 +60,15 @@ pub fn loading_update(
             panic!("Failed to load assets.");
         }
         LoadState::Loaded => {
-            if !screen_fade.fading() {
+            if state.fading && screen_fade.faded_out() {
+                app_state.set(AppState::Overworld).unwrap();
+                ev_dialogue_init.send_default();
+            }
+            if !state.fading {
                 screen_fade.enable();
                 screen_fade.set(0.);
                 screen_fade.fade_out(0.1);
-            }
-            if screen_fade.faded_out() {
-                app_state.set(AppState::MainMenu).unwrap();
-                ev_dialogue_init.send_default();
+                state.fading = true;
             }
         }
         _ => {}

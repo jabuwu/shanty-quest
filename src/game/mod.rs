@@ -7,7 +7,8 @@ impl Plugin for GamePlugin {
         app.init_resource::<state::GameState>()
             .add_plugin(cutscenes::CutscenesPlugin)
             .add_plugin(overworld::OverworldPlugin)
-            .add_plugin(town::TownPlugin);
+            .add_plugin(town::TownPlugin)
+            .add_plugin(quests::QuestsPlugin);
     }
 }
 
@@ -15,5 +16,6 @@ pub mod cutscenes;
 pub mod data;
 pub mod overworld;
 pub mod prelude;
+pub mod quests;
 pub mod state;
 pub mod town;
