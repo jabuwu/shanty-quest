@@ -20,6 +20,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(time_to_live::TimeToLivePlugin)
             .add_plugin(clickable::ClickablePlugin)
             .add_plugin(screen_fade::ScreenFadePlugin)
+            .add_plugin(cutscene::CutscenePlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_startup_system(asset_hot_reloading);
@@ -43,6 +44,7 @@ pub mod label;
 pub mod ldtk;
 pub mod math;
 pub mod menu_bar;
+pub mod cutscene;
 pub mod mouse;
 pub mod prelude;
 pub mod screen_fade;

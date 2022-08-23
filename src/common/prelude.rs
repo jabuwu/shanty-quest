@@ -7,6 +7,9 @@ pub use super::{
         shape::CollisionShape, Collision, CollisionFilter, CollisionQuery, COLLISION_FLAG,
     },
     component_child::{ComponentChild, ComponentChildCreatedEvent},
+    cutscene::{
+        AddAppCutscene, Cutscene, CutsceneBuilder, CutsceneContinueEvent, CutsceneStartEvent,
+    },
     easing::*,
     facing::Facing,
     label::Label,

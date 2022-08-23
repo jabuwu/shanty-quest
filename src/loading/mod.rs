@@ -71,7 +71,7 @@ pub fn loading_update(
             panic!("Failed to load assets.");
         }
         LoadState::Loaded => {
-            app_state.set(AppState::Overworld).unwrap();
+            app_state.set(AppState::MainMenu).unwrap();
         }
         _ => {}
     }
