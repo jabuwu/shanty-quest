@@ -27,13 +27,13 @@ pub struct AssetLibrary {
     /*********
      * Level *
      *********/
-    #[asset("levels/test.ldtk")]
-    pub level_test: Handle<LdtkAsset>,
+    #[asset("levels/level.ldtk")]
+    pub level: Handle<LdtkAsset>,
     #[asset("levels/IslandTilemap.png")]
-    pub level_test_island_tilemap: Handle<Image>,
+    pub levelisland_tilemap: Handle<Image>,
 
     #[asset("levels/WaterTileMap.png")]
-    pub level_test_water_tilemap: Handle<Image>,
+    pub levelwater_tilemap: Handle<Image>,
 
     /*************
      * Main Menu *

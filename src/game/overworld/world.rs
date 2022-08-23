@@ -27,7 +27,7 @@ fn world_spawn(
         ev_ocean_spawn.send_default();
         ev_ldtk_spawn.send(LdtkSpawnEvent {
             entity: None,
-            asset: asset_library.level_test.clone(),
+            asset: asset_library.level.clone(),
             position: Vec2::new(-800., 350.),
         });
 
