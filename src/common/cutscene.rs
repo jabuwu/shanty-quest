@@ -43,6 +43,14 @@ impl Cutscenes {
         }
     }
 
+    pub fn skipping(&self) -> bool {
+        if let Some(running_cutscene) = &self.running_cutscene {
+            running_cutscene.skip
+        } else {
+            false
+        }
+    }
+
     pub fn running(&self) -> bool {
         !matches!(self.running_cutscene, None)
     }

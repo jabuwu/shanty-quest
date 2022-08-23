@@ -17,6 +17,14 @@ pub struct SoundEffects {
     pub sfx_menu_button_click: AudioPlusSoundEffect,
     pub sfx_menu_button_click_confirm: AudioPlusSoundEffect,
 
+    // cutscenes
+    pub sfx_cutscene_intro_music: AudioPlusSoundEffect,
+    pub sfx_cutscene_intro1: AudioPlusSoundEffect,
+    pub sfx_cutscene_intro2: AudioPlusSoundEffect,
+    pub sfx_cutscene_intro3: AudioPlusSoundEffect,
+    pub sfx_cutscene_intro4: AudioPlusSoundEffect,
+    pub sfx_cutscene_intro5: AudioPlusSoundEffect,
+
     // overworld
     pub sfx_overworld_ambient: AudioPlusSoundEffect,
     pub sfx_overworld_music: AudioPlusSoundEffect,
@@ -76,6 +84,42 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         sfx_menu_button_click_confirm: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.menu_sfx_play.clone()],
             volume: 1.,
+            ..Default::default()
+        },
+        sfx_cutscene_intro_music: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.menu_music.clone()],
+            volume: 0.1,
+            fade_out: 1.0,
+            ..Default::default()
+        },
+        sfx_cutscene_intro1: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.cutscene_voice_intro1.clone()],
+            volume: 0.7,
+            fade_out: 0.5,
+            ..Default::default()
+        },
+        sfx_cutscene_intro2: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.cutscene_voice_intro2.clone()],
+            volume: 0.7,
+            fade_out: 0.5,
+            ..Default::default()
+        },
+        sfx_cutscene_intro3: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.cutscene_voice_intro3.clone()],
+            volume: 0.7,
+            fade_out: 0.5,
+            ..Default::default()
+        },
+        sfx_cutscene_intro4: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.cutscene_voice_intro4.clone()],
+            volume: 0.7,
+            fade_out: 0.5,
+            ..Default::default()
+        },
+        sfx_cutscene_intro5: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.cutscene_voice_intro5.clone()],
+            volume: 0.7,
+            fade_out: 0.5,
             ..Default::default()
         },
         sfx_overworld_ambient: AudioPlusSoundEffect {

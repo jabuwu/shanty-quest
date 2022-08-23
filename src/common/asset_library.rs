@@ -67,6 +67,30 @@ pub struct AssetLibrary {
     pub menu_sfx_play: Handle<AudioSource>,
 
     /*************
+     * Cutscenes *
+     *************/
+    #[asset("sprites/cutscene_intro1.png")]
+    pub cutscene_image_intro1: Handle<Image>,
+    #[asset("sprites/cutscene_intro1.png")]
+    pub cutscene_image_intro2: Handle<Image>,
+    #[asset("sprites/cutscene_intro1.png")]
+    pub cutscene_image_intro3: Handle<Image>,
+    #[asset("sprites/cutscene_intro1.png")]
+    pub cutscene_image_intro4: Handle<Image>,
+    #[asset("sprites/cutscene_intro1.png")]
+    pub cutscene_image_intro5: Handle<Image>,
+    #[asset("audio/voice/intro1.ogg")]
+    pub cutscene_voice_intro1: Handle<AudioSource>,
+    #[asset("audio/voice/intro2.ogg")]
+    pub cutscene_voice_intro2: Handle<AudioSource>,
+    #[asset("audio/voice/intro3.ogg")]
+    pub cutscene_voice_intro3: Handle<AudioSource>,
+    #[asset("audio/voice/intro4.ogg")]
+    pub cutscene_voice_intro4: Handle<AudioSource>,
+    #[asset("audio/voice/intro5.ogg")]
+    pub cutscene_voice_intro5: Handle<AudioSource>,
+
+    /*************
      * Overworld *
      *************/
     #[asset("sprites/Ship1.png")]
