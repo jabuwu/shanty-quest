@@ -9,10 +9,10 @@ impl Plugin for Q1A1Plugin {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct Q1A1Cutscene {
-    birdup: bool,
-    time: f32,
+    pub birdup: f32,
+    pub time: f32,
 }
 
 impl Cutscene for Q1A1Cutscene {
@@ -24,9 +24,8 @@ impl Cutscene for Q1A1Cutscene {
     }
 }
 
-fn start1(mut cutscene: ResMut<Q1A1Cutscene>) {
+fn start1(cutscene: Res<Q1A1Cutscene>) {
     println!("start1 {:?}", cutscene);
-    cutscene.birdup = true;
 }
 
 fn update1(mut ev_continue: EventWriter<CutsceneContinueEvent<Q1A1Cutscene>>) {
@@ -43,7 +42,6 @@ fn update2(
     mut ev_continue: EventWriter<CutsceneContinueEvent<Q1A1Cutscene>>,
     time: Res<Time>,
 ) {
-    println!("update2 {}", cutscene.time);
     cutscene.time += time.delta_seconds();
     if cutscene.time > 2. {
         ev_continue.send_default();

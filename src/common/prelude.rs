@@ -9,8 +9,9 @@ pub use super::{
     component_child::{ComponentChild, ComponentChildCreatedEvent},
     cutscene::{
         AddAppCutscene, Cutscene, CutsceneBuilder, CutsceneContinueEvent, CutsceneSkipEvent,
-        CutsceneStartEvent,
+        CutsceneStartEvent, Cutscenes,
     },
+    dialogue::{Dialogue, DialogueInitEvent},
     easing::*,
     facing::Facing,
     label::Label,

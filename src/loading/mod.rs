@@ -45,6 +45,7 @@ pub fn loading_update(
     asset_library: Res<AssetLibrary>,
     asset_server: Res<AssetServer>,
     mut screen_fade: ResMut<ScreenFade>,
+    mut ev_dialogue_init: EventWriter<DialogueInitEvent>,
 ) {
     use bevy::asset::LoadState;
     match asset_library.load_state(&asset_server) {
@@ -58,7 +59,8 @@ pub fn loading_update(
                 screen_fade.fade_out(0.1);
             }
             if screen_fade.faded_out() {
-                app_state.set(AppState::MainMenu).unwrap();
+                app_state.set(AppState::Overworld).unwrap();
+                ev_dialogue_init.send_default();
             }
         }
         _ => {}

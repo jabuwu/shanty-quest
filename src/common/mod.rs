@@ -21,6 +21,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(clickable::ClickablePlugin)
             .add_plugin(screen_fade::ScreenFadePlugin)
             .add_plugin(cutscene::CutscenePlugin)
+            .add_plugin(dialogue::DialoguePlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_startup_system(asset_hot_reloading);
@@ -37,6 +38,8 @@ pub mod assets;
 pub mod clickable;
 pub mod collision;
 pub mod component_child;
+pub mod cutscene;
+pub mod dialogue;
 pub mod easing;
 pub mod entity_debug;
 pub mod facing;
@@ -44,7 +47,6 @@ pub mod label;
 pub mod ldtk;
 pub mod math;
 pub mod menu_bar;
-pub mod cutscene;
 pub mod mouse;
 pub mod prelude;
 pub mod screen_fade;

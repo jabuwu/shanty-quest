@@ -10,6 +10,7 @@ pub use super::{
         },
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         character_controller::{CharacterController, CharacterControllerSystems},
+        cutscenes::{enter_town::EnterTownCutscene, example_dialogue::ExampleDialogueCutscene},
         damage::{DamageEvent, Hitbox, Hurtbox},
         depth_layers::*,
         enemy::{Enemy, EnemySpawnEvent},
@@ -20,7 +21,7 @@ pub use super::{
         town::{Town, TownSpawnEvent},
         water_ring::{WaterRing, WaterRingSpawnEvent},
         world::{World, WorldLoadEvent},
-        OverworldPlugin,
+        OverworldPlugin, WorldAmbienceSoundStopEvent,
     },
     state::GameState,
 };

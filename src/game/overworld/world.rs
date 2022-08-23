@@ -1,6 +1,5 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
-use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 pub struct WorldPlugin;
@@ -26,14 +25,6 @@ fn world_spawn(
     asset_library: Res<AssetLibrary>,
 ) {
     for _ in ev_spawn.iter() {
-        commands.spawn().insert(
-            AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_ambient.clone())
-                .as_looping(),
-        );
-        commands.spawn().insert(
-            AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_music.clone())
-                .as_looping(),
-        );
         ev_ocean_spawn.send_default();
         ev_ldtk_spawn.send(LdtkSpawnEvent {
             entity: None,
@@ -45,8 +36,8 @@ fn world_spawn(
             entity: island_entity,
             town: TownData {
                 name: "Tortuga".to_string(),
-                position: Vec2::new(-220., -880.),
-                spawn_offset: Vec2::new(300., 0.),
+                position: Vec2::new(887., -353.),
+                spawn_offset: Vec2::new(0., -300.),
             },
         });
         let island_entity = commands.spawn().id();

@@ -17,7 +17,7 @@ impl Plugin for IntroCutscenePlugin {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct IntroCutscene;
 
 impl Cutscene for IntroCutscene {

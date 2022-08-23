@@ -4,6 +4,7 @@ pub struct GameState {
     pub town: TownData,
     pub band_members: [BandMember; 2],
     pub band_unlocked_count: usize,
+    pub showed_example_text: bool,
 }
 
 impl Default for GameState {
@@ -12,6 +13,7 @@ impl Default for GameState {
             town: TownData::default(),
             band_members: [BandMember::from_index(0), BandMember::from_index(1)],
             band_unlocked_count: 3,
+            showed_example_text: false,
         }
     }
 }

@@ -10,15 +10,18 @@ use std::{
     marker::PhantomData,
 };
 
+pub trait CutsceneType: Cutscene + Default + Clone + Send + Sync + 'static {}
+impl<T> CutsceneType for T where T: Cutscene + Default + Clone + Send + Sync + 'static {}
+
 const UPDATE_BUFFER: u32 = 3;
 
 #[derive(Default, Debug)]
-struct CutsceneState {
+pub struct Cutscenes {
     running_cutscene: Option<RunningCutscene>,
     backlog_cutscenes: VecDeque<(String, TypeId)>,
 }
 
-impl CutsceneState {
+impl Cutscenes {
     fn queue(&mut self, name: String, type_id: TypeId) {
         self.backlog_cutscenes.push_back((name, type_id));
     }
@@ -29,6 +32,7 @@ impl CutsceneState {
                 self.running_cutscene = Some(RunningCutscene {
                     name,
                     type_id,
+                    started: false,
                     init: true,
                     updates: 0,
                     step: 0,
@@ -38,12 +42,17 @@ impl CutsceneState {
             }
         }
     }
+
+    pub fn running(&self) -> bool {
+        !matches!(self.running_cutscene, None)
+    }
 }
 
 #[derive(Debug)]
 struct RunningCutscene {
     name: String,
     type_id: TypeId,
+    started: bool,
     init: bool,
     updates: u32,
     step: usize,
@@ -63,7 +72,8 @@ pub struct CutscenePlugin;
 
 impl Plugin for CutscenePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<CutsceneState>()
+        app.init_resource::<Cutscenes>()
+            .init_resource::<Cutscenes>()
             .add_system(cutscene_debug);
     }
 }
@@ -71,15 +81,16 @@ impl Plugin for CutscenePlugin {
 pub trait AddAppCutscene {
     fn add_cutscene<T>(&mut self) -> &mut Self
     where
-        T: Cutscene + Default + Send + Sync + 'static;
+        T: CutsceneType;
 }
 
 impl AddAppCutscene for App {
     fn add_cutscene<T>(&mut self) -> &mut Self
     where
-        T: Cutscene + Default + Send + Sync + 'static,
+        T: CutsceneType,
     {
         self.init_resource::<T>();
+        self.init_resource::<CutsceneInitialValues<T>>();
         self.add_event::<CutsceneStartEvent<T>>();
         self.add_event::<CutsceneContinueEvent<T>>();
         self.add_event::<CutsceneSkipEvent<T>>();
@@ -94,11 +105,15 @@ impl AddAppCutscene for App {
         T::build(&mut builder);
         let step = builder.step;
         self.add_system(
-            move |mut cutscene_state: ResMut<CutsceneState>, mut state: ResMut<T>| {
+            move |mut cutscene_state: ResMut<Cutscenes>,
+                  mut state: ResMut<T>,
+                  mut initial_values: ResMut<CutsceneInitialValues<T>>| {
                 if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
                     if running_cutscene.type_id == TypeId::of::<T>() {
-                        if running_cutscene.step == step {
-                            *state = T::default();
+                        if !running_cutscene.started {
+                            *state = initial_values.0.pop_front().unwrap();
+                            running_cutscene.started = true;
+                        } else if running_cutscene.step == step {
                             cutscene_state.running_cutscene = None;
                             cutscene_state.try_run_next();
                         } else if running_cutscene.skip {
@@ -130,10 +145,11 @@ impl<'a> CutsceneBuilder<'a> {
         let type_id = self.type_id;
         let step = self.step;
         self.app.add_system(init.with_run_criteria(
-            move |mut cutscene_state: ResMut<CutsceneState>| {
+            move |mut cutscene_state: ResMut<Cutscenes>| {
                 if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
                     if running_cutscene.type_id == type_id
                         && running_cutscene.init
+                        && running_cutscene.started
                         && running_cutscene.step == step
                     {
                         running_cutscene.init = false;
@@ -144,10 +160,11 @@ impl<'a> CutsceneBuilder<'a> {
             },
         ));
         self.app.add_system(update.with_run_criteria(
-            move |mut cutscene_state: ResMut<CutsceneState>| {
+            move |mut cutscene_state: ResMut<Cutscenes>| {
                 if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
                     if running_cutscene.type_id == type_id
                         && !running_cutscene.init
+                        && running_cutscene.started
                         && running_cutscene.step == step
                     {
                         if running_cutscene.updates == UPDATE_BUFFER {
@@ -164,14 +181,43 @@ impl<'a> CutsceneBuilder<'a> {
         self
     }
 
+    pub fn add_update_step<ParamsA>(
+        &mut self,
+        update: impl IntoSystemDescriptor<ParamsA> + ParallelSystemDescriptorCoercion<ParamsA>,
+    ) -> &mut Self {
+        self.add_step(|| {}, update)
+    }
+
     pub fn add_quick_step<ParamsA>(
         &mut self,
         init: impl IntoSystemDescriptor<ParamsA> + ParallelSystemDescriptorCoercion<ParamsA>,
     ) -> &mut Self {
         let step = self.step;
-        self.add_step(init, move |mut state: ResMut<CutsceneState>| {
+        self.add_step(init, move |mut state: ResMut<Cutscenes>| {
             Self::to_step(state.as_mut(), step + 1);
         });
+        self
+    }
+
+    pub fn add_dialogue_step<ParamsA>(
+        &mut self,
+        init: impl IntoSystemDescriptor<ParamsA> + ParallelSystemDescriptorCoercion<ParamsA>,
+    ) -> &mut Self {
+        let step = self.step;
+        self.add_step(
+            init,
+            move |mut state: ResMut<Cutscenes>, time: Res<Time>, dialogue: Res<Dialogue>| {
+                let advance = if let Some(running_cutscene) = &mut state.running_cutscene {
+                    running_cutscene.time += time.delta_seconds();
+                    running_cutscene.time > 0.2 && !dialogue.visible()
+                } else {
+                    false
+                };
+                if advance {
+                    Self::to_step(state.as_mut(), step + 1);
+                }
+            },
+        );
         self
     }
 
@@ -183,7 +229,7 @@ impl<'a> CutsceneBuilder<'a> {
         let step = self.step;
         self.add_step(
             init,
-            move |mut state: ResMut<CutsceneState>, time: Res<Time>| {
+            move |mut state: ResMut<Cutscenes>, time: Res<Time>| {
                 let advance = if let Some(running_cutscene) = &mut state.running_cutscene {
                     running_cutscene.time += time.delta_seconds();
                     running_cutscene.time > seconds
@@ -198,7 +244,7 @@ impl<'a> CutsceneBuilder<'a> {
         self
     }
 
-    fn to_step(state: &mut CutsceneState, step: usize) {
+    fn to_step(state: &mut Cutscenes, step: usize) {
         if let Some(running_cutscene) = &mut state.running_cutscene {
             running_cutscene.reset();
             running_cutscene.step = step;
@@ -211,17 +257,14 @@ pub trait Cutscene {
 }
 
 #[derive(Default, Clone, Copy)]
-pub struct CutsceneStartEvent<T>
+pub struct CutsceneStartEvent<T>(pub T)
 where
-    T: Cutscene + Default + Send + Sync + 'static,
-{
-    _phantom: PhantomData<T>,
-}
+    T: CutsceneType;
 
 #[derive(Default, Clone, Copy)]
 pub struct CutsceneContinueEvent<T>
 where
-    T: Cutscene + Default + Send + Sync + 'static,
+    T: CutsceneType,
 {
     _phantom: PhantomData<T>,
 }
@@ -229,18 +272,25 @@ where
 #[derive(Default, Clone, Copy)]
 pub struct CutsceneSkipEvent<T>
 where
-    T: Cutscene + Default + Send + Sync + 'static,
+    T: CutsceneType,
 {
     _phantom: PhantomData<T>,
 }
 
+#[derive(Default)]
+struct CutsceneInitialValues<T>(VecDeque<T>)
+where
+    T: CutsceneType;
+
 fn cutscene_start<T>(
     mut ev_cutscene_start: EventReader<CutsceneStartEvent<T>>,
-    mut cutscene_state: ResMut<CutsceneState>,
+    mut cutscene_state: ResMut<Cutscenes>,
+    mut initial_values: ResMut<CutsceneInitialValues<T>>,
 ) where
-    T: Cutscene + Default + Send + Sync + 'static,
+    T: CutsceneType,
 {
-    for _ in ev_cutscene_start.iter() {
+    for event in ev_cutscene_start.iter() {
+        initial_values.0.push_back(event.0.clone());
         cutscene_state.queue(String::from(type_name::<T>()), TypeId::of::<T>());
         cutscene_state.try_run_next();
     }
@@ -248,9 +298,9 @@ fn cutscene_start<T>(
 
 fn cutscene_continue<T>(
     mut ev_cutscene_continue: EventReader<CutsceneContinueEvent<T>>,
-    mut cutscene_state: ResMut<CutsceneState>,
+    mut cutscene_state: ResMut<Cutscenes>,
 ) where
-    T: Cutscene + Default + Send + Sync + 'static,
+    T: CutsceneType,
 {
     let mut continued = false;
     for _ in ev_cutscene_continue.iter() {
@@ -270,9 +320,9 @@ fn cutscene_continue<T>(
 
 fn cutscene_skip<T>(
     mut ev_cutscene_skip: EventReader<CutsceneSkipEvent<T>>,
-    mut cutscene_state: ResMut<CutsceneState>,
+    mut cutscene_state: ResMut<Cutscenes>,
 ) where
-    T: Cutscene + Default + Send + Sync + 'static,
+    T: CutsceneType,
 {
     for _ in ev_cutscene_skip.iter() {
         if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
@@ -286,7 +336,7 @@ fn cutscene_skip<T>(
 fn cutscene_debug(
     mut egui_context: ResMut<EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
-    mut cutscene_state: ResMut<CutsceneState>,
+    mut cutscene_state: ResMut<Cutscenes>,
 ) {
     menu_bar.item("Cutscenes", |open| {
         egui::Window::new("Cutscenes")
