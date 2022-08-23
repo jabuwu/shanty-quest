@@ -104,9 +104,11 @@ fn dialogue_update(
     mut back_query: Query<&mut Visibility, With<DialogueBack>>,
     mut text_query: Query<&mut Text, With<DialogueText>>,
     mut sound_query: Query<&mut AudioPlusSource, With<DialogueBack>>,
+    screen_fade: Res<ScreenFade>,
     input: Res<Input<KeyCode>>,
 ) {
-    if input.just_pressed(KeyCode::Space) {
+    let allow = screen_fade.faded_in();
+    if input.just_pressed(KeyCode::Space) && allow {
         if dialogue.texts.pop_front().is_some() {
             for mut sound in sound_query.iter_mut() {
                 sound.play();
@@ -114,12 +116,23 @@ fn dialogue_update(
         }
     }
     if let Some(text) = dialogue.texts.get(0) {
-        for mut back_visibility in back_query.iter_mut() {
-            back_visibility.is_visible = true;
-        }
-        for mut ui_text in text_query.iter_mut() {
-            if ui_text.sections[0].value != *text {
-                ui_text.sections[0].value = text.clone();
+        if allow {
+            for mut back_visibility in back_query.iter_mut() {
+                back_visibility.is_visible = true;
+            }
+            for mut ui_text in text_query.iter_mut() {
+                if ui_text.sections[0].value != *text {
+                    ui_text.sections[0].value = text.clone();
+                }
+            }
+        } else {
+            for mut back_visibility in back_query.iter_mut() {
+                back_visibility.is_visible = false;
+            }
+            for mut text in text_query.iter_mut() {
+                if text.sections[0].value != "" {
+                    text.sections[0].value = "".to_owned();
+                }
             }
         }
     } else {
