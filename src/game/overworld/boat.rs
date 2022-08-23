@@ -44,6 +44,7 @@ pub struct Boat {
     pub special_attack: SpecialAttack,
     pub special_shoot: bool,
     pub shoot: bool,
+    pub opacity: f32,
 }
 
 #[derive(Component)]
@@ -88,6 +89,7 @@ fn boat_spawn(
                 special_attack: event.special_attack,
                 special_shoot: false,
                 shoot: false,
+                opacity: 1.,
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {
@@ -143,6 +145,7 @@ fn boat_update(
         }
         for child in children.iter() {
             if let Ok(mut atlas) = children_query.get_mut(*child) {
+                atlas.color.set_a(boat.opacity);
                 match boat.facing {
                     Facing::North => {
                         atlas.index = 3;

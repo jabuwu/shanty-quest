@@ -33,9 +33,15 @@ fn forward_cannons_sound(
     asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_created.iter() {
-        commands.entity(event.entity).insert(AudioPlusSource::new(
-            asset_library.sound_effects.sfx_placeholder_sound.clone(),
-        ));
+        commands
+            .entity(event.entity)
+            .insert_bundle(Transform2Bundle::default())
+            .insert(AudioPlusSource::new(
+                asset_library
+                    .sound_effects
+                    .sfx_overworld_attack_forward_cannons
+                    .clone(),
+            ));
     }
 }
 

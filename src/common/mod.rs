@@ -22,6 +22,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(screen_fade::ScreenFadePlugin)
             .add_plugin(cutscene::CutscenePlugin)
             .add_plugin(dialogue::DialoguePlugin)
+            .add_plugin(follow_camera::FollowCameraPlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_startup_system(asset_hot_reloading);
@@ -43,6 +44,7 @@ pub mod dialogue;
 pub mod easing;
 pub mod entity_debug;
 pub mod facing;
+pub mod follow_camera;
 pub mod label;
 pub mod ldtk;
 pub mod math;

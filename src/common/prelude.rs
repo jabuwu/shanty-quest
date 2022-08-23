@@ -14,6 +14,7 @@ pub use super::{
     dialogue::{Dialogue, DialogueInitEvent},
     easing::*,
     facing::Facing,
+    follow_camera::FollowCamera,
     label::Label,
     ldtk::{Ldtk, LdtkSpawnEvent},
     math::{Lerp, Rect},

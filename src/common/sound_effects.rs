@@ -23,6 +23,9 @@ pub struct SoundEffects {
     pub sfx_overworld_town_enter: AudioPlusSoundEffect,
     pub sfx_overworld_town_exit: AudioPlusSoundEffect,
 
+    // overworld attacks
+    pub sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect,
+
     // town
     pub sfx_town_ambient: AudioPlusSoundEffect,
     pub sfx_town_music: AudioPlusSoundEffect,
@@ -90,6 +93,12 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         sfx_overworld_town_exit: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.menu_sfx_play.clone()],
             volume: 0.5,
+            ..Default::default()
+        },
+        sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            volume: 0.5,
+            positional: true,
             ..Default::default()
         },
         sfx_overworld_music: AudioPlusSoundEffect::none(),

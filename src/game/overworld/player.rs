@@ -17,7 +17,9 @@ impl Plugin for PlayerPlugin {
             .add_system(player_controls.before(BoatSystems::Update))
             .add_system(player_enter_town)
             .add_system(player_camera.label(PlayerSystems::Camera))
-            .add_system(player_set_attack);
+            .add_system(player_set_attack)
+            .add_system(player_invincibility)
+            .add_system(player_damage);
     }
 }
 
@@ -27,6 +29,7 @@ pub struct PlayerSpawnEvent;
 #[derive(Component)]
 pub struct Player {
     disabled: bool,
+    invincibility: f32,
 }
 
 fn player_spawn(
@@ -39,7 +42,10 @@ fn player_spawn(
     for _ in ev_spawn.iter() {
         let entity = commands
             .spawn()
-            .insert(Player { disabled: false })
+            .insert(Player {
+                disabled: false,
+                invincibility: 0.,
+            })
             .insert(Label("Player".to_owned()))
             .insert(AudioPlusListener)
             .id();
@@ -167,6 +173,32 @@ fn player_set_attack(mut query: Query<&mut Boat, With<Player>>, input: Res<Input
         }
         if input.just_pressed(KeyCode::Key3) {
             boat.special_attack = SpecialAttack::DashAttack;
+        }
+    }
+}
+
+fn player_invincibility(mut crate_query: Query<(&mut Player, &mut Boat)>, time: Res<Time>) {
+    for (mut player, mut boat) in crate_query.iter_mut() {
+        player.invincibility -= time.delta_seconds();
+        player.invincibility = player.invincibility.max(0.);
+        if player.invincibility <= 0. {
+            boat.opacity = 1.;
+        } else {
+            boat.opacity = 0.5;
+        }
+    }
+}
+
+fn player_damage(
+    mut ev_damage: EventReader<DamageEvent>,
+    mut crate_query: Query<(&mut Health, &mut Player)>,
+) {
+    for event in ev_damage.iter() {
+        if let Ok((mut health, mut player)) = crate_query.get_mut(event.hit) {
+            if player.invincibility <= 0. {
+                health.damage(1.);
+                player.invincibility = 1.;
+            }
         }
     }
 }

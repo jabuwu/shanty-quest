@@ -8,7 +8,7 @@ impl Plugin for DamagePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<DamageEvent>()
             .add_system(damage_check)
-            .add_system(damage_calculate);
+            .add_system(damage_auto_die);
     }
 }
 
@@ -29,6 +29,12 @@ pub struct Hurtbox {
     pub shape: CollisionShape,
     pub for_entity: Option<Entity>,
     pub auto_despawn: bool,
+}
+
+#[derive(Component, Default)]
+pub struct AutoDamage {
+    pub despawn: bool,
+    pub invincibility: f32,
 }
 
 fn damage_check(
@@ -81,14 +87,22 @@ fn damage_check(
     }
 }
 
-fn damage_calculate(
+fn damage_auto_die(
     mut ev_damage: EventReader<DamageEvent>,
-    mut crate_query: Query<(Entity, &mut Health)>,
+    mut crate_query: Query<(Entity, &mut Health, &mut AutoDamage)>,
     mut commands: Commands,
+    time: Res<Time>,
 ) {
+    for (_, _, mut auto_damage) in crate_query.iter_mut() {
+        auto_damage.invincibility -= time.delta_seconds();
+        auto_damage.invincibility = auto_damage.invincibility.max(0.);
+    }
     for event in ev_damage.iter() {
-        if let Ok((entity, mut health)) = crate_query.get_mut(event.hit) {
-            health.damage(1.);
+        if let Ok((entity, mut health, mut auto_damage)) = crate_query.get_mut(event.hit) {
+            if auto_damage.invincibility == 0. {
+                health.damage(1.);
+                auto_damage.invincibility = 1.;
+            }
             if health.dead() {
                 commands.entity(entity).despawn_recursive();
             }

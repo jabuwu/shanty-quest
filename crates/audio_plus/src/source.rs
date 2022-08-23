@@ -103,8 +103,8 @@ impl AudioPlusSource {
 
 pub(crate) fn update_audio_sources(
     mut queries: ParamSet<(
-        Query<(&mut AudioPlusSource, Option<&Transform>)>,
-        Query<&Transform, With<AudioPlusListener>>,
+        Query<(&mut AudioPlusSource, Option<&GlobalTransform>)>,
+        Query<&GlobalTransform, With<AudioPlusListener>>,
     )>,
     time: Res<Time>,
     mixer: Res<AudioPlusMixer>,
@@ -119,12 +119,13 @@ pub(crate) fn update_audio_sources(
         let mut volume = 1.;
         let mut panning = 0.5;
         if source.sound_effect.positional && transform.is_some() && listener_transform.is_some() {
-            let relative_position = transform.unwrap().translation.truncate()
-                - listener_transform.unwrap().translation.truncate();
+            let relative_position = transform.unwrap().translation().truncate()
+                - listener_transform.unwrap().translation().truncate();
             let distance = relative_position.length();
             volume *= ((source.sound_effect.distance - distance) / source.sound_effect.distance)
                 .clamp(0., 1.);
-            panning = (0.5 + relative_position.x / source.sound_effect.distance).clamp(0.2, 0.8);
+            panning =
+                (0.5 + (relative_position.x / source.sound_effect.distance) * 1.2).clamp(0.2, 0.8);
         }
         if source.sound_effect.channel != AudioPlusMixerChannel::None {
             volume *= mixer.get_volume(source.sound_effect.channel);

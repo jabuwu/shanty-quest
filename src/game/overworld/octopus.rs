@@ -9,7 +9,8 @@ impl Plugin for OctopusPlugin {
         app.add_event::<OctopusSpawnEvent>()
             .add_system(octopus_spawn)
             .add_system(octopus_move)
-            .add_system(octopus_animate);
+            .add_system(octopus_animate)
+            .add_system(octopus_invincibility);
     }
 }
 
@@ -46,6 +47,13 @@ fn octopus_spawn(
                 },
                 for_entity: None,
             })
+            .insert(Hurtbox {
+                shape: CollisionShape::Rect {
+                    size: Vec2::new(80., 80.),
+                },
+                for_entity: None,
+                auto_despawn: false,
+            })
             .insert(Collision {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(60., 60.),
@@ -55,6 +63,10 @@ fn octopus_spawn(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: 100.,
+            })
+            .insert(AutoDamage {
+                despawn: true,
+                ..Default::default()
             })
             .id();
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
@@ -85,5 +97,15 @@ fn octopus_animate(mut query: Query<&mut TextureAtlasSprite, With<Octopus>>, tim
         } else {
             sprite.index = 0;
         }
+    }
+}
+
+fn octopus_invincibility(mut query: Query<(&mut TextureAtlasSprite, &AutoDamage)>) {
+    for (mut sprite, auto_damage) in query.iter_mut() {
+        if auto_damage.invincibility > 0. {
+            sprite.color.set_a(0.5);
+        } else {
+            sprite.color.set_a(1.);
+        };
     }
 }

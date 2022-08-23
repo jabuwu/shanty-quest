@@ -20,6 +20,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(damage::DamagePlugin)
             .add_plugin(cutscenes::CutscenesPlugin)
             .add_plugin(octopus::OctopusPlugin)
+            .add_plugin(ui::OverworldUiPlugin)
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
             .add_system_set(SystemSet::on_update(AppState::Overworld).with_system(overworld_update))
@@ -40,6 +41,7 @@ fn overworld_init(
     mut ev_enemy_spawn: EventWriter<EnemySpawnEvent>,
     mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
+    mut ev_ui_spawn: EventWriter<OverworldUiSpawnEvent>,
     asset_library: Res<AssetLibrary>,
     mut ev_cutscene_example_dialogue: EventWriter<CutsceneStartEvent<ExampleDialogueCutscene>>,
     mut game_state: ResMut<GameState>,
@@ -56,6 +58,7 @@ fn overworld_init(
         position: Vec2::new(100., -400.),
     });
     ev_world_load.send_default();
+    ev_ui_spawn.send_default();
     commands
         .spawn()
         .insert(
@@ -107,5 +110,6 @@ pub mod ocean;
 pub mod octopus;
 pub mod player;
 pub mod town;
+pub mod ui;
 pub mod water_ring;
 pub mod world;
