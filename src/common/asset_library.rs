@@ -71,13 +71,13 @@ pub struct AssetLibrary {
      *************/
     #[asset("sprites/cutscene_intro1.png")]
     pub cutscene_image_intro1: Handle<Image>,
-    #[asset("sprites/cutscene_intro1.png")]
+    #[asset("sprites/cutscene_intro2.png")]
     pub cutscene_image_intro2: Handle<Image>,
-    #[asset("sprites/cutscene_intro1.png")]
+    #[asset("sprites/cutscene_intro3.png")]
     pub cutscene_image_intro3: Handle<Image>,
-    #[asset("sprites/cutscene_intro1.png")]
+    #[asset("sprites/cutscene_intro4.png")]
     pub cutscene_image_intro4: Handle<Image>,
-    #[asset("sprites/cutscene_intro1.png")]
+    #[asset("sprites/cutscene_intro5.png")]
     pub cutscene_image_intro5: Handle<Image>,
     #[asset("audio/voice/intro1.ogg")]
     pub cutscene_voice_intro1: Handle<AudioSource>,
