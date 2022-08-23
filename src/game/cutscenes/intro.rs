@@ -150,12 +150,13 @@ fn step1(
                 ..Default::default()
             })
             .insert(
-                Transform2::new()
-                    .with_scale(Vec2::ONE * 7.)
-                    .with_depth((DepthLayer::Entity, 0.0)),
+                Transform2::from_xy(-50., -20.)
+                    .with_scale(Vec2::ONE * 5.5)
+                    .with_depth((DepthLayer::Entity, 0.0))
+                    .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(10., 10.),
+                velocity: Vec2::new(5., 5.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro1.clone())
@@ -186,12 +187,13 @@ fn step2(
                 ..Default::default()
             })
             .insert(
-                Transform2::new()
-                    .with_scale(Vec2::ONE * 7.)
-                    .with_depth((DepthLayer::Entity, 0.1)),
+                Transform2::from_xy(-50., -20.)
+                    .with_scale(Vec2::ONE * 5.5)
+                    .with_depth((DepthLayer::Entity, 0.1))
+                    .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(10., 10.),
+                velocity: Vec2::new(5., 5.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro2.clone())
@@ -222,12 +224,13 @@ fn step3(
                 ..Default::default()
             })
             .insert(
-                Transform2::new()
-                    .with_scale(Vec2::ONE * 7.)
-                    .with_depth((DepthLayer::Entity, 0.1)),
+                Transform2::from_xy(-50., -20.)
+                    .with_scale(Vec2::ONE * 5.5)
+                    .with_depth((DepthLayer::Entity, 0.3))
+                    .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(10., 10.),
+                velocity: Vec2::new(5., 5.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro3.clone())
@@ -258,12 +261,13 @@ fn step4(
                 ..Default::default()
             })
             .insert(
-                Transform2::new()
-                    .with_scale(Vec2::ONE * 7.)
-                    .with_depth((DepthLayer::Entity, 0.1)),
+                Transform2::from_xy(-50., -20.)
+                    .with_scale(Vec2::ONE * 5.5)
+                    .with_depth((DepthLayer::Entity, 0.4))
+                    .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(10., 10.),
+                velocity: Vec2::new(5., 5.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro4.clone())
@@ -294,12 +298,13 @@ fn step5(
                 ..Default::default()
             })
             .insert(
-                Transform2::new()
-                    .with_scale(Vec2::ONE * 7.)
-                    .with_depth((DepthLayer::Entity, 0.1)),
+                Transform2::from_xy(-50., -20.)
+                    .with_scale(Vec2::ONE * 5.5)
+                    .with_depth((DepthLayer::Entity, 0.5))
+                    .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(10., 10.),
+                velocity: Vec2::new(5., 5.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro5.clone())

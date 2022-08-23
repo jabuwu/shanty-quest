@@ -43,7 +43,7 @@ fn overworld_init(
     mut ev_world_load: EventWriter<WorldLoadEvent>,
     mut ev_ui_spawn: EventWriter<OverworldUiSpawnEvent>,
     asset_library: Res<AssetLibrary>,
-    mut ev_cutscene_example_dialogue: EventWriter<CutsceneStartEvent<ExampleDialogueCutscene>>,
+    mut ev_cutscene_jagerossa1: EventWriter<CutsceneStartEvent<JagerossaCutscene>>,
     mut game_state: ResMut<GameState>,
 ) {
     screen_fade.fade_in(1.);
@@ -74,7 +74,7 @@ fn overworld_init(
         )
         .insert(WorldAmbienceSound);
     if !game_state.showed_example_text {
-        ev_cutscene_example_dialogue.send_default();
+        ev_cutscene_jagerossa1.send_default();
         game_state.showed_example_text = true;
     }
 }

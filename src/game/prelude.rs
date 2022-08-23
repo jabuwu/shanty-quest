@@ -12,7 +12,7 @@ pub use super::{
         character_controller::{CharacterController, CharacterControllerSystems},
         cutscenes::{
             enter_town::EnterTownCutscene, example_dialogue::ExampleDialogueCutscene,
-            exit_town::ExitTownCutscene,
+            exit_town::ExitTownCutscene, jagerossa1::JagerossaCutscene,
         },
         damage::{AutoDamage, DamageEvent, Hitbox, Hurtbox},
         depth_layers::*,
