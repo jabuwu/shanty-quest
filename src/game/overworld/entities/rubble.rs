@@ -6,7 +6,9 @@ pub struct RubblePlugin;
 
 impl Plugin for RubblePlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<RubbleSpawnEvent>().add_system(rubble_spawn);
+        app.add_event::<RubbleSpawnEvent>()
+            .add_system(rubble_spawn)
+            .add_system(rubble_world_spawn);
     }
 }
 
@@ -62,5 +64,18 @@ fn rubble_spawn(
             offset: Vec2::new(0., 75.),
             size: Vec2::new(80., 6.),
         });
+    }
+}
+
+fn rubble_world_spawn(
+    mut ev_spawn: EventReader<WorldLocationsSpawnEvent>,
+    world_locations: Res<WorldLocations>,
+    mut ev_rubble_spawn: EventWriter<RubbleSpawnEvent>,
+) {
+    for _ in ev_spawn.iter() {
+        let positions = world_locations.get_multiple_positions("Rubble");
+        for position in positions {
+            ev_rubble_spawn.send(RubbleSpawnEvent { position });
+        }
     }
 }

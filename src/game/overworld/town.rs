@@ -6,13 +6,16 @@ pub struct TownPlugin;
 
 impl Plugin for TownPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<TownSpawnEvent>().add_system(town_spawn);
+        app.add_event::<TownSpawnEvent>()
+            .add_system(town_spawn)
+            .add_system(town_world_spawn);
     }
 }
 
 pub struct TownSpawnEvent {
-    pub entity: Entity,
+    pub entity: Option<Entity>,
     pub town: TownData,
+    pub position: Vec2,
 }
 
 #[derive(Component)]
@@ -26,8 +29,12 @@ fn town_spawn(
     asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_spawn.iter() {
-        commands
-            .entity(event.entity)
+        let mut entity = if let Some(entity) = event.entity {
+            commands.entity(entity)
+        } else {
+            commands.spawn()
+        };
+        entity
             .insert_bundle(SpriteBundle {
                 texture: asset_library.sprite_overworld_city.clone(),
                 ..Default::default()
@@ -60,5 +67,26 @@ fn town_spawn(
                     })
                     .insert(Transform2::from_xy(0., 130.).with_depth((DepthLayer::Front, 0.)));
             });
+    }
+}
+
+fn town_world_spawn(
+    mut ev_spawn: EventReader<WorldLocationsSpawnEvent>,
+    world_locations: Res<WorldLocations>,
+    mut ev_rubble_spawn: EventWriter<TownSpawnEvent>,
+) {
+    for _ in ev_spawn.iter() {
+        let positions = world_locations.get_multiple_positions("Tortuga");
+        for position in positions {
+            ev_rubble_spawn.send(TownSpawnEvent {
+                position,
+                entity: None,
+                town: TownData {
+                    name: "Tortuga".to_string(),
+                    position: position,
+                    spawn_offset: Vec2::new(0., -300.),
+                },
+            });
+        }
     }
 }

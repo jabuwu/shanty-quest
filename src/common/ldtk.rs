@@ -1,4 +1,5 @@
 use crate::common::prelude::*;
+use crate::game::prelude::*;
 use asset_struct::AssetStruct;
 use bevy::prelude::*;
 use std::collections::HashMap;
@@ -67,11 +68,14 @@ fn ldtk_load(
     mut texture_atlas_assets: ResMut<Assets<TextureAtlas>>,
     ldtk_assets: Res<Assets<LdtkAsset>>,
     asset_library: Res<AssetLibrary>,
+    mut ev_world_locations_spawn: EventWriter<WorldLocationsSpawnEvent>,
+    mut world_location: ResMut<WorldLocations>,
 ) {
     for (map_entity, mut ldtk) in query.iter_mut() {
         if let Some(ldtk_asset) = ldtk_assets.get(&ldtk.asset) {
             let ldtk_map = &ldtk_asset.map;
             if !ldtk.state.is_loaded() {
+                world_location.clear();
                 let mut texture_atlases = HashMap::new();
                 for tileset in ldtk_map.defs.tilesets.iter() {
                     let texture_handle = asset_library
@@ -159,10 +163,23 @@ fn ldtk_load(
                                     }
                                 }
                             }
+                            "Entities" => {
+                                for entity in layer.entity_instances.iter() {
+                                    world_location.add(
+                                        &entity.identifier,
+                                        Vec2::new(
+                                            entity.px[0] as f32 + level.world_x as f32,
+                                            (entity.px[1] as f32 + level.world_y as f32) * -1.,
+                                        ),
+                                        Vec2::new(entity.width as f32, entity.height as f32),
+                                    );
+                                }
+                            }
                             _ => (),
                         }
                     }
                 }
+                ev_world_locations_spawn.send_default();
                 ldtk.state = LdtkState::Loaded;
             }
         }

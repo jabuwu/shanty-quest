@@ -8,7 +8,7 @@ pub struct JagerossaTriggerPlugin;
 
 impl Plugin for JagerossaTriggerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(jagerossa_trigger_spawn)
+        app.add_system(jagerossa_trigger_world_spawn)
             .add_system(jagerossa_trigger_check);
     }
 }
@@ -16,19 +16,24 @@ impl Plugin for JagerossaTriggerPlugin {
 #[derive(Component)]
 pub struct JagerossaTrigger;
 
-fn jagerossa_trigger_spawn(
-    mut ev_overworld_enter: EventReader<OverworldEnterEvent>,
+fn jagerossa_trigger_world_spawn(
+    mut ev_spawn: EventReader<WorldLocationsSpawnEvent>,
     mut commands: Commands,
+    world_locations: Res<WorldLocations>,
 ) {
-    for _ in ev_overworld_enter.iter() {
-        commands
-            .spawn_bundle(TransformBundle::default())
-            .insert(Transform2::from_xy(602., -560.).with_depth((DepthLayer::Entity, 0.)))
-            .insert(Trigger::new(CollisionShape::Rect {
-                size: Vec2::new(384., 384.),
-            }))
-            .insert(Label("Jagerossa Trigger".to_owned()))
-            .insert(JagerossaTrigger);
+    for _ in ev_spawn.iter() {
+        let triggers = world_locations.get_multiple_rect("JagerossaTrigger");
+        for trigger in triggers {
+            commands
+                .spawn_bundle(TransformBundle::default())
+                .insert(
+                    Transform2::from_translation(trigger.position)
+                        .with_depth((DepthLayer::Entity, 0.)),
+                )
+                .insert(Trigger::new(CollisionShape::Rect { size: trigger.size }))
+                .insert(Label("Jagerossa Trigger".to_owned()))
+                .insert(JagerossaTrigger);
+        }
     }
 }
 

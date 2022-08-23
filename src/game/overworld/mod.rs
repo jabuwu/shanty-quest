@@ -24,6 +24,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(camera::OverworldCameraPlugin)
             .add_plugin(entities::EntitiesPlugin)
             .add_plugin(trigger::TriggerPlugin)
+            .add_plugin(world_locations::WorldLocationsPlugin)
             .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
@@ -48,7 +49,6 @@ fn overworld_init(
     mut ev_player_spawn: EventWriter<PlayerSpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
     mut ev_ui_spawn: EventWriter<OverworldUiSpawnEvent>,
-    mut ev_rubble_spawn: EventWriter<RubbleSpawnEvent>,
     asset_library: Res<AssetLibrary>,
 ) {
     screen_fade.fade_in(1.);
@@ -59,9 +59,6 @@ fn overworld_init(
     ev_player_spawn.send_default();
     ev_world_load.send_default();
     ev_ui_spawn.send_default();
-    ev_rubble_spawn.send(RubbleSpawnEvent {
-        position: Vec2::new(409., -402.),
-    });
     commands
         .spawn()
         .insert(
@@ -115,3 +112,4 @@ pub mod trigger;
 pub mod ui;
 pub mod water_ring;
 pub mod world;
+pub mod world_locations;
