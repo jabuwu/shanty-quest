@@ -73,6 +73,9 @@ pub struct AssetLibrary {
     pub sprite_ship: Handle<Image>,
     pub sprite_ship_atlas: Handle<TextureAtlas>,
 
+    #[asset("sprites/OverworldCity.png")]
+    pub sprite_overworld_city: Handle<Image>,
+
     #[asset("sprites/WaterOverlay.png")]
     pub sprite_water_overlay: Handle<Image>,
     #[asset("sprites/WaterOverlay2.png")]

@@ -29,11 +29,7 @@ fn town_spawn(
         commands
             .entity(event.entity)
             .insert_bundle(SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Vec2::new(64., 64.).into(),
-                    color: Color::BEIGE,
-                    ..Default::default()
-                },
+                texture: asset_library.sprite_overworld_city.clone(),
                 ..Default::default()
             })
             .insert(

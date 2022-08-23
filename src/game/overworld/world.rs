@@ -54,7 +54,7 @@ fn world_spawn(
             entity: island_entity,
             town: TownData {
                 name: "Raven Rock".to_string(),
-                position: Vec2::new(70., 250.),
+                position: Vec2::new(-30., 150.),
                 spawn_offset: Vec2::new(0., -300.),
             },
         });
