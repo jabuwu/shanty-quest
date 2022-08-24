@@ -1,4 +1,5 @@
 use crate::common::prelude::*;
+use crate::game::data::town_data::TOWN_NAMES;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
@@ -76,17 +77,19 @@ fn town_world_spawn(
     mut ev_rubble_spawn: EventWriter<TownSpawnEvent>,
 ) {
     for _ in ev_spawn.iter() {
-        let positions = world_locations.get_multiple_positions("Tortuga");
-        for position in positions {
-            ev_rubble_spawn.send(TownSpawnEvent {
-                position,
-                entity: None,
-                town: TownData {
-                    name: "Tortuga".to_string(),
-                    position: position,
-                    spawn_offset: Vec2::new(0., -300.),
-                },
-            });
+        for name in TOWN_NAMES.iter() {
+            let positions = world_locations.get_multiple_positions(*name);
+            for position in positions {
+                ev_rubble_spawn.send(TownSpawnEvent {
+                    position,
+                    entity: None,
+                    town: TownData {
+                        name: String::from(*name),
+                        position: position,
+                        spawn_offset: Vec2::new(0., -300.),
+                    },
+                });
+            }
         }
     }
 }

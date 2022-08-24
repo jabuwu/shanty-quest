@@ -22,7 +22,11 @@ impl Cutscene for MapCutscene {
     }
 }
 
-fn map_open(mut commands: Commands, map_builder: Res<MapBuilder>) {
+fn map_open(
+    mut commands: Commands,
+    map_builder: Res<MapBuilder>,
+    asset_library: Res<AssetLibrary>,
+) {
     commands
         .spawn_bundle(VisibilityBundle::default())
         .insert_bundle(TransformBundle::default())
@@ -34,7 +38,7 @@ fn map_open(mut commands: Commands, map_builder: Res<MapBuilder>) {
                 .spawn_bundle(SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(1., 1.).into(),
-                        color: Color::BEIGE,
+                        color: Color::rgb_u8(255, 217, 162),
                         ..Default::default()
                     },
                     ..Default::default()
@@ -55,7 +59,7 @@ fn map_open(mut commands: Commands, map_builder: Res<MapBuilder>) {
                                         120. / map_builder.size().y,
                                     )
                                     .into(),
-                                    color: Color::BLACK,
+                                    color: Color::rgb_u8(175, 95, 50),
                                     ..Default::default()
                                 },
                                 ..Default::default()
@@ -67,6 +71,55 @@ fn map_open(mut commands: Commands, map_builder: Res<MapBuilder>) {
                                 .with_depth(DEPTH_LAYER_MAP_TILE),
                             );
                     }
+                    for label in map_builder.labels.iter() {
+                        parent
+                            .spawn_bundle(SpriteBundle {
+                                sprite: Sprite {
+                                    custom_size: Vec2::new(
+                                        320. / map_builder.size().x,
+                                        320. / map_builder.size().y,
+                                    )
+                                    .into(),
+                                    color: Color::BLACK,
+                                    ..Default::default()
+                                },
+                                ..Default::default()
+                            })
+                            .insert(
+                                Transform2::from_translation(
+                                    (label.0 + Vec2::new(0., -100.)) / (map_builder.size())
+                                        + Vec2::new(-0.5, 0.5),
+                                )
+                                .with_depth(DEPTH_LAYER_MAP_LABEL),
+                            );
+                        parent
+                            .spawn_bundle(Text2dBundle {
+                                text: Text::from_section(
+                                    label.1.clone(),
+                                    TextStyle {
+                                        font: asset_library.font_bold.clone(),
+                                        font_size: 72.,
+                                        color: Color::BLACK,
+                                    },
+                                )
+                                .with_alignment(TextAlignment {
+                                    horizontal: HorizontalAlign::Center,
+                                    vertical: VerticalAlign::Center,
+                                }),
+                                ..Default::default()
+                            })
+                            .insert(
+                                Transform2::from_translation(
+                                    (label.0 + Vec2::new(0., 300.)) / (map_builder.size())
+                                        + Vec2::new(-0.5, 0.5),
+                                )
+                                .with_scale(Vec2::new(
+                                    7. / map_builder.size().x,
+                                    7. / map_builder.size().y,
+                                ))
+                                .with_depth(DEPTH_LAYER_MAP_LABEL),
+                            );
+                    }
                     parent
                         .spawn_bundle(SpriteBundle {
                             sprite: Sprite {
@@ -75,7 +128,7 @@ fn map_open(mut commands: Commands, map_builder: Res<MapBuilder>) {
                                     (100. / map_builder.size().y) * 3.,
                                 )
                                 .into(),
-                                color: Color::RED,
+                                color: Color::BLACK,
                                 ..Default::default()
                             },
                             ..Default::default()

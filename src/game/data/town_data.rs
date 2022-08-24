@@ -1,5 +1,23 @@
 use bevy::prelude::*;
 
+pub const TOWN_NAMES: [&str; 15] = [
+    "Portallica",
+    "Rolling Rock",
+    "Port Floyd",
+    "Iron Maiden's Cove",
+    "Rocktuga",
+    "Isla de la Solo",
+    "Sing-a-Rock",
+    "Port Sabbath",
+    "Saint Pantera",
+    "Judas Priest's Isle",
+    "Isla de Dio",
+    "Republic of Roll",
+    "Queen's Cove",
+    "Drummer's Isle",
+    "Isla la Chorus",
+];
+
 #[derive(Clone)]
 pub struct TownData {
     pub name: String,

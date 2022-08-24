@@ -24,6 +24,7 @@ pub const DEPTH_LAYER_TOWN_NAME: Layer = (DepthLayer::Front, 0.);
 pub const DEPTH_LAYER_MAP_BACK: Layer = (DepthLayer::Front, 0.85);
 pub const DEPTH_LAYER_MAP_TILE: Layer = (DepthLayer::Front, 0.86);
 pub const DEPTH_LAYER_MAP_PLAYER: Layer = (DepthLayer::Front, 0.87);
+pub const DEPTH_LAYER_MAP_LABEL: Layer = (DepthLayer::Front, 0.89);
 
 pub const DEPTH_LAYER_UI_TEXT: Layer = (DepthLayer::Front, 0.87);
 

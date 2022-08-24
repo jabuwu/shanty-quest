@@ -11,6 +11,7 @@ impl Plugin for MapBuilderPlugin {
 #[derive(Default)]
 pub struct MapBuilder {
     pub tiles: Vec<Vec2>,
+    pub labels: Vec<(Vec2, String)>,
 }
 
 impl MapBuilder {
@@ -37,6 +38,20 @@ impl MapBuilder {
         {
             new_pos.y *= -1.;
             self.tiles.push(new_pos);
+        }
+    }
+
+    pub fn add_label(&mut self, pos: Vec2, label: &str) {
+        let mut new_pos = pos;
+        new_pos -= self.offset();
+        new_pos.y *= -1.;
+        if new_pos.x >= 0.
+            && new_pos.y >= 0.
+            && new_pos.x <= self.size().x
+            && new_pos.y <= self.size().y
+        {
+            new_pos.y *= -1.;
+            self.labels.push((new_pos, String::from(label)));
         }
     }
 }

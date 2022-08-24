@@ -1,4 +1,4 @@
-use crate::common::prelude::*;
+use crate::{common::prelude::*, game::data::town_data::TOWN_NAMES};
 use asset_struct::AssetStruct;
 use bevy::prelude::*;
 use std::collections::HashMap;
@@ -170,6 +170,19 @@ fn ldtk_load(
                             }
                             "Entities" => {
                                 for entity in layer.entity_instances.iter() {
+                                    for name in TOWN_NAMES.iter() {
+                                        let town_name = entity.identifier.replace("_", " ");
+                                        if town_name == *name {
+                                            map_builder.add_label(
+                                                Vec2::new(
+                                                    entity.px[0] as f32 + level.world_x as f32,
+                                                    (entity.px[1] as f32 + level.world_y as f32)
+                                                        * -1.0,
+                                                ),
+                                                name,
+                                            );
+                                        }
+                                    }
                                     world_location.add(
                                         &entity.identifier,
                                         Vec2::new(

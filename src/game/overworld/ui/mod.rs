@@ -34,7 +34,7 @@ fn overworld_ui_spawn(
                 parent
                     .spawn_bundle(Text2dBundle {
                         text: Text::from_section(
-                            "??",
+                            "",
                             TextStyle {
                                 font: asset_library.font_default.clone(),
                                 font_size: 64.0,
@@ -48,8 +48,7 @@ fn overworld_ui_spawn(
                         ..Default::default()
                     })
                     .insert(Transform2::from_xy(-570., -340.).with_depth(DEPTH_LAYER_UI_TEXT))
-                    .insert(OverworldUiHealth)
-                    .insert(Label("hi".to_owned()));
+                    .insert(OverworldUiHealth);
             });
     }
 }
@@ -57,6 +56,7 @@ fn overworld_ui_spawn(
 fn overworld_ui_health(
     mut query: Query<&mut Text, With<OverworldUiHealth>>,
     health_query: Query<&Health, With<Player>>,
+    threat_level: Res<ThreatLevel>,
 ) {
     let health = if let Ok(health) = health_query.get_single() {
         health.value
@@ -64,7 +64,8 @@ fn overworld_ui_health(
         0.
     };
     for mut text in query.iter_mut() {
-        text.sections[0].value = format!("Rum: {}", health);
+        text.sections[0].value =
+            format!("Rum: {}\nThreat level: {:?}", health, threat_level.as_ref());
     }
 }
 
