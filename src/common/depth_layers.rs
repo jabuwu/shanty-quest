@@ -27,6 +27,8 @@ pub const DEPTH_LAYER_MAP_PLAYER: Layer = (DepthLayer::Front, 0.87);
 pub const DEPTH_LAYER_MAP_LABEL: Layer = (DepthLayer::Front, 0.89);
 
 pub const DEPTH_LAYER_UI_TEXT: Layer = (DepthLayer::Front, 0.87);
+pub const DEPTH_LAYER_UI_MARKER_ICON: Layer = (DepthLayer::Front, 0.91);
+pub const DEPTH_LAYER_UI_MARKER_ARROW: Layer = (DepthLayer::Front, 0.92);
 
 pub const DEPTH_LAYER_BAND_SELECTION_BACK: Layer = (DepthLayer::Front, 0.5);
 pub const DEPTH_LAYER_BAND_SELECTION_SLOT: Layer = (DepthLayer::Front, 0.51);

@@ -57,7 +57,7 @@ impl Quests {
 
     pub fn marker(&self) -> Option<&str> {
         match self.active_quest {
-            Quest::Jagerossa(..) => Some("JagerossaTrigger"),
+            Quest::Jagerossa(..) => None,
             Quest::Ringo(..) => Some("RingoTrigger"),
             Quest::Plank(..) => Some("PlankTrigger"),
             Quest::Davy(..) => Some("DavyTrigger"),

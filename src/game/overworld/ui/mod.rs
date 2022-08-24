@@ -2,12 +2,15 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
+use self::marker::MarkerSpawnEvent;
+
 pub struct OverworldUiPlugin;
 
 impl Plugin for OverworldUiPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<OverworldUiSpawnEvent>()
             .add_plugin(map::MapPlugin)
+            .add_plugin(marker::MarkerPlugin)
             .add_system(overworld_ui_spawn)
             .add_system(overworld_ui_health);
     }
@@ -22,9 +25,11 @@ pub struct OverworldUiHealth;
 fn overworld_ui_spawn(
     mut ev_spawn: EventReader<OverworldUiSpawnEvent>,
     mut commands: Commands,
+    mut ev_marker_spawn: EventWriter<MarkerSpawnEvent>,
     asset_library: Res<AssetLibrary>,
 ) {
     for _ in ev_spawn.iter() {
+        ev_marker_spawn.send_default();
         commands
             .spawn_bundle(VisibilityBundle::default())
             .insert_bundle(TransformBundle::default())
@@ -75,3 +80,4 @@ fn overworld_ui_health(
 }
 
 pub mod map;
+pub mod marker;
