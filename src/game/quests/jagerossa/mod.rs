@@ -3,18 +3,11 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 use jagerossa::JagerossaSpawnEvent;
 
-#[derive(Default)]
-pub enum JagerossaQuestState {
-    #[default]
-    Empty,
-}
-
 pub struct JagerossaQuestPlugin;
 
 impl Plugin for JagerossaQuestPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<JagerossaQuestState>()
-            .add_cutscene::<Jagerossa1Cutscene>()
+        app.add_cutscene::<Jagerossa1Cutscene>()
             .add_cutscene::<Jagerossa2Cutscene>()
             .add_plugin(jagerossa::JagerossaPlugin)
             .add_plugin(trigger::JagerossaTriggerPlugin);
@@ -57,15 +50,9 @@ fn jagerossa1_init1(
 ) {
     ev_jagerossa_spawn.send_default();
 
-    dialogue.add_text(
-        DialoguePortrait::Jagerossa,
-        "Ha-ha! Sailed right into me ambush ya bilge rat!\nI'll paint ya ship black with gunpowder!"
-            .to_owned(),
-    );
-    dialogue.add_text(
-        DialoguePortrait::Jagerossa,
-        "Then I'll take yer instrument from your scorched corpse!".to_owned(),
-    );
+    for (p, t) in JAGEROSSA1.iter() {
+        dialogue.add_text(*p, String::from(*t));
+    }
 
     let rect = world_locations.get_single_rect("JagerossaArena");
     overworld_camera.enable_arena(rect.position, rect.size);
@@ -92,12 +79,9 @@ impl Cutscene for Jagerossa2Cutscene {
 }
 
 fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>) {
-    dialogue.add_text(
-        DialoguePortrait::Jagerossa,
-        "Well! Ya can't always get what you want... But wait, don't kill me yet!".to_owned(),
-    );
-    dialogue.add_text(DialoguePortrait::Jagerossa,"Have some sympathy fer me, poor devil...\nHow about we combine our powers?! Ha?\nWith 2 instruments, yer ship we'll be unstoppable!".to_owned());
-    dialogue.add_text(DialoguePortrait::Jagerossa,"Other Pirate Lords will scatter like tumblin' dice before our\ncombined might!\nSet sail, onwards! We need to find a town.".to_owned());
+    for (p, t) in JAGEROSSA2.iter() {
+        dialogue.add_text(*p, String::from(*t));
+    }
 }
 
 fn jagerossa2_cleanup(

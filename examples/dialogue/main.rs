@@ -45,7 +45,7 @@ pub fn init(
         "this is example dialogue text".to_owned(),
     );
     dialogue.add_text(DialoguePortrait::Jagerossa, "1) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
-    dialogue.add_text(DialoguePortrait::Jagerossa, "2) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
+    dialogue.add_text(DialoguePortrait::Davy, "2) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
     dialogue.add_text(DialoguePortrait::Jagerossa, "3) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
     dialogue.add_text(DialoguePortrait::Jagerossa, "4) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
     dialogue.add_text(DialoguePortrait::Jagerossa, "5) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());

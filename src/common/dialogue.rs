@@ -30,10 +30,15 @@ struct DialogueEntry {
     text: String,
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum DialoguePortrait {
     None,
     Jagerossa,
+    Ringo,
+    Plank,
+    Davy,
+    Mayor,
+    Barkeep,
 }
 
 impl DialoguePortrait {
@@ -41,6 +46,11 @@ impl DialoguePortrait {
         match *self {
             Self::None => "???",
             Self::Jagerossa => "Captain Mick Jagerossa",
+            Self::Ringo => "Captain Ringo Yarr",
+            Self::Plank => "Captain Plank Presley",
+            Self::Davy => "Captain Davy Bowie",
+            Self::Mayor => "Mayor",
+            Self::Barkeep => "Barkeep",
         }
     }
 }
@@ -85,7 +95,9 @@ pub struct DialogueText;
 pub struct DialogueName;
 
 #[derive(Component)]
-pub struct DialoguePortraitComp;
+pub struct DialoguePortraitComp {
+    portrait: DialoguePortrait,
+}
 
 fn dialogue_init(
     mut ev_dialogue_init: EventReader<DialogueInitEvent>,
@@ -156,19 +168,32 @@ fn dialogue_init(
                         ..Default::default()
                     })
                     .insert(Transform2::from_xy(-550., 90.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT))
-                    .insert(DialogueName);
+                    .insert(DialogueName)
+                    .insert(AudioPlusSource::new(
+                        asset_library.sound_effects.sfx_dialogue_repeat.clone(),
+                    ));
                 parent
                     .spawn_bundle(SpriteBundle {
-                        texture: asset_library.sprite_dialogue_portrait_guitar.clone(),
+                        texture: asset_library.sprite_dialogue_portrait_jagerossa.clone(),
                         ..Default::default()
                     })
                     .insert(
                         Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
                     )
-                    .insert(DialoguePortraitComp)
-                    .insert(AudioPlusSource::new(
-                        asset_library.sound_effects.sfx_dialogue_repeat.clone(),
-                    ));
+                    .insert(DialoguePortraitComp {
+                        portrait: DialoguePortrait::Jagerossa,
+                    });
+                parent
+                    .spawn_bundle(SpriteBundle {
+                        texture: asset_library.sprite_dialogue_portrait_bowie.clone(),
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    )
+                    .insert(DialoguePortraitComp {
+                        portrait: DialoguePortrait::Davy,
+                    });
             });
     }
 }
@@ -179,9 +204,9 @@ fn dialogue_update(
         Query<&mut Visibility, With<DialogueBack>>,
         Query<&mut Text, With<DialogueText>>,
         Query<&mut Text, With<DialogueName>>,
-        Query<&mut Visibility, With<DialoguePortraitComp>>,
+        Query<(&mut Visibility, &DialoguePortraitComp)>,
         Query<&mut AudioPlusSource, With<DialogueBack>>,
-        Query<&mut AudioPlusSource, With<DialoguePortraitComp>>,
+        Query<&mut AudioPlusSource, With<DialogueName>>,
         Query<&mut AudioPlusSource, With<DialogueText>>,
     )>,
     screen_fade: Res<ScreenFade>,
@@ -232,8 +257,8 @@ fn dialogue_update(
             for mut dialogue_name in queries.p2().iter_mut() {
                 dialogue_name.sections[0].value = String::from(entry.portrait.name());
             }
-            for mut portrait_visibility in queries.p3().iter_mut() {
-                portrait_visibility.is_visible = entry.portrait == DialoguePortrait::Jagerossa;
+            for (mut portrait_visibility, portrait) in queries.p3().iter_mut() {
+                portrait_visibility.is_visible = entry.portrait == portrait.portrait;
             }
         } else {
             hide = true;
@@ -255,7 +280,7 @@ fn dialogue_update(
                 dialogue_name.sections[0].value = "".to_owned();
             }
         }
-        for mut portrait_visibility in queries.p3().iter_mut() {
+        for (mut portrait_visibility, _) in queries.p3().iter_mut() {
             portrait_visibility.is_visible = false;
         }
     }

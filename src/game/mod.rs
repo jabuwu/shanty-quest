@@ -13,6 +13,7 @@ impl Plugin for GamePlugin {
     }
 }
 
+pub mod all_dialogue;
 pub mod cutscenes;
 pub mod data;
 pub mod dead;

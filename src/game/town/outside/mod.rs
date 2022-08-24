@@ -253,12 +253,12 @@ fn outside_click(
                 input.reset(MouseButton::Left);
                 match clickable_item.action {
                     ClickableAction::Tavern => {
-                        dialogue.add_text(DialoguePortrait::None, "refilled rum".to_owned());
+                        dialogue.add_text(DialoguePortrait::Barkeep, "refilled rum".to_owned());
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::Mayor => {
                         dialogue
-                            .add_text(DialoguePortrait::None, "ding dong im the mayor".to_owned());
+                            .add_text(DialoguePortrait::Mayor, "ding dong im the mayor".to_owned());
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::ConcertHall => {

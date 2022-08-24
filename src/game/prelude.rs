@@ -1,4 +1,5 @@
 pub use super::{
+    all_dialogue::*,
     data::{band_members::BandMember, town_data::TownData},
     overworld::{
         attacks::{

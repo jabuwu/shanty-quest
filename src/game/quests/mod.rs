@@ -1,4 +1,4 @@
-use self::jagerossa::JagerossaQuest;
+use self::{davy::DavyQuest, jagerossa::JagerossaQuest, plank::PlankQuest, ringo::RingoQuest};
 use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
@@ -9,6 +9,9 @@ pub struct QuestsPlugin;
 impl Plugin for QuestsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(jagerossa::JagerossaQuestPlugin)
+            .add_plugin(davy::DavyQuestPlugin)
+            .add_plugin(ringo::RingoQuestPlugin)
+            .add_plugin(plank::PlankQuestPlugin)
             .add_system(quests_debug);
     }
 }
@@ -34,10 +37,11 @@ impl Quests {
     }
 
     pub fn block_enemy_spawns(&self) -> bool {
-        match self.active_quest {
+        /*match self.active_quest {
             Quest::Jagerossa(..) => true,
             _ => false,
-        }
+        }*/
+        true
     }
 
     pub fn block_dangerous_seas(&self) -> bool {
@@ -59,14 +63,20 @@ impl Quests {
 #[derive(Clone)]
 pub enum Quest {
     Jagerossa(JagerossaQuest),
+    Ringo(RingoQuest),
+    Plank(PlankQuest),
+    Davy(DavyQuest),
     End,
 }
 
 impl Quest {
     pub fn next(&mut self) {
         *self = match *self {
-            Self::Jagerossa(..) => Self::End,
-            _ => Self::End,
+            Self::Jagerossa(..) => Self::Ringo(RingoQuest::default()),
+            Self::Ringo(..) => Self::Plank(PlankQuest::default()),
+            Self::Plank(..) => Self::Davy(DavyQuest::default()),
+            Self::Davy(..) => Self::End,
+            Self::End => Self::End,
         }
     }
 }
@@ -91,6 +101,9 @@ fn quests_debug(
                     "Active Quest: {}",
                     match game_state.quests.active_quest {
                         Quest::Jagerossa(..) => "Jagerossa",
+                        Quest::Ringo(..) => "Ringo",
+                        Quest::Plank(..) => "Plank",
+                        Quest::Davy(..) => "Davy",
                         Quest::End => "End",
                     }
                 ));
@@ -98,4 +111,7 @@ fn quests_debug(
     });
 }
 
+pub mod davy;
 pub mod jagerossa;
+pub mod plank;
+pub mod ringo;
