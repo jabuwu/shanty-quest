@@ -11,7 +11,7 @@ impl Default for TownData {
     fn default() -> Self {
         Self {
             name: "Dummy Town".to_owned(),
-            position: Vec2::new(0., 0.),
+            position: Vec2::new(800., -350.),
             spawn_offset: Vec2::new(0., -200.),
         }
     }

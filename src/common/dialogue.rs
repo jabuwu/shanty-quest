@@ -112,13 +112,12 @@ fn dialogue_init(
                     .insert(
                         Transform2::new()
                             .with_scale(Vec2::ONE * 1.4)
-                            .with_depth((DepthLayer::Front, 0.95)),
+                            .with_depth(DEPTH_LAYER_DIALOGUE_BACK),
                     )
                     .insert(DialogueBack)
                     .insert(AudioPlusSource::new(
                         asset_library.sound_effects.sfx_dialogue_proceed.clone(),
-                    ))
-                    .insert(Label("hi".to_owned()));
+                    ));
                 parent
                     .spawn_bundle(Text2dBundle {
                         text: Text::from_section(
@@ -135,7 +134,7 @@ fn dialogue_init(
                         }),
                         ..Default::default()
                     })
-                    .insert(Transform2::from_xy(-540., 60.).with_depth((DepthLayer::Front, 0.96)))
+                    .insert(Transform2::from_xy(-540., 60.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT))
                     .insert(DialogueText)
                     .insert(AudioPlusSource::new(
                         asset_library.sound_effects.sfx_dialogue_start.clone(),
@@ -156,14 +155,16 @@ fn dialogue_init(
                         }),
                         ..Default::default()
                     })
-                    .insert(Transform2::from_xy(-550., 90.).with_depth((DepthLayer::Front, 0.96)))
+                    .insert(Transform2::from_xy(-550., 90.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT))
                     .insert(DialogueName);
                 parent
                     .spawn_bundle(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_guitar.clone(),
                         ..Default::default()
                     })
-                    .insert(Transform2::from_xy(350., 280.).with_depth((DepthLayer::Front, 0.94)))
+                    .insert(
+                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    )
                     .insert(DialoguePortraitComp)
                     .insert(AudioPlusSource::new(
                         asset_library.sound_effects.sfx_dialogue_repeat.clone(),

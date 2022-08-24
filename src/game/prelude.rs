@@ -22,7 +22,6 @@ pub use super::{
             AutoDamage, DamageEvent, Hitbox, Hurtbox, DAMAGE_FLAG_ENEMY, DAMAGE_FLAG_ENVIRONMENT,
             DAMAGE_FLAG_PLAYER,
         },
-        depth_layers::*,
         enemy::{Enemy, EnemySpawnEvent},
         entities::rubble::{Rubble, RubbleSpawnEvent},
         health::Health,

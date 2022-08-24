@@ -7,6 +7,7 @@ pub struct OverworldUiPlugin;
 impl Plugin for OverworldUiPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<OverworldUiSpawnEvent>()
+            .add_plugin(map::MapPlugin)
             .add_system(overworld_ui_spawn)
             .add_system(overworld_ui_health);
     }
@@ -19,7 +20,7 @@ pub struct OverworldUiSpawnEvent;
 pub struct OverworldUiHealth;
 
 fn overworld_ui_spawn(
-    mut ev_spawn: EventReader<WorldLoadEvent>,
+    mut ev_spawn: EventReader<OverworldUiSpawnEvent>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
@@ -27,13 +28,13 @@ fn overworld_ui_spawn(
         commands
             .spawn_bundle(VisibilityBundle::default())
             .insert_bundle(TransformBundle::default())
-            .insert(Transform2::from_xy(0., 0.).with_depth((DepthLayer::Front, 0.9)))
             .insert(FollowCamera { offset: Vec2::ZERO })
+            .insert(Transform2::new())
             .with_children(|parent| {
                 parent
                     .spawn_bundle(Text2dBundle {
                         text: Text::from_section(
-                            "",
+                            "??",
                             TextStyle {
                                 font: asset_library.font_default.clone(),
                                 font_size: 64.0,
@@ -46,8 +47,9 @@ fn overworld_ui_spawn(
                         }),
                         ..Default::default()
                     })
-                    .insert(Transform2::from_xy(-570., -340.).with_depth((DepthLayer::Front, 0.)))
-                    .insert(OverworldUiHealth);
+                    .insert(Transform2::from_xy(-570., -340.).with_depth(DEPTH_LAYER_UI_TEXT))
+                    .insert(OverworldUiHealth)
+                    .insert(Label("hi".to_owned()));
             });
     }
 }
@@ -65,3 +67,5 @@ fn overworld_ui_health(
         text.sections[0].value = format!("Rum: {}", health);
     }
 }
+
+pub mod map;

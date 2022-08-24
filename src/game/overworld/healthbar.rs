@@ -52,7 +52,7 @@ fn healthbar_spawn(mut ev_spawn: EventReader<HealthbarSpawnEvent>, mut commands:
                     })
                     .insert(
                         Transform2::from_translation(event.offset)
-                            .with_depth((DepthLayer::Front, 0.11)),
+                            .with_depth(DEPTH_LAYER_HEALTHBAR_BORDER),
                     );
                 parent
                     .spawn_bundle(SpriteBundle {
@@ -65,7 +65,7 @@ fn healthbar_spawn(mut ev_spawn: EventReader<HealthbarSpawnEvent>, mut commands:
                     })
                     .insert(
                         Transform2::from_translation(event.offset)
-                            .with_depth((DepthLayer::Front, 0.111)),
+                            .with_depth(DEPTH_LAYER_HEALTHBAR),
                     )
                     .insert(HealthbarValue {
                         offset: event.offset,

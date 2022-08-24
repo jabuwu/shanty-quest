@@ -69,12 +69,14 @@ fn ldtk_load(
     asset_library: Res<AssetLibrary>,
     mut ev_world_locations_spawn: EventWriter<WorldLocationsSpawnEvent>,
     mut world_location: ResMut<WorldLocations>,
+    mut map_builder: ResMut<MapBuilder>,
 ) {
     for (map_entity, mut ldtk) in query.iter_mut() {
         if let Some(ldtk_asset) = ldtk_assets.get(&ldtk.asset) {
             let ldtk_map = &ldtk_asset.map;
             if !ldtk.state.is_loaded() {
                 world_location.clear();
+                map_builder.reset();
                 let mut texture_atlases = HashMap::new();
                 for tileset in ldtk_map.defs.tilesets.iter() {
                     let texture_handle = asset_library
@@ -152,6 +154,10 @@ fn ldtk_load(
                             "IntGrid" => {
                                 if let Some(i) = layer.tileset_def_uid {
                                     for tile in layer.auto_layer_tiles.iter() {
+                                        map_builder.add_tile(Vec2::new(
+                                            tile.px[0] as f32 + level.world_x as f32,
+                                            (tile.px[1] as f32 + level.world_y as f32) * -1.0,
+                                        ));
                                         let tile_entity = ldtk_spawn_tile(
                                             &tile,
                                             i as i32,

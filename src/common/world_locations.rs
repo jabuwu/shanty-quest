@@ -33,10 +33,8 @@ impl WorldLocations {
             self.positions.insert(String::from(name), vec![]);
         }
         if let Some(vec) = self.positions.get_mut(name) {
-            let position_correction = position
-                + (size * 0.5 * Vec2::new(1., -1.))
-                + Vec2::new(-800., 350.)
-                + Vec2::new(-50., 50.);
+            let position_correction =
+                position + (size * 0.5 * Vec2::new(1., -1.)) + Vec2::new(-50., 50.);
             vec.push(WorldLocationRect {
                 position: position_correction,
                 size,
