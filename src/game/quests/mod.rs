@@ -40,6 +40,13 @@ impl Quests {
         }
     }
 
+    pub fn block_dangerous_seas(&self) -> bool {
+        match self.active_quest {
+            Quest::Jagerossa(..) => true,
+            _ => false,
+        }
+    }
+
     pub fn must_talk_to_mayor(&self) -> bool {
         false
     }

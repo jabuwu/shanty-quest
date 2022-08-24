@@ -14,8 +14,9 @@ pub use super::{
             CharacterController, CharacterControllerDestination, CharacterControllerSystems,
         },
         cutscenes::{
-            death::DeathCutscene, enter_town::EnterTownCutscene,
-            example_dialogue::ExampleDialogueCutscene, exit_town::ExitTownCutscene,
+            dangerous_seas::DangerousSeasCutscene, death::DeathCutscene,
+            enter_town::EnterTownCutscene, example_dialogue::ExampleDialogueCutscene,
+            exit_town::ExitTownCutscene,
         },
         damage::{
             AutoDamage, DamageEvent, Hitbox, Hurtbox, DAMAGE_FLAG_ENEMY, DAMAGE_FLAG_ENVIRONMENT,
@@ -29,6 +30,7 @@ pub use super::{
         ocean::{Ocean, OceanSpawnEvent},
         octopus::{Octopus, OctopusSpawnEvent},
         player::{Player, PlayerSpawnEvent},
+        threat_level::ThreatLevel,
         town::{Town, TownSpawnEvent},
         trigger::Trigger,
         ui::OverworldUiSpawnEvent,

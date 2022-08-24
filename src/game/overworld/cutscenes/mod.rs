@@ -7,10 +7,12 @@ impl Plugin for CutscenesPlugin {
         app.add_plugin(enter_town::EnterTownCutscenePlugin)
             .add_plugin(exit_town::ExitTownCutscenePlugin)
             .add_plugin(example_dialogue::ExampleDialogueCutscenePlugin)
-            .add_plugin(death::DeathCutscenePlugin);
+            .add_plugin(death::DeathCutscenePlugin)
+            .add_plugin(dangerous_seas::DangerousSeasCutscenePlugin);
     }
 }
 
+pub mod dangerous_seas;
 pub mod death;
 pub mod enter_town;
 pub mod example_dialogue;

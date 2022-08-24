@@ -49,6 +49,7 @@ fn enemy_spawns(
     state_time: Res<StateTime<AppState>>,
     game_state: Res<GameState>,
     screen_fade: Res<ScreenFade>,
+    threat_level: Res<ThreatLevel>,
 ) {
     let player_position = if let Ok(player_transform) = queries.p0().get_single() {
         player_transform.translation().truncate()
@@ -63,11 +64,22 @@ fn enemy_spawns(
             count += 1;
         }
     }
+    let spawn_chance = match *threat_level {
+        ThreatLevel::None => 0.00,
+        ThreatLevel::Easy => 0.02,
+        ThreatLevel::Medium => 0.05,
+    };
+    let spawn_max = match *threat_level {
+        ThreatLevel::None => 0,
+        ThreatLevel::Easy => 5,
+        ThreatLevel::Medium => 30,
+    };
     if !state_time.just_entered()
-        && rand::random::<f32>() < 0.05
-        && count < 30
+        && rand::random::<f32>() < spawn_chance
+        && count < spawn_max
         && !game_state.quests.block_enemy_spawns()
         && screen_fade.faded_in()
+        && *threat_level != ThreatLevel::None
     {
         let entity = commands.spawn().insert(SpawnedEntity).id();
         ev_octopus_spawn.send(OctopusSpawnEvent {

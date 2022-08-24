@@ -25,6 +25,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(entities::EntitiesPlugin)
             .add_plugin(trigger::TriggerPlugin)
             .add_plugin(enemy_spawns::EnemySpawnsPlugin)
+            .add_plugin(threat_level::ThreatLevelPlugin)
             .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
@@ -110,6 +111,7 @@ pub mod healthbar;
 pub mod ocean;
 pub mod octopus;
 pub mod player;
+pub mod threat_level;
 pub mod town;
 pub mod trigger;
 pub mod ui;
