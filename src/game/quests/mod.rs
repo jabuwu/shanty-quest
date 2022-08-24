@@ -33,6 +33,13 @@ impl Quests {
         }
     }
 
+    pub fn block_enemy_spawns(&self) -> bool {
+        match self.active_quest {
+            Quest::Jagerossa(..) => true,
+            _ => false,
+        }
+    }
+
     pub fn next(&mut self) {
         self.active_quest.next();
     }

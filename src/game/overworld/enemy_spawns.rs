@@ -47,6 +47,7 @@ fn enemy_spawns(
     )>,
     mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
     state_time: Res<StateTime<AppState>>,
+    game_state: Res<GameState>,
 ) {
     let player_position = if let Ok(player_transform) = queries.p0().get_single() {
         player_transform.translation().truncate()
@@ -61,7 +62,11 @@ fn enemy_spawns(
             count += 1;
         }
     }
-    if !state_time.just_entered() && rand::random::<f32>() < 0.02 && count < 30 {
+    if !state_time.just_entered()
+        && rand::random::<f32>() < 0.02
+        && count < 30
+        && !game_state.quests.block_enemy_spawns()
+    {
         let entity = commands.spawn().insert(SpawnedEntity).id();
         ev_octopus_spawn.send(OctopusSpawnEvent {
             entity: Some(entity),
