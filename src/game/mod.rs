@@ -8,12 +8,14 @@ impl Plugin for GamePlugin {
             .add_plugin(cutscenes::CutscenesPlugin)
             .add_plugin(overworld::OverworldPlugin)
             .add_plugin(town::TownPlugin)
-            .add_plugin(quests::QuestsPlugin);
+            .add_plugin(quests::QuestsPlugin)
+            .add_plugin(dead::DeadPlugin);
     }
 }
 
 pub mod cutscenes;
 pub mod data;
+pub mod dead;
 pub mod overworld;
 pub mod prelude;
 pub mod quests;

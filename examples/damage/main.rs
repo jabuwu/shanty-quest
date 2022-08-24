@@ -75,6 +75,7 @@ pub fn init(
                 size: Vec2::new(32., 32.),
             },
             for_entity: None,
+            flags: 1,
         })
         .insert(Player)
         .insert(Health::new(3.))
@@ -112,6 +113,7 @@ pub fn init(
                     size: Vec2::new(20., 20.),
                 },
                 for_entity: None,
+                flags: 1,
             })
             .insert(Crate)
             .insert(Health::new(3.))
@@ -152,6 +154,7 @@ fn player_control(
                     },
                     for_entity: Some(player_entity),
                     auto_despawn: true,
+                    flags: 1,
                 });
         }
         if keys.pressed(KeyCode::W) {

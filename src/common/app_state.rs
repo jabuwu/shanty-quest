@@ -11,6 +11,7 @@ pub enum AppState {
     TownTavern,
     TownMayor,
     TownConcertHall,
+    Dead,
 }
 
 impl AppState {
@@ -24,6 +25,7 @@ impl AppState {
             Self::TownTavern => true,
             Self::TownMayor => true,
             Self::TownConcertHall => true,
+            Self::Dead => false,
         }
     }
 }

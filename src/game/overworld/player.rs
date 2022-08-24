@@ -24,6 +24,7 @@ pub struct PlayerSpawnEvent;
 pub struct Player {
     disabled: bool,
     invincibility: f32,
+    dead: bool,
 }
 
 fn player_spawn(
@@ -39,6 +40,7 @@ fn player_spawn(
             .insert(Player {
                 disabled: false,
                 invincibility: 0.,
+                dead: false,
             })
             .insert(Label("Player".to_owned()))
             .insert(AudioPlusListener)
@@ -164,11 +166,16 @@ fn player_invincibility(mut crate_query: Query<(&mut Player, &mut Boat)>, time: 
 fn player_damage(
     mut ev_damage: EventReader<DamageEvent>,
     mut crate_query: Query<(&mut Health, &mut Player)>,
+    mut ev_death_cutscene: EventWriter<CutsceneStartEvent<DeathCutscene>>,
 ) {
     for event in ev_damage.iter() {
         if let Ok((mut health, mut player)) = crate_query.get_mut(event.hit) {
             if player.invincibility <= 0. {
                 health.damage(1.);
+                if !player.dead && health.dead() {
+                    player.dead = true;
+                    ev_death_cutscene.send_default();
+                }
                 player.invincibility = 0.3;
             }
         }

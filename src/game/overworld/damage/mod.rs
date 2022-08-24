@@ -49,7 +49,11 @@ fn damage_check(
     transform_query: Query<&GlobalTransform>,
     mut ev_damage: EventWriter<DamageEvent>,
     mut commands: Commands,
+    cutscenes: Res<Cutscenes>,
 ) {
+    if cutscenes.running() {
+        return;
+    }
     for (hurtbox_entity, hurtbox) in hurtbox_query.iter() {
         let hurtbox_translation = if let Ok(transform) = transform_query.get(hurtbox_entity) {
             transform.translation().truncate()

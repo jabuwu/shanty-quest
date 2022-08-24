@@ -12,8 +12,8 @@ pub use super::{
         camera::{OverworldCamera, OverworldCameraSystems},
         character_controller::{CharacterController, CharacterControllerSystems},
         cutscenes::{
-            enter_town::EnterTownCutscene, example_dialogue::ExampleDialogueCutscene,
-            exit_town::ExitTownCutscene,
+            death::DeathCutscene, enter_town::EnterTownCutscene,
+            example_dialogue::ExampleDialogueCutscene, exit_town::ExitTownCutscene,
         },
         damage::{
             AutoDamage, DamageEvent, Hitbox, Hurtbox, DAMAGE_FLAG_ENEMY, DAMAGE_FLAG_ENVIRONMENT,

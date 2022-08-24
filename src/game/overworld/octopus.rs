@@ -86,7 +86,7 @@ fn octopus_spawn(
             })
             .insert(CharacterController {
                 movement: Vec2::ZERO,
-                speed: 100.,
+                speed: 150.,
             })
             .insert(AutoDamage {
                 despawn: true,
