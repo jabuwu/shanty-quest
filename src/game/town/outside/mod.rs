@@ -266,10 +266,9 @@ fn outside_click(
                     }
                     ClickableAction::Leave => {
                         if game_state.quests.must_talk_to_mayor() {
-                            dialogue.add_text(
-                                DialoguePortrait::Jagerossa,
-                                "We must talk to the mayor before we leave".to_owned(),
-                            );
+                            for (p, t) in MUST_TALK_TO_MAYOR.iter() {
+                                dialogue.add_text(*p, String::from(*t));
+                            }
                         } else {
                             screen_fade.fade_out(1.);
                             state.leave = true;

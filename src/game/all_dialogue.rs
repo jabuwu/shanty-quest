@@ -2,6 +2,11 @@ use crate::common::prelude::DialoguePortrait;
 
 type P = DialoguePortrait;
 
+pub const MUST_TALK_TO_MAYOR: [(P, &str); 1] = [(
+    P::Jagerossa,
+    "No no! Ya can't leave without finding where the Pirate Lord is!\nThe sea be vast, we'll be huntin' for 'im forever!",
+)];
+
 pub const JAGEROSSA1: [(P, &str); 2] = [
     (
         P::Jagerossa,

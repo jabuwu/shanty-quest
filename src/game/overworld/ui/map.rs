@@ -7,6 +7,7 @@ pub struct MapPlugin;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(map_update_player)
+            .add_system(map_update_objective)
             .add_cutscene::<MapCutscene>()
             .add_system_set(SystemSet::on_update(AppState::Overworld).with_system(map_input));
     }
@@ -139,6 +140,25 @@ fn map_open(
                                 .without_pixel_perfect(),
                         )
                         .insert(MapPlayer);
+                    parent
+                        .spawn_bundle(SpriteBundle {
+                            sprite: Sprite {
+                                custom_size: Vec2::new(
+                                    (100. / map_builder.size().x) * 3.,
+                                    (100. / map_builder.size().y) * 3.,
+                                )
+                                .into(),
+                                color: Color::RED,
+                                ..Default::default()
+                            },
+                            ..Default::default()
+                        })
+                        .insert(
+                            Transform2::from_xy(99999., 99999.)
+                                .with_depth(DEPTH_LAYER_MAP_PLAYER)
+                                .without_pixel_perfect(),
+                        )
+                        .insert(MapObjective);
                 });
         });
 }
@@ -165,6 +185,9 @@ pub struct Map;
 #[derive(Component)]
 pub struct MapPlayer;
 
+#[derive(Component)]
+pub struct MapObjective;
+
 fn map_input(
     input: Res<Input<KeyCode>>,
     cutscenes: Res<Cutscenes>,
@@ -181,15 +204,28 @@ fn map_update_player(
     mut query: Query<&mut Transform2, With<MapPlayer>>,
     map_builder: Res<MapBuilder>,
 ) {
-    let mut player_position = if let Ok(player_transform) = player_query.get_single() {
+    let player_position = if let Ok(player_transform) = player_query.get_single() {
         player_transform.translation().truncate()
     } else {
         Vec2::new(99999., 99999.)
     };
-    player_position -= map_builder.offset();
-    player_position /= map_builder.size();
-    player_position += Vec2::new(-0.5, 0.5);
     for mut map_player_transform in query.iter_mut() {
-        map_player_transform.translation = player_position;
+        map_player_transform.translation = map_builder.world_to_map(player_position);
+    }
+}
+
+fn map_update_objective(
+    mut query: Query<&mut Transform2, With<MapObjective>>,
+    map_builder: Res<MapBuilder>,
+    game_state: Res<GameState>,
+    world_locations: Res<WorldLocations>,
+) {
+    let objective_position = if let Some(objective_marker) = game_state.quests.marker() {
+        world_locations.get_single_position(objective_marker)
+    } else {
+        Vec2::new(99999., 99999.)
+    };
+    for mut map_player_transform in query.iter_mut() {
+        map_player_transform.translation = map_builder.world_to_map(objective_position);
     }
 }

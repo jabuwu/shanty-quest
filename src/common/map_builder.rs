@@ -54,4 +54,12 @@ impl MapBuilder {
             self.labels.push((new_pos, String::from(label)));
         }
     }
+
+    pub fn world_to_map(&self, position: Vec2) -> Vec2 {
+        let mut map_position = position;
+        map_position -= self.offset();
+        map_position /= self.size();
+        map_position += Vec2::new(-0.5, 0.5);
+        map_position
+    }
 }

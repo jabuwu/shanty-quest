@@ -37,7 +37,7 @@ fn overworld_ui_spawn(
                             "",
                             TextStyle {
                                 font: asset_library.font_default.clone(),
-                                font_size: 64.0,
+                                font_size: 48.0,
                                 color: Color::BLACK,
                             },
                         )
@@ -57,6 +57,7 @@ fn overworld_ui_health(
     mut query: Query<&mut Text, With<OverworldUiHealth>>,
     health_query: Query<&Health, With<Player>>,
     threat_level: Res<ThreatLevel>,
+    game_state: Res<GameState>,
 ) {
     let health = if let Ok(health) = health_query.get_single() {
         health.value
@@ -64,8 +65,12 @@ fn overworld_ui_health(
         0.
     };
     for mut text in query.iter_mut() {
-        text.sections[0].value =
-            format!("Rum: {}\nThreat level: {:?}", health, threat_level.as_ref());
+        text.sections[0].value = format!(
+            "Rum: {}\nObjective: {:?}\nThreat level: {:?}",
+            health,
+            game_state.quests.objective(),
+            threat_level.as_ref()
+        );
     }
 }
 

@@ -55,6 +55,26 @@ impl Quests {
         false
     }
 
+    pub fn marker(&self) -> Option<&str> {
+        match self.active_quest {
+            Quest::Jagerossa(..) => Some("JagerossaTrigger"),
+            Quest::Ringo(..) => Some("RingoTrigger"),
+            Quest::Plank(..) => Some("PlankTrigger"),
+            Quest::Davy(..) => Some("DavyTrigger"),
+            Quest::End => None,
+        }
+    }
+
+    pub fn objective(&self) -> Option<&str> {
+        match self.active_quest {
+            Quest::Jagerossa(..) => Some("Defeat Jagerossa"),
+            Quest::Ringo(..) => Some("Defeat Ringo"),
+            Quest::Plank(..) => Some("Defeat Plank"),
+            Quest::Davy(..) => Some("Defeat Davy"),
+            Quest::End => None,
+        }
+    }
+
     pub fn next(&mut self) {
         self.active_quest.next();
     }
