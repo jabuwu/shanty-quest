@@ -25,6 +25,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(entities::EntitiesPlugin)
             .add_plugin(trigger::TriggerPlugin)
             .add_plugin(world_locations::WorldLocationsPlugin)
+            .add_plugin(enemy_spawns::EnemySpawnsPlugin)
             .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
@@ -103,6 +104,7 @@ pub mod cutscenes;
 pub mod damage;
 pub mod depth_layers;
 pub mod enemy;
+pub mod enemy_spawns;
 pub mod entities;
 pub mod health;
 pub mod healthbar;

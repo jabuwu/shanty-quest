@@ -2,6 +2,9 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
+const OCTOPUS_COLLISION_SIZE: Vec2 = Vec2::new(100., 100.);
+const OCTOPUS_HURTBOX_SIZE: Vec2 = Vec2::new(100., 100.);
+
 pub struct OctopusPlugin;
 
 impl Plugin for OctopusPlugin {
@@ -16,6 +19,7 @@ impl Plugin for OctopusPlugin {
 
 #[derive(Default, Clone, Copy)]
 pub struct OctopusSpawnEvent {
+    pub entity: Option<Entity>,
     pub position: Vec2,
 }
 
@@ -27,10 +31,28 @@ fn octopus_spawn(
     mut commands: Commands,
     mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
     asset_library: Res<AssetLibrary>,
+    collision_query: Res<CollisionQuery>,
 ) {
     for event in ev_spawn.iter() {
-        let entity = commands
-            .spawn_bundle(SpriteSheetBundle {
+        if collision_query
+            .check(
+                event.position,
+                CollisionShape::Rect {
+                    size: OCTOPUS_COLLISION_SIZE * 1.5,
+                },
+                None,
+            )
+            .is_some()
+        {
+            continue;
+        }
+        let mut entity = if let Some(entity) = event.entity {
+            commands.entity(entity)
+        } else {
+            commands.spawn()
+        };
+        entity
+            .insert_bundle(SpriteSheetBundle {
                 texture_atlas: asset_library.sprite_octopus_atlas.clone(),
                 ..Default::default()
             })
@@ -40,7 +62,7 @@ fn octopus_spawn(
             .insert(Octopus)
             .insert(Label("Octopus".to_owned()))
             .insert(YDepth::default())
-            .insert(Health::new(10.))
+            .insert(Health::new(3.))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(60., 60.),
@@ -49,14 +71,14 @@ fn octopus_spawn(
             })
             .insert(Hurtbox {
                 shape: CollisionShape::Rect {
-                    size: Vec2::new(80., 80.),
+                    size: OCTOPUS_HURTBOX_SIZE,
                 },
                 for_entity: None,
                 auto_despawn: false,
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {
-                    size: Vec2::new(60., 60.),
+                    size: OCTOPUS_COLLISION_SIZE,
                 },
                 flags: COLLISION_FLAG,
             })
@@ -67,10 +89,9 @@ fn octopus_spawn(
             .insert(AutoDamage {
                 despawn: true,
                 ..Default::default()
-            })
-            .id();
+            });
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
-            entity: Some(entity),
+            entity: Some(entity.id()),
             offset: Vec2::new(0., 75.),
             size: Vec2::new(80., 6.),
         });

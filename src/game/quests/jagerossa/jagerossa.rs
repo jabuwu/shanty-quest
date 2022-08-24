@@ -32,7 +32,7 @@ fn jagerossa_spawn(
     world_locations: Res<WorldLocations>,
 ) {
     let spawn_position = if let Ok(player_transform) = player_query.get_single() {
-        player_transform.translation().truncate() + Vec2::new(710., -450.)
+        player_transform.translation().truncate() + Vec2::new(810., -150.)
     } else {
         Vec2::ZERO
     };
