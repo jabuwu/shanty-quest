@@ -41,6 +41,7 @@ pub struct Hurtbox {
 pub struct AutoDamage {
     pub despawn: bool,
     pub invincibility: f32,
+    pub already_despawned: bool,
 }
 
 fn damage_check(
@@ -116,8 +117,9 @@ fn damage_auto_die(
                 health.damage(1.);
                 auto_damage.invincibility = 0.1;
             }
-            if health.dead() {
+            if health.dead() && !auto_damage.already_despawned {
                 commands.entity(entity).despawn_recursive();
+                auto_damage.already_despawned = true;
             }
         }
     }
