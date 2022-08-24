@@ -40,6 +40,10 @@ impl Quests {
         }
     }
 
+    pub fn must_talk_to_mayor(&self) -> bool {
+        false
+    }
+
     pub fn next(&mut self) {
         self.active_quest.next();
     }

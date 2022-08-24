@@ -105,11 +105,14 @@ fn dialogue_update(
     mut text_query: Query<&mut Text, With<DialogueText>>,
     mut sound_query: Query<&mut AudioPlusSource, With<DialogueBack>>,
     screen_fade: Res<ScreenFade>,
-    input: Res<Input<KeyCode>>,
+    mut input: ResMut<Input<KeyCode>>,
+    mut mouse: ResMut<Input<MouseButton>>,
 ) {
     let allow = screen_fade.faded_in();
-    if input.just_pressed(KeyCode::Space) && allow {
+    if (input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left)) && allow {
         if dialogue.texts.pop_front().is_some() {
+            input.reset(KeyCode::Space);
+            mouse.reset(MouseButton::Left);
             for mut sound in sound_query.iter_mut() {
                 sound.play();
             }

@@ -199,6 +199,9 @@ fn outside_click(
         Query<&mut AudioPlusSource, With<ClickSound>>,
     )>,
     state_time: Res<StateTime<AppState>>,
+    mut dialogue: ResMut<Dialogue>,
+    cutscenes: Res<Cutscenes>,
+    game_state: Res<GameState>,
 ) {
     if state_time.just_entered() || state.leave {
         return;
@@ -215,7 +218,10 @@ fn outside_click(
         } else {
             visibility.is_visible = false;
         }
-        let hovered = clickable.hovered && highest_priority == clickable_item.click_priority;
+        let hovered = clickable.hovered
+            && highest_priority == clickable_item.click_priority
+            && !dialogue.visible()
+            && !cutscenes.running();
         if hovered != clickable_item.last_hover {
             clickable_item.last_hover = hovered;
             if hovered {
@@ -239,17 +245,24 @@ fn outside_click(
                 input.reset(MouseButton::Left);
                 match clickable_item.action {
                     ClickableAction::Tavern => {
-                        app_state.set(AppState::TownTavern).unwrap();
+                        dialogue.add_text("refilled rum".to_owned());
+                        input.reset(MouseButton::Left);
                     }
                     ClickableAction::Mayor => {
-                        app_state.set(AppState::TownMayor).unwrap();
+                        dialogue.add_text("ding dong im the mayor".to_owned());
+                        input.reset(MouseButton::Left);
                     }
                     ClickableAction::ConcertHall => {
                         app_state.set(AppState::TownConcertHall).unwrap();
                     }
                     ClickableAction::Leave => {
-                        screen_fade.fade_out(1.);
-                        state.leave = true;
+                        if game_state.quests.must_talk_to_mayor() {
+                            dialogue
+                                .add_text("We must talk to the mayor before we leave".to_owned());
+                        } else {
+                            screen_fade.fade_out(1.);
+                            state.leave = true;
+                        }
                     }
                 }
             }
