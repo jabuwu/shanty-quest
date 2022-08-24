@@ -30,6 +30,7 @@ impl Plugin for OverworldPlugin {
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
             .add_system_set(SystemSet::on_update(AppState::Overworld).with_system(overworld_update))
+            .add_system(overworld_init_after_ldtk)
             .add_system(overworld_sound_stop);
     }
 }
@@ -49,7 +50,6 @@ fn overworld_init(
     mut ev_overworld_enter: EventWriter<OverworldEnterEvent>,
     mut ev_player_spawn: EventWriter<PlayerSpawnEvent>,
     mut ev_world_load: EventWriter<WorldLoadEvent>,
-    mut ev_ui_spawn: EventWriter<OverworldUiSpawnEvent>,
     mut overworld_camera: ResMut<OverworldCamera>,
     asset_library: Res<AssetLibrary>,
 ) {
@@ -61,7 +61,6 @@ fn overworld_init(
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     ev_player_spawn.send_default();
     ev_world_load.send_default();
-    ev_ui_spawn.send_default();
     commands
         .spawn()
         .insert(
@@ -76,6 +75,15 @@ fn overworld_init(
                 .as_looping(),
         )
         .insert(WorldAmbienceSound);
+}
+
+fn overworld_init_after_ldtk(
+    mut ev_ui_spawn: EventWriter<OverworldUiSpawnEvent>,
+    mut ev_spawn: EventReader<WorldLocationsSpawnEvent>,
+) {
+    for _ in ev_spawn.iter() {
+        ev_ui_spawn.send_default();
+    }
 }
 
 fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
@@ -102,7 +110,6 @@ pub mod camera;
 pub mod character_controller;
 pub mod cutscenes;
 pub mod damage;
-pub mod depth_layers;
 pub mod enemy;
 pub mod enemy_spawns;
 pub mod entities;

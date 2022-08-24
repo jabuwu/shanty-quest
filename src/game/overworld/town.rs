@@ -65,7 +65,7 @@ fn town_spawn(
                         }),
                         ..Default::default()
                     })
-                    .insert(Transform2::from_xy(0., 130.).with_depth((DepthLayer::Front, 0.)));
+                    .insert(Transform2::from_xy(0., 130.).with_depth(DEPTH_LAYER_TOWN_NAME));
             });
     }
 }

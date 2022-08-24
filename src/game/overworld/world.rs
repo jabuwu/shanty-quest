@@ -28,13 +28,13 @@ fn world_spawn(
         ev_ldtk_spawn.send(LdtkSpawnEvent {
             entity: None,
             asset: asset_library.level.clone(),
-            position: Vec2::new(-800., 350.),
+            position: Vec2::new(0., 0.),
         });
 
         commands
             .spawn_bundle(Text2dBundle {
                 text: Text::from_section(
-                    "Hold left mouse button to move\nPress F to fire your cannons\nPress D to use your magical ability",
+                    "Hold left mouse button to move\nPress F to fire your cannons\nPress D to use your magical ability\nPress M for map",
                     TextStyle {
                         font: asset_library.font_default.clone(),
                         font_size: 48.0,
@@ -47,6 +47,6 @@ fn world_spawn(
                 }),
                 ..Default::default()
             })
-            .insert(Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_CONTROLS));
+            .insert(Transform2::from_xy(800., -350.).with_depth(DEPTH_LAYER_CONTROLS));
     }
 }

@@ -2,8 +2,6 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
-const BAND_SELECTION_DEPTH: f32 = 0.5;
-
 pub struct BandSelectionPlugin;
 
 impl Plugin for BandSelectionPlugin {
@@ -51,7 +49,7 @@ fn band_selection_spawn(
                 texture: asset_library.sprite_band_selection_bg.clone(),
                 ..Default::default()
             })
-            .insert(Transform2::new().with_depth((DepthLayer::Front, BAND_SELECTION_DEPTH)))
+            .insert(Transform2::new().with_depth(DEPTH_LAYER_BAND_SELECTION_BACK))
             .insert(BandSelection)
             .with_children(|parent| {
                 parent
@@ -61,8 +59,7 @@ fn band_selection_spawn(
                         ..Default::default()
                     })
                     .insert(
-                        Transform2::from_xy(-276., 79.)
-                            .with_depth((DepthLayer::Front, BAND_SELECTION_DEPTH + 0.05)),
+                        Transform2::from_xy(-276., 79.).with_depth(DEPTH_LAYER_BAND_SELECTION_SLOT),
                     )
                     .insert(BandSelectionSlot {
                         index: 0,
@@ -76,8 +73,7 @@ fn band_selection_spawn(
                         ..Default::default()
                     })
                     .insert(
-                        Transform2::from_xy(-96., 79.)
-                            .with_depth((DepthLayer::Front, BAND_SELECTION_DEPTH + 0.05)),
+                        Transform2::from_xy(-96., 79.).with_depth(DEPTH_LAYER_BAND_SELECTION_SLOT),
                     )
                     .insert(BandSelectionSlot {
                         index: 1,
@@ -87,8 +83,8 @@ fn band_selection_spawn(
                 for slot in 0..BandMember::len() {
                     let x = -276. + 138. * slot as f32;
                     let member = BandMember::from_index(slot);
-                    let transform2 = Transform2::from_xy(x, -115.)
-                        .with_depth((DepthLayer::Front, BAND_SELECTION_DEPTH + 0.5));
+                    let transform2 =
+                        Transform2::from_xy(x, -115.).with_depth(DEPTH_LAYER_BAND_SELECTION_SLOT);
                     let label = Label(format!("Band Draggable ({:?})", member));
                     if game_state.member_in_band(member) {
                         parent
@@ -169,7 +165,7 @@ fn band_selection_drag(
         if let Ok(mut drag_transform) = drag_query.get_mut(drag.entity) {
             drag_transform.translation = mouse.position + drag.offset * 0.7;
             drag_transform.scale = Vec2::ONE * 0.7;
-            drag_transform.depth = BAND_SELECTION_DEPTH + 0.1;
+            drag_transform.depth = DEPTH_LAYER_BAND_SELECTION_SLOT_RAISED.1;
         }
     } else {
         if input.just_pressed(MouseButton::Left) {

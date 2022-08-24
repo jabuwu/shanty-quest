@@ -3,7 +3,7 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 
 const CAMERA_SIZE: Vec2 = Vec2::new(1280., 768.);
-const WORLD_LIMITS: (Vec2, Vec2) = (Vec2::new(-400., -9000.), Vec2::new(9000., 400.));
+const WORLD_LIMITS: (Vec2, Vec2) = (Vec2::new(-400., -90000.), Vec2::new(90000., 400.));
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
 pub enum OverworldCameraSystems {

@@ -2,8 +2,6 @@ use crate::common::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
-use super::depth_layers::DEPTH_LAYER_BOAT_TRAIL;
-
 pub struct WaterRingPlugin;
 
 #[derive(Default)]

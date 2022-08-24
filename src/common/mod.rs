@@ -24,6 +24,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(dialogue::DialoguePlugin)
             .add_plugin(follow_camera::FollowCameraPlugin)
             .add_plugin(world_locations::WorldLocationsPlugin)
+            .add_plugin(map_builder::MapBuilderPlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_startup_system(asset_hot_reloading);
@@ -41,6 +42,7 @@ pub mod clickable;
 pub mod collision;
 pub mod component_child;
 pub mod cutscene;
+pub mod depth_layers;
 pub mod dialogue;
 pub mod easing;
 pub mod entity_debug;
@@ -48,6 +50,7 @@ pub mod facing;
 pub mod follow_camera;
 pub mod label;
 pub mod ldtk;
+pub mod map_builder;
 pub mod math;
 pub mod menu_bar;
 pub mod mouse;

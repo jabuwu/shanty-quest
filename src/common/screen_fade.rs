@@ -72,7 +72,7 @@ fn screen_fade_init(mut commands: Commands) {
             },
             ..Default::default()
         })
-        .insert(Transform2::new().with_depth((DepthLayer::Front, 1.)))
+        .insert(Transform2::new().with_depth(DEPTH_LAYER_SCREEN_FADE))
         .insert(ScreenFadeComp)
         .insert(Persistent);
 }

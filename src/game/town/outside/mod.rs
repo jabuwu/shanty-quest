@@ -69,7 +69,7 @@ fn outside_init(
         })
         .insert(
             Transform2::new()
-                .with_depth((DepthLayer::Front, 0.))
+                .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_BG)
                 .with_scale(Vec2::ONE * 0.5),
         );
     commands
@@ -78,7 +78,7 @@ fn outside_init(
             ..Default::default()
         })
         .insert_bundle(TransformBundle::default())
-        .insert(Transform2::from_xy(-493., -84.).with_depth((DepthLayer::Front, 0.1)))
+        .insert(Transform2::from_xy(-493., -84.))
         .insert(ClickableItem {
             click_priority: 1,
             action: ClickableAction::Tavern,
@@ -93,7 +93,9 @@ fn outside_init(
                     texture: asset_library.sprite_town_tavern_outline.clone(),
                     ..Default::default()
                 })
-                .insert(Transform2::from_xy(0., 30.).with_depth((DepthLayer::Front, 0.1)));
+                .insert(
+                    Transform2::from_xy(0., 30.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
+                );
         });
     commands
         .spawn_bundle(VisibilityBundle {
@@ -101,7 +103,7 @@ fn outside_init(
             ..Default::default()
         })
         .insert_bundle(TransformBundle::default())
-        .insert(Transform2::from_xy(369., 0.).with_depth((DepthLayer::Front, 0.1)))
+        .insert(Transform2::from_xy(369., 0.))
         .insert(ClickableItem {
             click_priority: 0,
             action: ClickableAction::Mayor,
@@ -116,7 +118,9 @@ fn outside_init(
                     texture: asset_library.sprite_town_mayor_outline.clone(),
                     ..Default::default()
                 })
-                .insert(Transform2::from_xy(0., 43.).with_depth((DepthLayer::Front, 0.1)));
+                .insert(
+                    Transform2::from_xy(0., 43.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
+                );
         });
     commands
         .spawn_bundle(VisibilityBundle {
@@ -124,7 +128,7 @@ fn outside_init(
             ..Default::default()
         })
         .insert_bundle(TransformBundle::default())
-        .insert(Transform2::from_xy(-229., 72.).with_depth((DepthLayer::Front, 0.1)))
+        .insert(Transform2::from_xy(-229., 72.))
         .insert(ClickableItem {
             click_priority: 0,
             action: ClickableAction::ConcertHall,
@@ -139,7 +143,9 @@ fn outside_init(
                     texture: asset_library.sprite_town_concert_hall_outline.clone(),
                     ..Default::default()
                 })
-                .insert(Transform2::from_xy(115., -5.).with_depth((DepthLayer::Front, 0.1)));
+                .insert(
+                    Transform2::from_xy(115., -5.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
+                );
         });
     commands
         .spawn_bundle(Text2dBundle {
@@ -165,7 +171,7 @@ fn outside_init(
             action: ClickableAction::Leave,
             last_hover: false,
         })
-        .insert(Transform2::from_xy(470., -330.).with_depth((DepthLayer::Front, 0.2)));
+        .insert(Transform2::from_xy(470., -330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_EXIT));
     commands
         .spawn_bundle(Text2dBundle {
             text: Text::from_section(
@@ -182,7 +188,7 @@ fn outside_init(
             }),
             ..Default::default()
         })
-        .insert(Transform2::from_xy(0., 330.).with_depth((DepthLayer::Front, 0.2)));
+        .insert(Transform2::from_xy(0., 330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_NAME));
 }
 
 fn outside_click(
