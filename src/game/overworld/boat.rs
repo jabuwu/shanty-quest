@@ -106,6 +106,7 @@ fn boat_spawn(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: 200.,
+                force_facing: None,
             })
             .insert(ForwardCannons {
                 shoot: false,
@@ -165,6 +166,9 @@ fn boat_update(
         character_controller.movement = boat.movement;
         character_controller.speed = boat.speed;
         if let Some(facing) = Facing::from_vec(Vec2::from_angle(boat.direction)) {
+            boat.facing = facing;
+        }
+        if let Some(facing) = character_controller.force_facing {
             boat.facing = facing;
         }
         for child in children.iter() {

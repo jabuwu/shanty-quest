@@ -10,7 +10,9 @@ pub use super::{
         },
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         camera::{OverworldCamera, OverworldCameraSystems},
-        character_controller::{CharacterController, CharacterControllerSystems},
+        character_controller::{
+            CharacterController, CharacterControllerDestination, CharacterControllerSystems,
+        },
         cutscenes::{
             death::DeathCutscene, enter_town::EnterTownCutscene,
             example_dialogue::ExampleDialogueCutscene, exit_town::ExitTownCutscene,

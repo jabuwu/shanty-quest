@@ -98,7 +98,17 @@ fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>) {
 fn jagerossa2_cleanup(
     mut game_state: ResMut<GameState>,
     mut overworld_camera: ResMut<OverworldCamera>,
+    player_query: Query<Entity, With<Player>>,
+    mut commands: Commands,
+    world_locations: Res<WorldLocations>,
 ) {
+    if let Ok(player_entity) = player_query.get_single() {
+        commands
+            .entity(player_entity)
+            .insert(CharacterControllerDestination {
+                target: world_locations.get_single_position("Tortuga"),
+            });
+    }
     game_state.quests.next();
     overworld_camera.reset();
 }

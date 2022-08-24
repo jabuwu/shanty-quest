@@ -87,6 +87,7 @@ fn octopus_spawn(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: 150.,
+                force_facing: None,
             })
             .insert(AutoDamage {
                 despawn: true,
@@ -105,6 +106,7 @@ fn octopus_move(
         Query<(&mut CharacterController, &GlobalTransform), With<Octopus>>,
         Query<&GlobalTransform, With<Player>>,
     )>,
+    cutscenes: Res<Cutscenes>,
 ) {
     let player_position = if let Ok(player_transform) = queries.p1().get_single() {
         player_transform.translation().truncate()
@@ -112,8 +114,12 @@ fn octopus_move(
         Vec2::ZERO
     };
     for (mut character_controller, octopus_transform) in queries.p0().iter_mut() {
-        let direction = player_position - octopus_transform.translation().truncate();
-        character_controller.movement = direction.normalize();
+        if cutscenes.running() {
+            character_controller.movement = Vec2::ZERO;
+        } else {
+            let direction = player_position - octopus_transform.translation().truncate();
+            character_controller.movement = direction.normalize();
+        }
     }
 }
 

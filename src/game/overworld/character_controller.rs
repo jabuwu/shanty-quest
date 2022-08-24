@@ -23,6 +23,12 @@ impl Plugin for CharacterControllerPlugin {
 pub struct CharacterController {
     pub movement: Vec2,
     pub speed: f32,
+    pub force_facing: Option<Facing>,
+}
+
+#[derive(Component)]
+pub struct CharacterControllerDestination {
+    pub target: Vec2,
 }
 
 fn character_controller_update(
@@ -30,22 +36,44 @@ fn character_controller_update(
     mut queries: ParamSet<(
         Query<(
             Entity,
-            &CharacterController,
+            &mut CharacterController,
             &mut Transform2,
             &Collision,
+            &GlobalTransform,
             Option<&Dash>,
+            Option<&CharacterControllerDestination>,
         )>,
         Query<(Entity, &GlobalTransform, &Collision)>,
     )>,
     mut collision_query: ResMut<CollisionQuery>,
     time: Res<Time>,
+    mut commands: Commands,
 ) {
     for entity in query.iter() {
         collision_query.update(&queries.p1());
-        if let Ok((entity, character_controller, mut transform, collision, dash)) =
-            queries.p0().get_mut(entity)
+        if let Ok((
+            entity,
+            mut character_controller,
+            mut transform,
+            collision,
+            global_transform,
+            dash,
+            destination,
+        )) = queries.p0().get_mut(entity)
         {
             let mut velocity = character_controller.movement;
+            character_controller.force_facing = None;
+            if let Some(destination) = destination {
+                velocity = (destination.target - global_transform.translation().truncate()) / 200.;
+                if let Some(facing) = Facing::from_vec(velocity) {
+                    character_controller.force_facing = Some(facing);
+                }
+                if velocity.length() < 0.1 {
+                    commands
+                        .entity(entity)
+                        .remove::<CharacterControllerDestination>();
+                }
+            }
             if velocity.length_squared() > 1. {
                 velocity = velocity.normalize();
             }
