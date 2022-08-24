@@ -73,6 +73,21 @@ pub const RINGO2: [(P, &str); 2] = [
     )
 ];
 
+pub const PLANK_MAYOR: [(P, &str); 3] = [
+    (
+        P::Mayor,
+        "Oh, Pirate Lord! My humble town celebrates your arrival..."
+    ),
+    (
+        P::Mayor,
+        "Of course, of course. I will get straight into business!\nHere is where Captain Plank Presley has set anchor!"
+    ),
+    (
+        P::Mayor,
+        "Beware of his dashing hair and wicked dance moves!\nAnd... do remember your good friends, the Genes!"
+    )
+];
+
 pub const PLANK1: [(P, &str); 1] = [(
     P::Plank,
     "Yaar! It's now or never! All yer instruments will be mine!",
@@ -83,6 +98,21 @@ pub const PLANK2: [(P, &str); 1] = [
         P::Plank,
         "Huh... I'm all shook up! Come on, don't be cruel! My instrument fer me\nlife, a fair accord! You can combine their powers... And just let me be!",
     ),
+];
+
+pub const DAVY_MAYOR: [(P, &str); 3] = [
+    (
+        P::Mayor,
+        "Welcome, welcome Pirate Lord! Or, dare I say it? Pirate King!\nYour achievements know no bounds."
+    ),
+    (
+        P::Mayor,
+        "Only one Lord left, the maniac Captain Davy Bowie!\nHis ship is anchored nearby. Beware of his many-colored eyes!\nIt is said they can turn you to stone!"
+    ),
+    (
+        P::Mayor,
+        "Once he's... dispatched, and his instrument combined with your\norchestra...\nThen we can do business!"
+    )
 ];
 
 pub const DAVY1: [(P, &str); 1] = [(
@@ -97,3 +127,63 @@ pub const DAVY2: [(P, &str); 2] = [
     ),
     (P::Davy, "Yer truly are the Pirate King..."),
 ];
+
+pub const MAYOR_RANDOM1: [(P, &str); 1] = [(
+    P::Mayor,
+    "Of course I am a spitting image of the other Governor!\nWhy, we're identical siblings!",
+)];
+
+pub const MAYOR_RANDOM2: [(P, &str); 1] =
+    [(P::Mayor, "When you're the Pirate King, trade will flow!")];
+
+pub const MAYOR_RANDOM3: [(P, &str); 1] = [(
+    P::Mayor,
+    "Darn, darn, darn! Look at these accounts!\nWe'll be ruined if the Pirate Lords aren't... Oh, hello!",
+)];
+
+pub const MAYOR_RANDOM4: [(P, &str); 1] = [(P::Mayor, "Ah, tax counting day. My favorite!")];
+
+pub const MAYOR_RANDOM5: [(P, &str); 1] = [(
+    P::Mayor,
+    "Where is that rumship? Townsfolk are getting restless...",
+)];
+
+pub const BARKEEP1: [(P, &str); 3] = [
+    (P::Barkeep, "Eh? Piss off scoundrel! We have no more rum..."),
+    (
+        P::Barkeep,
+        "Oh... Thousand apologies, Pirate Lord! Boy!\nFetch ye the best caskets of rum!",
+    ),
+    (
+        P::Barkeep,
+        "Not that, stupid! That's bilge water! The best caskets I said!",
+    ),
+];
+
+pub const BARKEEP_RANDOM1: [(P, &str); 1] = [(
+    P::Barkeep,
+    "The more I clean this glass the dirtier it gets...",
+)];
+
+pub const BARKEEP_RANDOM2: [(P, &str); 1] = [(
+    P::Barkeep,
+    "Should've chosen a trade with real retirement options.",
+)];
+
+pub const BARKEEP_RANDOM3: [(P, &str); 1] = [(
+    P::Barkeep,
+    "Boy! Are those rats-on-sticks done?! Guests be waiting!",
+)];
+
+pub const BARKEEP_RANDOM4: [(P, &str); 1] = [(
+    P::Barkeep,
+    "Water?! Ye want to drink water?! That's fer washing, not drinking! Out!",
+)];
+
+pub const BARKEEP_RANDOM5: [(P, &str); 1] = [(
+    P::Barkeep,
+    "Dirty water is a copper, clean water is a silver, jug o' rum is two silver!",
+)];
+
+pub const BARKEEP_RANDOM6: [(P, &str); 1] =
+    [(P::Barkeep, "Eh. Should've attracted better clientele...")];

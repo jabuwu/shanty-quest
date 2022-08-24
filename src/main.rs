@@ -62,10 +62,24 @@ fn debug_dialogue(
                 dialogue_button_for!(RINGO_MAYOR);
                 dialogue_button_for!(RINGO1);
                 dialogue_button_for!(RINGO2);
+                dialogue_button_for!(PLANK_MAYOR);
                 dialogue_button_for!(PLANK1);
                 dialogue_button_for!(PLANK2);
+                dialogue_button_for!(DAVY_MAYOR);
                 dialogue_button_for!(DAVY1);
                 dialogue_button_for!(DAVY2);
+                dialogue_button_for!(MAYOR_RANDOM1);
+                dialogue_button_for!(MAYOR_RANDOM2);
+                dialogue_button_for!(MAYOR_RANDOM3);
+                dialogue_button_for!(MAYOR_RANDOM4);
+                dialogue_button_for!(MAYOR_RANDOM5);
+                dialogue_button_for!(BARKEEP1);
+                dialogue_button_for!(BARKEEP_RANDOM1);
+                dialogue_button_for!(BARKEEP_RANDOM2);
+                dialogue_button_for!(BARKEEP_RANDOM3);
+                dialogue_button_for!(BARKEEP_RANDOM4);
+                dialogue_button_for!(BARKEEP_RANDOM5);
+                dialogue_button_for!(BARKEEP_RANDOM6);
             });
     });
 }
