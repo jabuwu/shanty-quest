@@ -193,8 +193,13 @@ fn map_input(
     cutscenes: Res<Cutscenes>,
     state_time: Res<StateTime<AppState>>,
     mut ev_cutscene: EventWriter<CutsceneStartEvent<MapCutscene>>,
+    game_state: Res<GameState>,
 ) {
-    if state_time.time > 1. && input.just_pressed(KeyCode::M) && !cutscenes.running() {
+    if state_time.time > 1.
+        && input.just_pressed(KeyCode::M)
+        && !cutscenes.running()
+        && game_state.dangerous_seas
+    {
         ev_cutscene.send_default();
     }
 }
