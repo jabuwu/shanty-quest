@@ -29,11 +29,12 @@ fn overworld_ui_spawn(
             .spawn_bundle(VisibilityBundle::default())
             .insert_bundle(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
+            .insert(Transform2::new())
             .with_children(|parent| {
                 parent
                     .spawn_bundle(Text2dBundle {
                         text: Text::from_section(
-                            "",
+                            "??",
                             TextStyle {
                                 font: asset_library.font_default.clone(),
                                 font_size: 64.0,
@@ -47,7 +48,8 @@ fn overworld_ui_spawn(
                         ..Default::default()
                     })
                     .insert(Transform2::from_xy(-570., -340.).with_depth(DEPTH_LAYER_UI_TEXT))
-                    .insert(OverworldUiHealth);
+                    .insert(OverworldUiHealth)
+                    .insert(Label("hi".to_owned()));
             });
     }
 }
