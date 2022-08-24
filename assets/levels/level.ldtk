@@ -1044,7 +1044,7 @@
 					"layerDefUid": 51,
 					"pxOffsetX": 0,
 					"pxOffsetY": 0,
-					"visible": true,
+					"visible": false,
 					"optionalRules": [],
 					"intGridCsv": [],
 					"autoLayerTiles": [],
@@ -1136,7 +1136,7 @@
 						},
 						{
 							"__identifier": "JagerossaMoveTo",
-							"__grid": [44,31],
+							"__grid": [48,33],
 							"__pivot": [0,0],
 							"__tags": [],
 							"__tile": null,
@@ -1145,7 +1145,7 @@
 							"width": 100,
 							"height": 100,
 							"defUid": 48,
-							"px": [2200,1550],
+							"px": [2400,1650],
 							"fieldInstances": []
 						},
 						{
