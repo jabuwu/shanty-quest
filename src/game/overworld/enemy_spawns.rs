@@ -65,7 +65,7 @@ fn enemy_spawns(
     }
     if !state_time.just_entered()
         && rand::random::<f32>() < 0.05
-        && count < 300
+        && count < 30
         && !game_state.quests.block_enemy_spawns()
         && screen_fade.faded_in()
     {
