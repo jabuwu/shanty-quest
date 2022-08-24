@@ -61,6 +61,7 @@ pub fn init(
         .insert(CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
+            force_facing: None,
         })
         .insert(Player);
     commands
@@ -82,6 +83,7 @@ pub fn init(
         .insert(CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
+            force_facing: None,
         })
         .insert(MovingBox { right: true });
     commands
@@ -103,6 +105,7 @@ pub fn init(
         .insert(CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
+            force_facing: None,
         })
         .insert(MovingBox { right: false });
 }
