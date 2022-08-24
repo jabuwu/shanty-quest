@@ -14,7 +14,7 @@ pub const DEPTH_LAYER_SCREEN_FADE: Layer = (DepthLayer::Front, 1.);
 
 pub const DEPTH_LAYER_DIALOGUE_BACK: Layer = (DepthLayer::Front, 0.95);
 pub const DEPTH_LAYER_DIALOGUE_TEXT: Layer = (DepthLayer::Front, 0.96);
-pub const DEPTH_LAYER_DIALOGUE_PORTRAIT: Layer = (DepthLayer::Front, 0.96);
+pub const DEPTH_LAYER_DIALOGUE_PORTRAIT: Layer = (DepthLayer::Front, 0.94);
 
 pub const DEPTH_LAYER_HEALTHBAR_BORDER: Layer = (DepthLayer::Front, 0.1);
 pub const DEPTH_LAYER_HEALTHBAR: Layer = (DepthLayer::Front, 0.11);
