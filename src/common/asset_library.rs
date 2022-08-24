@@ -23,6 +23,10 @@ pub struct AssetLibrary {
     pub audio_sfx_sea: Handle<AudioSource>,
     #[asset("fonts/IMFellDoublePica-Regular.ttf")]
     pub font_default: Handle<Font>,
+    #[asset("sprites/OverworldDialogBG.png")]
+    pub sprite_dialogue_bg: Handle<Image>,
+    #[asset("sprites/portrait_a.png")]
+    pub sprite_dialogue_portrait_guitar: Handle<Image>,
 
     /*********
      * Level *

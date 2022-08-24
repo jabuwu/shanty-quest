@@ -47,7 +47,9 @@ fn outside_init(
     game_state: Res<GameState>,
 ) {
     *state = OutsideState::default();
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands
+        .spawn_bundle(Camera2dBundle::default())
+        .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     commands
         .spawn()
         .insert(AudioPlusSource::new(
@@ -245,11 +247,12 @@ fn outside_click(
                 input.reset(MouseButton::Left);
                 match clickable_item.action {
                     ClickableAction::Tavern => {
-                        dialogue.add_text("refilled rum".to_owned());
+                        dialogue.add_text(DialoguePortrait::None, "refilled rum".to_owned());
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::Mayor => {
-                        dialogue.add_text("ding dong im the mayor".to_owned());
+                        dialogue
+                            .add_text(DialoguePortrait::None, "ding dong im the mayor".to_owned());
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::ConcertHall => {
@@ -257,8 +260,10 @@ fn outside_click(
                     }
                     ClickableAction::Leave => {
                         if game_state.quests.must_talk_to_mayor() {
-                            dialogue
-                                .add_text("We must talk to the mayor before we leave".to_owned());
+                            dialogue.add_text(
+                                DialoguePortrait::Jagerossa,
+                                "We must talk to the mayor before we leave".to_owned(),
+                            );
                         } else {
                             screen_fade.fade_out(1.);
                             state.leave = true;

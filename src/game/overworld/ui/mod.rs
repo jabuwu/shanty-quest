@@ -28,7 +28,7 @@ fn overworld_ui_spawn(
             .spawn_bundle(VisibilityBundle::default())
             .insert_bundle(TransformBundle::default())
             .insert(Transform2::from_xy(0., 0.).with_depth((DepthLayer::Front, 0.9)))
-            .insert(FollowCamera)
+            .insert(FollowCamera { offset: Vec2::ZERO })
             .with_children(|parent| {
                 parent
                     .spawn_bundle(Text2dBundle {

@@ -14,10 +14,12 @@ impl Plugin for FollowCameraPlugin {
 }
 
 #[derive(Component)]
-pub struct FollowCamera;
+pub struct FollowCamera {
+    pub offset: Vec2,
+}
 
 fn follow_camera(
-    query: Query<Entity, With<FollowCamera>>,
+    query: Query<(Entity, &FollowCamera)>,
     camera_query: Query<Entity, With<Camera>>,
     mut transform_query: Query<&mut Transform2>,
 ) {
@@ -31,10 +33,10 @@ fn follow_camera(
     } else {
         return;
     };
-    for follow_entity in query.iter() {
+    for (follow_entity, follow_camera) in query.iter() {
         if let Ok(mut transform) = transform_query.get_mut(follow_entity) {
-            transform.translation.x = camera_translation.x;
-            transform.translation.y = camera_translation.y;
+            transform.translation.x = camera_translation.x + follow_camera.offset.x;
+            transform.translation.y = camera_translation.y + follow_camera.offset.y;
         }
     }
 }

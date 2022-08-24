@@ -8,7 +8,9 @@ pub struct SoundEffects {
     pub sfx_placeholder_sound: AudioPlusSoundEffect,
 
     // generic
-    pub sfx_dialogue_progress: AudioPlusSoundEffect,
+    pub sfx_dialogue_start: AudioPlusSoundEffect,
+    pub sfx_dialogue_proceed: AudioPlusSoundEffect,
+    pub sfx_dialogue_repeat: AudioPlusSoundEffect,
 
     // main menu
     pub sfx_menu_ambient: AudioPlusSoundEffect,
@@ -53,9 +55,20 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             volume: 1.0,
             ..Default::default()
         },
-        sfx_dialogue_progress: AudioPlusSoundEffect {
+        sfx_dialogue_start: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
-            volume: 1.0,
+            volume: 0.0,
+            ..Default::default()
+        },
+        sfx_dialogue_proceed: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            volume: 0.0,
+            ..Default::default()
+        },
+        sfx_dialogue_repeat: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            volume: 0.4,
+            pitch_variation: 0.2,
             ..Default::default()
         },
         sfx_menu_ambient: AudioPlusSoundEffect {

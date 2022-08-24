@@ -34,7 +34,6 @@ pub use super::{
         ui::OverworldUiSpawnEvent,
         water_ring::{WaterRing, WaterRingSpawnEvent},
         world::{World, WorldLoadEvent},
-        world_locations::{WorldLocationRect, WorldLocations, WorldLocationsSpawnEvent},
         OverworldEnterEvent, OverworldPlugin, WorldAmbienceSoundStopEvent,
     },
     quests::{Quest, Quests},

@@ -23,6 +23,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(cutscene::CutscenePlugin)
             .add_plugin(dialogue::DialoguePlugin)
             .add_plugin(follow_camera::FollowCameraPlugin)
+            .add_plugin(world_locations::WorldLocationsPlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_startup_system(asset_hot_reloading);
@@ -55,4 +56,5 @@ pub mod screen_fade;
 pub mod sound_effects;
 pub mod time_to_live;
 pub mod transform2;
+pub mod world_locations;
 pub mod y_depth;

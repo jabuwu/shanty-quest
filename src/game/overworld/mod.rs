@@ -24,7 +24,6 @@ impl Plugin for OverworldPlugin {
             .add_plugin(camera::OverworldCameraPlugin)
             .add_plugin(entities::EntitiesPlugin)
             .add_plugin(trigger::TriggerPlugin)
-            .add_plugin(world_locations::WorldLocationsPlugin)
             .add_plugin(enemy_spawns::EnemySpawnsPlugin)
             .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
@@ -116,4 +115,3 @@ pub mod trigger;
 pub mod ui;
 pub mod water_ring;
 pub mod world;
-pub mod world_locations;

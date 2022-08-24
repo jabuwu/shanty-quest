@@ -58,10 +58,14 @@ fn jagerossa1_init1(
     ev_jagerossa_spawn.send_default();
 
     dialogue.add_text(
-        "Ha-ha! Sailed right into me ambush ya bilge rat! I'll paint ya ship black with gunpowder!"
+        DialoguePortrait::Jagerossa,
+        "Ha-ha! Sailed right into me ambush ya bilge rat!\nI'll paint ya ship black with gunpowder!"
             .to_owned(),
     );
-    dialogue.add_text("Then I'll take yer instrument from your scorched corpse!".to_owned());
+    dialogue.add_text(
+        DialoguePortrait::Jagerossa,
+        "Then I'll take yer instrument from your scorched corpse!".to_owned(),
+    );
 
     let rect = world_locations.get_single_rect("JagerossaArena");
     overworld_camera.enable_arena(rect.position, rect.size);
@@ -89,10 +93,11 @@ impl Cutscene for Jagerossa2Cutscene {
 
 fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>) {
     dialogue.add_text(
+        DialoguePortrait::Jagerossa,
         "Well! Ya can't always get what you want... But wait, don't kill me yet!".to_owned(),
     );
-    dialogue.add_text("Have some sympathy fer me, poor devil... How about we combine our powers?! Ha?\nWith 2 instruments, yer ship we'll be unstoppable!".to_owned());
-    dialogue.add_text("Other Pirate Lords will scatter like tumblin' dice before our combined might! Set sail, onwards! We need to find a town.".to_owned());
+    dialogue.add_text(DialoguePortrait::Jagerossa,"Have some sympathy fer me, poor devil...\nHow about we combine our powers?! Ha?\nWith 2 instruments, yer ship we'll be unstoppable!".to_owned());
+    dialogue.add_text(DialoguePortrait::Jagerossa,"Other Pirate Lords will scatter like tumblin' dice before our\ncombined might!\nSet sail, onwards! We need to find a town.".to_owned());
 }
 
 fn jagerossa2_cleanup(

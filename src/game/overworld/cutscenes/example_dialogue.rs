@@ -27,6 +27,12 @@ impl Cutscene for ExampleDialogueCutscene {
 }
 
 fn init1(mut dialogue: ResMut<Dialogue>) {
-    dialogue.add_text("Hello world\nPress space to continue".to_owned());
-    dialogue.add_text("Move by clicking left mouse button\nShoot with F and D".to_owned());
+    dialogue.add_text(
+        DialoguePortrait::None,
+        "Hello world\nPress space to continue".to_owned(),
+    );
+    dialogue.add_text(
+        DialoguePortrait::None,
+        "Move by clicking left mouse button\nShoot with F and D".to_owned(),
+    );
 }

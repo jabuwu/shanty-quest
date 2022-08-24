@@ -11,7 +11,7 @@ pub use super::{
         AddAppCutscene, Cutscene, CutsceneBuilder, CutsceneContinueEvent, CutsceneSkipEvent,
         CutsceneStartEvent, Cutscenes,
     },
-    dialogue::{Dialogue, DialogueInitEvent},
+    dialogue::{Dialogue, DialogueInitEvent, DialoguePortrait},
     easing::*,
     facing::Facing,
     follow_camera::FollowCamera,
@@ -23,6 +23,7 @@ pub use super::{
     screen_fade::ScreenFade,
     time_to_live::TimeToLive,
     transform2::{DepthLayer, Transform2, Transform2Bundle},
+    world_locations::{WorldLocationRect, WorldLocations, WorldLocationsSpawnEvent},
     y_depth::YDepth,
     CommonPlugin,
 };

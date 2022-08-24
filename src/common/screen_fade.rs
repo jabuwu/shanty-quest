@@ -43,7 +43,7 @@ impl ScreenFade {
     }
 
     pub fn faded_in(&self) -> bool {
-        matches!(self.state, ScreenFadeState::FadedIn) && !self.fading()
+        !self.enabled || (matches!(self.state, ScreenFadeState::FadedIn) && !self.fading())
     }
 
     pub fn faded_out(&self) -> bool {

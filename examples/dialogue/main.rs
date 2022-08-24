@@ -39,8 +39,16 @@ pub fn init(
     asset_library.load_assets(&asset_server);
     ev_dialogue_init.send_default();
     commands.spawn_bundle(Camera2dBundle::default());
-    dialogue.add_text("hi".to_owned());
-    dialogue.add_text("this is example dialogue text".to_owned());
+    dialogue.add_text(DialoguePortrait::None, "hi".to_owned());
+    dialogue.add_text(
+        DialoguePortrait::None,
+        "this is example dialogue text".to_owned(),
+    );
+    dialogue.add_text(DialoguePortrait::Jagerossa, "1) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
+    dialogue.add_text(DialoguePortrait::Jagerossa, "2) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
+    dialogue.add_text(DialoguePortrait::Jagerossa, "3) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
+    dialogue.add_text(DialoguePortrait::Jagerossa, "4) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
+    dialogue.add_text(DialoguePortrait::Jagerossa, "5) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
     commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
