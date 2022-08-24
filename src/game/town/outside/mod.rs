@@ -210,6 +210,8 @@ fn outside_click(
     mut dialogue: ResMut<Dialogue>,
     cutscenes: Res<Cutscenes>,
     game_state: Res<GameState>,
+    mut ev_mayor_quest: EventWriter<QuestMayorEvent>,
+    mut ev_barkeep_quest: EventWriter<QuestBarkeepEvent>,
 ) {
     if state_time.just_entered() || state.leave {
         return;
@@ -253,12 +255,11 @@ fn outside_click(
                 input.reset(MouseButton::Left);
                 match clickable_item.action {
                     ClickableAction::Tavern => {
-                        dialogue.add_text(DialoguePortrait::Barkeep, "refilled rum".to_owned());
+                        ev_barkeep_quest.send_default();
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::Mayor => {
-                        dialogue
-                            .add_text(DialoguePortrait::Mayor, "ding dong im the mayor".to_owned());
+                        ev_mayor_quest.send_default();
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::ConcertHall => {

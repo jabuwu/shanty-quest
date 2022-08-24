@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use jam::common::prelude::*;
+use jam::game::prelude::*;
 
 fn main() {
     App::new()
@@ -18,6 +19,7 @@ fn main() {
         .add_plugin(jam::main_menu::MainMenuPlugin)
         .add_plugin(jam::game::GamePlugin)
         .add_system(stats)
+        .add_system(debug_dialogue)
         .run();
 }
 
@@ -31,6 +33,39 @@ fn stats(
             .open(open)
             .show(egui_context.ctx_mut(), |ui| {
                 ui.label(format!("State Time: {}", state_time.time));
+            });
+    });
+}
+
+fn debug_dialogue(
+    mut egui_context: ResMut<EguiContext>,
+    mut menu_bar: ResMut<MenuBar>,
+    mut dialogue: ResMut<Dialogue>,
+) {
+    menu_bar.item("Dialogues", |open| {
+        egui::Window::new("Dialogues")
+            .open(open)
+            .show(egui_context.ctx_mut(), |ui| {
+                macro_rules! dialogue_button_for {
+                    ($e:expr) => {
+                        if ui.button(stringify!($e)).clicked() {
+                            for (p, t) in $e.iter() {
+                                dialogue.add_text(*p, String::from(*t));
+                            }
+                        }
+                    };
+                }
+                dialogue_button_for!(MUST_TALK_TO_MAYOR);
+                dialogue_button_for!(JAGEROSSA1);
+                dialogue_button_for!(JAGEROSSA2);
+                dialogue_button_for!(DANGEROUS_SEAS);
+                dialogue_button_for!(RINGO_MAYOR);
+                dialogue_button_for!(RINGO1);
+                dialogue_button_for!(RINGO2);
+                dialogue_button_for!(PLANK1);
+                dialogue_button_for!(PLANK2);
+                dialogue_button_for!(DAVY1);
+                dialogue_button_for!(DAVY2);
             });
     });
 }

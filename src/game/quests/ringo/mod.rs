@@ -15,15 +15,16 @@ impl Plugin for RingoQuestPlugin {
     }
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct RingoQuest {
-    stage: RingoQuestStage,
+    pub stage: RingoQuestStage,
 }
 
-#[derive(Default, Clone)]
-enum RingoQuestStage {
+#[derive(Default, Clone, Debug)]
+pub enum RingoQuestStage {
     #[default]
-    ControlsTutorial,
+    TalkToMayor,
+    TalkedToMayor,
     Dialogue1,
     Fight,
     Dialogue2,

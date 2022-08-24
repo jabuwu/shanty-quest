@@ -15,12 +15,12 @@ impl Plugin for PlankQuestPlugin {
     }
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct PlankQuest {
     stage: PlankQuestStage,
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 enum PlankQuestStage {
     #[default]
     ControlsTutorial,

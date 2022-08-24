@@ -1,4 +1,9 @@
-use self::{davy::DavyQuest, jagerossa::JagerossaQuest, plank::PlankQuest, ringo::RingoQuest};
+use self::{
+    davy::DavyQuest,
+    jagerossa::JagerossaQuest,
+    plank::PlankQuest,
+    ringo::{RingoQuest, RingoQuestStage},
+};
 use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
@@ -8,18 +13,28 @@ pub struct QuestsPlugin;
 
 impl Plugin for QuestsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(jagerossa::JagerossaQuestPlugin)
+        app.add_event::<QuestMayorEvent>()
+            .add_event::<QuestBarkeepEvent>()
+            .add_plugin(jagerossa::JagerossaQuestPlugin)
             .add_plugin(davy::DavyQuestPlugin)
             .add_plugin(ringo::RingoQuestPlugin)
             .add_plugin(plank::PlankQuestPlugin)
-            .add_system(quests_debug);
+            .add_system(quests_debug)
+            .add_system(quests_mayor)
+            .add_system(quests_barkeep);
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Quests {
     pub active_quest: Quest,
 }
+
+#[derive(Default, Clone, Copy)]
+pub struct QuestMayorEvent;
+
+#[derive(Default, Clone, Copy)]
+pub struct QuestBarkeepEvent;
 
 impl Quests {
     pub fn block_town_enter(&self) -> bool {
@@ -52,7 +67,11 @@ impl Quests {
     }
 
     pub fn must_talk_to_mayor(&self) -> bool {
-        false
+        match &self.active_quest {
+            Quest::Jagerossa(..) => false,
+            Quest::Ringo(quest) => matches!(quest.stage, RingoQuestStage::TalkToMayor),
+            _ => false,
+        }
     }
 
     pub fn marker(&self) -> Option<&str> {
@@ -80,7 +99,7 @@ impl Quests {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Quest {
     Jagerossa(JagerossaQuest),
     Ringo(RingoQuest),
@@ -108,6 +127,37 @@ impl Default for Quest {
     }
 }
 
+fn quests_mayor(
+    mut ev_mayor: EventReader<QuestMayorEvent>,
+    mut dialogue: ResMut<Dialogue>,
+    mut game_state: ResMut<GameState>,
+) {
+    let mut fallback_dialogue = true;
+    for _ in ev_mayor.iter() {
+        match &mut game_state.quests.active_quest {
+            Quest::Ringo(quest) => {
+                if matches!(quest.stage, RingoQuestStage::TalkToMayor) {
+                    for (p, t) in RINGO_MAYOR.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                    quest.stage = RingoQuestStage::TalkedToMayor;
+                    fallback_dialogue = false;
+                }
+            }
+            _ => {}
+        }
+        if fallback_dialogue {
+            dialogue.add_text(DialoguePortrait::Mayor, "yippity yappity".to_string());
+        }
+    }
+}
+
+fn quests_barkeep(mut ev_barkeep: EventReader<QuestBarkeepEvent>, mut dialogue: ResMut<Dialogue>) {
+    for _ in ev_barkeep.iter() {
+        dialogue.add_text(DialoguePortrait::Barkeep, "babaa".to_string());
+    }
+}
+
 fn quests_debug(
     mut egui_context: ResMut<EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
@@ -127,6 +177,7 @@ fn quests_debug(
                         Quest::End => "End",
                     }
                 ));
+                ui.label(format!("{:?}", game_state.quests));
             });
     });
 }

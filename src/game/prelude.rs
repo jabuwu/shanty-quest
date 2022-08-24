@@ -38,6 +38,6 @@ pub use super::{
         world::{World, WorldLoadEvent},
         OverworldEnterEvent, OverworldPlugin, WorldAmbienceSoundStopEvent,
     },
-    quests::{Quest, Quests},
+    quests::{Quest, QuestBarkeepEvent, QuestMayorEvent, Quests},
     state::GameState,
 };

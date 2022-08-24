@@ -15,12 +15,12 @@ impl Plugin for DavyQuestPlugin {
     }
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct DavyQuest {
     stage: DavyQuestStage,
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 enum DavyQuestStage {
     #[default]
     ControlsTutorial,

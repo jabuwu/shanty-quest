@@ -45,7 +45,7 @@ fn ringo_trigger_check(
     for trigger in query.iter() {
         if trigger.triggered() {
             if let Quest::Ringo(quest) = &mut game_state.quests.active_quest {
-                if matches!(quest.stage, RingoQuestStage::ControlsTutorial) {
+                if matches!(quest.stage, RingoQuestStage::TalkedToMayor) {
                     ev_cutscene_ringo1.send_default();
                     quest.stage = RingoQuestStage::Dialogue1;
                 }

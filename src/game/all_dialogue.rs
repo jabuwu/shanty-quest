@@ -38,6 +38,25 @@ pub const DANGEROUS_SEAS: [(P, &str); 1] = [(
     "These seas be dangerous!\nOnly a fool would traverse them without a map!",
 )];
 
+pub const RINGO_MAYOR: [(P, &str); 4] = [
+    (
+        P::Mayor,
+        "Ah! The account of your triumph precedes you, Pirate Lord! The town\nof Portallica celebrates the defeat of your rival!"
+    ),
+    (
+        P::Mayor,
+        "Now that I have your attention... How about you conquer your other\nrivals, o mighty Pirate Lord? It would do wonders for my purse...\nI mean, for trade! Trade!"
+    ),
+    (
+        P::Mayor,
+        "Just imagine it! With all the other Lords defeated, all their instruments\ncombined... Why! You could be Pirate King!"
+    ),
+    (
+        P::Mayor,
+        "Luckily for you, I know where that bastard Ringo Yarr has set anchor...\nI'll provide you with his location, if you promise to remember your good\nfriend. Quid pro quo, as Latins say!"
+    )
+];
+
 pub const RINGO1: [(P, &str); 1] = [(
     P::Ringo,
     "Here ye are, sailin' helter-skelter right into me guns! Ha!",
