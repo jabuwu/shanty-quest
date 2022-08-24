@@ -48,6 +48,7 @@ fn concert_hall_init(
                 position: Vec2::ZERO,
                 special_attack: SpecialAttack::Shockwave,
                 healthbar: false,
+                player: true,
             });
             let ocean_entity = parent.spawn().id();
             ev_ocean_spawn.send(OceanSpawnEvent {

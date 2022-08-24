@@ -41,6 +41,7 @@ fn enemy_spawn(
             position: event.position,
             special_attack: SpecialAttack::ShotgunCannons,
             healthbar: true,
+            player: false,
         });
     }
 }

@@ -2,8 +2,8 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
-const OCTOPUS_COLLISION_SIZE: Vec2 = Vec2::new(100., 100.);
-const OCTOPUS_HURTBOX_SIZE: Vec2 = Vec2::new(100., 100.);
+const OCTOPUS_COLLISION_SIZE: Vec2 = Vec2::new(60., 60.);
+const OCTOPUS_HURTBOX_SIZE: Vec2 = Vec2::new(80., 80.);
 
 pub struct OctopusPlugin;
 
@@ -68,6 +68,7 @@ fn octopus_spawn(
                     size: Vec2::new(60., 60.),
                 },
                 for_entity: None,
+                flags: DAMAGE_FLAG_ENEMY,
             })
             .insert(Hurtbox {
                 shape: CollisionShape::Rect {
@@ -75,6 +76,7 @@ fn octopus_spawn(
                 },
                 for_entity: None,
                 auto_despawn: false,
+                flags: DAMAGE_FLAG_PLAYER,
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {
@@ -98,15 +100,20 @@ fn octopus_spawn(
     }
 }
 
-fn octopus_move(mut query: Query<&mut CharacterController, With<Octopus>>) {
-    for mut character_controller in query.iter_mut() {
-        let mut angle = Vec2::X.angle_between(character_controller.movement);
-        if angle.is_nan() {
-            angle = 0.;
-        }
-        angle += rand::random::<f32>() * 0.2;
-        angle -= rand::random::<f32>() * 0.2;
-        character_controller.movement = Vec2::from_angle(angle);
+fn octopus_move(
+    mut queries: ParamSet<(
+        Query<(&mut CharacterController, &GlobalTransform), With<Octopus>>,
+        Query<&GlobalTransform, With<Player>>,
+    )>,
+) {
+    let player_position = if let Ok(player_transform) = queries.p1().get_single() {
+        player_transform.translation().truncate()
+    } else {
+        Vec2::ZERO
+    };
+    for (mut character_controller, octopus_transform) in queries.p0().iter_mut() {
+        let direction = player_position - octopus_transform.translation().truncate();
+        character_controller.movement = direction.normalize();
     }
 }
 

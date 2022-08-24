@@ -47,6 +47,7 @@ fn rubble_spawn(
                     size: Vec2::new(128., 128.),
                 },
                 for_entity: None,
+                flags: DAMAGE_FLAG_ENVIRONMENT,
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {

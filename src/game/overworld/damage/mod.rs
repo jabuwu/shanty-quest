@@ -2,6 +2,10 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
+pub const DAMAGE_FLAG_PLAYER: u32 = 1;
+pub const DAMAGE_FLAG_ENEMY: u32 = 2;
+pub const DAMAGE_FLAG_ENVIRONMENT: u32 = 4;
+
 pub struct DamagePlugin;
 
 impl Plugin for DamagePlugin {
@@ -22,6 +26,7 @@ pub struct DamageEvent {
 pub struct Hitbox {
     pub shape: CollisionShape,
     pub for_entity: Option<Entity>,
+    pub flags: u32,
 }
 
 #[derive(Component)]
@@ -29,6 +34,7 @@ pub struct Hurtbox {
     pub shape: CollisionShape,
     pub for_entity: Option<Entity>,
     pub auto_despawn: bool,
+    pub flags: u32,
 }
 
 #[derive(Component, Default)]
@@ -63,6 +69,9 @@ fn damage_check(
                 hitbox_entity
             };
             if hit == hurt {
+                continue;
+            }
+            if hurtbox.flags & hitbox.flags == 0 {
                 continue;
             }
             let hitbox_translation = if let Ok(transform) = transform_query.get(hitbox_entity) {

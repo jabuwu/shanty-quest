@@ -3,6 +3,7 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 
 const CAMERA_SIZE: Vec2 = Vec2::new(1280., 768.);
+const WORLD_LIMITS: (Vec2, Vec2) = (Vec2::new(-400., -9000.), Vec2::new(9000., 400.));
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
 pub enum OverworldCameraSystems {
@@ -72,6 +73,7 @@ fn overworld_camera_update(
             clamped_position,
             ease(Easing::SineInOut, overworld_camera.arena_focus),
         );
+        position = position.clamp(WORLD_LIMITS.0, WORLD_LIMITS.1);
         for camera_entity in camera_query.iter() {
             if let Ok(mut camera_transform) = transform_query.get_mut(camera_entity) {
                 camera_transform.translation = position;

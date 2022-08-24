@@ -15,7 +15,10 @@ pub use super::{
             enter_town::EnterTownCutscene, example_dialogue::ExampleDialogueCutscene,
             exit_town::ExitTownCutscene,
         },
-        damage::{AutoDamage, DamageEvent, Hitbox, Hurtbox},
+        damage::{
+            AutoDamage, DamageEvent, Hitbox, Hurtbox, DAMAGE_FLAG_ENEMY, DAMAGE_FLAG_ENVIRONMENT,
+            DAMAGE_FLAG_PLAYER,
+        },
         depth_layers::*,
         enemy::{Enemy, EnemySpawnEvent},
         entities::rubble::{Rubble, RubbleSpawnEvent},

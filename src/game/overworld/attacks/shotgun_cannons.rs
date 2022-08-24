@@ -17,6 +17,7 @@ impl Plugin for ShotgunCannonsPlugin {
 #[derive(Component, Default)]
 pub struct ShotgunCannons {
     pub shoot: bool,
+    pub hurt_flags: u32,
 }
 
 #[derive(Component)]
@@ -85,6 +86,7 @@ fn shotgun_cannons_fire(
                             },
                             for_entity: Some(boat_entity),
                             auto_despawn: true,
+                            flags: shotgun_cannons.hurt_flags,
                         })
                         .insert(
                             Transform2::from_translation(position)

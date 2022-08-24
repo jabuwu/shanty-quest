@@ -17,6 +17,7 @@ impl Plugin for ForwardCannonsPlugin {
 #[derive(Component, Default)]
 pub struct ForwardCannons {
     pub shoot: bool,
+    pub hurt_flags: u32,
 }
 
 #[derive(Component)]
@@ -91,6 +92,7 @@ fn forward_cannons_fire(
                         },
                         for_entity: Some(boat_entity),
                         auto_despawn: true,
+                        flags: forward_cannons.hurt_flags,
                     })
                     .insert(YDepth::default())
                     .insert(ForwardCannonBall { velocity })

@@ -48,6 +48,7 @@ fn player_spawn(
             position: game_state.town.position + game_state.town.spawn_offset,
             special_attack: game_state.band_special_attack_type(),
             healthbar: false,
+            player: true,
         });
         if !game_state.quests.block_town_exit_cutscene() {
             ev_cutscene_exit_town.send(CutsceneStartEvent(ExitTownCutscene {

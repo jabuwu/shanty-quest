@@ -17,6 +17,7 @@ impl Plugin for ShockwavePlugin {
 #[derive(Component, Default)]
 pub struct Shockwave {
     pub shoot: bool,
+    pub hurt_flags: u32,
 }
 
 #[derive(Component, Default)]

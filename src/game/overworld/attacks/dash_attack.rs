@@ -17,6 +17,7 @@ impl Plugin for DashAttackPlugin {
 #[derive(Component, Default)]
 pub struct DashAttack {
     pub shoot: bool,
+    pub hurt_flags: u32,
 }
 
 #[derive(Component)]

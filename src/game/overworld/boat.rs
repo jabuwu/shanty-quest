@@ -32,6 +32,7 @@ pub struct BoatSpawnEvent {
     pub position: Vec2,
     pub special_attack: SpecialAttack,
     pub healthbar: bool,
+    pub player: bool,
 }
 
 #[derive(Component)]
@@ -76,6 +77,11 @@ fn boat_spawn(
         } else {
             commands.spawn()
         };
+        let hurt_flags = if event.player {
+            DAMAGE_FLAG_ENEMY | DAMAGE_FLAG_ENVIRONMENT
+        } else {
+            DAMAGE_FLAG_PLAYER
+        };
         boat_entity
             .insert_bundle(TransformBundle::default())
             .insert_bundle(VisibilityBundle::default())
@@ -101,16 +107,33 @@ fn boat_spawn(
                 movement: Vec2::ZERO,
                 speed: 200.,
             })
-            .insert(ForwardCannons::default())
-            .insert(ShotgunCannons::default())
-            .insert(Shockwave::default())
-            .insert(DashAttack::default())
+            .insert(ForwardCannons {
+                shoot: false,
+                hurt_flags,
+            })
+            .insert(ShotgunCannons {
+                shoot: false,
+                hurt_flags,
+            })
+            .insert(Shockwave {
+                shoot: false,
+                hurt_flags,
+            })
+            .insert(DashAttack {
+                shoot: false,
+                hurt_flags,
+            })
             .insert(Health::new(3.))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(100., 100.),
                 },
                 for_entity: None,
+                flags: if event.player {
+                    DAMAGE_FLAG_PLAYER
+                } else {
+                    DAMAGE_FLAG_ENEMY
+                },
             })
             .add_child(sprite_entity);
         if event.healthbar {

@@ -53,6 +53,7 @@ fn jagerossa_spawn(
             position: spawn_position,
             special_attack: SpecialAttack::ShotgunCannons,
             healthbar: true,
+            player: false,
         });
     }
 }
