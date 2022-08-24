@@ -66,21 +66,31 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             ..Default::default()
         },
         sfx_dialogue_repeat: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            audio_sources: vec![
+                asset_library.audio_sfx_dialogue_voice_generic_01.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_02.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_03.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_04.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_05.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_06.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_07.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_08.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_09.clone()
+            ],
             volume: 0.4,
-            pitch_variation: 0.2,
+            pitch_variation: 0.,
             ..Default::default()
         },
         sfx_menu_ambient: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_sea.clone()],
-            volume: 0.5,
+            volume: 0.6,
             fade_in: 1.,
             fade_out: 1.,
             ..Default::default()
         },
         sfx_menu_music: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.menu_music.clone()],
-            volume: 1.,
+            volume: 0.8,
             fade_out: 1.7,
             ..Default::default()
         },

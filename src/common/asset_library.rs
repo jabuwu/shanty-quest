@@ -27,6 +27,24 @@ pub struct AssetLibrary {
     pub sprite_dialogue_bg: Handle<Image>,
     #[asset("sprites/portrait_a.png")]
     pub sprite_dialogue_portrait_guitar: Handle<Image>,
+    #[asset("audio/sfx/dialogue_voice_generic_01.ogg")]
+    pub audio_sfx_dialogue_voice_generic_01: Handle<AudioSource>,
+    #[asset("audio/sfx/dialogue_voice_generic_02.ogg")]
+    pub audio_sfx_dialogue_voice_generic_02: Handle<AudioSource>,
+    #[asset("audio/sfx/dialogue_voice_generic_03.ogg")]
+    pub audio_sfx_dialogue_voice_generic_03: Handle<AudioSource>,
+    #[asset("audio/sfx/dialogue_voice_generic_04.ogg")]
+    pub audio_sfx_dialogue_voice_generic_04: Handle<AudioSource>,
+    #[asset("audio/sfx/dialogue_voice_generic_05.ogg")]
+    pub audio_sfx_dialogue_voice_generic_05: Handle<AudioSource>,
+    #[asset("audio/sfx/dialogue_voice_generic_06.ogg")]
+    pub audio_sfx_dialogue_voice_generic_06: Handle<AudioSource>,
+    #[asset("audio/sfx/dialogue_voice_generic_07.ogg")]
+    pub audio_sfx_dialogue_voice_generic_07: Handle<AudioSource>,
+    #[asset("audio/sfx/dialogue_voice_generic_08.ogg")]
+    pub audio_sfx_dialogue_voice_generic_08: Handle<AudioSource>,
+    #[asset("audio/sfx/dialogue_voice_generic_09.ogg")]
+    pub audio_sfx_dialogue_voice_generic_09: Handle<AudioSource>,
 
     /*********
      * Level *

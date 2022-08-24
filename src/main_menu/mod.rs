@@ -215,7 +215,8 @@ fn menu_shine(mut query: Query<(&mut Shine, &mut Transform2, &mut Sprite)>, time
         sprite
             .color
             .set_a(ease(Easing::QuartOut, (shine.x * 3.).clamp(0., 1.)));
-        transform.rotation = shine.x * 0.05;
+        transform.rotation = shine.x * 0.2;
+        transform.scale = Vec2::new(shine.x.sin() * 0.2 + 0.6, shine.x.cos() * 0.2 + 0.6)
     }
 }
 
