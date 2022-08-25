@@ -3,7 +3,7 @@ use asset_struct::AssetStruct;
 use bevy::prelude::*;
 use std::collections::HashMap;
 
-use super::grid_combiner::{GridCombiner, GridPoint};
+use grid_combiner::{GridCombiner, GridPoint};
 
 pub struct LdtkPlugin;
 
@@ -40,15 +40,6 @@ impl LdtkState {
             false
         }
     }
-}
-
-fn random_color() -> Color {
-    Color::rgba(
-        rand::random::<f32>(),
-        rand::random::<f32>(),
-        rand::random::<f32>(),
-        0.5,
-    )
 }
 
 fn ldtk_spawn(mut ev_spawn: EventReader<LdtkSpawnEvent>, mut commands: Commands) {

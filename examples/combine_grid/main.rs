@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use jam::common::grid_combiner::{GridCombiner, GridPoint};
+use grid_combiner::{GridCombiner, GridPoint};
 
 fn random_color() -> Color {
     Color::rgb(

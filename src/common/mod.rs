@@ -48,7 +48,6 @@ pub mod easing;
 pub mod entity_debug;
 pub mod facing;
 pub mod follow_camera;
-pub mod grid_combiner;
 pub mod label;
 pub mod ldtk;
 pub mod map_builder;
