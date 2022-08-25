@@ -148,8 +148,8 @@ impl Quest {
 
 impl Default for Quest {
     fn default() -> Self {
-        Self::Jagerossa(JagerossaQuest::default())
-        //Self::End
+        //Self::Jagerossa(JagerossaQuest::default())
+        Self::End
     }
 }
 

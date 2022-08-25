@@ -148,6 +148,10 @@ pub struct AssetLibrary {
     pub sprite_octopus: Handle<Image>,
     pub sprite_octopus_atlas: Handle<TextureAtlas>,
 
+    #[asset("sprites/AnglerFish.png")]
+    pub sprite_angler_fish: Handle<Image>,
+    pub sprite_angler_fish_atlas: Handle<TextureAtlas>,
+
     /****************
      * Overworld UI *
      ****************/
@@ -200,11 +204,11 @@ impl AssetLibrary {
         self.sprite_ship_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_octopus.clone(), Vec2::new(162., 130.), 2, 1);
+            TextureAtlas::from_grid(self.sprite_octopus.clone(), Vec2::new(131., 130.), 2, 1);
         self.sprite_octopus_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_turtle.clone(), Vec2::new(162., 130.), 2, 1);
+            TextureAtlas::from_grid(self.sprite_turtle.clone(), Vec2::new(131., 130.), 2, 1);
         self.sprite_turtle_atlas = texture_atlas_assets.add(texture_atlas);
     }
 
