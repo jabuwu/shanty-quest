@@ -95,7 +95,7 @@ fn jagerossa2_cleanup(
         commands
             .entity(player_entity)
             .insert(CharacterControllerDestination {
-                target: world_locations.get_single_position("Portallica"),
+                target: world_locations.get_single_position("Portallica") + Vec2::new(0., -100.),
             });
     }
     game_state.quests.next();

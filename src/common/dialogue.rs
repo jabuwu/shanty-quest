@@ -215,13 +215,19 @@ fn dialogue_update(
     time: Res<Time>,
 ) {
     let allow = screen_fade.faded_in();
-    if (input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left)) && allow {
+    let space_pressed = input.just_pressed(KeyCode::Space);
+    let mouse_pressed = mouse.just_pressed(MouseButton::Left);
+    if (space_pressed || mouse_pressed) && allow {
         if !dialogue.entries.is_empty() {
             if dialogue.all_characters_visible() {
                 dialogue.entries.pop_front();
                 dialogue.time = 0.;
-                input.reset(KeyCode::Space);
-                mouse.reset(MouseButton::Left);
+                if space_pressed {
+                    input.reset(KeyCode::Space);
+                }
+                if mouse_pressed {
+                    mouse.reset(MouseButton::Left);
+                }
                 for mut sound in queries.p4().iter_mut() {
                     sound.play();
                 }

@@ -77,8 +77,9 @@ impl Quests {
     }
 
     pub fn block_dangerous_seas(&self) -> bool {
-        match self.active_quest {
+        match &self.active_quest {
             Quest::Jagerossa(..) => true,
+            Quest::Ringo(quest) => matches!(quest.stage, RingoQuestStage::TalkToMayor),
             _ => false,
         }
     }
