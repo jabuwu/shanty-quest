@@ -219,14 +219,7 @@ fn ldtk_load(
                     pos *= 100.;
                     size *= 100.;
                     commands
-                        .spawn_bundle(SpriteBundle {
-                            sprite: Sprite {
-                                color: random_color(),
-                                custom_size: size.into(),
-                                ..Default::default()
-                            },
-                            ..Default::default()
-                        })
+                        .spawn_bundle(TransformBundle::default())
                         .insert(
                             Transform2::from_translation(pos).with_depth((DepthLayer::Front, 1.)),
                         )
