@@ -11,19 +11,28 @@ pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(
-            character_controller_update
-                .label(CharacterControllerSystems::Update)
-                .before(OverworldCameraSystems::Update),
-        );
+        app.add_event::<KnockbackEvent>()
+            .add_system(
+                character_controller_update
+                    .label(CharacterControllerSystems::Update)
+                    .before(OverworldCameraSystems::Update),
+            )
+            .add_system(character_controller_knockback);
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Default)]
 pub struct CharacterController {
     pub movement: Vec2,
     pub speed: f32,
     pub force_facing: Option<Facing>,
+    pub knockback: Vec2,
+}
+
+#[derive(Clone, Copy)]
+pub struct KnockbackEvent {
+    pub entity: Entity,
+    pub force: Vec2,
 }
 
 #[derive(Component)]
@@ -81,6 +90,8 @@ fn character_controller_update(
             if let Some(dash) = dash {
                 velocity += dash.velocity * time.delta_seconds();
             }
+            velocity += character_controller.knockback;
+            character_controller.knockback *= 0.000001_f32.powf(time.delta_seconds());
             let velocity_x = Vec2::X * velocity;
             let velocity_y = Vec2::Y * velocity;
             let collision_filters = CollisionFilter {
@@ -109,6 +120,17 @@ fn character_controller_update(
             {
                 transform.translation += velocity_y;
             }
+        }
+    }
+}
+
+fn character_controller_knockback(
+    mut query: Query<&mut CharacterController>,
+    mut ev_knockback: EventReader<KnockbackEvent>,
+) {
+    for event in ev_knockback.iter() {
+        if let Ok(mut character_controller) = query.get_mut(event.entity) {
+            character_controller.knockback += event.force;
         }
     }
 }

@@ -13,6 +13,7 @@ pub use super::{
         camera::{OverworldCamera, OverworldCameraSystems},
         character_controller::{
             CharacterController, CharacterControllerDestination, CharacterControllerSystems,
+            KnockbackEvent,
         },
         cutscenes::{
             dangerous_seas::DangerousSeasCutscene, death::DeathCutscene,
@@ -20,8 +21,8 @@ pub use super::{
             exit_town::ExitTownCutscene,
         },
         damage::{
-            AutoDamage, DamageEvent, Hitbox, Hurtbox, DAMAGE_FLAG_ENEMY, DAMAGE_FLAG_ENVIRONMENT,
-            DAMAGE_FLAG_PLAYER,
+            AutoDamage, DamageEvent, Hitbox, Hurtbox, HurtboxKnockbackType, DAMAGE_FLAG_ENEMY,
+            DAMAGE_FLAG_ENVIRONMENT, DAMAGE_FLAG_PLAYER,
         },
         enemy::{Enemy, EnemySpawnEvent},
         entities::rubble::{Rubble, RubbleSpawnEvent},

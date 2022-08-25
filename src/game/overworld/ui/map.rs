@@ -168,7 +168,10 @@ fn map_wait_for_close(
     mouse: Res<Input<MouseButton>>,
     mut ev_continue: EventWriter<CutsceneContinueEvent<MapCutscene>>,
 ) {
-    if input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left) {
+    if input.just_pressed(KeyCode::Space)
+        || mouse.just_pressed(MouseButton::Left)
+        || input.just_pressed(KeyCode::M)
+    {
         ev_continue.send_default();
     }
 }

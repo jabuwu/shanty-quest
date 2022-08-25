@@ -106,7 +106,7 @@ fn boat_spawn(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: 200.,
-                force_facing: None,
+                ..Default::default()
             })
             .insert(ForwardCannons {
                 shoot: false,

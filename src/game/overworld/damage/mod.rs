@@ -35,6 +35,14 @@ pub struct Hurtbox {
     pub for_entity: Option<Entity>,
     pub auto_despawn: bool,
     pub flags: u32,
+    pub knockback_type: HurtboxKnockbackType,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum HurtboxKnockbackType {
+    None,
+    Velocity(Vec2),
+    Difference,
 }
 
 #[derive(Component, Default)]
@@ -51,6 +59,7 @@ fn damage_check(
     mut ev_damage: EventWriter<DamageEvent>,
     mut commands: Commands,
     cutscenes: Res<Cutscenes>,
+    mut ev_knockback: EventWriter<KnockbackEvent>,
 ) {
     if cutscenes.running() {
         return;
@@ -88,6 +97,15 @@ fn damage_check(
                 .shape
                 .overlaps(hitbox_translation, hurtbox.shape, hurtbox_translation)
             {
+                match hurtbox.knockback_type {
+                    HurtboxKnockbackType::Velocity(force) => {
+                        ev_knockback.send(KnockbackEvent {
+                            entity: hitbox_entity,
+                            force,
+                        });
+                    }
+                    _ => {}
+                }
                 ev_damage.send(DamageEvent { hit, hurt });
                 if hurtbox.auto_despawn {
                     despawn = true;

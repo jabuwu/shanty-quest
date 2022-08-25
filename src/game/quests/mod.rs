@@ -70,11 +70,10 @@ impl Quests {
     }
 
     pub fn block_enemy_spawns(&self) -> bool {
-        /*match self.active_quest {
+        match self.active_quest {
             Quest::Jagerossa(..) => true,
             _ => false,
-        }*/
-        true
+        }
     }
 
     pub fn block_dangerous_seas(&self) -> bool {

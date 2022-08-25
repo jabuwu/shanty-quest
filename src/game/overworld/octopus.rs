@@ -77,6 +77,7 @@ fn octopus_spawn(
                 for_entity: None,
                 auto_despawn: false,
                 flags: DAMAGE_FLAG_PLAYER,
+                knockback_type: HurtboxKnockbackType::None,
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {
@@ -87,7 +88,7 @@ fn octopus_spawn(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: 150.,
-                force_facing: None,
+                ..Default::default()
             })
             .insert(AutoDamage {
                 despawn: true,

@@ -69,7 +69,7 @@ pub fn init(
         .insert(CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
-            force_facing: None,
+            ..Default::default()
         })
         .insert(Hitbox {
             shape: CollisionShape::Rect {
@@ -108,7 +108,7 @@ pub fn init(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: 300.,
-                force_facing: None,
+                ..Default::default()
             })
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
