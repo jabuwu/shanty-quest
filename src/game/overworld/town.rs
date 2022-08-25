@@ -78,7 +78,8 @@ fn town_world_spawn(
 ) {
     for _ in ev_spawn.iter() {
         for name in TOWN_NAMES.iter() {
-            let positions = world_locations.get_multiple_positions(*name);
+            let town_name = name.replace(" ", "_");
+            let positions = world_locations.get_multiple_positions(&town_name);
             for position in positions {
                 ev_rubble_spawn.send(TownSpawnEvent {
                     position,

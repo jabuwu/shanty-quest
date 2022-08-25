@@ -17,13 +17,14 @@ impl Plugin for PlankQuestPlugin {
 
 #[derive(Default, Clone, Debug)]
 pub struct PlankQuest {
-    stage: PlankQuestStage,
+    pub stage: PlankQuestStage,
 }
 
 #[derive(Default, Clone, Debug)]
-enum PlankQuestStage {
+pub enum PlankQuestStage {
     #[default]
-    ControlsTutorial,
+    TalkToMayor,
+    TalkedToMayor,
     Dialogue1,
     Fight,
     Dialogue2,

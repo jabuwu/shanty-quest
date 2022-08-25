@@ -1,7 +1,7 @@
 use self::{
-    davy::DavyQuest,
+    davy::{DavyQuest, DavyQuestStage},
     jagerossa::JagerossaQuest,
-    plank::PlankQuest,
+    plank::{PlankQuest, PlankQuestStage},
     ringo::{RingoQuest, RingoQuestStage},
 };
 use crate::common::prelude::*;
@@ -28,6 +28,7 @@ impl Plugin for QuestsPlugin {
 #[derive(Default, Debug)]
 pub struct Quests {
     pub active_quest: Quest,
+    pub mayor_dialogue: u32,
 }
 
 #[derive(Default, Clone, Copy)]
@@ -38,8 +39,23 @@ pub struct QuestBarkeepEvent;
 
 impl Quests {
     pub fn block_town_enter(&self) -> bool {
-        match self.active_quest {
+        match &self.active_quest {
             Quest::Jagerossa(..) => true,
+            Quest::Ringo(quest) => {
+                matches!(quest.stage, RingoQuestStage::Dialogue1)
+                    || matches!(quest.stage, RingoQuestStage::Fight)
+                    || matches!(quest.stage, RingoQuestStage::Dialogue2)
+            }
+            Quest::Plank(quest) => {
+                matches!(quest.stage, PlankQuestStage::Dialogue1)
+                    || matches!(quest.stage, PlankQuestStage::Fight)
+                    || matches!(quest.stage, PlankQuestStage::Dialogue2)
+            }
+            Quest::Davy(quest) => {
+                matches!(quest.stage, DavyQuestStage::Dialogue1)
+                    || matches!(quest.stage, DavyQuestStage::Fight)
+                    || matches!(quest.stage, DavyQuestStage::Dialogue2)
+            }
             _ => false,
         }
     }
@@ -70,11 +86,16 @@ impl Quests {
         match &self.active_quest {
             Quest::Jagerossa(..) => false,
             Quest::Ringo(quest) => matches!(quest.stage, RingoQuestStage::TalkToMayor),
+            Quest::Plank(quest) => matches!(quest.stage, PlankQuestStage::TalkToMayor),
+            Quest::Davy(quest) => matches!(quest.stage, DavyQuestStage::TalkToMayor),
             _ => false,
         }
     }
 
     pub fn marker(&self) -> Option<&str> {
+        if self.must_talk_to_mayor() {
+            return None;
+        }
         match self.active_quest {
             Quest::Jagerossa(..) => None,
             Quest::Ringo(..) => Some("RingoTrigger"),
@@ -85,6 +106,9 @@ impl Quests {
     }
 
     pub fn objective(&self) -> Option<&str> {
+        if self.must_talk_to_mayor() {
+            return Some("Talk to mayor");
+        }
         match self.active_quest {
             Quest::Jagerossa(..) => Some("Defeat Jagerossa"),
             Quest::Ringo(..) => Some("Defeat Ringo"),
@@ -144,10 +168,55 @@ fn quests_mayor(
                     fallback_dialogue = false;
                 }
             }
+            Quest::Plank(quest) => {
+                if matches!(quest.stage, PlankQuestStage::TalkToMayor) {
+                    for (p, t) in PLANK_MAYOR.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                    quest.stage = PlankQuestStage::TalkedToMayor;
+                    fallback_dialogue = false;
+                }
+            }
+            Quest::Davy(quest) => {
+                if matches!(quest.stage, DavyQuestStage::TalkToMayor) {
+                    for (p, t) in DAVY_MAYOR.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                    quest.stage = DavyQuestStage::TalkedToMayor;
+                    fallback_dialogue = false;
+                }
+            }
             _ => {}
         }
         if fallback_dialogue {
-            dialogue.add_text(DialoguePortrait::Mayor, "yippity yappity".to_string());
+            match game_state.quests.mayor_dialogue % 5 {
+                0 => {
+                    for (p, t) in MAYOR_RANDOM1.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                1 => {
+                    for (p, t) in MAYOR_RANDOM2.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                2 => {
+                    for (p, t) in MAYOR_RANDOM3.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                3 => {
+                    for (p, t) in MAYOR_RANDOM4.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                _ => {
+                    for (p, t) in MAYOR_RANDOM5.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+            }
+            game_state.quests.mayor_dialogue = (game_state.quests.mayor_dialogue + 1) % 5;
         }
     }
 }

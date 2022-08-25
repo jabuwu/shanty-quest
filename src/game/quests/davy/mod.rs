@@ -17,13 +17,14 @@ impl Plugin for DavyQuestPlugin {
 
 #[derive(Default, Clone, Debug)]
 pub struct DavyQuest {
-    stage: DavyQuestStage,
+    pub stage: DavyQuestStage,
 }
 
 #[derive(Default, Clone, Debug)]
-enum DavyQuestStage {
+pub enum DavyQuestStage {
     #[default]
-    ControlsTutorial,
+    TalkToMayor,
+    TalkedToMayor,
     Dialogue1,
     Fight,
     Dialogue2,

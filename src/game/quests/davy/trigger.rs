@@ -45,7 +45,7 @@ fn davy_trigger_check(
     for trigger in query.iter() {
         if trigger.triggered() {
             if let Quest::Davy(quest) = &mut game_state.quests.active_quest {
-                if matches!(quest.stage, DavyQuestStage::ControlsTutorial) {
+                if matches!(quest.stage, DavyQuestStage::TalkedToMayor) {
                     ev_cutscene_davy1.send_default();
                     quest.stage = DavyQuestStage::Dialogue1;
                 }

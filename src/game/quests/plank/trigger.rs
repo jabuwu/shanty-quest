@@ -45,7 +45,7 @@ fn plank_trigger_check(
     for trigger in query.iter() {
         if trigger.triggered() {
             if let Quest::Plank(quest) = &mut game_state.quests.active_quest {
-                if matches!(quest.stage, PlankQuestStage::ControlsTutorial) {
+                if matches!(quest.stage, PlankQuestStage::TalkedToMayor) {
                     ev_cutscene_plank1.send_default();
                     quest.stage = PlankQuestStage::Dialogue1;
                 }

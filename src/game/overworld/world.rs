@@ -34,7 +34,7 @@ fn world_spawn(
         commands
             .spawn_bundle(Text2dBundle {
                 text: Text::from_section(
-                    "Hold left mouse button to move\nPress F to fire your cannons\nPress D to use your magical ability\nPress M for map",
+                    "Hold left mouse button to move\nPress F to fire your cannons\nPress D to use your magical ability",
                     TextStyle {
                         font: asset_library.font_default.clone(),
                         font_size: 48.0,

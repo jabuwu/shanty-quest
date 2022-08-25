@@ -35,7 +35,7 @@ pub const JAGEROSSA2: [(P, &str); 3] = [
 
 pub const DANGEROUS_SEAS: [(P, &str); 1] = [(
     P::Jagerossa,
-    "These seas be dangerous!\nOnly a fool would traverse them without a map!",
+    "These seas be dangerous!\nOnly a fool would traverse them without a map!\n(Press M to open map)",
 )];
 
 pub const RINGO_MAYOR: [(P, &str); 4] = [
