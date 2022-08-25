@@ -81,7 +81,7 @@ fn marker_update(
     if let Some(objective_position) = objective_position {
         let difference = (objective_position - camera_position).normalize_or_zero();
         let distance = objective_position.distance(camera_position);
-        let alpha = ((distance - 400.) / 400.).clamp(0., 1.);
+        let alpha = ((distance - 200.) / 400.).clamp(0., 1.);
         for (mut icon_transform, mut icon_sprite) in queries.p1().iter_mut() {
             icon_transform.translation = difference * 250.;
             icon_sprite.color.set_a(alpha);
