@@ -31,7 +31,7 @@ fn marker_spawn(
             .spawn_bundle(VisibilityBundle::default())
             .insert_bundle(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new())
+            .insert(Transform2::new().without_pixel_perfect())
             .with_children(|parent| {
                 parent
                     .spawn_bundle(SpriteBundle {
@@ -41,7 +41,11 @@ fn marker_spawn(
                         texture: asset_library.sprite_world_quest_marker_icon.clone(),
                         ..Default::default()
                     })
-                    .insert(Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_UI_TEXT))
+                    .insert(
+                        Transform2::from_xy(0., 0.)
+                            .with_depth(DEPTH_LAYER_UI_TEXT)
+                            .without_pixel_perfect(),
+                    )
                     .insert(MarkerIcon)
                     .with_children(|parent| {
                         parent
