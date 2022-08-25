@@ -27,12 +27,14 @@ fn stats(
     mut egui_context: ResMut<EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     state_time: Res<StateTime<AppState>>,
+    game_state: Res<GameState>,
 ) {
     menu_bar.item("Stats", |open| {
         egui::Window::new("Stats")
             .open(open)
             .show(egui_context.ctx_mut(), |ui| {
                 ui.label(format!("State Time: {}", state_time.time));
+                ui.label(format!("Game State: {:#?}", game_state));
             });
     });
 }

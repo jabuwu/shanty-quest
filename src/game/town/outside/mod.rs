@@ -289,8 +289,10 @@ fn outside_leave(
     state: Res<OutsideState>,
     screen_fade: Res<ScreenFade>,
     mut app_state: ResMut<State<AppState>>,
+    mut game_state: ResMut<GameState>,
 ) {
     if state.leave && screen_fade.faded_out() {
+        game_state.checkpoint();
         app_state.set(AppState::Overworld).unwrap();
     }
 }

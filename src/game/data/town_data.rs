@@ -18,7 +18,7 @@ pub const TOWN_NAMES: [&str; 15] = [
     "Isla la Chorus",
 ];
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TownData {
     pub name: String,
     pub position: Vec2,

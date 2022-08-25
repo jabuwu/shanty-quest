@@ -70,6 +70,9 @@ fn jagerossa_move(mut query: Query<(&mut Boat, &GlobalTransform, &Jagerossa)>) {
         if boat.movement.length_squared() > 0. {
             boat.direction = Vec2::X.angle_between(boat.movement);
         }
+        if rand::random::<f32>() < 0.05 {
+            boat.special_shoot = true;
+        }
     }
 }
 

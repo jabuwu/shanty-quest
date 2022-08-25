@@ -55,7 +55,7 @@ fn overworld_init(
 ) {
     screen_fade.fade_in(1.);
     ev_overworld_enter.send_default();
-    overworld_camera.reset();
+    *overworld_camera = OverworldCamera::default();
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));

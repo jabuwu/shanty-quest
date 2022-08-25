@@ -25,7 +25,7 @@ impl Plugin for QuestsPlugin {
     }
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct Quests {
     pub active_quest: Quest,
     pub mayor_dialogue: u32,

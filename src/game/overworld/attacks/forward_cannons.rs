@@ -56,6 +56,7 @@ fn forward_cannons_fire(
     )>,
     mut sound_query: Query<&mut AudioPlusSource, With<ForwardCannonsSound>>,
     mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
 ) {
     for (boat_entity, mut forward_cannons, boat, global_transform, children) in query.iter_mut() {
         if forward_cannons.shoot {
@@ -71,14 +72,15 @@ fn forward_cannons_fire(
                 let position =
                     global_transform.translation().truncate() + forward * 40. + side * 15.;
                 let velocity = forward * 1200.;
-                let (scale, _, _) = global_transform.to_scale_rotation_translation();
+                let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
+                scale *= 0.5;
                 commands
                     .spawn_bundle(SpriteBundle {
                         sprite: Sprite {
-                            custom_size: Vec2::new(8., 8.).into(),
                             color: Color::BLACK,
                             ..Default::default()
                         },
+                        texture: asset_library.sprite_bullet_note.clone(),
                         ..Default::default()
                     })
                     .insert(
