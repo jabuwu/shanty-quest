@@ -36,6 +36,19 @@ fn threat_level_update(
     };
     *threat_level = ThreatLevel::None;
 
+    macro_rules! disable_threat_level_near_position {
+        ($str:literal) => {
+            if player_position.distance(world_locations.get_single_position($str)) < 500. {
+                return;
+            }
+        };
+    }
+
+    disable_threat_level_near_position!("JagerossaTrigger");
+    disable_threat_level_near_position!("RingoTrigger");
+    disable_threat_level_near_position!("PlankTrigger");
+    disable_threat_level_near_position!("DavyTrigger");
+
     macro_rules! threat_level {
         ($str:literal, $value:expr) => {
             for rect in world_locations.get_multiple_rect($str).iter() {

@@ -73,7 +73,7 @@ fn enemy_spawns(
     for (entity, transform, mut spawned) in queries.p1().iter_mut() {
         spawned.frames += 1;
         let difference = (player_position - transform.translation().truncate()).abs();
-        if spawned.frames > 3
+        if spawned.frames > 10
             && (difference.x > RANDOM_SPAWN_DISTANCE.x + DESPAWN_BUFFER_DISTANCE
                 || difference.y > RANDOM_SPAWN_DISTANCE.y + DESPAWN_BUFFER_DISTANCE)
         {
@@ -118,7 +118,7 @@ fn enemy_spawns_despawn(
 ) {
     for _ in ev_despawn.iter() {
         for (entity, spawned) in query.iter() {
-            if spawned.frames > 3 {
+            if spawned.frames > 10 {
                 commands.entity(entity).despawn_recursive();
             }
         }
