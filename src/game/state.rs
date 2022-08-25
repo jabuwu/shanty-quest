@@ -49,40 +49,4 @@ impl GameState {
         }
         false
     }
-
-    pub fn band_special_attack_type(&self) -> SpecialAttack {
-        let (band_member_a, band_member_b) =
-            if self.band_members[0].index() < self.band_members[1].index() {
-                (self.band_members[0], self.band_members[1])
-            } else {
-                (self.band_members[1], self.band_members[0])
-            };
-        match band_member_a {
-            BandMember::Guitar => match band_member_b {
-                BandMember::Drums => SpecialAttack::ShotgunCannons,
-                BandMember::Flute => SpecialAttack::DashAttack,
-                BandMember::Accordion => unimplemented!(),
-                BandMember::Harmonica => unimplemented!(),
-                _ => unreachable!(),
-            },
-            BandMember::Drums => match band_member_b {
-                BandMember::Flute => SpecialAttack::Shockwave,
-                BandMember::Accordion => unimplemented!(),
-                BandMember::Harmonica => unimplemented!(),
-                _ => unreachable!(),
-            },
-            BandMember::Flute => match band_member_b {
-                BandMember::Accordion => unimplemented!(),
-                BandMember::Harmonica => unimplemented!(),
-                _ => unreachable!(),
-            },
-            BandMember::Accordion => match band_member_b {
-                BandMember::Harmonica => unimplemented!(),
-                _ => unreachable!(),
-            },
-            BandMember::Harmonica => {
-                unreachable!();
-            }
-        }
-    }
 }

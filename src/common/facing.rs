@@ -18,7 +18,7 @@ pub enum Facing {
 impl Facing {
     pub fn from_vec(direction: Vec2) -> Option<Self> {
         if direction.length_squared() > 0. {
-            let angle = (direction.angle_between(Vec2::X) + PI) / TAU + 1. / 16.;
+            let angle = ((direction.angle_between(Vec2::X) + PI + PI * (1. / 8.)) % TAU) / TAU;
             if angle < 1. / 8. {
                 Some(Self::West)
             } else if angle < 2. / 8. {

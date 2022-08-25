@@ -43,7 +43,6 @@ pub struct Boat {
     pub facing: Facing,
     pub ring_timer: f32,
     pub special_attack: SpecialAttack,
-    pub special_shoot: bool,
     pub shoot: bool,
     pub opacity: f32,
 }
@@ -93,7 +92,6 @@ fn boat_spawn(
                 facing: Facing::South,
                 ring_timer: RING_SPAWN_INTEVAL,
                 special_attack: event.special_attack,
-                special_shoot: false,
                 shoot: false,
                 opacity: 1.,
             })
@@ -120,7 +118,11 @@ fn boat_spawn(
                 shoot: false,
                 hurt_flags,
             })
-            .insert(DashAttack {
+            .insert(Bombs {
+                shoot: false,
+                hurt_flags,
+            })
+            .insert(Kraken {
                 shoot: false,
                 hurt_flags,
             })
@@ -235,22 +237,35 @@ fn boat_attack(
         &mut ForwardCannons,
         &mut ShotgunCannons,
         &mut Shockwave,
-        &mut DashAttack,
+        &mut Bombs,
+        &mut Kraken,
     )>,
 ) {
-    for (mut boat, mut forward_cannons, mut shotgun_cannons, mut shockwave, mut dash_attack) in
-        query.iter_mut()
+    for (
+        mut boat,
+        mut forward_cannons,
+        mut shotgun_cannons,
+        mut shockwave,
+        mut bombs,
+        mut kraken,
+    ) in query.iter_mut()
     {
         if boat.shoot {
             boat.shoot = false;
-            forward_cannons.shoot = true;
-        }
-        if boat.special_shoot {
-            boat.special_shoot = false;
-            match boat.special_attack {
-                SpecialAttack::ShotgunCannons => shotgun_cannons.shoot = true,
-                SpecialAttack::Shockwave => shockwave.shoot = true,
-                SpecialAttack::DashAttack => dash_attack.shoot = true,
+            if boat.special_attack.forward_cannons > 0 {
+                forward_cannons.shoot = true;
+            }
+            if boat.special_attack.shotgun_cannons > 0 {
+                shotgun_cannons.shoot = true
+            }
+            if boat.special_attack.shockwave > 0 {
+                shockwave.shoot = true
+            }
+            if boat.special_attack.bombs > 0 {
+                bombs.shoot = true
+            }
+            if boat.special_attack.kraken > 0 {
+                kraken.shoot = true
             }
         }
     }
@@ -259,39 +274,19 @@ fn boat_attack(
 fn boat_debug(
     mut egui_context: ResMut<EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
-    mut query: Query<(&mut Boat, &Label, Entity)>,
+    mut query: Query<(&mut Boat, &Label)>,
 ) {
     menu_bar.item("Boats", |open| {
         egui::Window::new("Boats")
             .open(open)
             .show(egui_context.ctx_mut(), |ui| {
-                for (mut boat, label, entity) in query.iter_mut() {
+                for (mut boat, label) in query.iter_mut() {
                     ui.label(&label.0);
                     ui.horizontal(|ui| {
                         ui.label("Speed");
                         ui.add(egui::Slider::new(&mut boat.speed, 0.0..=1000.0));
                     });
                     ui.label(format!("Facing: {:?}", boat.facing));
-                    ui.label("Attack");
-                    egui::ComboBox::new(format!("{}", entity.id()), "")
-                        .selected_text(format!("{:?}", boat.special_attack))
-                        .show_ui(ui, |ui| {
-                            ui.selectable_value(
-                                &mut boat.special_attack,
-                                SpecialAttack::ShotgunCannons,
-                                "ShotgunCannons",
-                            );
-                            ui.selectable_value(
-                                &mut boat.special_attack,
-                                SpecialAttack::Shockwave,
-                                "Shockwave",
-                            );
-                            ui.selectable_value(
-                                &mut boat.special_attack,
-                                SpecialAttack::DashAttack,
-                                "DashAttack",
-                            );
-                        });
                 }
             });
     });

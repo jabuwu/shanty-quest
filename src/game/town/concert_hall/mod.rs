@@ -46,7 +46,13 @@ fn concert_hall_init(
             ev_boat_spawn.send(BoatSpawnEvent {
                 entity: Some(boat_entity),
                 position: Vec2::ZERO,
-                special_attack: SpecialAttack::Shockwave,
+                special_attack: SpecialAttack {
+                    forward_cannons: 1,
+                    shotgun_cannons: 1,
+                    shockwave: 1,
+                    bombs: 1,
+                    kraken: 1,
+                },
                 healthbar: false,
                 player: true,
             });
@@ -121,7 +127,6 @@ fn concert_hall_boat_preview(
     mut state: Local<ConcertHallBoatPreviewState>,
     mut transform_query: Query<&mut Transform2>,
     time: Res<Time>,
-    game_state: Res<GameState>,
 ) {
     state.spawn_time += time.delta_seconds();
     let spawn = if state.spawn_time > 0.8 {
@@ -135,8 +140,8 @@ fn concert_hall_boat_preview(
             if let Ok(mut transform) = transform_query.get_mut(entity) {
                 transform.translation = Vec2::ZERO;
             }
-            boat.special_attack = game_state.band_special_attack_type();
-            boat.special_shoot = true;
+            //boat.special_attack = game_state.band_special_attack_type();
+            boat.shoot = true;
         }
         let translation = if spawn {
             Vec2::ZERO

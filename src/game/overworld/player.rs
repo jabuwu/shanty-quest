@@ -11,7 +11,7 @@ impl Plugin for PlayerPlugin {
             .add_system(player_spawn)
             .add_system(player_controls.before(BoatSystems::Update))
             .add_system(player_enter_town)
-            .add_system(player_set_attack)
+            .add_system(player_upgrade_attack)
             .add_system(player_invincibility)
             .add_system(player_damage);
     }
@@ -48,7 +48,10 @@ fn player_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: game_state.town.position + game_state.town.spawn_offset,
-            special_attack: game_state.band_special_attack_type(),
+            special_attack: SpecialAttack {
+                forward_cannons: 1,
+                ..Default::default()
+            },
             healthbar: false,
             player: true,
         });
@@ -88,9 +91,6 @@ fn player_controls(
         }
         if keys.just_pressed(KeyCode::F) {
             boat.shoot = true;
-        }
-        if keys.just_pressed(KeyCode::D) {
-            boat.special_shoot = true;
         }
     }
 }
@@ -136,17 +136,17 @@ fn player_enter_town(
     }
 }
 
-fn player_set_attack(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
+fn player_upgrade_attack(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
     // TODO: remove debug
     for mut boat in query.iter_mut() {
-        if input.just_pressed(KeyCode::Key1) {
-            boat.special_attack = SpecialAttack::ShotgunCannons;
-        }
-        if input.just_pressed(KeyCode::Key2) {
-            boat.special_attack = SpecialAttack::Shockwave;
-        }
-        if input.just_pressed(KeyCode::Key3) {
-            boat.special_attack = SpecialAttack::DashAttack;
+        if input.just_pressed(KeyCode::F1) {
+            boat.special_attack = SpecialAttack {
+                forward_cannons: 1,
+                shotgun_cannons: 1,
+                shockwave: 1,
+                bombs: 1,
+                kraken: 1,
+            };
         }
     }
 }

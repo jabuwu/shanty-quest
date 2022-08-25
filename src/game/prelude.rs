@@ -3,8 +3,10 @@ pub use super::{
     data::{band_members::BandMember, town_data::TownData},
     overworld::{
         attacks::{
+            bombs::Bombs,
             dash_attack::{Dash, DashAttack},
             forward_cannons::ForwardCannons,
+            kraken::Kraken,
             shockwave::Shockwave,
             shotgun_cannons::ShotgunCannons,
             SpecialAttack,
@@ -24,7 +26,6 @@ pub use super::{
             AutoDamage, DamageEvent, Hitbox, Hurtbox, HurtboxKnockbackType, DAMAGE_FLAG_ENEMY,
             DAMAGE_FLAG_ENVIRONMENT, DAMAGE_FLAG_PLAYER,
         },
-        enemy::{Enemy, EnemySpawnEvent},
         enemy_spawns::DespawnSpawnedEntitiesEvent,
         entities::rubble::{Rubble, RubbleSpawnEvent},
         health::Health,
