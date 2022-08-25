@@ -3,6 +3,8 @@ use asset_struct::AssetStruct;
 use bevy::prelude::*;
 use std::collections::HashMap;
 
+use super::grid_combiner::{GridCombiner, GridPoint};
+
 pub struct LdtkPlugin;
 
 impl Plugin for LdtkPlugin {
@@ -40,6 +42,15 @@ impl LdtkState {
     }
 }
 
+fn random_color() -> Color {
+    Color::rgba(
+        rand::random::<f32>(),
+        rand::random::<f32>(),
+        rand::random::<f32>(),
+        0.5,
+    )
+}
+
 fn ldtk_spawn(mut ev_spawn: EventReader<LdtkSpawnEvent>, mut commands: Commands) {
     for event in ev_spawn.iter() {
         let mut ldtk_entity = if let Some(entity) = event.entity {
@@ -75,6 +86,7 @@ fn ldtk_load(
         if let Some(ldtk_asset) = ldtk_assets.get(&ldtk.asset) {
             let ldtk_map = &ldtk_asset.map;
             if !ldtk.state.is_loaded() {
+                let mut grid_combiner = GridCombiner::new();
                 world_location.clear();
                 map_builder.reset();
                 let mut texture_atlases = HashMap::new();
@@ -154,6 +166,10 @@ fn ldtk_load(
                             "IntGrid" => {
                                 if let Some(i) = layer.tileset_def_uid {
                                     for tile in layer.auto_layer_tiles.iter() {
+                                        grid_combiner.add_point(GridPoint::new(
+                                            (tile.px[0] + level.world_x) / 100,
+                                            (tile.px[1] + level.world_y) / -100,
+                                        ));
                                         map_builder.add_tile(Vec2::new(
                                             tile.px[0] as f32 + level.world_x as f32,
                                             (tile.px[1] as f32 + level.world_y as f32) * -1.0,
@@ -197,6 +213,28 @@ fn ldtk_load(
                         }
                     }
                 }
+                let rects = grid_combiner.combine();
+                for rect in rects.iter() {
+                    let (mut pos, mut size) = rect.to_position_size();
+                    pos *= 100.;
+                    size *= 100.;
+                    commands
+                        .spawn_bundle(SpriteBundle {
+                            sprite: Sprite {
+                                color: random_color(),
+                                custom_size: size.into(),
+                                ..Default::default()
+                            },
+                            ..Default::default()
+                        })
+                        .insert(
+                            Transform2::from_translation(pos).with_depth((DepthLayer::Front, 1.)),
+                        )
+                        .insert(Collision {
+                            shape: CollisionShape::Rect { size },
+                            flags: COLLISION_FLAG,
+                        });
+                }
                 ev_world_locations_spawn.send_default();
                 ldtk.state = LdtkState::Loaded;
             }
@@ -230,11 +268,5 @@ fn ldtk_spawn_tile(
             tile.px[0] as f32,
             tile.px[1] as f32 * -1.0,
         ))
-        .insert(Collision {
-            shape: CollisionShape::Rect {
-                size: Vec2::new(100., 100.),
-            },
-            flags: COLLISION_FLAG,
-        })
         .id()
 }
