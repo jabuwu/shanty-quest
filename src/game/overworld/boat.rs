@@ -124,7 +124,7 @@ fn boat_spawn(
                 shoot: false,
                 hurt_flags,
             })
-            .insert(Health::new(3.))
+            .insert(Health::new(if event.player { 10. } else { 3. }))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(100., 100.),

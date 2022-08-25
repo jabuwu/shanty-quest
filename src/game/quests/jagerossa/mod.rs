@@ -16,11 +16,11 @@ impl Plugin for JagerossaQuestPlugin {
 
 #[derive(Default, Clone, Debug)]
 pub struct JagerossaQuest {
-    stage: JagerossaQuestStage,
+    pub stage: JagerossaQuestStage,
 }
 
 #[derive(Default, Clone, Debug)]
-enum JagerossaQuestStage {
+pub enum JagerossaQuestStage {
     #[default]
     ControlsTutorial,
     Dialogue1,

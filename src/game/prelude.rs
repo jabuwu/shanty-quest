@@ -25,6 +25,7 @@ pub use super::{
             DAMAGE_FLAG_ENVIRONMENT, DAMAGE_FLAG_PLAYER,
         },
         enemy::{Enemy, EnemySpawnEvent},
+        enemy_spawns::DespawnSpawnedEntitiesEvent,
         entities::rubble::{Rubble, RubbleSpawnEvent},
         health::Health,
         healthbar::{Healthbar, HealthbarSpawnEvent},

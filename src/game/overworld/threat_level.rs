@@ -19,6 +19,8 @@ pub enum ThreatLevel {
     None,
     Easy,
     Medium,
+    Hard,
+    Midnight,
 }
 
 fn threat_level_update(
@@ -33,29 +35,25 @@ fn threat_level_update(
         return;
     };
     *threat_level = ThreatLevel::None;
-    for rect in world_locations.get_multiple_rect("ThreatLevelEasy").iter() {
-        if (CollisionShape::Rect { size: rect.size }).overlaps(
-            rect.position,
-            CollisionShape::Point,
-            player_position,
-        ) {
-            *threat_level = ThreatLevel::Easy;
-            return;
-        }
+
+    macro_rules! threat_level {
+        ($str:literal, $value:expr) => {
+            for rect in world_locations.get_multiple_rect($str).iter() {
+                if (CollisionShape::Rect { size: rect.size }).overlaps(
+                    rect.position,
+                    CollisionShape::Point,
+                    player_position,
+                ) {
+                    *threat_level = $value;
+                    return;
+                }
+            }
+        };
     }
-    for rect in world_locations
-        .get_multiple_rect("ThreatLevelMedium")
-        .iter()
-    {
-        if (CollisionShape::Rect { size: rect.size }).overlaps(
-            rect.position,
-            CollisionShape::Point,
-            player_position,
-        ) {
-            *threat_level = ThreatLevel::Medium;
-            return;
-        }
-    }
+    threat_level!("ThreatLevelEasy", ThreatLevel::Easy);
+    threat_level!("ThreatLevelMedium", ThreatLevel::Medium);
+    threat_level!("ThreatLevelHard", ThreatLevel::Hard);
+    threat_level!("ThreatLevelMidnight", ThreatLevel::Midnight);
 }
 
 fn threat_level_debug(

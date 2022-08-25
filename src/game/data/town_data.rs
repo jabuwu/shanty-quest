@@ -18,6 +18,10 @@ pub const TOWN_NAMES: [&str; 15] = [
     "Isla la Chorus",
 ];
 
+pub fn town_safe_name(input: &str) -> String {
+    input.replace(" ", "_").replace("'", "_")
+}
+
 #[derive(Clone, Debug)]
 pub struct TownData {
     pub name: String,

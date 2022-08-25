@@ -28,15 +28,12 @@ fn davy_spawn(
     mut ev_spawn: EventReader<DavySpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
     mut commands: Commands,
-    player_query: Query<&GlobalTransform, With<Player>>,
     world_locations: Res<WorldLocations>,
+    mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
 ) {
-    let spawn_position = if let Ok(player_transform) = player_query.get_single() {
-        player_transform.translation().truncate() + Vec2::new(810., -150.)
-    } else {
-        Vec2::ZERO
-    };
+    let spawn_position = world_locations.get_single_position("DavySpawn");
     for _ in ev_spawn.iter() {
+        ev_enemies_despawn.send_default();
         let entity = commands
             .spawn()
             .insert(Davy {

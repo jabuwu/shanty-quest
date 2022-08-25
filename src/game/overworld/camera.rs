@@ -24,6 +24,7 @@ pub struct OverworldCamera {
     arena: (Vec2, Vec2),
     arena_enabled: bool,
     arena_focus: f32,
+    zoom_out: bool,
 }
 
 impl OverworldCamera {
@@ -36,7 +37,7 @@ impl OverworldCamera {
     }
 
     pub fn enable_arena(&mut self, position: Vec2, size: Vec2) {
-        self.arena = (position, size.min(CAMERA_SIZE * 0.5 * 0.25));
+        self.arena = (position, (size - CAMERA_SIZE).max(Vec2::ZERO));
         self.arena_enabled = true;
     }
 }
@@ -47,6 +48,7 @@ fn overworld_camera_update(
     mut transform_query: Query<&mut Transform2>,
     mut overworld_camera: ResMut<OverworldCamera>,
     time: Res<Time>,
+    input: Res<Input<KeyCode>>,
 ) {
     let player_position = if let Ok(player_entity) = player_query.get_single() {
         if let Ok(player_transform) = transform_query.get(player_entity) {
@@ -57,6 +59,10 @@ fn overworld_camera_update(
     } else {
         None
     };
+    // TODO: remove debug
+    if input.just_pressed(KeyCode::F3) {
+        overworld_camera.zoom_out = !overworld_camera.zoom_out;
+    }
     if let Some(player_position) = player_position {
         let mut position = player_position;
         if overworld_camera.arena_enabled {
@@ -77,6 +83,10 @@ fn overworld_camera_update(
         for camera_entity in camera_query.iter() {
             if let Ok(mut camera_transform) = transform_query.get_mut(camera_entity) {
                 camera_transform.translation = position;
+                camera_transform.scale = Vec2::ONE;
+                if overworld_camera.zoom_out {
+                    camera_transform.scale = Vec2::ONE * 3.;
+                }
             }
         }
     }

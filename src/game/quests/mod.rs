@@ -1,6 +1,6 @@
 use self::{
     davy::{DavyQuest, DavyQuestStage},
-    jagerossa::JagerossaQuest,
+    jagerossa::{JagerossaQuest, JagerossaQuestStage},
     plank::{PlankQuest, PlankQuestStage},
     ringo::{RingoQuest, RingoQuestStage},
 };
@@ -21,7 +21,8 @@ impl Plugin for QuestsPlugin {
             .add_plugin(plank::PlankQuestPlugin)
             .add_system(quests_debug)
             .add_system(quests_mayor)
-            .add_system(quests_barkeep);
+            .add_system(quests_barkeep)
+            .add_system(quests_skip);
     }
 }
 
@@ -70,7 +71,10 @@ impl Quests {
     }
 
     pub fn block_enemy_spawns(&self) -> bool {
-        match self.active_quest {
+        if self.fighting() {
+            return true;
+        }
+        match &self.active_quest {
             Quest::Jagerossa(..) => true,
             _ => false,
         }
@@ -80,6 +84,38 @@ impl Quests {
         match &self.active_quest {
             Quest::Jagerossa(..) => true,
             Quest::Ringo(quest) => matches!(quest.stage, RingoQuestStage::TalkToMayor),
+            _ => false,
+        }
+    }
+
+    pub fn pirate_dialogue(&self) -> bool {
+        match &self.active_quest {
+            Quest::Jagerossa(quest) => {
+                matches!(quest.stage, JagerossaQuestStage::Dialogue1)
+                    || matches!(quest.stage, JagerossaQuestStage::Dialogue2)
+            }
+            Quest::Ringo(quest) => {
+                matches!(quest.stage, RingoQuestStage::Dialogue1)
+                    || matches!(quest.stage, RingoQuestStage::Dialogue2)
+            }
+            Quest::Plank(quest) => {
+                matches!(quest.stage, PlankQuestStage::Dialogue1)
+                    || matches!(quest.stage, PlankQuestStage::Dialogue2)
+            }
+            Quest::Davy(quest) => {
+                matches!(quest.stage, DavyQuestStage::Dialogue1)
+                    || matches!(quest.stage, DavyQuestStage::Dialogue2)
+            }
+            _ => false,
+        }
+    }
+
+    pub fn fighting(&self) -> bool {
+        match &self.active_quest {
+            Quest::Jagerossa(quest) => matches!(quest.stage, JagerossaQuestStage::Fight),
+            Quest::Ringo(quest) => matches!(quest.stage, RingoQuestStage::Fight),
+            Quest::Plank(quest) => matches!(quest.stage, PlankQuestStage::Fight),
+            Quest::Davy(quest) => matches!(quest.stage, DavyQuestStage::Fight),
             _ => false,
         }
     }
@@ -95,7 +131,7 @@ impl Quests {
     }
 
     pub fn marker(&self) -> Option<&str> {
-        if self.must_talk_to_mayor() {
+        if self.must_talk_to_mayor() || self.fighting() || self.pirate_dialogue() {
             return None;
         }
         match self.active_quest {
@@ -148,8 +184,8 @@ impl Quest {
 
 impl Default for Quest {
     fn default() -> Self {
-        //Self::Jagerossa(JagerossaQuest::default())
-        Self::End
+        Self::Jagerossa(JagerossaQuest::default())
+        //Self::End
     }
 }
 
@@ -297,6 +333,14 @@ fn quests_debug(
                 ui.label(format!("{:?}", game_state.quests));
             });
     });
+}
+
+pub fn quests_skip(input: Res<Input<KeyCode>>, mut game_state: ResMut<GameState>) {
+    if input.just_pressed(KeyCode::F2) {
+        game_state.quests.active_quest = Quest::End;
+        game_state.quests.talked_to_barkeep = true;
+        game_state.dangerous_seas = true;
+    }
 }
 
 pub mod davy;

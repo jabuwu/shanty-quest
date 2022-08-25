@@ -1,5 +1,5 @@
 use crate::common::prelude::*;
-use crate::game::data::town_data::TOWN_NAMES;
+use crate::game::data::town_data::{town_safe_name, TOWN_NAMES};
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
@@ -78,7 +78,7 @@ fn town_world_spawn(
 ) {
     for _ in ev_spawn.iter() {
         for name in TOWN_NAMES.iter() {
-            let town_name = name.replace(" ", "_");
+            let town_name = town_safe_name(name);
             let positions = world_locations.get_multiple_positions(&town_name);
             for position in positions {
                 ev_rubble_spawn.send(TownSpawnEvent {

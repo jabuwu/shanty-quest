@@ -28,15 +28,12 @@ fn ringo_spawn(
     mut ev_spawn: EventReader<RingoSpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
     mut commands: Commands,
-    player_query: Query<&GlobalTransform, With<Player>>,
     world_locations: Res<WorldLocations>,
+    mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
 ) {
-    let spawn_position = if let Ok(player_transform) = player_query.get_single() {
-        player_transform.translation().truncate() + Vec2::new(810., -150.)
-    } else {
-        Vec2::ZERO
-    };
+    let spawn_position = world_locations.get_single_position("RingoSpawn");
     for _ in ev_spawn.iter() {
+        ev_enemies_despawn.send_default();
         let entity = commands
             .spawn()
             .insert(Ringo {
@@ -70,9 +67,9 @@ fn ringo_move(mut query: Query<(&mut Boat, &GlobalTransform, &Ringo)>) {
         if boat.movement.length_squared() > 0. {
             boat.direction = Vec2::X.angle_between(boat.movement);
         }
-        if rand::random::<f32>() < 0.05 {
+        /*if rand::random::<f32>() < 0.05 {
             boat.special_shoot = true;
-        }
+        }*/
     }
 }
 
