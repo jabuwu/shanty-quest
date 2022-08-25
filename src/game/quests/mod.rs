@@ -29,6 +29,8 @@ impl Plugin for QuestsPlugin {
 pub struct Quests {
     pub active_quest: Quest,
     pub mayor_dialogue: u32,
+    pub barkeep_dialogue: u32,
+    pub talked_to_barkeep: bool,
 }
 
 #[derive(Default, Clone, Copy)]
@@ -221,9 +223,55 @@ fn quests_mayor(
     }
 }
 
-fn quests_barkeep(mut ev_barkeep: EventReader<QuestBarkeepEvent>, mut dialogue: ResMut<Dialogue>) {
+fn quests_barkeep(
+    mut ev_barkeep: EventReader<QuestBarkeepEvent>,
+    mut dialogue: ResMut<Dialogue>,
+    mut game_state: ResMut<GameState>,
+) {
+    let mut fallback_dialogue = true;
     for _ in ev_barkeep.iter() {
-        dialogue.add_text(DialoguePortrait::Barkeep, "babaa".to_string());
+        if !game_state.quests.talked_to_barkeep {
+            game_state.quests.talked_to_barkeep = true;
+            for (p, t) in BARKEEP1.iter() {
+                dialogue.add_text(*p, String::from(*t));
+            }
+            fallback_dialogue = false;
+        }
+        if fallback_dialogue {
+            match game_state.quests.barkeep_dialogue % 6 {
+                0 => {
+                    for (p, t) in BARKEEP_RANDOM1.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                1 => {
+                    for (p, t) in BARKEEP_RANDOM2.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                2 => {
+                    for (p, t) in BARKEEP_RANDOM3.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                3 => {
+                    for (p, t) in BARKEEP_RANDOM4.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                4 => {
+                    for (p, t) in BARKEEP_RANDOM5.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+                _ => {
+                    for (p, t) in BARKEEP_RANDOM6.iter() {
+                        dialogue.add_text(*p, String::from(*t));
+                    }
+                }
+            }
+            game_state.quests.barkeep_dialogue = (game_state.quests.barkeep_dialogue + 1) % 6;
+        }
     }
 }
 

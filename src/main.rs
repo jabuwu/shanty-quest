@@ -47,39 +47,50 @@ fn debug_dialogue(
             .open(open)
             .show(egui_context.ctx_mut(), |ui| {
                 macro_rules! dialogue_button_for {
-                    ($e:expr) => {
-                        if ui.button(stringify!($e)).clicked() {
+                    ($ui:ident, $e:expr) => {
+                        if $ui.button(stringify!($e)).clicked() {
                             for (p, t) in $e.iter() {
                                 dialogue.add_text(*p, String::from(*t));
                             }
                         }
                     };
                 }
-                dialogue_button_for!(MUST_TALK_TO_MAYOR);
-                dialogue_button_for!(JAGEROSSA1);
-                dialogue_button_for!(JAGEROSSA2);
-                dialogue_button_for!(DANGEROUS_SEAS);
-                dialogue_button_for!(RINGO_MAYOR);
-                dialogue_button_for!(RINGO1);
-                dialogue_button_for!(RINGO2);
-                dialogue_button_for!(PLANK_MAYOR);
-                dialogue_button_for!(PLANK1);
-                dialogue_button_for!(PLANK2);
-                dialogue_button_for!(DAVY_MAYOR);
-                dialogue_button_for!(DAVY1);
-                dialogue_button_for!(DAVY2);
-                dialogue_button_for!(MAYOR_RANDOM1);
-                dialogue_button_for!(MAYOR_RANDOM2);
-                dialogue_button_for!(MAYOR_RANDOM3);
-                dialogue_button_for!(MAYOR_RANDOM4);
-                dialogue_button_for!(MAYOR_RANDOM5);
-                dialogue_button_for!(BARKEEP1);
-                dialogue_button_for!(BARKEEP_RANDOM1);
-                dialogue_button_for!(BARKEEP_RANDOM2);
-                dialogue_button_for!(BARKEEP_RANDOM3);
-                dialogue_button_for!(BARKEEP_RANDOM4);
-                dialogue_button_for!(BARKEEP_RANDOM5);
-                dialogue_button_for!(BARKEEP_RANDOM6);
+                ui.horizontal(|ui| {
+                    dialogue_button_for!(ui, MUST_TALK_TO_MAYOR);
+                    dialogue_button_for!(ui, MUST_TALK_TO_BARKEEP);
+                    dialogue_button_for!(ui, JAGEROSSA1);
+                    dialogue_button_for!(ui, JAGEROSSA2);
+                    dialogue_button_for!(ui, DANGEROUS_SEAS);
+                    dialogue_button_for!(ui, RINGO_MAYOR);
+                });
+                ui.horizontal(|ui| {
+                    dialogue_button_for!(ui, RINGO1);
+                    dialogue_button_for!(ui, RINGO2);
+                    dialogue_button_for!(ui, PLANK_MAYOR);
+                    dialogue_button_for!(ui, PLANK1);
+                    dialogue_button_for!(ui, PLANK2);
+                    dialogue_button_for!(ui, DAVY_MAYOR);
+                });
+                ui.horizontal(|ui| {
+                    dialogue_button_for!(ui, DAVY1);
+                    dialogue_button_for!(ui, DAVY2);
+                    dialogue_button_for!(ui, MAYOR_RANDOM1);
+                    dialogue_button_for!(ui, MAYOR_RANDOM2);
+                    dialogue_button_for!(ui, MAYOR_RANDOM3);
+                    dialogue_button_for!(ui, MAYOR_RANDOM4);
+                });
+                ui.horizontal(|ui| {
+                    dialogue_button_for!(ui, MAYOR_RANDOM5);
+                    dialogue_button_for!(ui, BARKEEP1);
+                    dialogue_button_for!(ui, BARKEEP_RANDOM1);
+                    dialogue_button_for!(ui, BARKEEP_RANDOM2);
+                    dialogue_button_for!(ui, BARKEEP_RANDOM3);
+                    dialogue_button_for!(ui, BARKEEP_RANDOM4);
+                });
+                ui.horizontal(|ui| {
+                    dialogue_button_for!(ui, BARKEEP_RANDOM5);
+                    dialogue_button_for!(ui, BARKEEP_RANDOM6);
+                });
             });
     });
 }

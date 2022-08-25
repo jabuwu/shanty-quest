@@ -270,6 +270,10 @@ fn outside_click(
                             for (p, t) in MUST_TALK_TO_MAYOR.iter() {
                                 dialogue.add_text(*p, String::from(*t));
                             }
+                        } else if !game_state.quests.talked_to_barkeep {
+                            for (p, t) in MUST_TALK_TO_BARKEEP.iter() {
+                                dialogue.add_text(*p, String::from(*t));
+                            }
                         } else {
                             screen_fade.fade_out(1.);
                             state.leave = true;

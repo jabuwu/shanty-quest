@@ -7,6 +7,11 @@ pub const MUST_TALK_TO_MAYOR: [(P, &str); 1] = [(
     "No no! Ya can't leave without finding where the Pirate Lord is!\nThe sea be vast, we'll be huntin' for 'im forever!",
 )];
 
+pub const MUST_TALK_TO_BARKEEP: [(P, &str); 1] = [(
+    P::Jagerossa,
+    "Yer a brave soul no doubt! But I advise a visit to the tavern over yonder,\nand stocking up on barrels o' rum! How else can a ship sail!?",
+)];
+
 pub const JAGEROSSA1: [(P, &str); 2] = [
     (
         P::Jagerossa,
