@@ -87,9 +87,9 @@ fn overworld_init_after_ldtk(
 }
 
 fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
-    if input.just_pressed(KeyCode::Escape) {
+    if input.just_pressed(KeyCode::Key0) {
         app_state.set(AppState::MainMenu).unwrap();
-        input.reset(KeyCode::Escape);
+        input.reset(KeyCode::Key0);
     }
 }
 
