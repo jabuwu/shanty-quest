@@ -83,7 +83,6 @@ fn ringo_move(
     };
     for (mut boat, global_transform, mut ringo) in queries.p0().iter_mut() {
         boat.shoot = false;
-        boat.dash = false;
         if cutscenes.running() {
             boat.movement = (ringo.target - global_transform.translation().truncate()) / 100.;
             if boat.movement.x.abs() < 0.1 {
@@ -106,10 +105,10 @@ fn ringo_move(
             } else {
                 player_position + Vec2::from_angle(ringo.angle) * 300.
             };
-            boat.dash = ringo.charge_time > 0.;
+            let last_dash_time = ringo.charge_time;
             ringo.charge_time -= time.delta_seconds();
-            if ringo.charge_time > 0. {
-                boat.dash = false;
+            if ringo.charge_time <= 0. && last_dash_time > 0. {
+                boat.dash = true;
             }
             let mut difference = destination - global_transform.translation().truncate();
             if difference.length() == 0. {
