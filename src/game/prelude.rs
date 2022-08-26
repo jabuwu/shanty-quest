@@ -28,6 +28,7 @@ pub use super::{
         },
         enemy_spawns::DespawnSpawnedEntitiesEvent,
         entities::rubble::{Rubble, RubbleSpawnEvent},
+        experience::{Experience, ExperienceSpawnEvent},
         health::Health,
         healthbar::{Healthbar, HealthbarSpawnEvent},
         ocean::{Ocean, OceanSpawnEvent},

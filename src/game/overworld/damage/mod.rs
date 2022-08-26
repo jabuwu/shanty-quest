@@ -129,17 +129,19 @@ fn damage_check(
 
 fn damage_auto_die(
     mut ev_damage: EventReader<DamageEvent>,
-    mut crate_query: Query<(Entity, &mut Health, &mut AutoDamage)>,
+    mut crate_query: Query<(Entity, &mut Health, &mut AutoDamage, &GlobalTransform)>,
     mut commands: Commands,
     time: Res<Time>,
     cutscenes: Res<Cutscenes>,
+    mut ev_experience_spawn: EventWriter<ExperienceSpawnEvent>,
 ) {
-    for (_, _, mut auto_damage) in crate_query.iter_mut() {
+    for (_, _, mut auto_damage, _) in crate_query.iter_mut() {
         auto_damage.invincibility -= time.delta_seconds();
         auto_damage.invincibility = auto_damage.invincibility.max(0.);
     }
     for event in ev_damage.iter() {
-        if let Ok((entity, mut health, mut auto_damage)) = crate_query.get_mut(event.hit) {
+        if let Ok((entity, mut health, mut auto_damage, transform)) = crate_query.get_mut(event.hit)
+        {
             if auto_damage.invincibility == 0. {
                 if !cutscenes.running() {
                     health.damage(1.);
@@ -148,6 +150,9 @@ fn damage_auto_die(
             }
             if health.dead() && !auto_damage.already_despawned {
                 commands.entity(entity).despawn_recursive();
+                ev_experience_spawn.send(ExperienceSpawnEvent {
+                    position: transform.translation().truncate(),
+                });
                 auto_damage.already_despawned = true;
             }
         }

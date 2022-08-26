@@ -26,6 +26,7 @@ impl Plugin for OverworldPlugin {
             .add_plugin(enemy_spawns::EnemySpawnsPlugin)
             .add_plugin(threat_level::ThreatLevelPlugin)
             .add_plugin(turtle::TurtlePlugin)
+            .add_plugin(experience::ExperiencePlugin)
             .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
@@ -112,6 +113,7 @@ pub mod cutscenes;
 pub mod damage;
 pub mod enemy_spawns;
 pub mod entities;
+pub mod experience;
 pub mod health;
 pub mod healthbar;
 pub mod ocean;
