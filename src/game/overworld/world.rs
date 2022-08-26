@@ -34,7 +34,7 @@ fn world_spawn(
         commands
             .spawn_bundle(Text2dBundle {
                 text: Text::from_section(
-                    "Hold left mouse or spacebar button to move\nPress both to dash!\nPress F to start jamming",
+                    "Hold left mouse button to move!\nPress space to dash!\nPress F to start jamming!",
                     TextStyle {
                         font: asset_library.font_default.clone(),
                         font_size: 48.0,
