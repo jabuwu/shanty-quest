@@ -102,7 +102,7 @@ fn ringo_spawn(
             health: 50.,
             speed: stats.speed,
             attack_cooldown: stats.attack_time,
-            knockback_resistance: 0.8,
+            knockback_resistance: 0.9,
         });
     }
 }

@@ -39,12 +39,12 @@ fn plank_stats_by_health(health_percent: f32) -> PlankStatsByHealth {
     if health_percent > 0.5 {
         PlankStatsByHealth {
             speed: 400.,
-            attack_time: 0.25,
+            attack_time: 0.35,
         }
     } else if health_percent > 0.15 {
         PlankStatsByHealth {
             speed: 400.,
-            attack_time: 0.15,
+            attack_time: 0.25,
         }
     } else {
         PlankStatsByHealth {

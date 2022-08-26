@@ -147,15 +147,21 @@ impl Quests {
         }
     }
 
-    pub fn objective(&self) -> Option<&str> {
+    pub fn objective(&self) -> Option<(f32, &str)> {
+        if self.jagerossa() {
+            return None;
+        }
+        if self.ringo() && self.must_talk_to_mayor() {
+            return None;
+        }
         if self.must_talk_to_mayor() {
-            return Some("Talk to mayor");
+            return Some((264., "Talk to the governor at town"));
         }
         match self.active_quest {
-            Quest::Jagerossa(..) => Some("Defeat Jagerossa"),
-            Quest::Ringo(..) => Some("Defeat Ringo"),
-            Quest::Plank(..) => Some("Defeat Plank"),
-            Quest::Davy(..) => Some("Defeat Davy"),
+            Quest::Jagerossa(..) => Some((284., "Defeat Captain Mike Jagerossa")),
+            Quest::Ringo(..) => Some((240., "Defeat Captain Ringo Yarr")),
+            Quest::Plank(..) => Some((268., "Defeat Captain Plank Presley")),
+            Quest::Davy(..) => Some((244., "Defeat Captain Davy Bowie")),
             Quest::End => None,
         }
     }

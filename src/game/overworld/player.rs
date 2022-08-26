@@ -54,7 +54,7 @@ fn player_spawn(
             },
             healthbar: false,
             player: true,
-            health: 25.,
+            health: 20.,
             speed: 250.,
             attack_cooldown: 0.48,
             knockback_resistance: 0.2,

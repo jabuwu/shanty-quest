@@ -171,6 +171,8 @@ pub struct AssetLibrary {
     pub sprite_world_quest_marker_arrow: Handle<Image>,
     #[asset("sprites/WorldTownMarker_Icon.png")]
     pub sprite_world_town_marker_icon: Handle<Image>,
+    #[asset("sprites/HUD_ObjectiveHeader.png")]
+    pub sprite_objective_bg: Handle<Image>,
 
     /***********
      * Attacks *

@@ -3,6 +3,7 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 
 use self::marker::MarkerSpawnEvent;
+use self::objective::ObjectiveSpawnEvent;
 use self::town_marker::TownMarkerSpawnEvent;
 
 pub struct OverworldUiPlugin;
@@ -13,6 +14,7 @@ impl Plugin for OverworldUiPlugin {
             .add_plugin(map::MapPlugin)
             .add_plugin(marker::MarkerPlugin)
             .add_plugin(town_marker::TownMarkerPlugin)
+            .add_plugin(objective::ObjectivePlugin)
             .add_system(overworld_ui_spawn)
             .add_system(overworld_ui_health);
     }
@@ -29,11 +31,13 @@ fn overworld_ui_spawn(
     mut commands: Commands,
     mut ev_marker_spawn: EventWriter<MarkerSpawnEvent>,
     mut ev_town_marker_spawn: EventWriter<TownMarkerSpawnEvent>,
+    mut ev_objective_spawn: EventWriter<ObjectiveSpawnEvent>,
     asset_library: Res<AssetLibrary>,
 ) {
     for _ in ev_spawn.iter() {
         ev_marker_spawn.send_default();
         ev_town_marker_spawn.send_default();
+        ev_objective_spawn.send_default();
         commands
             .spawn_bundle(VisibilityBundle::default())
             .insert_bundle(TransformBundle::default())
@@ -66,7 +70,6 @@ fn overworld_ui_health(
     mut query: Query<&mut Text, With<OverworldUiHealth>>,
     health_query: Query<&Health, With<Player>>,
     threat_level: Res<ThreatLevel>,
-    game_state: Res<GameState>,
 ) {
     let health = if let Ok(health) = health_query.get_single() {
         health.value
@@ -74,15 +77,12 @@ fn overworld_ui_health(
         0.
     };
     for mut text in query.iter_mut() {
-        text.sections[0].value = format!(
-            "Rum: {}\nObjective: {:?}\nThreat level: {:?}",
-            health,
-            game_state.quests.objective(),
-            threat_level.as_ref()
-        );
+        text.sections[0].value =
+            format!("Rum: {}\nThreat level: {:?}", health, threat_level.as_ref());
     }
 }
 
 pub mod map;
 pub mod marker;
+pub mod objective;
 pub mod town_marker;
