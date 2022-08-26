@@ -43,7 +43,7 @@ fn jagerossa_spawn(
                 target: world_locations.get_single_position("JagerossaMoveTo"),
                 angle: 0.,
                 adjust_angle_chance: TimedChance::new(),
-                backoff_time: 2.5,
+                backoff_time: 1.5,
                 backoff_dir: Vec2::new(1., -1.),
                 backoff_chance: TimedChance::new(),
             })
@@ -62,10 +62,10 @@ fn jagerossa_spawn(
             },
             healthbar: true,
             player: false,
-            health: 15.,
+            health: 7.,
             speed: 175.,
             attack_cooldown: 1.,
-            knockback_resistance: 0.9,
+            knockback_resistance: 0.5,
         });
     }
 }

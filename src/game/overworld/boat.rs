@@ -130,6 +130,7 @@ fn boat_spawn(
             .insert(Shockwave {
                 shoot: false,
                 hurt_flags,
+                boss: !event.player,
             })
             .insert(Bombs {
                 shoot: false,

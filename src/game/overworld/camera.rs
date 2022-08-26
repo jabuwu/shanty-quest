@@ -32,13 +32,50 @@ impl OverworldCamera {
         self.arena_enabled = false;
     }
 
-    pub fn disable_arena(&mut self) {
+    pub fn arena_disable(&mut self) {
         self.arena_enabled = false;
     }
 
-    pub fn enable_arena(&mut self, position: Vec2, size: Vec2) {
+    pub fn arena_enable(&mut self, position: Vec2, size: Vec2) {
         self.arena = (position, (size - CAMERA_SIZE).max(Vec2::ZERO));
         self.arena_enabled = true;
+    }
+
+    pub fn is_arena_enabled(&self) -> bool {
+        self.arena_enabled
+    }
+
+    pub fn arena(&self) -> Option<(Vec2, Vec2)> {
+        if self.arena_enabled {
+            Some(self.arena)
+        } else {
+            None
+        }
+    }
+
+    pub fn arena_correction(&self, translation: Vec2) -> Option<Vec2> {
+        if self.arena_enabled {
+            let mut correction = Vec2::ZERO;
+            let screen_left = self.arena.0.x - self.arena.1.x - CAMERA_SIZE.x * 0.5;
+            let screen_right = self.arena.0.x + self.arena.1.x + CAMERA_SIZE.x * 0.5;
+            let screen_bottom = self.arena.0.y - self.arena.1.x - CAMERA_SIZE.y * 0.5;
+            let screen_top = self.arena.0.y + self.arena.1.x + CAMERA_SIZE.y * 0.5;
+            if translation.x < screen_left {
+                correction.x = screen_left - translation.x;
+            }
+            if translation.x > screen_right {
+                correction.x = screen_right - translation.x;
+            }
+            if translation.y < screen_bottom {
+                correction.y = screen_bottom - translation.y;
+            }
+            if translation.y > screen_top {
+                correction.y = screen_top - translation.y;
+            }
+            Some(correction)
+        } else {
+            None
+        }
     }
 }
 

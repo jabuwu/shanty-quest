@@ -73,21 +73,32 @@ fn debug(
     mut ev_plank_spawn: EventWriter<PlankSpawnEvent>,
     mut ev_davy_spawn: EventWriter<DavySpawnEvent>,
     player_query: Query<&GlobalTransform, With<Player>>,
+    mut player_health_query: Query<&mut Health, With<Player>>,
     input: Res<Input<KeyCode>>,
     mut world_locations: ResMut<WorldLocations>,
     mut game_state: ResMut<GameState>,
+    mut overworld_camera: ResMut<OverworldCamera>,
 ) {
     let player_position = if let Ok(player_transform) = player_query.get_single() {
         player_transform.translation().truncate()
     } else {
         Vec2::ZERO
     };
+    for mut player_health in player_health_query.iter_mut() {
+        player_health.value = player_health.max;
+    }
     egui::Window::new("Combat").show(egui_context.ctx_mut(), |ui| {
         ui.label("1) Octopus");
         ui.label("6) Jagerossa");
         ui.label("7) Ringo");
         ui.label("8) Plank");
         ui.label("9) Davy");
+        ui.label("");
+        ui.label(if overworld_camera.is_arena_enabled() {
+            "L) Unlock Cam"
+        } else {
+            "L) Lock Cam"
+        });
         ui.label("");
 
         macro_rules! attack_setting {
@@ -126,6 +137,19 @@ fn debug(
             position: player_position + spawn_pos,
             level,
         });
+    }
+    if input.just_pressed(KeyCode::L) {
+        if overworld_camera.is_arena_enabled() {
+            overworld_camera.arena_disable();
+        } else {
+            if input.pressed(KeyCode::LShift) {
+                overworld_camera.arena_enable(player_position, Vec2::new(1280. * 1.3, 768. * 1.3));
+            } else if input.pressed(KeyCode::LControl) {
+                overworld_camera.arena_enable(player_position, Vec2::new(1280. * 1.1, 768. * 1.1));
+            } else {
+                overworld_camera.arena_enable(player_position, Vec2::new(1280., 768.));
+            }
+        }
     }
     if input.just_pressed(KeyCode::Key6) {
         world_locations.clear();

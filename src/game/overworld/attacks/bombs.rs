@@ -24,6 +24,9 @@ pub struct Bombs {
 #[derive(Component)]
 struct Bomb {
     pub velocity: Vec2,
+    pub life_time: f32,
+    pub parent: Entity,
+    pub hurt_flags: u32,
 }
 
 #[derive(Component, Default)]
@@ -60,15 +63,12 @@ fn bombs_fire(
                     sound.play();
                 }
             }
-            for shoot_side in 0..2 {
-                let forward = Vec2::from_angle(boat.direction + std::f32::consts::PI);
-                let mult = if shoot_side == 0 { 1. } else { -1. };
-                let side = forward.perp() * mult;
-                let position =
-                    global_transform.translation().truncate() + forward * 40. + side * 15.;
-                let velocity = forward * 200.;
-                let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
-                scale *= 0.75;
+            for _ in 0..2 {
+                let throw_direction =
+                    Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
+                let position = global_transform.translation().truncate() + throw_direction * 100.;
+                let velocity =
+                    throw_direction * (200. + rand::random::<f32>() * 300.) + boat.movement * 200.;
                 commands
                     .spawn_bundle(SpriteSheetBundle {
                         texture_atlas: asset_library.sprite_bomb_atlas.clone(),
@@ -76,30 +76,57 @@ fn bombs_fire(
                     })
                     .insert(
                         Transform2::from_translation(position)
-                            .with_depth((DepthLayer::Entity, 0.0))
-                            .with_scale(scale.truncate()),
+                            .with_depth((DepthLayer::Entity, 0.0)),
                     )
-                    .insert(Hurtbox {
-                        shape: CollisionShape::Rect {
-                            size: Vec2::new(14., 14.),
-                        },
-                        for_entity: Some(boat_entity),
-                        auto_despawn: true,
-                        flags: bombs.hurt_flags,
-                        knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.01),
-                    })
                     .insert(YDepth::default())
-                    .insert(Bomb { velocity })
-                    .insert(TimeToLive::new(1.0));
+                    .insert(Bomb {
+                        velocity,
+                        life_time: 1.75,
+                        parent: boat_entity,
+                        hurt_flags: bombs.hurt_flags,
+                    });
             }
         }
         bombs.shoot = false;
     }
 }
 
-fn bomb_move(mut query: Query<(&mut Transform2, &Bomb)>, time: Res<Time>) {
-    for (mut transform, cannon_ball) in query.iter_mut() {
-        transform.translation += cannon_ball.velocity * time.delta_seconds()
+fn bomb_move(
+    mut query: Query<(Entity, &mut Transform2, &mut Bomb, &GlobalTransform)>,
+    time: Res<Time>,
+    mut commands: Commands,
+) {
+    for (entity, mut transform, mut bomb, global_transform) in query.iter_mut() {
+        transform.translation += bomb.velocity * time.delta_seconds();
+        bomb.velocity *= 0.2_f32.powf(time.delta_seconds());
+        bomb.life_time -= time.delta_seconds();
+        if bomb.life_time < 0. {
+            commands.entity(entity).despawn();
+            commands
+                .spawn_bundle(SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Vec2::new(150., 150.).into(),
+                        color: Color::RED,
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                })
+                .insert(
+                    Transform2::from_translation(global_transform.translation().truncate())
+                        .with_depth((DepthLayer::Entity, 0.)),
+                )
+                .insert(Hurtbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(150., 150.),
+                    },
+                    for_entity: Some(bomb.parent),
+                    auto_despawn: false,
+                    flags: bomb.hurt_flags,
+                    knockback_type: HurtboxKnockbackType::Difference(7.5),
+                })
+                .insert(YDepth::default())
+                .insert(TimeToLive { seconds: 0.05 });
+        }
     }
 }
 

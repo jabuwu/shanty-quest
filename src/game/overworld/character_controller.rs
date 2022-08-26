@@ -58,6 +58,7 @@ fn character_controller_update(
     mut collision_query: ResMut<CollisionQuery>,
     time: Res<Time>,
     mut commands: Commands,
+    overworld_camera: Res<OverworldCamera>,
 ) {
     for entity in query.iter() {
         collision_query.update(&queries.p1());
@@ -92,7 +93,12 @@ fn character_controller_update(
                 velocity += dash.velocity * time.delta_seconds();
             }
             velocity += character_controller.knockback;
-            character_controller.knockback *= 0.000001_f32.powf(time.delta_seconds());
+            character_controller.knockback *= 0.01_f32.powf(time.delta_seconds());
+            if let Some(correction) =
+                overworld_camera.arena_correction(global_transform.translation().truncate())
+            {
+                velocity += correction;
+            }
             let velocity_x = Vec2::X * velocity;
             let velocity_y = Vec2::Y * velocity;
             let collision_filters = CollisionFilter {

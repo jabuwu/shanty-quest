@@ -57,7 +57,7 @@ fn ringo1_init1(
     }
 
     let rect = world_locations.get_single_rect("RingoArena");
-    overworld_camera.enable_arena(rect.position, rect.size);
+    overworld_camera.arena_enable(rect.position, rect.size);
 }
 
 fn ringo1_cleanup(mut game_state: ResMut<GameState>) {
