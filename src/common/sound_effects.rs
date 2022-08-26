@@ -33,8 +33,12 @@ pub struct SoundEffects {
     pub sfx_overworld_town_enter: AudioPlusSoundEffect,
     pub sfx_overworld_town_exit: AudioPlusSoundEffect,
 
-    // overworld attacks
+    // attacks
     pub sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect,
+    pub sfx_overworld_attack_shotgun_cannons: AudioPlusSoundEffect,
+    pub sfx_overworld_attack_shockwave: AudioPlusSoundEffect,
+    pub sfx_overworld_attack_bombs: AudioPlusSoundEffect,
+    pub sfx_overworld_attack_kraken: AudioPlusSoundEffect,
 
     // town
     pub sfx_town_ambient: AudioPlusSoundEffect,
@@ -75,7 +79,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_dialogue_voice_generic_06.clone(),
                 asset_library.audio_sfx_dialogue_voice_generic_07.clone(),
                 asset_library.audio_sfx_dialogue_voice_generic_08.clone(),
-                asset_library.audio_sfx_dialogue_voice_generic_09.clone()
+                asset_library.audio_sfx_dialogue_voice_generic_09.clone(),
             ],
             volume: 0.4,
             pitch_variation: 0.,
@@ -163,8 +167,52 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             ..Default::default()
         },
         sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
-            volume: 0.5,
+            audio_sources: vec![
+                asset_library.audio_sfx_attack_player_01.clone(),
+                asset_library.audio_sfx_attack_player_02.clone(),
+                asset_library.audio_sfx_attack_player_03.clone(),
+            ],
+            volume: 1.0,
+            positional: true,
+            ..Default::default()
+        },
+        sfx_overworld_attack_shotgun_cannons: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_attack_jagerossa_01.clone(),
+                asset_library.audio_sfx_attack_jagerossa_02.clone(),
+                asset_library.audio_sfx_attack_jagerossa_03.clone(),
+            ],
+            volume: 1.0,
+            positional: true,
+            ..Default::default()
+        },
+        sfx_overworld_attack_shockwave: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_attack_ringo_01.clone(),
+                asset_library.audio_sfx_attack_ringo_02.clone(),
+                asset_library.audio_sfx_attack_ringo_03.clone(),
+            ],
+            volume: 1.0,
+            positional: true,
+            ..Default::default()
+        },
+        sfx_overworld_attack_bombs: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_attack_plank_01.clone(),
+                asset_library.audio_sfx_attack_plank_02.clone(),
+                asset_library.audio_sfx_attack_plank_03.clone(),
+            ],
+            volume: 1.0,
+            positional: true,
+            ..Default::default()
+        },
+        sfx_overworld_attack_kraken: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_attack_davy_01.clone(),
+                asset_library.audio_sfx_attack_davy_02.clone(),
+                asset_library.audio_sfx_attack_davy_03.clone(),
+            ],
+            volume: 1.0,
             positional: true,
             ..Default::default()
         },

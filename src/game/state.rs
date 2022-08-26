@@ -8,6 +8,7 @@ pub struct GameState {
     pub showed_example_text: bool,
     pub quests: Quests,
     pub dangerous_seas: bool,
+    pub attacks: Attacks,
 
     pub checkpoint: Option<Box<GameState>>,
 }
@@ -21,6 +22,13 @@ impl Default for GameState {
             showed_example_text: false,
             quests: Quests::default(),
             dangerous_seas: false,
+            attacks: Attacks {
+                forward_cannons: 1,
+                shotgun_cannons: 0,
+                shockwave: 0,
+                bombs: 0,
+                kraken: 0,
+            },
             checkpoint: None,
         }
     }
@@ -48,41 +56,5 @@ impl GameState {
             }
         }
         false
-    }
-
-    pub fn band_special_attack_type(&self) -> SpecialAttack {
-        let (band_member_a, band_member_b) =
-            if self.band_members[0].index() < self.band_members[1].index() {
-                (self.band_members[0], self.band_members[1])
-            } else {
-                (self.band_members[1], self.band_members[0])
-            };
-        match band_member_a {
-            BandMember::Guitar => match band_member_b {
-                BandMember::Drums => SpecialAttack::ShotgunCannons,
-                BandMember::Flute => SpecialAttack::DashAttack,
-                BandMember::Accordion => unimplemented!(),
-                BandMember::Harmonica => unimplemented!(),
-                _ => unreachable!(),
-            },
-            BandMember::Drums => match band_member_b {
-                BandMember::Flute => SpecialAttack::Shockwave,
-                BandMember::Accordion => unimplemented!(),
-                BandMember::Harmonica => unimplemented!(),
-                _ => unreachable!(),
-            },
-            BandMember::Flute => match band_member_b {
-                BandMember::Accordion => unimplemented!(),
-                BandMember::Harmonica => unimplemented!(),
-                _ => unreachable!(),
-            },
-            BandMember::Accordion => match band_member_b {
-                BandMember::Harmonica => unimplemented!(),
-                _ => unreachable!(),
-            },
-            BandMember::Harmonica => {
-                unreachable!();
-            }
-        }
     }
 }

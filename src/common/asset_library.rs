@@ -131,14 +131,8 @@ pub struct AssetLibrary {
     #[asset("sprites/WaterOverlay2.png")]
     pub sprite_water_overlay2: Handle<Image>,
 
-    #[asset("sprites/BulletNote.png")]
-    pub sprite_bullet_note: Handle<Image>,
-
     #[asset("sprites/WaterRingVFX.png")]
     pub sprite_water_ring_vfx: Handle<Image>,
-
-    #[asset("sprites/ShockwaveVFX.png")]
-    pub sprite_shockwave_vfx: Handle<Image>,
 
     #[asset("sprites/Turtle.png")]
     pub sprite_turtle: Handle<Image>,
@@ -159,6 +153,45 @@ pub struct AssetLibrary {
     pub sprite_world_quest_marker_icon: Handle<Image>,
     #[asset("sprites/WorldQuestMarker_Arrow.png")]
     pub sprite_world_quest_marker_arrow: Handle<Image>,
+
+    /***********
+     * Attacks *
+     ***********/
+    #[asset("sprites/BulletNote.png")]
+    pub sprite_bullet_note: Handle<Image>,
+    #[asset("sprites/ShockwaveVFX.png")]
+    pub sprite_shockwave_vfx: Handle<Image>,
+
+    #[asset("audio/music/shoot_drums_01.ogg")]
+    pub audio_sfx_attack_player_01: Handle<AudioSource>,
+    #[asset("audio/music/shoot_drums_02.ogg")]
+    pub audio_sfx_attack_player_02: Handle<AudioSource>,
+    #[asset("audio/music/shoot_drums_03.ogg")]
+    pub audio_sfx_attack_player_03: Handle<AudioSource>,
+    #[asset("audio/music/shoot_electricguitar_01.ogg")]
+    pub audio_sfx_attack_jagerossa_01: Handle<AudioSource>,
+    #[asset("audio/music/shoot_electricguitar_02.ogg")]
+    pub audio_sfx_attack_jagerossa_02: Handle<AudioSource>,
+    #[asset("audio/music/shoot_electricguitar_03.ogg")]
+    pub audio_sfx_attack_jagerossa_03: Handle<AudioSource>,
+    #[asset("audio/music/shoot_accordion_01.ogg")]
+    pub audio_sfx_attack_ringo_01: Handle<AudioSource>,
+    #[asset("audio/music/shoot_accordion_02.ogg")]
+    pub audio_sfx_attack_ringo_02: Handle<AudioSource>,
+    #[asset("audio/music/shoot_accordion_03.ogg")]
+    pub audio_sfx_attack_ringo_03: Handle<AudioSource>,
+    #[asset("audio/music/shoot_strings_01.ogg")]
+    pub audio_sfx_attack_plank_01: Handle<AudioSource>,
+    #[asset("audio/music/shoot_strings_02.ogg")]
+    pub audio_sfx_attack_plank_02: Handle<AudioSource>,
+    #[asset("audio/music/shoot_strings_03.ogg")]
+    pub audio_sfx_attack_plank_03: Handle<AudioSource>,
+    #[asset("audio/music/shoot_bass_01.ogg")]
+    pub audio_sfx_attack_davy_01: Handle<AudioSource>,
+    #[asset("audio/music/shoot_bass_02.ogg")]
+    pub audio_sfx_attack_davy_02: Handle<AudioSource>,
+    #[asset("audio/music/shoot_bass_03.ogg")]
+    pub audio_sfx_attack_davy_03: Handle<AudioSource>,
 
     /********
      * Town *

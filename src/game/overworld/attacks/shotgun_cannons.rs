@@ -35,7 +35,10 @@ fn shotgun_cannons_sound(
 ) {
     for event in ev_created.iter() {
         commands.entity(event.entity).insert(AudioPlusSource::new(
-            asset_library.sound_effects.sfx_placeholder_sound.clone(),
+            asset_library
+                .sound_effects
+                .sfx_overworld_attack_shotgun_cannons
+                .clone(),
         ));
     }
 }
@@ -95,7 +98,7 @@ fn shotgun_cannons_fire(
                                 .with_scale(scale.truncate()),
                         )
                         .insert(ShotgunCannonBall { velocity })
-                        .insert(TimeToLive::new(0.5));
+                        .insert(TimeToLive::new(0.25));
                 }
             }
         }

@@ -80,7 +80,8 @@ impl Cutscene for Ringo2Cutscene {
     }
 }
 
-fn ringo2_init1(mut dialogue: ResMut<Dialogue>) {
+fn ringo2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState>) {
+    game_state.attacks.shockwave = 1;
     for (p, t) in RINGO2.iter() {
         dialogue.add_text(*p, String::from(*t));
     }

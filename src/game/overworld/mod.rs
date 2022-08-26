@@ -11,7 +11,6 @@ impl Plugin for OverworldPlugin {
             .add_plugin(world::WorldPlugin)
             .add_plugin(town::TownPlugin)
             .add_plugin(boat::BoatPlugin)
-            .add_plugin(enemy::EnemyPlugin)
             .add_plugin(water_ring::WaterRingPlugin)
             .add_plugin(ocean::OceanPlugin)
             .add_plugin(healthbar::HealthbarPlugin)
@@ -110,7 +109,6 @@ pub mod camera;
 pub mod character_controller;
 pub mod cutscenes;
 pub mod damage;
-pub mod enemy;
 pub mod enemy_spawns;
 pub mod entities;
 pub mod health;

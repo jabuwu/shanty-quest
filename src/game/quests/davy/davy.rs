@@ -48,9 +48,14 @@ fn davy_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,
-            special_attack: SpecialAttack::ShotgunCannons,
+            special_attack: Attacks {
+                kraken: 1,
+                ..Default::default()
+            },
             healthbar: true,
             player: false,
+            health: 30.,
+            speed: 100.,
         });
     }
 }
@@ -66,6 +71,9 @@ fn davy_move(mut query: Query<(&mut Boat, &GlobalTransform, &Davy)>) {
         }
         if boat.movement.length_squared() > 0. {
             boat.direction = Vec2::X.angle_between(boat.movement);
+        }
+        if rand::random::<f32>() < 0.05 {
+            boat.shoot = true;
         }
     }
 }

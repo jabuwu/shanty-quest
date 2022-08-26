@@ -78,7 +78,8 @@ impl Cutscene for Jagerossa2Cutscene {
     }
 }
 
-fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>) {
+fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState>) {
+    game_state.attacks.shotgun_cannons = 1;
     for (p, t) in JAGEROSSA2.iter() {
         dialogue.add_text(*p, String::from(*t));
     }
@@ -87,11 +88,12 @@ fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>) {
 fn jagerossa2_cleanup(
     mut game_state: ResMut<GameState>,
     mut overworld_camera: ResMut<OverworldCamera>,
-    player_query: Query<Entity, With<Player>>,
+    mut player_query: Query<(Entity, &mut Boat), With<Player>>,
     mut commands: Commands,
     world_locations: Res<WorldLocations>,
 ) {
-    if let Ok(player_entity) = player_query.get_single() {
+    if let Ok((player_entity, mut player_boat)) = player_query.get_single_mut() {
+        player_boat.shoot = false;
         commands
             .entity(player_entity)
             .insert(CharacterControllerDestination {
