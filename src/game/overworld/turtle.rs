@@ -2,64 +2,64 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
-const OCTOPUS_COLLISION_SIZE: Vec2 = Vec2::new(60., 60.);
-const OCTOPUS_HURTBOX_SIZE: Vec2 = Vec2::new(80., 80.);
+const TURTLE_COLLISION_SIZE: Vec2 = Vec2::new(60., 60.);
+const TURTLE_HURTBOX_SIZE: Vec2 = Vec2::new(80., 80.);
 
-pub struct OctopusPlugin;
+pub struct TurtlePlugin;
 
-impl Plugin for OctopusPlugin {
+impl Plugin for TurtlePlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<OctopusSpawnEvent>()
-            .add_system(octopus_spawn)
-            .add_system(octopus_move)
-            .add_system(octopus_animate);
+        app.add_event::<TurtleSpawnEvent>()
+            .add_system(turtle_spawn)
+            .add_system(turtle_move)
+            .add_system(turtle_animate);
     }
 }
 
 #[derive(Default, Clone, Copy)]
-pub struct OctopusSpawnEvent {
+pub struct TurtleSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
-    pub level: OctopusLevel,
+    pub level: TurtleLevel,
 }
 
 #[derive(Default, Clone, Copy)]
-pub enum OctopusLevel {
+pub enum TurtleLevel {
     #[default]
     Easy,
     Medium,
     Hard,
 }
 
-impl OctopusLevel {
-    fn info(&self, asset_library: &AssetLibrary) -> OctopusInfo {
+impl TurtleLevel {
+    fn info(&self, asset_library: &AssetLibrary) -> TurtleInfo {
         match *self {
-            Self::Easy => OctopusInfo {
-                atlas: asset_library.sprite_octopus_easy_atlas.clone(),
-                scale: 0.75,
-                health: 2.,
-                speed: 150.,
-                knockback_resistence: 0.,
-            },
-            Self::Medium => OctopusInfo {
-                atlas: asset_library.sprite_octopus_medium_atlas.clone(),
+            Self::Easy => TurtleInfo {
+                atlas: asset_library.sprite_turtle_easy_atlas.clone(),
                 scale: 1.0,
                 health: 5.,
-                speed: 300.,
-                knockback_resistence: 0.4,
+                speed: 200.,
+                knockback_resistence: 0.8,
             },
-            Self::Hard => OctopusInfo {
-                atlas: asset_library.sprite_octopus_hard_atlas.clone(),
-                scale: 1.2,
+            Self::Medium => TurtleInfo {
+                atlas: asset_library.sprite_turtle_medium_atlas.clone(),
+                scale: 1.0,
                 health: 10.,
-                speed: 150.,
-                knockback_resistence: 0.7,
+                speed: 200.,
+                knockback_resistence: 0.9,
+            },
+            Self::Hard => TurtleInfo {
+                atlas: asset_library.sprite_turtle_hard_atlas.clone(),
+                scale: 1.5,
+                health: 20.,
+                speed: 100.,
+                knockback_resistence: 1.0,
             },
         }
     }
 }
 
-struct OctopusInfo {
+struct TurtleInfo {
     atlas: Handle<TextureAtlas>,
     scale: f32,
     health: f32,
@@ -68,16 +68,16 @@ struct OctopusInfo {
 }
 
 #[derive(Component)]
-pub struct Octopus {
-    stop_chance: TimedChance,
-    stop_time: f32,
+pub struct Turtle {
+    relative_angle: f32,
+    sprite_angle: f32,
 }
 
 #[derive(Component)]
-pub struct OctopusSprite;
+pub struct TurtleSprite;
 
-fn octopus_spawn(
-    mut ev_spawn: EventReader<OctopusSpawnEvent>,
+fn turtle_spawn(
+    mut ev_spawn: EventReader<TurtleSpawnEvent>,
     mut commands: Commands,
     mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
     asset_library: Res<AssetLibrary>,
@@ -88,7 +88,7 @@ fn octopus_spawn(
             .check(
                 event.position,
                 CollisionShape::Rect {
-                    size: OCTOPUS_COLLISION_SIZE * 1.5,
+                    size: TURTLE_COLLISION_SIZE * 1.5,
                 },
                 None,
             )
@@ -101,34 +101,28 @@ fn octopus_spawn(
         } else {
             commands.spawn()
         };
-        let OctopusInfo {
-            atlas,
-            scale,
-            health,
-            speed,
-            knockback_resistence,
-        } = event.level.info(asset_library.as_ref());
+        let info = event.level.info(asset_library.as_ref());
         entity
             .insert_bundle(TransformBundle::default())
             .insert_bundle(VisibilityBundle::default())
             .insert(Transform2::from_translation(event.position))
-            .insert(Octopus {
-                stop_chance: TimedChance::new(),
-                stop_time: 0.,
+            .insert(Turtle {
+                relative_angle: rand::random::<f32>() * std::f32::consts::TAU,
+                sprite_angle: 0.,
             })
-            .insert(Label("Octopus".to_owned()))
+            .insert(Label("Turtle".to_owned()))
             .insert(YDepth::default())
-            .insert(Health::new(health))
+            .insert(Health::new(info.health))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
-                    size: Vec2::new(60., 60.) * scale,
+                    size: Vec2::new(80., 80.) * info.scale,
                 },
                 for_entity: None,
                 flags: DAMAGE_FLAG_ENEMY,
             })
             .insert(Hurtbox {
                 shape: CollisionShape::Rect {
-                    size: OCTOPUS_HURTBOX_SIZE,
+                    size: TURTLE_HURTBOX_SIZE,
                 },
                 for_entity: None,
                 auto_despawn: false,
@@ -137,14 +131,14 @@ fn octopus_spawn(
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {
-                    size: OCTOPUS_COLLISION_SIZE,
+                    size: TURTLE_COLLISION_SIZE,
                 },
                 flags: COLLISION_FLAG,
             })
             .insert(CharacterController {
                 movement: Vec2::ZERO,
-                speed: speed,
-                knockback_resistance: knockback_resistence,
+                speed: info.speed,
+                knockback_resistance: info.knockback_resistence,
                 ..Default::default()
             })
             .insert(AutoDamage {
@@ -154,15 +148,15 @@ fn octopus_spawn(
             .with_children(|parent| {
                 parent
                     .spawn_bundle(SpriteSheetBundle {
-                        texture_atlas: atlas,
+                        texture_atlas: info.atlas,
                         ..Default::default()
                     })
                     .insert(
                         Transform2::new()
                             .with_depth((DepthLayer::Entity, 0.))
-                            .with_scale(Vec2::ONE * scale),
+                            .with_scale(Vec2::ONE * info.scale),
                     )
-                    .insert(OctopusSprite);
+                    .insert(TurtleSprite);
             });
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
             entity: Some(entity.id()),
@@ -172,9 +166,9 @@ fn octopus_spawn(
     }
 }
 
-fn octopus_move(
+fn turtle_move(
     mut queries: ParamSet<(
-        Query<(&mut CharacterController, &GlobalTransform, &mut Octopus)>,
+        Query<(&mut CharacterController, &GlobalTransform, &mut Turtle)>,
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
@@ -185,29 +179,36 @@ fn octopus_move(
     } else {
         Vec2::ZERO
     };
-    for (mut character_controller, octopus_transform, mut octopus) in queries.p0().iter_mut() {
-        if octopus.stop_time < 0. && octopus.stop_chance.check(6., 3., time.delta_seconds()) {
-            octopus.stop_time = 0.5;
-        }
-        octopus.stop_time -= time.delta_seconds();
-        if cutscenes.running() || octopus.stop_time > 0. {
+    for (mut character_controller, turtle_transform, mut turtle) in queries.p0().iter_mut() {
+        if cutscenes.running() {
             character_controller.movement = Vec2::ZERO;
         } else {
-            let direction = player_position - octopus_transform.translation().truncate();
-            character_controller.movement = direction.normalize();
+            turtle.relative_angle += rand::random::<f32>() * std::f32::consts::PI * 0.01;
+            let mut direction = (player_position + Vec2::from_angle(turtle.relative_angle) * 80.)
+                - turtle_transform.translation().truncate();
+            if direction.length() == 0. {
+                direction = Vec2::ONE;
+            }
+            turtle.sprite_angle = (time.delta_seconds() * 2.).lerp(
+                turtle.sprite_angle,
+                turtle.sprite_angle
+                    + Vec2::from_angle(turtle.sprite_angle).angle_between(direction.normalize()),
+            );
+            character_controller.movement = Vec2::from_angle(turtle.sprite_angle);
         }
     }
 }
 
-fn octopus_animate(
-    query: Query<(&Children, &AutoDamage), With<Octopus>>,
-    mut child_query: Query<&mut TextureAtlasSprite, With<OctopusSprite>>,
+fn turtle_animate(
+    mut query: Query<(&Turtle, &Children, &AutoDamage)>,
+    mut child_query: Query<(&mut TextureAtlasSprite, &mut Transform2), With<TurtleSprite>>,
     time: Res<Time>,
 ) {
-    for (children, auto_damage) in query.iter() {
+    for (turtle, children, auto_damage) in query.iter_mut() {
         for child in children.iter() {
-            if let Ok(mut sprite) = child_query.get_mut(*child) {
-                let time = time.time_since_startup().as_secs_f32() % 1.;
+            if let Ok((mut sprite, mut transform)) = child_query.get_mut(*child) {
+                transform.rotation = turtle.sprite_angle + std::f32::consts::PI * 1.3;
+                let time = (time.time_since_startup().as_secs_f32() * 2.) % 1.;
                 if time > 0.5 {
                     sprite.index = 1;
                 } else {

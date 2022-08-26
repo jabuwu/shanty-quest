@@ -367,7 +367,11 @@ pub fn quests_skip(
     input: Res<Input<KeyCode>>,
     mut game_state: ResMut<GameState>,
     mut player_query: Query<&mut Transform2, With<Player>>,
+    app_state: Res<State<AppState>>,
 ) {
+    if *app_state.current() != AppState::Overworld {
+        return;
+    }
     // TODO: remove debug
     if input.just_pressed(KeyCode::F2) {
         game_state.quests.active_quest = Quest::End;

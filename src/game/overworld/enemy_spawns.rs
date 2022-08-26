@@ -24,6 +24,7 @@ impl Default for EnemySpawnsState {
             easy_level: EnemySpawnLevel {
                 spawn_chances: vec![
                     (0.03, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.3, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 1.,
@@ -33,6 +34,8 @@ impl Default for EnemySpawnsState {
                 spawn_chances: vec![
                     (0.05, EnemySpawn::Octopus(OctopusLevel::Hard)),
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.1, EnemySpawn::Turtle(TurtleLevel::Medium)),
+                    (0.3, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.5,
@@ -42,6 +45,9 @@ impl Default for EnemySpawnsState {
                 spawn_chances: vec![
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Hard)),
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.1, EnemySpawn::Turtle(TurtleLevel::Hard)),
+                    (0.1, EnemySpawn::Turtle(TurtleLevel::Medium)),
+                    (0.3, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.25,
@@ -51,6 +57,9 @@ impl Default for EnemySpawnsState {
                 spawn_chances: vec![
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Hard)),
                     (0.3, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.1, EnemySpawn::Turtle(TurtleLevel::Hard)),
+                    (0.3, EnemySpawn::Turtle(TurtleLevel::Medium)),
+                    (0.3, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.1,
@@ -58,7 +67,7 @@ impl Default for EnemySpawnsState {
             },
             davy_level: EnemySpawnLevel {
                 spawn_chances: vec![(1., EnemySpawn::Octopus(OctopusLevel::Easy))],
-                seconds_per_spawn: 1.0,
+                seconds_per_spawn: 0.5,
                 spawn_max: 5,
             },
         }
@@ -67,6 +76,7 @@ impl Default for EnemySpawnsState {
 
 enum EnemySpawn {
     Octopus(OctopusLevel),
+    Turtle(TurtleLevel),
 }
 
 struct EnemySpawnLevel {
@@ -128,6 +138,7 @@ fn enemy_spawns(
         Query<(Entity, &GlobalTransform, &mut SpawnedEntity)>,
     )>,
     mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
+    mut ev_turtle_spawn: EventWriter<TurtleSpawnEvent>,
     state_time: Res<StateTime<AppState>>,
     game_state: Res<GameState>,
     screen_fade: Res<ScreenFade>,
@@ -189,6 +200,14 @@ fn enemy_spawns(
                     EnemySpawn::Octopus(level) => {
                         let entity = commands.spawn().insert(SpawnedEntity::default()).id();
                         ev_octopus_spawn.send(OctopusSpawnEvent {
+                            entity: Some(entity),
+                            position,
+                            level,
+                        });
+                    }
+                    EnemySpawn::Turtle(level) => {
+                        let entity = commands.spawn().insert(SpawnedEntity::default()).id();
+                        ev_turtle_spawn.send(TurtleSpawnEvent {
                             entity: Some(entity),
                             position,
                             level,

@@ -148,6 +148,16 @@ pub struct AssetLibrary {
     pub sprite_octopus_hard: Handle<Image>,
     pub sprite_octopus_hard_atlas: Handle<TextureAtlas>,
 
+    #[asset("sprites/Turtle.png")]
+    pub sprite_turtle_easy: Handle<Image>,
+    pub sprite_turtle_easy_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/Turtle_Blue.png")]
+    pub sprite_turtle_medium: Handle<Image>,
+    pub sprite_turtle_medium_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/Turtle_Red.png")]
+    pub sprite_turtle_hard: Handle<Image>,
+    pub sprite_turtle_hard_atlas: Handle<TextureAtlas>,
+
     #[asset("sprites/AnglerFish.png")]
     pub sprite_angler_fish: Handle<Image>,
     pub sprite_angler_fish_atlas: Handle<TextureAtlas>,
@@ -271,6 +281,22 @@ impl AssetLibrary {
             1,
         );
         self.sprite_octopus_hard_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_turtle_easy.clone(), Vec2::new(131., 130.), 2, 1);
+        self.sprite_turtle_easy_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_turtle_medium.clone(),
+            Vec2::new(131., 130.),
+            2,
+            1,
+        );
+        self.sprite_turtle_medium_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_turtle_hard.clone(), Vec2::new(131., 130.), 2, 1);
+        self.sprite_turtle_hard_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas =
             TextureAtlas::from_grid(self.sprite_turtle.clone(), Vec2::new(131., 130.), 2, 1);

@@ -36,6 +36,7 @@ pub use super::{
         threat_level::ThreatLevel,
         town::{Town, TownSpawnEvent},
         trigger::Trigger,
+        turtle::{Turtle, TurtleLevel, TurtleSpawnEvent},
         ui::OverworldUiSpawnEvent,
         water_ring::{WaterRing, WaterRingSpawnEvent},
         world::{World, WorldLoadEvent},

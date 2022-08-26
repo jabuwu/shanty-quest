@@ -38,6 +38,7 @@ fn main() {
         .add_plugin(jam::game::overworld::ocean::OceanPlugin)
         .add_plugin(jam::game::overworld::attacks::AttacksPlugin)
         .add_plugin(jam::game::overworld::octopus::OctopusPlugin)
+        .add_plugin(jam::game::overworld::turtle::TurtlePlugin)
         .add_plugin(jam::game::overworld::enemy_spawns::EnemySpawnsPlugin)
         .add_plugin(jam::game::overworld::threat_level::ThreatLevelPlugin)
         .add_plugin(jam::game::quests::QuestsPlugin)
@@ -68,6 +69,7 @@ pub fn init(
 fn debug(
     mut egui_context: ResMut<EguiContext>,
     mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
+    mut ev_turtle_spawn: EventWriter<TurtleSpawnEvent>,
     mut ev_jagerossa_spawn: EventWriter<JagerossaSpawnEvent>,
     mut ev_ringo_spawn: EventWriter<RingoSpawnEvent>,
     mut ev_plank_spawn: EventWriter<PlankSpawnEvent>,
@@ -89,6 +91,7 @@ fn debug(
     }
     egui::Window::new("Combat").show(egui_context.ctx_mut(), |ui| {
         ui.label("1) Octopus");
+        ui.label("2) Turtle");
         ui.label("6) Jagerossa");
         ui.label("7) Ringo");
         ui.label("8) Plank");
@@ -133,6 +136,21 @@ fn debug(
         };
         let spawn_pos = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU) * 500.;
         ev_octopus_spawn.send(OctopusSpawnEvent {
+            entity: None,
+            position: player_position + spawn_pos,
+            level,
+        });
+    }
+    if input.just_pressed(KeyCode::Key2) {
+        let level = if input.pressed(KeyCode::LShift) {
+            TurtleLevel::Hard
+        } else if input.pressed(KeyCode::LControl) {
+            TurtleLevel::Medium
+        } else {
+            TurtleLevel::Easy
+        };
+        let spawn_pos = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU) * 500.;
+        ev_turtle_spawn.send(TurtleSpawnEvent {
             entity: None,
             position: player_position + spawn_pos,
             level,

@@ -68,7 +68,7 @@ fn kraken_fire(
                 }
             }
             for i in 0..6 {
-                let close_tentacle = i == 0;
+                let close_tentacle = i == 0 && kraken.boss;
                 let (distance_min, distance_max) = if close_tentacle {
                     (100., 100.)
                 } else {
@@ -150,7 +150,7 @@ fn tentacle_animate(mut query: Query<(&mut TextureAtlasSprite, &Tentacle)>, time
             }
         } else {
             let time = (time.time_since_startup().as_secs_f32() * 3.) % 1.;
-            if time > 0.65 {
+            if time > 0.5 {
                 sprite.index = 3;
             } else {
                 sprite.index = 2;
