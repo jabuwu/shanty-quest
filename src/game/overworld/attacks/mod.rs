@@ -14,7 +14,7 @@ impl Plugin for AttacksPlugin {
 }
 
 #[derive(Default, Debug, PartialEq, Eq, Clone, Copy)]
-pub struct SpecialAttack {
+pub struct Attacks {
     pub forward_cannons: u32,
     pub shotgun_cannons: u32,
     pub shockwave: u32,

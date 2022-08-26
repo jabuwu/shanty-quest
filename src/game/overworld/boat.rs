@@ -30,9 +30,11 @@ impl Plugin for BoatPlugin {
 pub struct BoatSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
-    pub special_attack: SpecialAttack,
+    pub special_attack: Attacks,
     pub healthbar: bool,
     pub player: bool,
+    pub health: f32,
+    pub speed: f32,
 }
 
 #[derive(Component)]
@@ -42,8 +44,11 @@ pub struct Boat {
     pub speed: f32,
     pub facing: Facing,
     pub ring_timer: f32,
-    pub special_attack: SpecialAttack,
+    pub attacks: Attacks,
     pub shoot: bool,
+    pub shoot_cooldown: f32,
+    pub dash: bool,
+    pub dash_cooldown: f32,
     pub opacity: f32,
 }
 
@@ -91,8 +96,11 @@ fn boat_spawn(
                 speed: 200.,
                 facing: Facing::South,
                 ring_timer: RING_SPAWN_INTEVAL,
-                special_attack: event.special_attack,
+                attacks: event.special_attack,
+                shoot_cooldown: 0.,
                 shoot: false,
+                dash_cooldown: 0.,
+                dash: false,
                 opacity: 1.,
             })
             .insert(Collision {
@@ -103,7 +111,8 @@ fn boat_spawn(
             })
             .insert(CharacterController {
                 movement: Vec2::ZERO,
-                speed: 200.,
+                speed: event.speed,
+                knockback_resistance: 0.5,
                 ..Default::default()
             })
             .insert(ForwardCannons {
@@ -126,7 +135,11 @@ fn boat_spawn(
                 shoot: false,
                 hurt_flags,
             })
-            .insert(Health::new(if event.player { 10. } else { 3. }))
+            .insert(DashAttack {
+                shoot: false,
+                hurt_flags,
+            })
+            .insert(Health::new(event.health))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(100., 100.),
@@ -239,8 +252,14 @@ fn boat_attack(
         &mut Shockwave,
         &mut Bombs,
         &mut Kraken,
+        &mut DashAttack,
     )>,
+    time: Res<Time>,
+    cutscenes: Res<Cutscenes>,
 ) {
+    if cutscenes.running() {
+        return;
+    }
     for (
         mut boat,
         mut forward_cannons,
@@ -248,26 +267,34 @@ fn boat_attack(
         mut shockwave,
         mut bombs,
         mut kraken,
+        mut dash,
     ) in query.iter_mut()
     {
-        if boat.shoot {
-            boat.shoot = false;
-            if boat.special_attack.forward_cannons > 0 {
+        boat.shoot_cooldown += time.delta_seconds();
+        if boat.shoot && boat.shoot_cooldown > 0.48 {
+            boat.shoot_cooldown = 0.;
+            if boat.attacks.forward_cannons > 0 {
                 forward_cannons.shoot = true;
             }
-            if boat.special_attack.shotgun_cannons > 0 {
+            if boat.attacks.shotgun_cannons > 0 {
                 shotgun_cannons.shoot = true
             }
-            if boat.special_attack.shockwave > 0 {
+            if boat.attacks.shockwave > 0 {
                 shockwave.shoot = true
             }
-            if boat.special_attack.bombs > 0 {
+            if boat.attacks.bombs > 0 {
                 bombs.shoot = true
             }
-            if boat.special_attack.kraken > 0 {
+            if boat.attacks.kraken > 0 {
                 kraken.shoot = true
             }
         }
+        boat.dash_cooldown += time.delta_seconds();
+        if boat.dash && boat.dash_cooldown > 0.48 {
+            boat.dash_cooldown = 0.;
+            dash.shoot = true
+        }
+        boat.dash = false;
     }
 }
 

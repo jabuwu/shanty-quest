@@ -80,7 +80,8 @@ impl Cutscene for Davy2Cutscene {
     }
 }
 
-fn davy2_init1(mut dialogue: ResMut<Dialogue>) {
+fn davy2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState>) {
+    game_state.attacks.kraken = 1;
     for (p, t) in DAVY2.iter() {
         dialogue.add_text(*p, String::from(*t));
     }

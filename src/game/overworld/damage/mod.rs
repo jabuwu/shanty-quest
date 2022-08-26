@@ -42,7 +42,7 @@ pub struct Hurtbox {
 pub enum HurtboxKnockbackType {
     None,
     Velocity(Vec2),
-    Difference,
+    Difference(f32),
 }
 
 #[derive(Component, Default)]
@@ -102,6 +102,14 @@ fn damage_check(
                         ev_knockback.send(KnockbackEvent {
                             entity: hitbox_entity,
                             force,
+                        });
+                    }
+                    HurtboxKnockbackType::Difference(mult_force) => {
+                        let difference = hitbox_translation - hurtbox_translation;
+                        let force = (1.0 - (difference.length() / 500.).clamp(0., 1.)) * mult_force;
+                        ev_knockback.send(KnockbackEvent {
+                            entity: hitbox_entity,
+                            force: difference.normalize() * force,
                         });
                     }
                     _ => {}

@@ -27,6 +27,7 @@ pub struct CharacterController {
     pub speed: f32,
     pub force_facing: Option<Facing>,
     pub knockback: Vec2,
+    pub knockback_resistance: f32,
 }
 
 #[derive(Clone, Copy)]
@@ -130,7 +131,8 @@ fn character_controller_knockback(
 ) {
     for event in ev_knockback.iter() {
         if let Ok(mut character_controller) = query.get_mut(event.entity) {
-            character_controller.knockback += event.force;
+            let resistance = 1. - character_controller.knockback_resistance;
+            character_controller.knockback += event.force * resistance;
         }
     }
 }

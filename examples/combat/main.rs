@@ -75,6 +75,7 @@ fn debug(
     player_query: Query<&GlobalTransform, With<Player>>,
     input: Res<Input<KeyCode>>,
     mut world_locations: ResMut<WorldLocations>,
+    mut game_state: ResMut<GameState>,
 ) {
     let player_position = if let Ok(player_transform) = player_query.get_single() {
         player_transform.translation().truncate()
@@ -87,11 +88,35 @@ fn debug(
         ui.label("7) Ringo");
         ui.label("8) Plank");
         ui.label("9) Davy");
+        ui.label("");
+
+        macro_rules! attack_setting {
+            ($str:expr, $value:expr) => {
+                ui.label($str);
+                ui.horizontal(|ui| {
+                    if ui.button("-").clicked() {
+                        if $value > 0 {
+                            $value -= 1;
+                        }
+                    }
+                    ui.label(format!("{}", $value));
+                    if ui.button("+").clicked() {
+                        $value += 1;
+                    }
+                });
+            };
+        }
+        attack_setting!("Forward Cannons", game_state.attacks.forward_cannons);
+        attack_setting!("Shotgun Cannons", game_state.attacks.shotgun_cannons);
+        attack_setting!("Shockwave", game_state.attacks.shockwave);
+        attack_setting!("Bombs", game_state.attacks.bombs);
+        attack_setting!("Kraken", game_state.attacks.kraken);
     });
     if input.just_pressed(KeyCode::Key1) {
+        let spawn_pos = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU) * 500.;
         ev_octopus_spawn.send(OctopusSpawnEvent {
             entity: None,
-            position: player_position + Vec2::new(500., 0.),
+            position: player_position + spawn_pos,
         });
     }
     if input.just_pressed(KeyCode::Key6) {

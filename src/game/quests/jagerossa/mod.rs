@@ -78,7 +78,8 @@ impl Cutscene for Jagerossa2Cutscene {
     }
 }
 
-fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>) {
+fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState>) {
+    game_state.attacks.shotgun_cannons = 1;
     for (p, t) in JAGEROSSA2.iter() {
         dialogue.add_text(*p, String::from(*t));
     }

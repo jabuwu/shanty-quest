@@ -40,7 +40,7 @@ fn kraken_sound(
             .insert(AudioPlusSource::new(
                 asset_library
                     .sound_effects
-                    .sfx_overworld_attack_forward_cannons
+                    .sfx_overworld_attack_kraken
                     .clone(),
             ));
     }

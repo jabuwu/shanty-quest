@@ -54,7 +54,7 @@ fn dash_attack_fire(
                 }
             }
             commands.entity(entity).insert(Dash {
-                velocity: boat.facing.to_vec() * 1000.,
+                velocity: boat.facing.to_vec() * 750.,
                 time_alive: 0.,
             });
             dash_attack.shoot = false;
@@ -69,7 +69,7 @@ fn dash_attack_update(
 ) {
     for (mut dash, entity) in query.iter_mut() {
         dash.time_alive += time.delta_seconds();
-        if dash.time_alive > 0.25 {
+        if dash.time_alive > 0.2 {
             commands.entity(entity).remove::<Dash>();
         }
     }

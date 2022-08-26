@@ -8,6 +8,7 @@ pub struct GameState {
     pub showed_example_text: bool,
     pub quests: Quests,
     pub dangerous_seas: bool,
+    pub attacks: Attacks,
 
     pub checkpoint: Option<Box<GameState>>,
 }
@@ -21,6 +22,13 @@ impl Default for GameState {
             showed_example_text: false,
             quests: Quests::default(),
             dangerous_seas: false,
+            attacks: Attacks {
+                forward_cannons: 1,
+                shotgun_cannons: 0,
+                shockwave: 0,
+                bombs: 0,
+                kraken: 0,
+            },
             checkpoint: None,
         }
     }

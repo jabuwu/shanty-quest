@@ -9,7 +9,7 @@ pub use super::{
             kraken::Kraken,
             shockwave::Shockwave,
             shotgun_cannons::ShotgunCannons,
-            SpecialAttack,
+            Attacks,
         },
         boat::{Boat, BoatSpawnEvent, BoatSystems},
         camera::{OverworldCamera, OverworldCameraSystems},

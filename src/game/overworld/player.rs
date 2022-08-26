@@ -48,12 +48,14 @@ fn player_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: game_state.town.position + game_state.town.spawn_offset,
-            special_attack: SpecialAttack {
+            special_attack: Attacks {
                 forward_cannons: 1,
                 ..Default::default()
             },
             healthbar: false,
             player: true,
+            health: 100.,
+            speed: 200.,
         });
         if !game_state.quests.block_town_exit_cutscene() {
             ev_cutscene_exit_town.send(CutsceneStartEvent(ExitTownCutscene {
@@ -71,6 +73,7 @@ fn player_controls(
     input: Res<Input<MouseButton>>,
     keys: Res<Input<KeyCode>>,
     cutscenes: Res<Cutscenes>,
+    game_state: Res<GameState>,
 ) {
     if query.is_empty() {
         return;
@@ -89,9 +92,11 @@ fn player_controls(
         if !input.pressed(MouseButton::Left) {
             boat.movement *= 0.05;
         }
-        if keys.just_pressed(KeyCode::F) {
-            boat.shoot = true;
+        boat.shoot = keys.pressed(KeyCode::F);
+        if keys.just_pressed(KeyCode::D) {
+            boat.dash = true;
         }
+        boat.attacks = game_state.attacks;
     }
 }
 
@@ -136,18 +141,16 @@ fn player_enter_town(
     }
 }
 
-fn player_upgrade_attack(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
+fn player_upgrade_attack(input: Res<Input<KeyCode>>, mut game_state: ResMut<GameState>) {
     // TODO: remove debug
-    for mut boat in query.iter_mut() {
-        if input.just_pressed(KeyCode::F1) {
-            boat.special_attack = SpecialAttack {
-                forward_cannons: 1,
-                shotgun_cannons: 1,
-                shockwave: 1,
-                bombs: 1,
-                kraken: 1,
-            };
-        }
+    if input.just_pressed(KeyCode::F1) {
+        game_state.attacks = Attacks {
+            forward_cannons: 1,
+            shotgun_cannons: 1,
+            shockwave: 1,
+            bombs: 1,
+            kraken: 1,
+        };
     }
 }
 
@@ -167,11 +170,14 @@ fn player_damage(
     mut ev_damage: EventReader<DamageEvent>,
     mut crate_query: Query<(&mut Health, &mut Player)>,
     mut ev_death_cutscene: EventWriter<CutsceneStartEvent<DeathCutscene>>,
+    cutscenes: Res<Cutscenes>,
 ) {
     for event in ev_damage.iter() {
         if let Ok((mut health, mut player)) = crate_query.get_mut(event.hit) {
             if player.invincibility <= 0. {
-                health.damage(1.);
+                if !cutscenes.running() {
+                    health.damage(1.);
+                }
                 if !player.dead && health.dead() {
                     player.dead = true;
                     ev_death_cutscene.send_default();

@@ -80,7 +80,8 @@ impl Cutscene for Plank2Cutscene {
     }
 }
 
-fn plank2_init1(mut dialogue: ResMut<Dialogue>) {
+fn plank2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState>) {
+    game_state.attacks.bombs = 1;
     for (p, t) in PLANK2.iter() {
         dialogue.add_text(*p, String::from(*t));
     }
