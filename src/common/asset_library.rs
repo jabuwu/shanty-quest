@@ -161,6 +161,12 @@ pub struct AssetLibrary {
     pub sprite_bullet_note: Handle<Image>,
     #[asset("sprites/ShockwaveVFX.png")]
     pub sprite_shockwave_vfx: Handle<Image>,
+    #[asset("sprites/Bomb2.png")]
+    pub sprite_bomb: Handle<Image>,
+    pub sprite_bomb_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/Tentacle.png")]
+    pub sprite_tentacle: Handle<Image>,
+    pub sprite_tentacle_atlas: Handle<TextureAtlas>,
 
     #[asset("audio/music/shoot_drums_01.ogg")]
     pub audio_sfx_attack_player_01: Handle<AudioSource>,
@@ -243,6 +249,14 @@ impl AssetLibrary {
         let texture_atlas =
             TextureAtlas::from_grid(self.sprite_turtle.clone(), Vec2::new(131., 130.), 2, 1);
         self.sprite_turtle_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_bomb.clone(), Vec2::new(131., 130.), 2, 1);
+        self.sprite_bomb_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_tentacle.clone(), Vec2::new(131., 211.), 4, 1);
+        self.sprite_tentacle_atlas = texture_atlas_assets.add(texture_atlas);
     }
 
     pub fn create_sound_effects(&mut self) {

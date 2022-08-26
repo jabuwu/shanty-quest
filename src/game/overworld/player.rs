@@ -56,7 +56,7 @@ fn player_spawn(
             },
             healthbar: false,
             player: true,
-            health: 100.,
+            health: 25.,
             speed: 200.,
         });
         if !game_state.quests.block_town_exit_cutscene() {

@@ -10,6 +10,7 @@ impl Plugin for BombsPlugin {
         app.add_component_child::<Bombs, BombsSound>()
             .add_system(bombs_fire)
             .add_system(bomb_move)
+            .add_system(bomb_animate)
             .add_system(bombs_sound);
     }
 }
@@ -67,14 +68,10 @@ fn bombs_fire(
                     global_transform.translation().truncate() + forward * 40. + side * 15.;
                 let velocity = forward * 200.;
                 let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
-                scale *= 0.5;
+                scale *= 0.75;
                 commands
-                    .spawn_bundle(SpriteBundle {
-                        sprite: Sprite {
-                            color: Color::BLACK,
-                            ..Default::default()
-                        },
-                        texture: asset_library.sprite_bullet_note.clone(),
+                    .spawn_bundle(SpriteSheetBundle {
+                        texture_atlas: asset_library.sprite_bomb_atlas.clone(),
                         ..Default::default()
                     })
                     .insert(
@@ -103,5 +100,16 @@ fn bombs_fire(
 fn bomb_move(mut query: Query<(&mut Transform2, &Bomb)>, time: Res<Time>) {
     for (mut transform, cannon_ball) in query.iter_mut() {
         transform.translation += cannon_ball.velocity * time.delta_seconds()
+    }
+}
+
+fn bomb_animate(mut query: Query<&mut TextureAtlasSprite, With<Bomb>>, time: Res<Time>) {
+    for mut sprite in query.iter_mut() {
+        let time = (time.time_since_startup().as_secs_f32() * 10.0) % 1.;
+        if time > 0.5 {
+            sprite.index = 1;
+        } else {
+            sprite.index = 0;
+        }
     }
 }
