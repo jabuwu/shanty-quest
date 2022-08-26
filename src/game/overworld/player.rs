@@ -25,6 +25,7 @@ pub struct Player {
     disabled: bool,
     invincibility: f32,
     dead: bool,
+    dash_time: f32,
 }
 
 fn player_spawn(
@@ -41,6 +42,7 @@ fn player_spawn(
                 disabled: false,
                 invincibility: 0.,
                 dead: false,
+                dash_time: 0.,
             })
             .insert(Label("Player".to_owned()))
             .insert(AudioPlusListener)
@@ -68,17 +70,19 @@ fn player_spawn(
 }
 
 fn player_controls(
-    mut query: Query<(&mut Boat, &GlobalTransform, &Player)>,
+    mut query: Query<(&mut Boat, &GlobalTransform, &mut Player)>,
     mouse: Res<Mouse>,
     input: Res<Input<MouseButton>>,
     keys: Res<Input<KeyCode>>,
     cutscenes: Res<Cutscenes>,
     game_state: Res<GameState>,
+    time: Res<Time>,
 ) {
     if query.is_empty() {
         return;
     }
-    for (mut boat, global_transform, player) in query.iter_mut() {
+    for (mut boat, global_transform, mut player) in query.iter_mut() {
+        player.dash_time += time.delta_seconds();
         if player.disabled || cutscenes.running() {
             boat.movement = Vec2::ZERO;
             continue;
@@ -89,12 +93,17 @@ fn player_controls(
         }
         boat.direction = Vec2::X.angle_between(mouse_aim);
         boat.movement = mouse_aim;
-        if !input.pressed(MouseButton::Left) {
+        if !input.pressed(MouseButton::Left) && !keys.pressed(KeyCode::Space) {
             boat.movement *= 0.05;
         }
-        boat.shoot = keys.pressed(KeyCode::F);
-        if keys.just_pressed(KeyCode::D) {
-            boat.dash = true;
+        if input.pressed(MouseButton::Left) && keys.pressed(KeyCode::Space) {
+            if player.dash_time < 0.7 {
+                boat.dash = true;
+            }
+            player.dash_time = 0.;
+        }
+        if keys.just_pressed(KeyCode::F) {
+            boat.shoot = !boat.shoot;
         }
         boat.attacks = game_state.attacks;
     }

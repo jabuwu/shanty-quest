@@ -87,7 +87,7 @@ fn ringo_move(
                     ringo.attacking = false;
                 }
             } else {
-                if rand::random::<f32>() < 0.005 {
+                if rand::random::<f32>() < 0.0025 {
                     ringo.attacking = true;
                 }
             }
