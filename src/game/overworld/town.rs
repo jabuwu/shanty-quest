@@ -9,7 +9,8 @@ impl Plugin for TownPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<TownSpawnEvent>()
             .add_system(town_spawn)
-            .add_system(town_world_spawn);
+            .add_system(town_world_spawn)
+            .add_system(town_update);
     }
 }
 
@@ -22,6 +23,7 @@ pub struct TownSpawnEvent {
 #[derive(Component)]
 pub struct Town {
     pub town: TownData,
+    pub block_timer: f32,
 }
 
 fn town_spawn(
@@ -46,6 +48,7 @@ fn town_spawn(
             )
             .insert(Town {
                 town: event.town.clone(),
+                block_timer: 0.,
             })
             .insert(YDepth::default())
             .insert(Label(format!("Town: {}", event.town.name)))
@@ -92,5 +95,15 @@ fn town_world_spawn(
                 });
             }
         }
+    }
+}
+
+fn town_update(mut query: Query<&mut Town>, time: Res<Time>, game_state: Res<GameState>) {
+    for mut town in query.iter_mut() {
+        town.block_timer -= time.delta_seconds();
+        if game_state.quests.fighting() {
+            town.block_timer = 0.5;
+        }
+        println!("{}", town.block_timer);
     }
 }

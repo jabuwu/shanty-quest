@@ -104,7 +104,7 @@ fn player_controls(
 
 fn player_enter_town(
     mut game_state: ResMut<GameState>,
-    island_query: Query<(Entity, &Town)>,
+    town_query: Query<(Entity, &Town)>,
     mut player_query: Query<(Entity, &mut Player)>,
     transform_query: Query<&GlobalTransform>,
     mut ev_cutscene_enter_town: EventWriter<CutsceneStartEvent<EnterTownCutscene>>,
@@ -114,7 +114,7 @@ fn player_enter_town(
     if cutscenes.running() || state_time.just_entered() || game_state.quests.block_town_enter() {
         return;
     }
-    'outer: for (town_entity, island) in island_query.iter() {
+    'outer: for (town_entity, town) in town_query.iter() {
         let town_position = if let Ok(town_transform) = transform_query.get(town_entity) {
             town_transform.translation().truncate()
         } else {
@@ -122,6 +122,9 @@ fn player_enter_town(
         };
         for (player_entity, mut player) in player_query.iter_mut() {
             if player.disabled {
+                continue;
+            }
+            if town.block_timer > 0. {
                 continue;
             }
             let player_position = if let Ok(player_transform) = transform_query.get(player_entity) {
@@ -136,7 +139,7 @@ fn player_enter_town(
                     from: player_position,
                     to: town_position + Vec2::new(-10., -100.),
                 }));
-                game_state.town = island.town.clone();
+                game_state.town = town.town.clone();
                 break 'outer;
             }
         }
