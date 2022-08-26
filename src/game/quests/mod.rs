@@ -370,7 +370,7 @@ pub fn quests_skip(
 ) {
     // TODO: remove debug
     if input.just_pressed(KeyCode::F2) {
-        game_state.quests.active_quest = Quest::Davy(DavyQuest::default());
+        game_state.quests.active_quest = Quest::End;
         game_state.quests.talked_to_barkeep = true;
         game_state.dangerous_seas = true;
     }
