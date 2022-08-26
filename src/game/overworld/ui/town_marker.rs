@@ -2,27 +2,27 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
-pub struct MarkerPlugin;
+pub struct TownMarkerPlugin;
 
-impl Plugin for MarkerPlugin {
+impl Plugin for TownMarkerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<MarkerSpawnEvent>()
-            .add_system(marker_spawn)
-            .add_system(marker_update);
+        app.add_event::<TownMarkerSpawnEvent>()
+            .add_system(town_marker_spawn)
+            .add_system(town_marker_update);
     }
 }
 
 #[derive(Default, Clone, Copy)]
-pub struct MarkerSpawnEvent;
+pub struct TownMarkerSpawnEvent;
 
 #[derive(Component)]
-pub struct MarkerIcon;
+pub struct TownMarkerIcon;
 
 #[derive(Component)]
-pub struct MarkerArrow;
+pub struct TownMarkerArrow;
 
-fn marker_spawn(
-    mut ev_spawn: EventReader<MarkerSpawnEvent>,
+fn town_marker_spawn(
+    mut ev_spawn: EventReader<TownMarkerSpawnEvent>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
@@ -38,7 +38,7 @@ fn marker_spawn(
                         sprite: Sprite {
                             ..Default::default()
                         },
-                        texture: asset_library.sprite_world_quest_marker_icon.clone(),
+                        texture: asset_library.sprite_world_town_marker_icon.clone(),
                         ..Default::default()
                     })
                     .insert(
@@ -46,7 +46,7 @@ fn marker_spawn(
                             .with_depth(DEPTH_LAYER_UI_MARKER_ICON)
                             .without_pixel_perfect(),
                     )
-                    .insert(MarkerIcon)
+                    .insert(TownMarkerIcon)
                     .with_children(|parent| {
                         parent
                             .spawn_bundle(SpriteBundle {
@@ -56,7 +56,7 @@ fn marker_spawn(
                                 texture: asset_library.sprite_world_quest_marker_arrow.clone(),
                                 ..Default::default()
                             })
-                            .insert(MarkerArrow)
+                            .insert(TownMarkerArrow)
                             .insert(
                                 Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_UI_MARKER_ARROW),
                             );
@@ -65,31 +65,34 @@ fn marker_spawn(
     }
 }
 
-fn marker_update(
+fn town_marker_update(
     mut queries: ParamSet<(
         Query<&GlobalTransform, With<Camera>>,
-        Query<(&mut Transform2, &mut Sprite), With<MarkerIcon>>,
-        Query<(&mut Transform2, &mut Sprite), With<MarkerArrow>>,
+        Query<(&mut Transform2, &mut Sprite), With<TownMarkerIcon>>,
+        Query<(&mut Transform2, &mut Sprite), With<TownMarkerArrow>>,
+        Query<&GlobalTransform, With<Town>>,
     )>,
-    game_state: Res<GameState>,
-    world_locations: Res<WorldLocations>,
 ) {
     let camera_position = if let Ok(transform) = queries.p0().get_single() {
         transform.translation().truncate()
     } else {
         Vec2::ZERO
     };
-    let objective_position = if let Some(objective_marker) = game_state.quests.marker() {
-        Some(world_locations.get_single_position(objective_marker))
-    } else {
-        None
-    };
-    if let Some(objective_position) = objective_position {
+    let mut closest_town = None;
+    let mut closest_town_distance = 0.;
+    for town_transform in queries.p3().iter() {
+        let distance = camera_position.distance(town_transform.translation().truncate());
+        if distance < closest_town_distance || closest_town.is_none() {
+            closest_town = Some(town_transform.translation().truncate());
+            closest_town_distance = distance;
+        }
+    }
+    if let Some(objective_position) = closest_town {
         let difference = (objective_position - camera_position).normalize_or_zero();
         let distance = objective_position.distance(camera_position);
-        let alpha = ((distance - 200.) / 400.).clamp(0., 1.);
+        let alpha = ((distance - 350.) / 300.).clamp(0., 1.);
         for (mut icon_transform, mut icon_sprite) in queries.p1().iter_mut() {
-            icon_transform.translation = difference * 250.;
+            icon_transform.translation = difference * 330.;
             icon_sprite.color.set_a(alpha);
         }
         for (mut arrow_transform, mut arrow_sprite) in queries.p2().iter_mut() {
