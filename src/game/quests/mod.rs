@@ -410,7 +410,7 @@ pub fn quests_skip(
         game_state.attacks.shockwave = 1;
         game_state.attacks.bombs = 1;
         if let Ok(mut transform) = player_query.get_single_mut() {
-            transform.translation = Vec2::new(1800., -8250.);
+            transform.translation = Vec2::new(2850., -9650.);
         };
     }
 }

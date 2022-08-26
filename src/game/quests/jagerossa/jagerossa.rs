@@ -34,6 +34,7 @@ fn jagerossa_spawn(
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
     mut commands: Commands,
     world_locations: Res<WorldLocations>,
+    mut overworld_camera: ResMut<OverworldCamera>,
 ) {
     let spawn_position = world_locations.get_single_position("JagerossaSpawn");
     for _ in ev_spawn.iter() {
@@ -53,6 +54,7 @@ fn jagerossa_spawn(
                 ..Default::default()
             })
             .id();
+        overworld_camera.entity_focus(entity);
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,

@@ -19,6 +19,7 @@ impl Plugin for KrakenPlugin {
 pub struct Kraken {
     pub shoot: bool,
     pub hurt_flags: u32,
+    pub boss: bool,
 }
 
 #[derive(Component)]
@@ -64,12 +65,23 @@ fn kraken_fire(
                     sound.play();
                 }
             }
-            for _ in 0..2 {
+            for i in 0..6 {
+                let close_tentacle = i == 0;
+                let (distance_min, distance_max) = if close_tentacle {
+                    (100., 100.)
+                } else {
+                    if kraken.boss {
+                        (150., 1650.)
+                    } else {
+                        (150., 500.)
+                    }
+                };
                 let forward = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
                 let position = global_transform.translation().truncate()
-                    + forward * (150. + rand::random::<f32>() * 400.);
+                    + forward
+                        * (distance_min + rand::random::<f32>() * (distance_max - distance_min));
                 let (scale, _, _) = global_transform.to_scale_rotation_translation();
-                let submerge_time = 1.0;
+                let submerge_time = if close_tentacle { 0. } else { 1.0 };
                 commands
                     .spawn_bundle(SpriteSheetBundle {
                         texture_atlas: asset_library.sprite_tentacle_atlas.clone(),

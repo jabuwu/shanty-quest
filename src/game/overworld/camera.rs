@@ -25,11 +25,16 @@ pub struct OverworldCamera {
     arena_enabled: bool,
     arena_focus: f32,
     zoom_out: bool,
+    entity_focus: Option<Entity>,
+    entity_focus_amount: f32,
+    entity_last_position: Vec2,
+    entity_focus_frames: u32,
 }
 
 impl OverworldCamera {
     pub fn reset(&mut self) {
         self.arena_enabled = false;
+        self.entity_focus = None;
     }
 
     pub fn arena_disable(&mut self) {
@@ -51,6 +56,11 @@ impl OverworldCamera {
         } else {
             None
         }
+    }
+
+    pub fn entity_focus(&mut self, entity: Entity) {
+        self.entity_focus = Some(entity);
+        self.entity_focus_frames = 0;
     }
 
     pub fn arena_correction(&self, translation: Vec2) -> Option<Vec2> {
@@ -84,6 +94,7 @@ fn overworld_camera_update(
     camera_query: Query<Entity, With<Camera>>,
     mut transform_query: Query<&mut Transform2>,
     mut overworld_camera: ResMut<OverworldCamera>,
+    global_transform_query: Query<&GlobalTransform>,
     time: Res<Time>,
     input: Res<Input<KeyCode>>,
 ) {
@@ -107,7 +118,31 @@ fn overworld_camera_update(
         } else {
             overworld_camera.arena_focus -= time.delta_seconds();
         }
+        if overworld_camera.entity_focus.is_some() {
+            overworld_camera.entity_focus_amount += time.delta_seconds();
+        } else {
+            overworld_camera.entity_focus_amount -= time.delta_seconds();
+        }
+        overworld_camera.entity_focus_frames += 1;
+        let entity_position = if let Some(entity_focus) = overworld_camera.entity_focus {
+            if let Ok(transform) = global_transform_query.get(entity_focus) {
+                overworld_camera.entity_last_position = transform.translation().truncate();
+                transform.translation().truncate()
+            } else {
+                if overworld_camera.entity_focus_frames > 2 {
+                    overworld_camera.entity_focus = None;
+                }
+                overworld_camera.entity_last_position
+            }
+        } else {
+            overworld_camera.entity_last_position
+        };
         overworld_camera.arena_focus = overworld_camera.arena_focus.clamp(0., 1.);
+        overworld_camera.entity_focus_amount = overworld_camera.entity_focus_amount.clamp(0., 1.);
+        position = position.lerp(
+            entity_position,
+            ease(Easing::SineInOut, overworld_camera.entity_focus_amount) * 0.25,
+        );
         let clamped_position = position.clamp(
             overworld_camera.arena.0 - overworld_camera.arena.1,
             overworld_camera.arena.0 + overworld_camera.arena.1,

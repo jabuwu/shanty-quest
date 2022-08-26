@@ -19,6 +19,7 @@ impl Plugin for BombsPlugin {
 pub struct Bombs {
     pub shoot: bool,
     pub hurt_flags: u32,
+    pub boss: bool,
 }
 
 #[derive(Component)]
@@ -63,29 +64,31 @@ fn bombs_fire(
                     sound.play();
                 }
             }
-            for _ in 0..2 {
-                let throw_direction =
-                    Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
-                let position = global_transform.translation().truncate() + throw_direction * 100.;
-                let velocity =
-                    throw_direction * (200. + rand::random::<f32>() * 300.) + boat.movement * 200.;
-                commands
-                    .spawn_bundle(SpriteSheetBundle {
-                        texture_atlas: asset_library.sprite_bomb_atlas.clone(),
-                        ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(position)
-                            .with_depth((DepthLayer::Entity, 0.0)),
-                    )
-                    .insert(YDepth::default())
-                    .insert(Bomb {
-                        velocity,
-                        life_time: 1.75,
-                        parent: boat_entity,
-                        hurt_flags: bombs.hurt_flags,
-                    });
-            }
+            let throw_direction = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
+            let position = global_transform.translation().truncate() + throw_direction * 100.;
+            let (velocity_min, velocity_max) = if bombs.boss {
+                (100., 1500.)
+            } else {
+                (200., 500.)
+            };
+            let velocity = throw_direction
+                * (velocity_min + rand::random::<f32>() * (velocity_max - velocity_min))
+                + boat.movement.clamp(Vec2::NEG_ONE, Vec2::ONE) * 150.;
+            commands
+                .spawn_bundle(SpriteSheetBundle {
+                    texture_atlas: asset_library.sprite_bomb_atlas.clone(),
+                    ..Default::default()
+                })
+                .insert(
+                    Transform2::from_translation(position).with_depth((DepthLayer::Entity, 0.0)),
+                )
+                .insert(YDepth::default())
+                .insert(Bomb {
+                    velocity,
+                    life_time: 1.75,
+                    parent: boat_entity,
+                    hurt_flags: bombs.hurt_flags,
+                });
         }
         bombs.shoot = false;
     }

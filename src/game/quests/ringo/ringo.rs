@@ -33,6 +33,7 @@ fn ringo_spawn(
     mut commands: Commands,
     world_locations: Res<WorldLocations>,
     mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
+    mut overworld_camera: ResMut<OverworldCamera>,
 ) {
     let spawn_position = world_locations.get_single_position("RingoSpawn");
     for _ in ev_spawn.iter() {
@@ -51,6 +52,7 @@ fn ringo_spawn(
                 ..Default::default()
             })
             .id();
+        overworld_camera.entity_focus(entity);
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,

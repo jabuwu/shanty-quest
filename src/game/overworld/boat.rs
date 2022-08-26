@@ -135,10 +135,12 @@ fn boat_spawn(
             .insert(Bombs {
                 shoot: false,
                 hurt_flags,
+                boss: !event.player,
             })
             .insert(Kraken {
                 shoot: false,
                 hurt_flags,
+                boss: !event.player,
             })
             .insert(DashAttack {
                 shoot: false,

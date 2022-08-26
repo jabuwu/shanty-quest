@@ -151,7 +151,7 @@ fn player_upgrade_attack(input: Res<Input<KeyCode>>, mut game_state: ResMut<Game
             shotgun_cannons: 1,
             shockwave: 1,
             bombs: 1,
-            kraken: 0,
+            kraken: 1,
         };
     }
 }

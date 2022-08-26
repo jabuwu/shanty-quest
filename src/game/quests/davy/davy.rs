@@ -32,6 +32,7 @@ fn davy_spawn(
     mut commands: Commands,
     world_locations: Res<WorldLocations>,
     mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
+    mut overworld_camera: ResMut<OverworldCamera>,
 ) {
     let spawn_position = world_locations.get_single_position("DavySpawn");
     for _ in ev_spawn.iter() {
@@ -49,6 +50,7 @@ fn davy_spawn(
                 ..Default::default()
             })
             .id();
+        overworld_camera.entity_focus(entity);
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,
@@ -58,10 +60,10 @@ fn davy_spawn(
             },
             healthbar: true,
             player: false,
-            health: 30.,
-            speed: 100.,
-            attack_cooldown: 0.4,
-            knockback_resistance: 0.8,
+            health: 75.,
+            speed: 200.,
+            attack_cooldown: 0.25,
+            knockback_resistance: 1.0,
         });
     }
 }

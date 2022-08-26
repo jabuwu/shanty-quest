@@ -36,6 +36,7 @@ fn plank_spawn(
     mut commands: Commands,
     world_locations: Res<WorldLocations>,
     mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
+    mut overworld_camera: ResMut<OverworldCamera>,
 ) {
     let spawn_position = world_locations.get_single_position("PlankSpawn");
     for _ in ev_spawn.iter() {
@@ -46,7 +47,7 @@ fn plank_spawn(
                 target: world_locations.get_single_position("PlankMoveTo"),
                 angle: 0.,
                 adjust_angle_chance: TimedChance::new(),
-                backoff_time: 0.5,
+                backoff_time: 2.0,
                 backoff_dir: Vec2::new(-1., 0.),
                 backoff_chance: TimedChance::new(),
                 backoff_stop: false,
@@ -57,6 +58,7 @@ fn plank_spawn(
                 ..Default::default()
             })
             .id();
+        overworld_camera.entity_focus(entity);
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,
@@ -68,8 +70,8 @@ fn plank_spawn(
             player: false,
             health: 30.,
             speed: 400.,
-            attack_cooldown: 0.3,
-            knockback_resistance: 0.3,
+            attack_cooldown: 0.25,
+            knockback_resistance: 0.0,
         });
     }
 }
