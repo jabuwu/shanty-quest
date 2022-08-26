@@ -104,6 +104,5 @@ fn town_update(mut query: Query<&mut Town>, time: Res<Time>, game_state: Res<Gam
         if game_state.quests.fighting() {
             town.block_timer = 0.5;
         }
-        println!("{}", town.block_timer);
     }
 }
