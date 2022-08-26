@@ -58,6 +58,7 @@ pub mod prelude;
 pub mod screen_fade;
 pub mod sound_effects;
 pub mod time_to_live;
+pub mod timed_chance;
 pub mod transform2;
 pub mod world_locations;
 pub mod y_depth;

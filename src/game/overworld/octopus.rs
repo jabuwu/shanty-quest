@@ -21,10 +21,58 @@ impl Plugin for OctopusPlugin {
 pub struct OctopusSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
+    pub level: OctopusLevel,
+}
+
+#[derive(Default, Clone, Copy)]
+pub enum OctopusLevel {
+    #[default]
+    Easy,
+    Medium,
+    Hard,
+}
+
+impl OctopusLevel {
+    fn info(&self, asset_library: &AssetLibrary) -> OctopusInfo {
+        match *self {
+            Self::Easy => OctopusInfo {
+                atlas: asset_library.sprite_octopus_easy_atlas.clone(),
+                scale: 1.0,
+                health: 3.,
+                speed: 150.,
+                knockback_resistence: 0.,
+            },
+            Self::Medium => OctopusInfo {
+                atlas: asset_library.sprite_octopus_medium_atlas.clone(),
+                scale: 1.0,
+                health: 5.,
+                speed: 300.,
+                knockback_resistence: 0.4,
+            },
+            Self::Hard => OctopusInfo {
+                atlas: asset_library.sprite_octopus_hard_atlas.clone(),
+                scale: 1.2,
+                health: 10.,
+                speed: 150.,
+                knockback_resistence: 0.7,
+            },
+        }
+    }
+}
+
+struct OctopusInfo {
+    atlas: Handle<TextureAtlas>,
+    scale: f32,
+    health: f32,
+    speed: f32,
+    knockback_resistence: f32,
 }
 
 #[derive(Component)]
-pub struct Octopus;
+pub struct Octopus {
+    stop_chance: TimedChance,
+    stop_time: f32,
+}
 
 fn octopus_spawn(
     mut ev_spawn: EventReader<OctopusSpawnEvent>,
@@ -51,21 +99,27 @@ fn octopus_spawn(
         } else {
             commands.spawn()
         };
+        let info = event.level.info(asset_library.as_ref());
         entity
             .insert_bundle(SpriteSheetBundle {
-                texture_atlas: asset_library.sprite_octopus_atlas.clone(),
+                texture_atlas: info.atlas,
                 ..Default::default()
             })
             .insert(
-                Transform2::from_translation(event.position).with_depth((DepthLayer::Entity, 0.)),
+                Transform2::from_translation(event.position)
+                    .with_depth((DepthLayer::Entity, 0.))
+                    .with_scale(Vec2::ONE * info.scale),
             )
-            .insert(Octopus)
+            .insert(Octopus {
+                stop_chance: TimedChance::new(),
+                stop_time: 0.,
+            })
             .insert(Label("Octopus".to_owned()))
             .insert(YDepth::default())
-            .insert(Health::new(3.))
+            .insert(Health::new(info.health))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
-                    size: Vec2::new(60., 60.),
+                    size: Vec2::new(60., 60.) * info.scale,
                 },
                 for_entity: None,
                 flags: DAMAGE_FLAG_ENEMY,
@@ -87,7 +141,8 @@ fn octopus_spawn(
             })
             .insert(CharacterController {
                 movement: Vec2::ZERO,
-                speed: 150.,
+                speed: info.speed,
+                knockback_resistance: info.knockback_resistence,
                 ..Default::default()
             })
             .insert(AutoDamage {
@@ -104,18 +159,23 @@ fn octopus_spawn(
 
 fn octopus_move(
     mut queries: ParamSet<(
-        Query<(&mut CharacterController, &GlobalTransform), With<Octopus>>,
+        Query<(&mut CharacterController, &GlobalTransform, &mut Octopus)>,
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
+    time: Res<Time>,
 ) {
     let player_position = if let Ok(player_transform) = queries.p1().get_single() {
         player_transform.translation().truncate()
     } else {
         Vec2::ZERO
     };
-    for (mut character_controller, octopus_transform) in queries.p0().iter_mut() {
-        if cutscenes.running() {
+    for (mut character_controller, octopus_transform, mut octopus) in queries.p0().iter_mut() {
+        if octopus.stop_time < 0. && octopus.stop_chance.check(6., 3., time.delta_seconds()) {
+            octopus.stop_time = 2.;
+        }
+        octopus.stop_time -= time.delta_seconds();
+        if cutscenes.running() || octopus.stop_time > 0. {
             character_controller.movement = Vec2::ZERO;
         } else {
             let direction = player_position - octopus_transform.translation().truncate();

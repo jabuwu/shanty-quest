@@ -48,7 +48,7 @@ fn plank_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,
-            special_attack: Attacks {
+            attack: Attacks {
                 bombs: 1,
                 ..Default::default()
             },
@@ -56,6 +56,8 @@ fn plank_spawn(
             player: false,
             health: 30.,
             speed: 100.,
+            attack_cooldown: 1.,
+            knockback_resistance: 0.5,
         });
     }
 }

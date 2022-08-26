@@ -139,8 +139,14 @@ pub struct AssetLibrary {
     pub sprite_turtle_atlas: Handle<TextureAtlas>,
 
     #[asset("sprites/Octopus.png")]
-    pub sprite_octopus: Handle<Image>,
-    pub sprite_octopus_atlas: Handle<TextureAtlas>,
+    pub sprite_octopus_easy: Handle<Image>,
+    pub sprite_octopus_easy_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/Octopus_Blue.png")]
+    pub sprite_octopus_medium: Handle<Image>,
+    pub sprite_octopus_medium_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/Octopus_Red.png")]
+    pub sprite_octopus_hard: Handle<Image>,
+    pub sprite_octopus_hard_atlas: Handle<TextureAtlas>,
 
     #[asset("sprites/AnglerFish.png")]
     pub sprite_angler_fish: Handle<Image>,
@@ -236,9 +242,29 @@ impl AssetLibrary {
             TextureAtlas::from_grid(self.sprite_ship.clone(), Vec2::new(250., 350.), 5, 1);
         self.sprite_ship_atlas = texture_atlas_assets.add(texture_atlas);
 
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_octopus.clone(), Vec2::new(131., 130.), 2, 1);
-        self.sprite_octopus_atlas = texture_atlas_assets.add(texture_atlas);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_octopus_easy.clone(),
+            Vec2::new(131., 130.),
+            2,
+            1,
+        );
+        self.sprite_octopus_easy_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_octopus_medium.clone(),
+            Vec2::new(131., 130.),
+            2,
+            1,
+        );
+        self.sprite_octopus_medium_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_octopus_hard.clone(),
+            Vec2::new(131., 130.),
+            2,
+            1,
+        );
+        self.sprite_octopus_hard_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas =
             TextureAtlas::from_grid(self.sprite_turtle.clone(), Vec2::new(131., 130.), 2, 1);

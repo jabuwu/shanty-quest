@@ -25,7 +25,6 @@ pub struct Player {
     disabled: bool,
     invincibility: f32,
     dead: bool,
-    dash_time: f32,
 }
 
 fn player_spawn(
@@ -42,7 +41,6 @@ fn player_spawn(
                 disabled: false,
                 invincibility: 0.,
                 dead: false,
-                dash_time: 0.,
             })
             .insert(Label("Player".to_owned()))
             .insert(AudioPlusListener)
@@ -50,14 +48,16 @@ fn player_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: game_state.town.position + game_state.town.spawn_offset,
-            special_attack: Attacks {
+            attack: Attacks {
                 forward_cannons: 1,
                 ..Default::default()
             },
             healthbar: false,
             player: true,
             health: 100.,
-            speed: 200.,
+            speed: 250.,
+            attack_cooldown: 0.48,
+            knockback_resistance: 0.2,
         });
         if !game_state.quests.block_town_exit_cutscene() {
             ev_cutscene_exit_town.send(CutsceneStartEvent(ExitTownCutscene {
@@ -70,19 +70,17 @@ fn player_spawn(
 }
 
 fn player_controls(
-    mut query: Query<(&mut Boat, &GlobalTransform, &mut Player)>,
+    mut query: Query<(&mut Boat, &GlobalTransform, &Player)>,
     mouse: Res<Mouse>,
     input: Res<Input<MouseButton>>,
     keys: Res<Input<KeyCode>>,
     cutscenes: Res<Cutscenes>,
     game_state: Res<GameState>,
-    time: Res<Time>,
 ) {
     if query.is_empty() {
         return;
     }
-    for (mut boat, global_transform, mut player) in query.iter_mut() {
-        player.dash_time += time.delta_seconds();
+    for (mut boat, global_transform, player) in query.iter_mut() {
         if player.disabled || cutscenes.running() {
             boat.movement = Vec2::ZERO;
             continue;
@@ -93,15 +91,10 @@ fn player_controls(
         }
         boat.direction = Vec2::X.angle_between(mouse_aim);
         boat.movement = mouse_aim;
-        if !input.pressed(MouseButton::Left) && !keys.pressed(KeyCode::Space) {
-            boat.movement *= 0.05;
+        if !input.pressed(MouseButton::Left) {
+            boat.movement *= 0.005;
         }
-        if input.pressed(MouseButton::Left) && keys.pressed(KeyCode::Space) {
-            if player.dash_time < 0.7 {
-                boat.dash = true;
-            }
-            player.dash_time = 0.;
-        }
+        boat.dash = keys.pressed(KeyCode::Space);
         if keys.just_pressed(KeyCode::F) {
             boat.shoot = !boat.shoot;
         }

@@ -24,6 +24,7 @@ pub use super::{
     mouse::Mouse,
     screen_fade::ScreenFade,
     time_to_live::TimeToLive,
+    timed_chance::TimedChance,
     transform2::{DepthLayer, Transform2, Transform2Bundle},
     world_locations::{WorldLocationRect, WorldLocations, WorldLocationsSpawnEvent},
     y_depth::YDepth,

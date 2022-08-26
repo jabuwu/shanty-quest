@@ -23,6 +23,10 @@ pub struct JagerossaSpawnEvent;
 pub struct Jagerossa {
     target: Vec2,
     angle: f32,
+    adjust_angle_chance: TimedChance,
+    backoff_time: f32,
+    backoff_dir: Vec2,
+    backoff_chance: TimedChance,
 }
 
 fn jagerossa_spawn(
@@ -38,6 +42,10 @@ fn jagerossa_spawn(
             .insert(Jagerossa {
                 target: world_locations.get_single_position("JagerossaMoveTo"),
                 angle: 0.,
+                adjust_angle_chance: TimedChance::new(),
+                backoff_time: 2.5,
+                backoff_dir: Vec2::new(1., -1.),
+                backoff_chance: TimedChance::new(),
             })
             .insert(Label("Jagerossa".to_owned()))
             .insert(AutoDamage {
@@ -48,14 +56,16 @@ fn jagerossa_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,
-            special_attack: Attacks {
+            attack: Attacks {
                 shotgun_cannons: 1,
                 ..Default::default()
             },
             healthbar: true,
             player: false,
             health: 15.,
-            speed: 100.,
+            speed: 175.,
+            attack_cooldown: 1.,
+            knockback_resistance: 0.9,
         });
     }
 }
@@ -66,6 +76,7 @@ fn jagerossa_move(
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
+    time: Res<Time>,
 ) {
     let player_position = if let Ok(player_transform) = queries.p1().get_single() {
         player_transform.translation().truncate()
@@ -75,23 +86,44 @@ fn jagerossa_move(
     for (mut boat, global_transform, mut jagerossa) in queries.p0().iter_mut() {
         if cutscenes.running() {
             boat.movement = (jagerossa.target - global_transform.translation().truncate()) / 100.;
+            if boat.movement.x.abs() < 0.1 {
+                boat.movement.x = 0.
+            }
+            if boat.movement.y.abs() < 0.1 {
+                boat.movement.y = 0.
+            }
         } else {
-            let destination = player_position + Vec2::from_angle(jagerossa.angle) * 300.;
+            jagerossa.backoff_time -= time.delta_seconds();
+            let mut destination = player_position + Vec2::from_angle(jagerossa.angle) * 200.;
+            if jagerossa.backoff_time > 0. {
+                destination = global_transform.translation().truncate()
+                    + jagerossa.backoff_dir.normalize() * 300.;
+            } else if jagerossa
+                .backoff_chance
+                .check(2.5, 0.25, time.delta_seconds())
+            {
+                jagerossa.backoff_dir =
+                    (global_transform.translation().truncate() - player_position).normalize();
+                if rand::random() {
+                    jagerossa.backoff_dir = jagerossa.backoff_dir.perp();
+                } else {
+                    jagerossa.backoff_dir = -jagerossa.backoff_dir.perp();
+                }
+                jagerossa.backoff_time = 0.5;
+            }
             let mut difference = destination - global_transform.translation().truncate();
             if difference.length() == 0. {
                 difference = Vec2::ONE;
             }
             let applied_length = (difference.length() - 100.).max(0.) / 50.;
-            if applied_length < 0.8 {
+            if applied_length < 0.8
+                || jagerossa
+                    .adjust_angle_chance
+                    .check(3., 3., time.delta_seconds())
+            {
                 jagerossa.angle += std::f32::consts::PI * 0.3;
             }
             boat.movement = difference.normalize() * applied_length;
-        }
-        if boat.movement.x.abs() < 0.1 {
-            boat.movement.x = 0.
-        }
-        if boat.movement.y.abs() < 0.1 {
-            boat.movement.y = 0.
         }
         if boat.movement.length_squared() > 0. {
             boat.direction = Vec2::X.angle_between(boat.movement);

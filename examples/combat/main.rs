@@ -113,10 +113,18 @@ fn debug(
         attack_setting!("Kraken", game_state.attacks.kraken);
     });
     if input.just_pressed(KeyCode::Key1) {
+        let level = if input.pressed(KeyCode::LShift) {
+            OctopusLevel::Hard
+        } else if input.pressed(KeyCode::LControl) {
+            OctopusLevel::Medium
+        } else {
+            OctopusLevel::Easy
+        };
         let spawn_pos = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU) * 500.;
         ev_octopus_spawn.send(OctopusSpawnEvent {
             entity: None,
             position: player_position + spawn_pos,
+            level,
         });
     }
     if input.just_pressed(KeyCode::Key6) {

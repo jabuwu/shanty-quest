@@ -1952,8 +1952,8 @@
 							"__tile": null,
 							"__smartColor": "#A41F1F",
 							"iid": "601c7860-02f0-11ed-b164-fd88fd10aabb",
-							"width": 1280,
-							"height": 800,
+							"width": 1400,
+							"height": 900,
 							"defUid": 52,
 							"px": [1800,1250],
 							"fieldInstances": []
@@ -1974,16 +1974,16 @@
 						},
 						{
 							"__identifier": "RingoArena",
-							"__grid": [148,30],
+							"__grid": [148,25],
 							"__pivot": [0,0],
 							"__tags": [],
 							"__tile": null,
 							"__smartColor": "#A41F1F",
 							"iid": "743b3080-02f0-11ed-a070-e950b227b32c",
-							"width": 1280,
-							"height": 768,
+							"width": 1750,
+							"height": 1250,
 							"defUid": 67,
-							"px": [7400,1500],
+							"px": [7400,1268],
 							"fieldInstances": []
 						},
 						{

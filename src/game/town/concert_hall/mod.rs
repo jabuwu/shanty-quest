@@ -46,7 +46,7 @@ fn concert_hall_init(
             ev_boat_spawn.send(BoatSpawnEvent {
                 entity: Some(boat_entity),
                 position: Vec2::ZERO,
-                special_attack: Attacks {
+                attack: Attacks {
                     forward_cannons: 1,
                     shotgun_cannons: 1,
                     shockwave: 1,
@@ -57,6 +57,8 @@ fn concert_hall_init(
                 player: true,
                 health: 30.,
                 speed: 100.,
+                attack_cooldown: 1.,
+                knockback_resistance: 0.,
             });
             let ocean_entity = parent.spawn().id();
             ev_ocean_spawn.send(OceanSpawnEvent {

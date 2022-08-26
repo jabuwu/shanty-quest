@@ -22,8 +22,9 @@ pub struct RingoSpawnEvent;
 #[derive(Component)]
 pub struct Ringo {
     target: Vec2,
-    attacking: bool,
     angle: f32,
+    dash_chance: TimedChance,
+    charge_time: f32,
 }
 
 fn ringo_spawn(
@@ -41,7 +42,8 @@ fn ringo_spawn(
             .insert(Ringo {
                 target: world_locations.get_single_position("RingoMoveTo"),
                 angle: 0.,
-                attacking: false,
+                dash_chance: TimedChance::new(),
+                charge_time: 0.,
             })
             .insert(Label("Ringo".to_owned()))
             .insert(AutoDamage {
@@ -52,14 +54,16 @@ fn ringo_spawn(
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,
-            special_attack: Attacks {
+            attack: Attacks {
                 shockwave: 1,
                 ..Default::default()
             },
             healthbar: true,
             player: false,
             health: 30.,
-            speed: 100.,
+            speed: 175.,
+            attack_cooldown: 1.,
+            knockback_resistance: 0.8,
         });
     }
 }
@@ -70,6 +74,7 @@ fn ringo_move(
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
+    time: Res<Time>,
 ) {
     let player_position = if let Ok(player_transform) = queries.p1().get_single() {
         player_transform.translation().truncate()
@@ -81,38 +86,43 @@ fn ringo_move(
         boat.dash = false;
         if cutscenes.running() {
             boat.movement = (ringo.target - global_transform.translation().truncate()) / 100.;
-        } else {
-            if ringo.attacking {
-                if rand::random::<f32>() < 0.05 {
-                    ringo.attacking = false;
-                }
-            } else {
-                if rand::random::<f32>() < 0.0025 {
-                    ringo.attacking = true;
-                }
+            if boat.movement.x.abs() < 0.1 {
+                boat.movement.x = 0.
             }
-            boat.dash = ringo.attacking;
-            let destination = if ringo.attacking {
+            if boat.movement.y.abs() < 0.1 {
+                boat.movement.y = 0.
+            }
+        } else {
+            if ringo.charge_time < 0. && ringo.dash_chance.check(2., 1., time.delta_seconds()) {
+                ringo.charge_time = 1.;
+            }
+            boat.shoot = global_transform
+                .translation()
+                .truncate()
+                .distance(player_position)
+                < 250.;
+            let destination = if ringo.charge_time > -1. {
                 player_position
             } else {
                 player_position + Vec2::from_angle(ringo.angle) * 300.
             };
+            boat.dash = ringo.charge_time > 0.;
+            ringo.charge_time -= time.delta_seconds();
+            if ringo.charge_time > 0. {
+                boat.dash = false;
+            }
             let mut difference = destination - global_transform.translation().truncate();
             if difference.length() == 0. {
                 difference = Vec2::ONE;
             }
-            let applied_length = (difference.length() - 100.).max(0.) / 50.;
+            let mut applied_length = (difference.length() - 100.).max(0.) / 50.;
             if applied_length < 0.8 {
                 ringo.angle += std::f32::consts::PI * 0.3;
-                boat.shoot = true;
+            }
+            if ringo.charge_time > 0. {
+                applied_length = 0.05;
             }
             boat.movement = difference.normalize() * applied_length;
-        }
-        if boat.movement.x.abs() < 0.1 {
-            boat.movement.x = 0.
-        }
-        if boat.movement.y.abs() < 0.1 {
-            boat.movement.y = 0.
         }
         if boat.movement.length_squared() > 0. {
             boat.direction = Vec2::X.angle_between(boat.movement);

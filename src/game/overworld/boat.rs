@@ -30,11 +30,13 @@ impl Plugin for BoatPlugin {
 pub struct BoatSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
-    pub special_attack: Attacks,
+    pub attack: Attacks,
+    pub attack_cooldown: f32,
     pub healthbar: bool,
     pub player: bool,
     pub health: f32,
     pub speed: f32,
+    pub knockback_resistance: f32,
 }
 
 #[derive(Component)]
@@ -47,6 +49,7 @@ pub struct Boat {
     pub attacks: Attacks,
     pub shoot: bool,
     pub shoot_cooldown: f32,
+    pub shoot_cooldown_threshold: f32,
     pub dash: bool,
     pub dash_cooldown: f32,
     pub opacity: f32,
@@ -93,11 +96,12 @@ fn boat_spawn(
             .insert(Boat {
                 movement: Vec2::ZERO,
                 direction: std::f32::consts::PI * -0.5,
-                speed: 200.,
+                speed: event.speed,
                 facing: Facing::South,
                 ring_timer: RING_SPAWN_INTEVAL,
-                attacks: event.special_attack,
+                attacks: event.attack,
                 shoot_cooldown: 0.,
+                shoot_cooldown_threshold: event.attack_cooldown,
                 shoot: false,
                 dash_cooldown: 0.,
                 dash: false,
@@ -112,7 +116,7 @@ fn boat_spawn(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: event.speed,
-                knockback_resistance: 0.5,
+                knockback_resistance: event.knockback_resistance,
                 ..Default::default()
             })
             .insert(ForwardCannons {
@@ -271,7 +275,7 @@ fn boat_attack(
     ) in query.iter_mut()
     {
         boat.shoot_cooldown += time.delta_seconds();
-        if boat.shoot && boat.shoot_cooldown > 0.48 {
+        if boat.shoot && boat.shoot_cooldown > boat.shoot_cooldown_threshold {
             boat.shoot_cooldown = 0.;
             if boat.attacks.forward_cannons > 0 {
                 forward_cannons.shoot = true;
@@ -290,7 +294,7 @@ fn boat_attack(
             }
         }
         boat.dash_cooldown += time.delta_seconds();
-        if boat.dash && boat.dash_cooldown > 0.48 {
+        if boat.dash && boat.dash_cooldown > 0.6 {
             boat.dash_cooldown = 0.;
             dash.shoot = true
         }

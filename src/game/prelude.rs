@@ -31,7 +31,7 @@ pub use super::{
         health::Health,
         healthbar::{Healthbar, HealthbarSpawnEvent},
         ocean::{Ocean, OceanSpawnEvent},
-        octopus::{Octopus, OctopusSpawnEvent},
+        octopus::{Octopus, OctopusLevel, OctopusSpawnEvent},
         player::{Player, PlayerSpawnEvent},
         threat_level::ThreatLevel,
         town::{Town, TownSpawnEvent},
