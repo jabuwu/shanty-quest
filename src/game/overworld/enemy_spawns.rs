@@ -24,7 +24,7 @@ impl Default for EnemySpawnsState {
             easy_level: EnemySpawnLevel {
                 spawn_chances: vec![
                     (0.03, EnemySpawn::Octopus(OctopusLevel::Medium)),
-                    (0.3, EnemySpawn::Turtle(TurtleLevel::Easy)),
+                    (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 1.,
@@ -34,8 +34,7 @@ impl Default for EnemySpawnsState {
                 spawn_chances: vec![
                     (0.05, EnemySpawn::Octopus(OctopusLevel::Hard)),
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Medium)),
-                    (0.1, EnemySpawn::Turtle(TurtleLevel::Medium)),
-                    (0.3, EnemySpawn::Turtle(TurtleLevel::Easy)),
+                    (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.5,
@@ -45,9 +44,8 @@ impl Default for EnemySpawnsState {
                 spawn_chances: vec![
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Hard)),
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Medium)),
-                    (0.1, EnemySpawn::Turtle(TurtleLevel::Hard)),
-                    (0.1, EnemySpawn::Turtle(TurtleLevel::Medium)),
-                    (0.3, EnemySpawn::Turtle(TurtleLevel::Easy)),
+                    (0.05, EnemySpawn::Turtle(TurtleLevel::Hard)),
+                    (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.25,
@@ -57,9 +55,8 @@ impl Default for EnemySpawnsState {
                 spawn_chances: vec![
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Hard)),
                     (0.3, EnemySpawn::Octopus(OctopusLevel::Medium)),
-                    (0.1, EnemySpawn::Turtle(TurtleLevel::Hard)),
-                    (0.3, EnemySpawn::Turtle(TurtleLevel::Medium)),
-                    (0.3, EnemySpawn::Turtle(TurtleLevel::Easy)),
+                    (0.05, EnemySpawn::Turtle(TurtleLevel::Hard)),
+                    (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.1,
@@ -104,7 +101,7 @@ pub struct SpawnedEntity {
 #[derive(Default, Clone, Copy)]
 pub struct DespawnSpawnedEntitiesEvent;
 
-const DESPAWN_BUFFER_DISTANCE: f32 = 100.;
+const DESPAWN_BUFFER_DISTANCE: f32 = 200.;
 const RANDOM_SPAWN_DISTANCE: Vec2 = Vec2::new(1280. * 0.5 + 100., 768. * 0.5 + 100.);
 fn random_spawn_offset() -> Vec2 {
     let area = rand::random::<u8>() % 4;
@@ -134,7 +131,7 @@ fn random_spawn_offset() -> Vec2 {
 fn enemy_spawns(
     mut commands: Commands,
     mut queries: ParamSet<(
-        Query<&GlobalTransform, With<Player>>,
+        Query<&GlobalTransform, With<Camera>>,
         Query<(Entity, &GlobalTransform, &mut SpawnedEntity)>,
     )>,
     mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
@@ -151,15 +148,15 @@ fn enemy_spawns(
     if cutscenes.running() && matches!(app_state.current(), AppState::Overworld) {
         return;
     }
-    let player_position = if let Ok(player_transform) = queries.p0().get_single() {
-        player_transform.translation().truncate()
+    let camera_position = if let Ok(camera_transform) = queries.p0().get_single() {
+        camera_transform.translation().truncate()
     } else {
         Vec2::ZERO
     };
     let mut count = 0;
     for (entity, transform, mut spawned) in queries.p1().iter_mut() {
         spawned.frames += 1;
-        let difference = (player_position - transform.translation().truncate()).abs();
+        let difference = (camera_position - transform.translation().truncate()).abs();
         if spawned.frames > 10
             && (difference.x > RANDOM_SPAWN_DISTANCE.x + DESPAWN_BUFFER_DISTANCE
                 || difference.y > RANDOM_SPAWN_DISTANCE.y + DESPAWN_BUFFER_DISTANCE)
@@ -193,7 +190,7 @@ fn enemy_spawns(
         && screen_fade.faded_in()
         && *threat_level != ThreatLevel::None
     {
-        let position = player_position + random_spawn_offset();
+        let position = camera_position + random_spawn_offset();
         for spawn_chance in level.spawn_chances.iter() {
             if rand::random::<f32>() < spawn_chance.0 {
                 match spawn_chance.1 {

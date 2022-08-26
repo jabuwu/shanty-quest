@@ -137,6 +137,7 @@ fn bomb_move(
                     } else {
                         7.5
                     }),
+                    damage: 3.,
                 })
                 .insert(YDepth::default())
                 .insert(TimeToLive { seconds: 0.05 });

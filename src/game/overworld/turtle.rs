@@ -37,21 +37,21 @@ impl TurtleLevel {
             Self::Easy => TurtleInfo {
                 atlas: asset_library.sprite_turtle_easy_atlas.clone(),
                 scale: 1.0,
-                health: 5.,
-                speed: 200.,
+                health: 3.,
+                speed: 150.,
                 knockback_resistence: 0.8,
             },
             Self::Medium => TurtleInfo {
                 atlas: asset_library.sprite_turtle_medium_atlas.clone(),
                 scale: 1.0,
-                health: 10.,
+                health: 5.,
                 speed: 200.,
                 knockback_resistence: 0.9,
             },
             Self::Hard => TurtleInfo {
                 atlas: asset_library.sprite_turtle_hard_atlas.clone(),
                 scale: 1.5,
-                health: 20.,
+                health: 7.,
                 speed: 100.,
                 knockback_resistence: 1.0,
             },
@@ -128,6 +128,7 @@ fn turtle_spawn(
                 auto_despawn: false,
                 flags: DAMAGE_FLAG_PLAYER,
                 knockback_type: HurtboxKnockbackType::None,
+                damage: 1.,
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {

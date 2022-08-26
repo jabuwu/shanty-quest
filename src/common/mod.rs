@@ -1,3 +1,4 @@
+use crate::common::prelude::*;
 use audio_plus::AudioPlusPlugin;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
@@ -27,12 +28,22 @@ impl Plugin for CommonPlugin {
             .add_plugin(map_builder::MapBuilderPlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
-            .add_startup_system(asset_hot_reloading);
+            .add_startup_system(asset_hot_reloading)
+            .add_system_to_stage(CoreStage::PreUpdate, nan_fix);
     }
 }
 
 fn asset_hot_reloading(asset_server: Res<AssetServer>) {
+    // TODO: remove debug
     asset_server.watch_for_changes().unwrap();
+}
+
+fn nan_fix(mut query: Query<&mut Transform2>) {
+    for mut transform in query.iter_mut() {
+        if !transform.translation.is_finite() {
+            transform.translation = Vec2::new(800., -350.);
+        }
+    }
 }
 
 pub mod app_state;

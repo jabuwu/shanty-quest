@@ -120,12 +120,14 @@ impl CollisionQuery {
     pub fn update(&mut self, query: &Query<(Entity, &GlobalTransform, &Collision)>) {
         self.entries.clear();
         for (entity, transform, collision) in query.iter() {
-            self.entries.push(CollisionQueryEntry {
-                entity,
-                position: transform.translation().truncate(),
-                shape: collision.shape,
-                flags: collision.flags,
-            });
+            if transform.translation().is_finite() {
+                self.entries.push(CollisionQueryEntry {
+                    entity,
+                    position: transform.translation().truncate(),
+                    shape: collision.shape,
+                    flags: collision.flags,
+                });
+            }
         }
     }
 }

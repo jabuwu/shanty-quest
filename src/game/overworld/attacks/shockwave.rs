@@ -96,6 +96,7 @@ fn shockwave_fire(
                                 knockback_type: HurtboxKnockbackType::Difference(
                                     if shockwave.boss { 15. } else { 5. },
                                 ),
+                                damage: 0.75,
                             })
                             .insert(TimeToLive { seconds: 0.05 });
                     })

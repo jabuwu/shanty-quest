@@ -41,6 +41,7 @@ fn main() {
         .add_plugin(jam::game::overworld::turtle::TurtlePlugin)
         .add_plugin(jam::game::overworld::enemy_spawns::EnemySpawnsPlugin)
         .add_plugin(jam::game::overworld::threat_level::ThreatLevelPlugin)
+        .add_plugin(jam::game::overworld::experience::ExperiencePlugin)
         .add_plugin(jam::game::quests::QuestsPlugin)
         .init_resource::<jam::game::state::GameState>()
         .add_startup_system(init)

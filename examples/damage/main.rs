@@ -158,6 +158,7 @@ fn player_control(
                     auto_despawn: true,
                     flags: 1,
                     knockback_type: HurtboxKnockbackType::None,
+                    damage: 1.,
                 });
         }
         if keys.pressed(KeyCode::W) {

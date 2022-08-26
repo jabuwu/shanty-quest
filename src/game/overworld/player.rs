@@ -181,7 +181,7 @@ fn player_damage(
         if let Ok((mut health, mut player)) = crate_query.get_mut(event.hit) {
             if player.invincibility <= 0. {
                 if !cutscenes.running() {
-                    health.damage(1.);
+                    health.damage(event.damage);
                 }
                 if !player.dead && health.dead() {
                     player.dead = true;

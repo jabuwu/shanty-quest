@@ -37,21 +37,21 @@ impl OctopusLevel {
             Self::Easy => OctopusInfo {
                 atlas: asset_library.sprite_octopus_easy_atlas.clone(),
                 scale: 0.75,
-                health: 2.,
+                health: 2.5,
                 speed: 150.,
                 knockback_resistence: 0.,
             },
             Self::Medium => OctopusInfo {
                 atlas: asset_library.sprite_octopus_medium_atlas.clone(),
                 scale: 1.0,
-                health: 5.,
+                health: 3.5,
                 speed: 300.,
                 knockback_resistence: 0.4,
             },
             Self::Hard => OctopusInfo {
                 atlas: asset_library.sprite_octopus_hard_atlas.clone(),
                 scale: 1.2,
-                health: 10.,
+                health: 5.,
                 speed: 150.,
                 knockback_resistence: 0.7,
             },
@@ -134,6 +134,7 @@ fn octopus_spawn(
                 auto_despawn: false,
                 flags: DAMAGE_FLAG_PLAYER,
                 knockback_type: HurtboxKnockbackType::None,
+                damage: 1.,
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {

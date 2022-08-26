@@ -91,6 +91,7 @@ fn shotgun_cannons_fire(
                             auto_despawn: true,
                             flags: shotgun_cannons.hurt_flags,
                             knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.01),
+                            damage: 1.,
                         })
                         .insert(
                             Transform2::from_translation(position)

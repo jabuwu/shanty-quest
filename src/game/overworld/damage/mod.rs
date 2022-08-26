@@ -20,6 +20,7 @@ impl Plugin for DamagePlugin {
 pub struct DamageEvent {
     pub hit: Entity,
     pub hurt: Entity,
+    pub damage: f32,
 }
 
 #[derive(Component)]
@@ -36,6 +37,7 @@ pub struct Hurtbox {
     pub auto_despawn: bool,
     pub flags: u32,
     pub knockback_type: HurtboxKnockbackType,
+    pub damage: f32,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -114,7 +116,11 @@ fn damage_check(
                     }
                     _ => {}
                 }
-                ev_damage.send(DamageEvent { hit, hurt });
+                ev_damage.send(DamageEvent {
+                    hit,
+                    hurt,
+                    damage: hurtbox.damage,
+                });
                 if hurtbox.auto_despawn {
                     despawn = true;
                     break;
@@ -144,7 +150,7 @@ fn damage_auto_die(
         {
             if auto_damage.invincibility == 0. {
                 if !cutscenes.running() {
-                    health.damage(1.);
+                    health.damage(event.damage);
                 }
                 auto_damage.invincibility = 0.1;
             }

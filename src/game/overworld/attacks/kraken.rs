@@ -134,6 +134,7 @@ fn tentacle_update(
                 } else {
                     HurtboxKnockbackType::Difference(5.)
                 },
+                damage: 1.,
             });
             tentacle.spawned_hurtbox = true;
         }
