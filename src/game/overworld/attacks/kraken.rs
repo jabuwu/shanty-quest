@@ -10,6 +10,7 @@ impl Plugin for KrakenPlugin {
         app.add_component_child::<Kraken, KrakenSound>()
             .add_system(kraken_fire)
             .add_system(tentacle_move)
+            .add_system(tentacle_animate)
             .add_system(kraken_sound);
     }
 }
@@ -50,6 +51,7 @@ fn kraken_fire(
     mut query: Query<(Entity, &mut Kraken, &Boat, &GlobalTransform, &Children)>,
     mut sound_query: Query<&mut AudioPlusSource, With<KrakenSound>>,
     mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
 ) {
     for (boat_entity, mut kraken, boat, global_transform, children) in query.iter_mut() {
         if kraken.shoot {
@@ -65,15 +67,10 @@ fn kraken_fire(
                 let position =
                     global_transform.translation().truncate() + forward * 150. + side * 15.;
                 let velocity = forward * 100.;
-                let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
-                scale *= 0.5;
+                let (scale, _, _) = global_transform.to_scale_rotation_translation();
                 commands
-                    .spawn_bundle(SpriteBundle {
-                        sprite: Sprite {
-                            custom_size: Vec2::new(28., 28.).into(),
-                            color: Color::PURPLE,
-                            ..Default::default()
-                        },
+                    .spawn_bundle(SpriteSheetBundle {
+                        texture_atlas: asset_library.sprite_tentacle_atlas.clone(),
                         ..Default::default()
                     })
                     .insert(
@@ -102,5 +99,20 @@ fn kraken_fire(
 fn tentacle_move(mut query: Query<(&mut Transform2, &Tentacle)>, time: Res<Time>) {
     for (mut transform, cannon_ball) in query.iter_mut() {
         transform.translation += cannon_ball.velocity * time.delta_seconds()
+    }
+}
+
+fn tentacle_animate(mut query: Query<&mut TextureAtlasSprite, With<Tentacle>>, time: Res<Time>) {
+    for mut sprite in query.iter_mut() {
+        let time = (time.time_since_startup().as_secs_f32() * 2.) % 1.;
+        if time > 0.75 {
+            sprite.index = 3;
+        } else if time > 0.5 {
+            sprite.index = 2;
+        } else if time > 0.25 {
+            sprite.index = 1;
+        } else {
+            sprite.index = 0;
+        }
     }
 }
