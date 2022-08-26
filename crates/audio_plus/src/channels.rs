@@ -15,7 +15,7 @@ macro_rules! channels {
         pub fn add_audio_channels(app: &mut App) {
             $(
                 app.add_audio_channel::<$x>();
-                app.add_system(update_kira_channel::<$x>.after(AudioPlusSystems::UpdateAudioSources));
+                app.add_system(update_kira_channel::<$x>.after(AudioPlusSystems::UpdateAudioSources).before(AudioPlusSystems::Debug));
             )*
         }
     };
@@ -136,5 +136,11 @@ channels!(
     Channel26, Channel27, Channel28, Channel29, Channel30, Channel31, Channel32, Channel33,
     Channel34, Channel35, Channel36, Channel37, Channel38, Channel39, Channel40, Channel41,
     Channel42, Channel43, Channel44, Channel45, Channel46, Channel47, Channel48, Channel49,
-    Channel50
+    Channel50, Channel51, Channel52, Channel53, Channel54, Channel55, Channel56, Channel57,
+    Channel58, Channel59, Channel60, Channel61, Channel62, Channel63, Channel64, Channel65,
+    Channel66, Channel67, Channel68, Channel69, Channel70, Channel71, Channel72, Channel73,
+    Channel74, Channel75, Channel76, Channel77, Channel78, Channel79, Channel80, Channel81,
+    Channel82, Channel83, Channel84, Channel85, Channel86, Channel87, Channel88, Channel89,
+    Channel90, Channel91, Channel92, Channel93, Channel94, Channel95, Channel96, Channel97,
+    Channel98, Channel99
 );

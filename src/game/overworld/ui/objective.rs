@@ -110,7 +110,7 @@ fn objective_update(
         }
     } else {
         for mut background_transform in background_query.iter_mut() {
-            background_transform.scale = Vec2::ZERO;
+            background_transform.scale.x = 0.;
         }
         for mut hud_visibility in hud_query.iter_mut() {
             hud_visibility.is_visible = false;

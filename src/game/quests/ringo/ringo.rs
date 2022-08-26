@@ -55,7 +55,7 @@ fn ringo_stats_by_health(health_percent: f32) -> RingoStatsByHealth {
     } else {
         RingoStatsByHealth {
             speed: 200.,
-            attack_time: 0.25,
+            attack_time: 0.75,
             charge_time: 0.2,
             charge_cooldown: 1.5,
             charge_cooldown_variance: 0.1,
