@@ -9,6 +9,7 @@ struct EnemySpawnsState {
     medium_level: EnemySpawnLevel,
     hard_level: EnemySpawnLevel,
     midnight_level: EnemySpawnLevel,
+    davy_level: EnemySpawnLevel,
 }
 
 impl Default for EnemySpawnsState {
@@ -54,6 +55,11 @@ impl Default for EnemySpawnsState {
                 ],
                 seconds_per_spawn: 0.1,
                 spawn_max: 30,
+            },
+            davy_level: EnemySpawnLevel {
+                spawn_chances: vec![(1., EnemySpawn::Octopus(OctopusLevel::Easy))],
+                seconds_per_spawn: 1.0,
+                spawn_max: 5,
             },
         }
     }
@@ -159,6 +165,7 @@ fn enemy_spawns(
         medium_level,
         hard_level,
         midnight_level,
+        davy_level,
     } = state.as_mut();
     let level = match *threat_level {
         ThreatLevel::None => none_level,
@@ -166,6 +173,7 @@ fn enemy_spawns(
         ThreatLevel::Medium => medium_level,
         ThreatLevel::Hard => hard_level,
         ThreatLevel::Midnight => midnight_level,
+        ThreatLevel::Davy => davy_level,
     };
     if !state_time.just_entered()
         && chance.check(level.seconds_per_spawn, 0., time.delta_seconds())

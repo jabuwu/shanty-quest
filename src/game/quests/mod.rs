@@ -71,7 +71,7 @@ impl Quests {
     }
 
     pub fn block_enemy_spawns(&self) -> bool {
-        if self.fighting() {
+        if self.fighting() && !self.davy() {
             return true;
         }
         match &self.active_quest {
@@ -153,6 +153,34 @@ impl Quests {
             Quest::Plank(..) => Some("Defeat Plank"),
             Quest::Davy(..) => Some("Defeat Davy"),
             Quest::End => None,
+        }
+    }
+
+    pub fn jagerossa(&self) -> bool {
+        match &self.active_quest {
+            Quest::Jagerossa(..) => true,
+            _ => false,
+        }
+    }
+
+    pub fn ringo(&self) -> bool {
+        match &self.active_quest {
+            Quest::Ringo(..) => true,
+            _ => false,
+        }
+    }
+
+    pub fn plank(&self) -> bool {
+        match &self.active_quest {
+            Quest::Plank(..) => true,
+            _ => false,
+        }
+    }
+
+    pub fn davy(&self) -> bool {
+        match &self.active_quest {
+            Quest::Davy(..) => true,
+            _ => false,
         }
     }
 
@@ -335,11 +363,55 @@ fn quests_debug(
     });
 }
 
-pub fn quests_skip(input: Res<Input<KeyCode>>, mut game_state: ResMut<GameState>) {
+pub fn quests_skip(
+    input: Res<Input<KeyCode>>,
+    mut game_state: ResMut<GameState>,
+    mut player_query: Query<&mut Transform2, With<Player>>,
+) {
+    // TODO: remove debug
     if input.just_pressed(KeyCode::F2) {
-        game_state.quests.active_quest = Quest::End;
+        game_state.quests.active_quest = Quest::Davy(DavyQuest::default());
         game_state.quests.talked_to_barkeep = true;
         game_state.dangerous_seas = true;
+    }
+    if input.just_pressed(KeyCode::Key7) {
+        game_state.quests.active_quest = Quest::Ringo(RingoQuest::default());
+        if let Quest::Ringo(quest) = &mut game_state.quests.active_quest {
+            quest.stage = RingoQuestStage::TalkedToMayor;
+        }
+        game_state.quests.talked_to_barkeep = true;
+        game_state.dangerous_seas = true;
+        game_state.attacks.shotgun_cannons = 1;
+        if let Ok(mut transform) = player_query.get_single_mut() {
+            transform.translation = Vec2::new(7000., -1250.);
+        };
+    }
+    if input.just_pressed(KeyCode::Key8) {
+        game_state.quests.active_quest = Quest::Plank(PlankQuest::default());
+        if let Quest::Plank(quest) = &mut game_state.quests.active_quest {
+            quest.stage = PlankQuestStage::TalkedToMayor;
+        }
+        game_state.quests.talked_to_barkeep = true;
+        game_state.dangerous_seas = true;
+        game_state.attacks.shotgun_cannons = 1;
+        game_state.attacks.shockwave = 1;
+        if let Ok(mut transform) = player_query.get_single_mut() {
+            transform.translation = Vec2::new(7500., -6750.);
+        };
+    }
+    if input.just_pressed(KeyCode::Key9) {
+        game_state.quests.active_quest = Quest::Davy(DavyQuest::default());
+        if let Quest::Davy(quest) = &mut game_state.quests.active_quest {
+            quest.stage = DavyQuestStage::TalkedToMayor;
+        }
+        game_state.quests.talked_to_barkeep = true;
+        game_state.dangerous_seas = true;
+        game_state.attacks.shotgun_cannons = 1;
+        game_state.attacks.shockwave = 1;
+        game_state.attacks.bombs = 1;
+        if let Ok(mut transform) = player_query.get_single_mut() {
+            transform.translation = Vec2::new(1800., -8250.);
+        };
     }
 }
 

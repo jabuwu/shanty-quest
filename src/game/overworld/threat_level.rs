@@ -21,12 +21,14 @@ pub enum ThreatLevel {
     Medium,
     Hard,
     Midnight,
+    Davy,
 }
 
 fn threat_level_update(
     player_query: Query<&GlobalTransform, With<Player>>,
     mut threat_level: ResMut<ThreatLevel>,
     world_locations: Res<WorldLocations>,
+    game_state: Res<GameState>,
 ) {
     let player_position = if let Ok(player_transform) = player_query.get_single() {
         player_transform.translation().truncate()
@@ -37,17 +39,24 @@ fn threat_level_update(
     *threat_level = ThreatLevel::None;
 
     macro_rules! disable_threat_level_near_position {
-        ($str:literal) => {
-            if player_position.distance(world_locations.get_single_position($str)) < 500. {
+        ($str:literal, $condition:expr) => {
+            if $condition
+                && player_position.distance(world_locations.get_single_position($str)) < 500.
+            {
                 return;
             }
         };
     }
 
-    disable_threat_level_near_position!("JagerossaTrigger");
-    disable_threat_level_near_position!("RingoTrigger");
-    disable_threat_level_near_position!("PlankTrigger");
-    disable_threat_level_near_position!("DavyTrigger");
+    if game_state.quests.davy() && game_state.quests.fighting() {
+        *threat_level = ThreatLevel::Davy;
+        return;
+    }
+
+    disable_threat_level_near_position!("JagerossaTrigger", game_state.quests.jagerossa());
+    disable_threat_level_near_position!("RingoTrigger", game_state.quests.ringo());
+    disable_threat_level_near_position!("PlankTrigger", game_state.quests.plank());
+    disable_threat_level_near_position!("DavyTrigger", game_state.quests.davy());
 
     macro_rules! threat_level {
         ($str:literal, $value:expr) => {

@@ -132,6 +132,7 @@ fn damage_auto_die(
     mut crate_query: Query<(Entity, &mut Health, &mut AutoDamage)>,
     mut commands: Commands,
     time: Res<Time>,
+    cutscenes: Res<Cutscenes>,
 ) {
     for (_, _, mut auto_damage) in crate_query.iter_mut() {
         auto_damage.invincibility -= time.delta_seconds();
@@ -140,7 +141,9 @@ fn damage_auto_die(
     for event in ev_damage.iter() {
         if let Ok((entity, mut health, mut auto_damage)) = crate_query.get_mut(event.hit) {
             if auto_damage.invincibility == 0. {
-                health.damage(1.);
+                if !cutscenes.running() {
+                    health.damage(1.);
+                }
                 auto_damage.invincibility = 0.1;
             }
             if health.dead() && !auto_damage.already_despawned {

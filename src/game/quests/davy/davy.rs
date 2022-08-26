@@ -22,6 +22,8 @@ pub struct DavySpawnEvent;
 #[derive(Component)]
 pub struct Davy {
     target: Vec2,
+    angle: f32,
+    adjust_angle_chance: TimedChance,
 }
 
 fn davy_spawn(
@@ -38,6 +40,8 @@ fn davy_spawn(
             .spawn()
             .insert(Davy {
                 target: world_locations.get_single_position("DavyMoveTo"),
+                angle: 0.,
+                adjust_angle_chance: TimedChance::new(),
             })
             .insert(Label("Davy".to_owned()))
             .insert(AutoDamage {
@@ -56,27 +60,51 @@ fn davy_spawn(
             player: false,
             health: 30.,
             speed: 100.,
-            attack_cooldown: 1.,
+            attack_cooldown: 0.4,
             knockback_resistance: 0.8,
         });
     }
 }
 
-fn davy_move(mut query: Query<(&mut Boat, &GlobalTransform, &Davy)>) {
-    for (mut boat, global_transform, davy) in query.iter_mut() {
-        boat.movement = (davy.target - global_transform.translation().truncate()) / 100.;
-        if boat.movement.x.abs() < 0.1 {
-            boat.movement.x = 0.
-        }
-        if boat.movement.y.abs() < 0.1 {
-            boat.movement.y = 0.
+fn davy_move(
+    mut queries: ParamSet<(
+        Query<(&mut Boat, &GlobalTransform, &mut Davy)>,
+        Query<&GlobalTransform, With<Player>>,
+    )>,
+    cutscenes: Res<Cutscenes>,
+    time: Res<Time>,
+) {
+    let player_position = if let Ok(player_transform) = queries.p1().get_single() {
+        player_transform.translation().truncate()
+    } else {
+        Vec2::ZERO
+    };
+    for (mut boat, global_transform, mut davy) in queries.p0().iter_mut() {
+        if cutscenes.running() {
+            boat.movement = (davy.target - global_transform.translation().truncate()) / 100.;
+            if boat.movement.x.abs() < 0.1 {
+                boat.movement.x = 0.
+            }
+            if boat.movement.y.abs() < 0.1 {
+                boat.movement.y = 0.
+            }
+        } else {
+            let destination = player_position + Vec2::from_angle(davy.angle) * 100.;
+            let mut difference = destination - global_transform.translation().truncate();
+            if difference.length() == 0. {
+                difference = Vec2::ONE;
+            }
+            let applied_length = (difference.length() - 100.).max(0.) / 50.;
+            if applied_length < 0.8 || davy.adjust_angle_chance.check(3., 3., time.delta_seconds())
+            {
+                davy.angle += std::f32::consts::PI * 0.3;
+            }
+            boat.movement = difference.normalize() * applied_length;
         }
         if boat.movement.length_squared() > 0. {
             boat.direction = Vec2::X.angle_between(boat.movement);
         }
-        if rand::random::<f32>() < 0.05 {
-            boat.shoot = true;
-        }
+        boat.shoot = !cutscenes.running();
     }
 }
 

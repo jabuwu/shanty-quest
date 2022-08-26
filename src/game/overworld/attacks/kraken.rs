@@ -9,7 +9,7 @@ impl Plugin for KrakenPlugin {
     fn build(&self, app: &mut App) {
         app.add_component_child::<Kraken, KrakenSound>()
             .add_system(kraken_fire)
-            .add_system(tentacle_move)
+            .add_system(tentacle_update)
             .add_system(tentacle_animate)
             .add_system(kraken_sound);
     }
@@ -23,7 +23,11 @@ pub struct Kraken {
 
 #[derive(Component)]
 struct Tentacle {
-    pub velocity: Vec2,
+    pub submerge_time: f32,
+    pub submerge_time_max: f32,
+    pub spawned_hurtbox: bool,
+    pub parent: Entity,
+    pub hurt_flags: u32,
 }
 
 #[derive(Component, Default)]
@@ -48,26 +52,24 @@ fn kraken_sound(
 }
 
 fn kraken_fire(
-    mut query: Query<(Entity, &mut Kraken, &Boat, &GlobalTransform, &Children)>,
+    mut query: Query<(Entity, &mut Kraken, &GlobalTransform, &Children)>,
     mut sound_query: Query<&mut AudioPlusSource, With<KrakenSound>>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (boat_entity, mut kraken, boat, global_transform, children) in query.iter_mut() {
+    for (boat_entity, mut kraken, global_transform, children) in query.iter_mut() {
         if kraken.shoot {
             for child in children.iter() {
                 if let Ok(mut sound) = sound_query.get_mut(*child) {
                     sound.play();
                 }
             }
-            for shoot_side in 0..2 {
-                let forward = Vec2::from_angle(boat.direction);
-                let mult = if shoot_side == 0 { 1. } else { -1. };
-                let side = forward.perp() * mult;
-                let position =
-                    global_transform.translation().truncate() + forward * 150. + side * 15.;
-                let velocity = forward * 100.;
+            for _ in 0..2 {
+                let forward = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
+                let position = global_transform.translation().truncate()
+                    + forward * (150. + rand::random::<f32>() * 400.);
                 let (scale, _, _) = global_transform.to_scale_rotation_translation();
+                let submerge_time = 1.0;
                 commands
                     .spawn_bundle(SpriteSheetBundle {
                         texture_atlas: asset_library.sprite_tentacle_atlas.clone(),
@@ -78,41 +80,58 @@ fn kraken_fire(
                             .with_depth((DepthLayer::Entity, 0.0))
                             .with_scale(scale.truncate()),
                     )
-                    .insert(Hurtbox {
-                        shape: CollisionShape::Rect {
-                            size: Vec2::new(28., 28.),
-                        },
-                        for_entity: Some(boat_entity),
-                        auto_despawn: true,
-                        flags: kraken.hurt_flags,
-                        knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.01),
-                    })
                     .insert(YDepth::default())
-                    .insert(Tentacle { velocity })
-                    .insert(TimeToLive::new(1.0));
+                    .insert(Tentacle {
+                        submerge_time,
+                        submerge_time_max: submerge_time,
+                        spawned_hurtbox: false,
+                        parent: boat_entity,
+                        hurt_flags: kraken.hurt_flags,
+                    })
+                    .insert(TimeToLive::new(3.0));
             }
         }
         kraken.shoot = false;
     }
 }
 
-fn tentacle_move(mut query: Query<(&mut Transform2, &Tentacle)>, time: Res<Time>) {
-    for (mut transform, cannon_ball) in query.iter_mut() {
-        transform.translation += cannon_ball.velocity * time.delta_seconds()
+fn tentacle_update(
+    mut query: Query<(Entity, &mut Tentacle)>,
+    time: Res<Time>,
+    mut commands: Commands,
+) {
+    for (entity, mut tentacle) in query.iter_mut() {
+        tentacle.submerge_time -= time.delta_seconds();
+        if tentacle.submerge_time <= 0. && !tentacle.spawned_hurtbox {
+            commands.entity(entity).insert(Hurtbox {
+                shape: CollisionShape::Rect {
+                    size: Vec2::new(32., 48.),
+                },
+                for_entity: Some(tentacle.parent),
+                auto_despawn: true,
+                flags: tentacle.hurt_flags,
+                knockback_type: HurtboxKnockbackType::Difference(25.),
+            });
+            tentacle.spawned_hurtbox = true;
+        }
     }
 }
 
-fn tentacle_animate(mut query: Query<&mut TextureAtlasSprite, With<Tentacle>>, time: Res<Time>) {
-    for mut sprite in query.iter_mut() {
-        let time = (time.time_since_startup().as_secs_f32() * 2.) % 1.;
-        if time > 0.75 {
-            sprite.index = 3;
-        } else if time > 0.5 {
-            sprite.index = 2;
-        } else if time > 0.25 {
-            sprite.index = 1;
+fn tentacle_animate(mut query: Query<(&mut TextureAtlasSprite, &Tentacle)>, time: Res<Time>) {
+    for (mut sprite, tentacle) in query.iter_mut() {
+        if tentacle.submerge_time > 0. {
+            if tentacle.submerge_time > tentacle.submerge_time_max * 0.25 {
+                sprite.index = 0;
+            } else {
+                sprite.index = 1;
+            }
         } else {
-            sprite.index = 0;
+            let time = (time.time_since_startup().as_secs_f32() * 3.) % 1.;
+            if time > 0.65 {
+                sprite.index = 3;
+            } else {
+                sprite.index = 2;
+            }
         }
     }
 }
