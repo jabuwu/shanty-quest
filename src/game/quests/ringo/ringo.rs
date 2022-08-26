@@ -27,6 +27,42 @@ pub struct Ringo {
     charge_time: f32,
 }
 
+struct RingoStatsByHealth {
+    speed: f32,
+    attack_time: f32,
+    charge_time: f32,
+    charge_cooldown: f32,
+    charge_cooldown_variance: f32,
+}
+
+fn ringo_stats_by_health(health_percent: f32) -> RingoStatsByHealth {
+    if health_percent > 0.3 {
+        RingoStatsByHealth {
+            speed: 150.,
+            attack_time: 1.,
+            charge_time: 1.,
+            charge_cooldown: 2.,
+            charge_cooldown_variance: 1.,
+        }
+    } else if health_percent > 0.15 {
+        RingoStatsByHealth {
+            speed: 175.,
+            attack_time: 1.,
+            charge_time: 0.75,
+            charge_cooldown: 1.5,
+            charge_cooldown_variance: 1.,
+        }
+    } else {
+        RingoStatsByHealth {
+            speed: 200.,
+            attack_time: 0.25,
+            charge_time: 0.2,
+            charge_cooldown: 1.5,
+            charge_cooldown_variance: 0.1,
+        }
+    }
+}
+
 fn ringo_spawn(
     mut ev_spawn: EventReader<RingoSpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
@@ -37,6 +73,7 @@ fn ringo_spawn(
 ) {
     let spawn_position = world_locations.get_single_position("RingoSpawn");
     for _ in ev_spawn.iter() {
+        let stats = ringo_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
             .spawn()
@@ -62,9 +99,9 @@ fn ringo_spawn(
             },
             healthbar: true,
             player: false,
-            health: 30.,
-            speed: 175.,
-            attack_cooldown: 1.,
+            health: 50.,
+            speed: stats.speed,
+            attack_cooldown: stats.attack_time,
             knockback_resistance: 0.8,
         });
     }
@@ -72,7 +109,7 @@ fn ringo_spawn(
 
 fn ringo_move(
     mut queries: ParamSet<(
-        Query<(&mut Boat, &GlobalTransform, &mut Ringo)>,
+        Query<(&mut Boat, &GlobalTransform, &mut Ringo, &Health)>,
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
@@ -83,7 +120,10 @@ fn ringo_move(
     } else {
         Vec2::ZERO
     };
-    for (mut boat, global_transform, mut ringo) in queries.p0().iter_mut() {
+    for (mut boat, global_transform, mut ringo, health) in queries.p0().iter_mut() {
+        let stats = ringo_stats_by_health(health.value / health.max);
+        boat.speed = stats.speed;
+        boat.shoot_cooldown_threshold = stats.attack_time;
         boat.shoot = false;
         if cutscenes.running() {
             boat.movement = (ringo.target - global_transform.translation().truncate()) / 100.;
@@ -94,8 +134,14 @@ fn ringo_move(
                 boat.movement.y = 0.
             }
         } else {
-            if ringo.charge_time < 0. && ringo.dash_chance.check(2., 1., time.delta_seconds()) {
-                ringo.charge_time = 1.;
+            if ringo.charge_time < 0.
+                && ringo.dash_chance.check(
+                    stats.charge_cooldown,
+                    stats.charge_cooldown_variance,
+                    time.delta_seconds(),
+                )
+            {
+                ringo.charge_time = stats.charge_time;
             }
             boat.shoot = global_transform
                 .translation()

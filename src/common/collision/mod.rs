@@ -45,15 +45,15 @@ impl CollisionQuery {
         position: Vec2,
         shape: CollisionShape,
         filter: Option<CollisionFilter>,
-    ) -> Option<Entity> {
+    ) -> Option<(Entity, Vec2)> {
         for entry in self.entries.iter() {
             if shape.overlaps(position, entry.shape, entry.position) {
                 if let Some(ref filter) = filter {
                     if filter.exclude_entity != entry.entity && filter.flags & entry.flags != 0 {
-                        return Some(entry.entity);
+                        return Some((entry.entity, entry.position - position));
                     }
                 } else {
-                    return Some(entry.entity);
+                    return Some((entry.entity, entry.position - position));
                 }
             }
         }

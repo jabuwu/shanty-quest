@@ -2,7 +2,10 @@ use asset_struct::prelude::*;
 use bevy::prelude::*;
 use jam::{
     common::prelude::*,
-    game::overworld::character_controller::{CharacterController, CharacterControllerPlugin},
+    game::overworld::{
+        camera::OverworldCameraPlugin,
+        character_controller::{CharacterController, CharacterControllerPlugin},
+    },
 };
 
 #[derive(Component)]
@@ -21,6 +24,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(CommonPlugin)
         .add_plugin(CharacterControllerPlugin)
+        .add_plugin(OverworldCameraPlugin)
         .add_startup_system(init)
         .add_system(player_move)
         .add_system(box_move)
@@ -51,7 +55,7 @@ pub fn init(
             },
             ..Default::default()
         })
-        .insert(Transform2::from_xy(0., 0.))
+        .insert(Transform2::from_xy(70., 0.))
         .insert(Collision {
             shape: CollisionShape::Rect {
                 size: Vec2::new(32., 32.),

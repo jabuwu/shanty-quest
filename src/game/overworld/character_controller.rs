@@ -72,6 +72,17 @@ fn character_controller_update(
             destination,
         )) = queries.p0().get_mut(entity)
         {
+            let collision_filters = CollisionFilter {
+                exclude_entity: entity,
+                flags: 1,
+            };
+            if let Some((_, diff)) = collision_query.check(
+                transform.translation,
+                collision.shape,
+                Some(collision_filters),
+            ) {
+                transform.translation -= diff.normalize();
+            }
             let mut velocity = character_controller.movement;
             character_controller.force_facing = None;
             if let Some(destination) = destination {
@@ -101,10 +112,6 @@ fn character_controller_update(
             }
             let velocity_x = Vec2::X * velocity;
             let velocity_y = Vec2::Y * velocity;
-            let collision_filters = CollisionFilter {
-                exclude_entity: entity,
-                flags: 1,
-            };
             if collision_query
                 .check_moving(
                     transform.translation,

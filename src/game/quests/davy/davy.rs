@@ -26,6 +26,30 @@ pub struct Davy {
     adjust_angle_chance: TimedChance,
 }
 
+struct DavyStatsByHealth {
+    speed: f32,
+    attack_time: f32,
+}
+
+fn davy_stats_by_health(health_percent: f32) -> DavyStatsByHealth {
+    if health_percent > 0.5 {
+        DavyStatsByHealth {
+            speed: 150.,
+            attack_time: 0.75,
+        }
+    } else if health_percent > 0.15 {
+        DavyStatsByHealth {
+            speed: 250.,
+            attack_time: 0.25,
+        }
+    } else {
+        DavyStatsByHealth {
+            speed: 400.,
+            attack_time: 0.2,
+        }
+    }
+}
+
 fn davy_spawn(
     mut ev_spawn: EventReader<DavySpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
@@ -36,6 +60,7 @@ fn davy_spawn(
 ) {
     let spawn_position = world_locations.get_single_position("DavySpawn");
     for _ in ev_spawn.iter() {
+        let stats = davy_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
             .spawn()
@@ -60,9 +85,9 @@ fn davy_spawn(
             },
             healthbar: true,
             player: false,
-            health: 75.,
-            speed: 200.,
-            attack_cooldown: 0.25,
+            health: 100.,
+            speed: stats.speed,
+            attack_cooldown: stats.attack_time,
             knockback_resistance: 1.0,
         });
     }
@@ -70,7 +95,7 @@ fn davy_spawn(
 
 fn davy_move(
     mut queries: ParamSet<(
-        Query<(&mut Boat, &GlobalTransform, &mut Davy)>,
+        Query<(&mut Boat, &GlobalTransform, &mut Davy, &Health)>,
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
@@ -81,7 +106,10 @@ fn davy_move(
     } else {
         Vec2::ZERO
     };
-    for (mut boat, global_transform, mut davy) in queries.p0().iter_mut() {
+    for (mut boat, global_transform, mut davy, health) in queries.p0().iter_mut() {
+        let stats = davy_stats_by_health(health.value / health.max);
+        boat.speed = stats.speed;
+        boat.shoot_cooldown_threshold = stats.attack_time;
         if cutscenes.running() {
             boat.movement = (davy.target - global_transform.translation().truncate()) / 100.;
             if boat.movement.x.abs() < 0.1 {

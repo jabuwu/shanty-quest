@@ -29,6 +29,25 @@ pub struct Jagerossa {
     backoff_chance: TimedChance,
 }
 
+struct JagerossaStatsByHealth {
+    speed: f32,
+    attack_time: f32,
+}
+
+fn jagerossa_stats_by_health(health_percent: f32) -> JagerossaStatsByHealth {
+    if health_percent > 0.3 {
+        JagerossaStatsByHealth {
+            speed: 175.,
+            attack_time: 1.,
+        }
+    } else {
+        JagerossaStatsByHealth {
+            speed: 300.,
+            attack_time: 0.5,
+        }
+    }
+}
+
 fn jagerossa_spawn(
     mut ev_spawn: EventReader<JagerossaSpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
@@ -38,6 +57,7 @@ fn jagerossa_spawn(
 ) {
     let spawn_position = world_locations.get_single_position("JagerossaSpawn");
     for _ in ev_spawn.iter() {
+        let stats = jagerossa_stats_by_health(1.);
         let entity = commands
             .spawn()
             .insert(Jagerossa {
@@ -64,17 +84,17 @@ fn jagerossa_spawn(
             },
             healthbar: true,
             player: false,
-            health: 7.,
-            speed: 175.,
-            attack_cooldown: 1.,
-            knockback_resistance: 0.5,
+            health: 20.,
+            speed: stats.speed,
+            attack_cooldown: stats.attack_time,
+            knockback_resistance: 0.8,
         });
     }
 }
 
 fn jagerossa_move(
     mut queries: ParamSet<(
-        Query<(&mut Boat, &GlobalTransform, &mut Jagerossa)>,
+        Query<(&mut Boat, &GlobalTransform, &mut Jagerossa, &Health)>,
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
@@ -85,7 +105,10 @@ fn jagerossa_move(
     } else {
         Vec2::ZERO
     };
-    for (mut boat, global_transform, mut jagerossa) in queries.p0().iter_mut() {
+    for (mut boat, global_transform, mut jagerossa, health) in queries.p0().iter_mut() {
+        let stats = jagerossa_stats_by_health(health.value / health.max);
+        boat.speed = stats.speed;
+        boat.shoot_cooldown_threshold = stats.attack_time;
         if cutscenes.running() {
             boat.movement = (jagerossa.target - global_transform.translation().truncate()) / 100.;
             if boat.movement.x.abs() < 0.1 {

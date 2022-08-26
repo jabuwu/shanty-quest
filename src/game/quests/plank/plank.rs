@@ -30,6 +30,30 @@ pub struct Plank {
     backoff_stop: bool,
 }
 
+struct PlankStatsByHealth {
+    speed: f32,
+    attack_time: f32,
+}
+
+fn plank_stats_by_health(health_percent: f32) -> PlankStatsByHealth {
+    if health_percent > 0.5 {
+        PlankStatsByHealth {
+            speed: 400.,
+            attack_time: 0.25,
+        }
+    } else if health_percent > 0.15 {
+        PlankStatsByHealth {
+            speed: 400.,
+            attack_time: 0.15,
+        }
+    } else {
+        PlankStatsByHealth {
+            speed: 600.,
+            attack_time: 0.15,
+        }
+    }
+}
+
 fn plank_spawn(
     mut ev_spawn: EventReader<PlankSpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
@@ -40,6 +64,7 @@ fn plank_spawn(
 ) {
     let spawn_position = world_locations.get_single_position("PlankSpawn");
     for _ in ev_spawn.iter() {
+        let stats = plank_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
             .spawn()
@@ -68,9 +93,9 @@ fn plank_spawn(
             },
             healthbar: true,
             player: false,
-            health: 30.,
-            speed: 400.,
-            attack_cooldown: 0.25,
+            health: 80.,
+            speed: stats.speed,
+            attack_cooldown: stats.attack_time,
             knockback_resistance: 0.0,
         });
     }
@@ -78,7 +103,7 @@ fn plank_spawn(
 
 fn plank_move(
     mut queries: ParamSet<(
-        Query<(&mut Boat, &GlobalTransform, &mut Plank)>,
+        Query<(&mut Boat, &GlobalTransform, &mut Plank, &Health)>,
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
@@ -89,7 +114,10 @@ fn plank_move(
     } else {
         Vec2::ZERO
     };
-    for (mut boat, global_transform, mut plank) in queries.p0().iter_mut() {
+    for (mut boat, global_transform, mut plank, health) in queries.p0().iter_mut() {
+        let stats = plank_stats_by_health(health.value / health.max);
+        boat.speed = stats.speed;
+        boat.shoot_cooldown_threshold = stats.attack_time;
         if cutscenes.running() {
             boat.movement = (plank.target - global_transform.translation().truncate()) / 100.;
             if boat.movement.x.abs() < 0.1 {

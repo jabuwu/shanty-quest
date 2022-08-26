@@ -28,6 +28,7 @@ struct Bomb {
     pub life_time: f32,
     pub parent: Entity,
     pub hurt_flags: u32,
+    pub boss: bool,
 }
 
 #[derive(Component, Default)]
@@ -64,31 +65,37 @@ fn bombs_fire(
                     sound.play();
                 }
             }
-            let throw_direction = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
-            let position = global_transform.translation().truncate() + throw_direction * 100.;
-            let (velocity_min, velocity_max) = if bombs.boss {
-                (100., 1500.)
-            } else {
-                (200., 500.)
-            };
-            let velocity = throw_direction
-                * (velocity_min + rand::random::<f32>() * (velocity_max - velocity_min))
-                + boat.movement.clamp(Vec2::NEG_ONE, Vec2::ONE) * 150.;
-            commands
-                .spawn_bundle(SpriteSheetBundle {
-                    texture_atlas: asset_library.sprite_bomb_atlas.clone(),
-                    ..Default::default()
-                })
-                .insert(
-                    Transform2::from_translation(position).with_depth((DepthLayer::Entity, 0.0)),
-                )
-                .insert(YDepth::default())
-                .insert(Bomb {
-                    velocity,
-                    life_time: 1.75,
-                    parent: boat_entity,
-                    hurt_flags: bombs.hurt_flags,
-                });
+            let amt = if bombs.boss { 3 } else { 1 };
+            for _ in 0..amt {
+                let throw_direction =
+                    Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
+                let position = global_transform.translation().truncate() + throw_direction * 100.;
+                let (velocity_min, velocity_max) = if bombs.boss {
+                    (100., 1500.)
+                } else {
+                    (200., 500.)
+                };
+                let velocity = throw_direction
+                    * (velocity_min + rand::random::<f32>() * (velocity_max - velocity_min))
+                    + boat.movement.clamp(Vec2::NEG_ONE, Vec2::ONE) * 150.;
+                commands
+                    .spawn_bundle(SpriteSheetBundle {
+                        texture_atlas: asset_library.sprite_bomb_atlas.clone(),
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::from_translation(position)
+                            .with_depth((DepthLayer::Entity, 0.0)),
+                    )
+                    .insert(YDepth::default())
+                    .insert(Bomb {
+                        velocity,
+                        life_time: 1.75,
+                        parent: boat_entity,
+                        hurt_flags: bombs.hurt_flags,
+                        boss: bombs.boss,
+                    });
+            }
         }
         bombs.shoot = false;
     }
@@ -125,7 +132,11 @@ fn bomb_move(
                     for_entity: Some(bomb.parent),
                     auto_despawn: false,
                     flags: bomb.hurt_flags,
-                    knockback_type: HurtboxKnockbackType::Difference(7.5),
+                    knockback_type: HurtboxKnockbackType::Difference(if bomb.boss {
+                        20.
+                    } else {
+                        7.5
+                    }),
                 })
                 .insert(YDepth::default())
                 .insert(TimeToLive { seconds: 0.05 });

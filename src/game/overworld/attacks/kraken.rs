@@ -29,6 +29,8 @@ struct Tentacle {
     pub spawned_hurtbox: bool,
     pub parent: Entity,
     pub hurt_flags: u32,
+    pub time_to_live: f32,
+    pub boss: bool,
 }
 
 #[derive(Component, Default)]
@@ -99,8 +101,9 @@ fn kraken_fire(
                         spawned_hurtbox: false,
                         parent: boat_entity,
                         hurt_flags: kraken.hurt_flags,
-                    })
-                    .insert(TimeToLive::new(3.0));
+                        time_to_live: if close_tentacle { 1.5 } else { 3.0 },
+                        boss: kraken.boss,
+                    });
             }
         }
         kraken.shoot = false;
@@ -114,15 +117,23 @@ fn tentacle_update(
 ) {
     for (entity, mut tentacle) in query.iter_mut() {
         tentacle.submerge_time -= time.delta_seconds();
+        tentacle.time_to_live -= time.delta_seconds();
+        if tentacle.time_to_live < 0. && tentacle.spawned_hurtbox {
+            commands.entity(entity).despawn();
+        }
         if tentacle.submerge_time <= 0. && !tentacle.spawned_hurtbox {
             commands.entity(entity).insert(Hurtbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(32., 48.),
                 },
                 for_entity: Some(tentacle.parent),
-                auto_despawn: true,
+                auto_despawn: false,
                 flags: tentacle.hurt_flags,
-                knockback_type: HurtboxKnockbackType::Difference(25.),
+                knockback_type: if tentacle.boss {
+                    HurtboxKnockbackType::Difference(10.)
+                } else {
+                    HurtboxKnockbackType::Difference(5.)
+                },
             });
             tentacle.spawned_hurtbox = true;
         }
