@@ -41,6 +41,10 @@ pub struct QuestMayorEvent;
 pub struct QuestBarkeepEvent;
 
 impl Quests {
+    pub fn hide_town_marker(&self) -> bool {
+        self.block_town_enter()
+    }
+
     pub fn block_town_enter(&self) -> bool {
         match &self.active_quest {
             Quest::Jagerossa(..) => true,

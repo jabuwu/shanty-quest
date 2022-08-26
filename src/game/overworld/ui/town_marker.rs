@@ -72,6 +72,7 @@ fn town_marker_update(
         Query<(&mut Transform2, &mut Sprite), With<TownMarkerArrow>>,
         Query<&GlobalTransform, With<Town>>,
     )>,
+    game_state: Res<GameState>,
 ) {
     let camera_position = if let Ok(transform) = queries.p0().get_single() {
         transform.translation().truncate()
@@ -87,9 +88,12 @@ fn town_marker_update(
             closest_town_distance = distance;
         }
     }
-    if let Some(objective_position) = closest_town {
-        let difference = (objective_position - camera_position).normalize_or_zero();
-        let distance = objective_position.distance(camera_position);
+    if game_state.quests.hide_town_marker() {
+        closest_town = None;
+    }
+    if let Some(town_position) = closest_town {
+        let difference = (town_position - camera_position).normalize_or_zero();
+        let distance = town_position.distance(camera_position);
         let alpha = ((distance - 350.) / 300.).clamp(0., 1.);
         for (mut icon_transform, mut icon_sprite) in queries.p1().iter_mut() {
             icon_transform.translation = difference * 330.;
