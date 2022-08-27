@@ -198,6 +198,10 @@ pub struct AssetLibrary {
     #[asset("sprites/Map_CompassRose.png")]
     pub sprite_map_compass: Handle<Image>,
 
+    #[asset("sprites/Bottle.png")]
+    pub sprite_health_bottle: Handle<Image>,
+    pub sprite_health_bottle_atlas: Handle<TextureAtlas>,
+
     /***********
      * Attacks *
      ***********/
@@ -343,6 +347,14 @@ impl AssetLibrary {
         let texture_atlas =
             TextureAtlas::from_grid(self.sprite_tentacle.clone(), Vec2::new(131., 211.), 4, 1);
         self.sprite_tentacle_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_health_bottle.clone(),
+            Vec2::new(102., 163.),
+            3,
+            1,
+        );
+        self.sprite_health_bottle_atlas = texture_atlas_assets.add(texture_atlas);
     }
 
     pub fn create_sound_effects(&mut self) {

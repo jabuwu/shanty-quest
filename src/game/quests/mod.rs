@@ -349,6 +349,10 @@ fn quests_barkeep(
             }
             game_state.quests.barkeep_dialogue = (game_state.quests.barkeep_dialogue + 1) % 6;
         }
+        dialogue.add_text(
+            DialoguePortrait::None,
+            "Rum supplied restored\nTODO: play cool animation here".to_owned(),
+        );
     }
 }
 

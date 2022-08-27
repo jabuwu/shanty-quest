@@ -41,6 +41,7 @@ pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME_BACKGROUND: Layer = (DepthLayer::Fr
 pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME: Layer = (DepthLayer::Front, 0.861);
 pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR_BORDER: Layer = (DepthLayer::Front, 0.86);
 pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR: Layer = (DepthLayer::Front, 0.861);
+pub const DEPTH_LAYER_UI_HEALTH_BOTTLE: Layer = (DepthLayer::Front, 0.905);
 
 pub const DEPTH_LAYER_BAND_SELECTION_BACK: Layer = (DepthLayer::Front, 0.5);
 pub const DEPTH_LAYER_BAND_SELECTION_SLOT: Layer = (DepthLayer::Front, 0.51);
