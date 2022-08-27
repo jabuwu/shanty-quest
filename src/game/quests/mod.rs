@@ -386,6 +386,9 @@ pub fn quests_skip(
     mut player_query: Query<&mut Transform2, With<Player>>,
     app_state: Res<State<AppState>>,
 ) {
+    if input.just_pressed(KeyCode::P) {
+        game_state.skill_points += 1;
+    }
     if *app_state.current() != AppState::Overworld {
         return;
     }

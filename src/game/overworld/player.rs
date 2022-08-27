@@ -3,6 +3,8 @@ use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
+pub const PLAYER_ATTACK_COOLDOWN: f32 = 0.48;
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -55,7 +57,7 @@ fn player_spawn(
             player: true,
             health: game_state.health,
             speed: 250.,
-            attack_cooldown: 0.48,
+            attack_cooldown: PLAYER_ATTACK_COOLDOWN,
             knockback_resistance: 0.2,
         });
         if !game_state.quests.block_town_exit_cutscene() {

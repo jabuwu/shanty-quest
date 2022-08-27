@@ -1,82 +1,44 @@
 use crate::common::prelude::*;
-use crate::game::prelude::*;
-use band_selection::BandSelectionSpawnEvent;
 use bevy::prelude::*;
 
-const PREVIEW_POSITION: Vec2 = Vec2::new(183., 102.);
+use self::boat_preview::BoatPreviewSpawnEvent;
+use self::upgrades::UpgradesSpawnEvent;
 
 pub struct ConcertHallPlugin;
 
 impl Plugin for ConcertHallPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(band_selection::BandSelectionPlugin)
+            .add_plugin(boat_preview::BoatPreviewPlugin)
             .add_plugin(upgrades::UpgradesPlugin)
             .add_system_set(
                 SystemSet::on_enter(AppState::TownConcertHall).with_system(concert_hall_init),
             )
             .add_system_set(
                 SystemSet::on_update(AppState::TownConcertHall).with_system(concert_hall_leave),
-            )
-            .add_system(concert_hall_boat_preview);
+            );
     }
 }
-
-#[derive(Component)]
-struct BoatPreviewParent;
-
-#[derive(Component)]
-struct BoatPreview;
 
 fn concert_hall_init(
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
-    mut ev_band_selection_spawn: EventWriter<BandSelectionSpawnEvent>,
-    mut ev_ocean_spawn: EventWriter<OceanSpawnEvent>,
-    mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
-    mut game_state: ResMut<GameState>,
+    mut ev_upgrades_spawn: EventWriter<UpgradesSpawnEvent>,
+    mut ev_boat_preview_spawn: EventWriter<BoatPreviewSpawnEvent>,
 ) {
-    game_state.skill_points = 0;
     commands.spawn_bundle(Camera2dBundle::default());
-    ev_band_selection_spawn.send_default();
-    commands
-        .spawn_bundle(VisibilityBundle::default())
-        .insert_bundle(TransformBundle::default())
-        .insert(Transform2::from_translation(PREVIEW_POSITION).with_scale(Vec2::ONE * 0.5))
-        .insert(BoatPreviewParent)
-        .with_children(|parent| {
-            let boat_entity = parent.spawn().insert(BoatPreview).id();
-            ev_boat_spawn.send(BoatSpawnEvent {
-                entity: Some(boat_entity),
-                position: Vec2::ZERO,
-                attack: Attacks {
-                    forward_cannons: 1,
-                    shotgun_cannons: 1,
-                    shockwave: 1,
-                    bombs: 1,
-                    kraken: 1,
-                },
-                healthbar: false,
-                player: true,
-                health: 30.,
-                speed: 100.,
-                attack_cooldown: 1.,
-                knockback_resistance: 0.,
-            });
-            let ocean_entity = parent.spawn().id();
-            ev_ocean_spawn.send(OceanSpawnEvent {
-                entity: Some(ocean_entity),
-            });
-        });
-    commands
-        .spawn_bundle(SpriteBundle {
-            texture: asset_library.sprite_town_bg_hole.clone(),
-            ..Default::default()
-        })
-        .insert(
-            Transform2::new()
-                .with_depth((DepthLayer::Front, 0.))
-                .with_scale(Vec2::ONE * 0.5),
-        );
+    ev_upgrades_spawn.send_default();
+    ev_boat_preview_spawn.send_default();
+    /*commands
+    .spawn_bundle(SpriteBundle {
+        texture: asset_library.sprite_town_bg_hole.clone(),
+        ..Default::default()
+    })
+    .insert(
+        Transform2::new()
+            .with_depth((DepthLayer::Front, 0.))
+            .with_scale(Vec2::ONE * 0.5),
+    );*/
     commands
         .spawn_bundle(NodeBundle {
             style: Style {
@@ -123,44 +85,6 @@ fn concert_hall_leave(mut keys: ResMut<Input<KeyCode>>, mut app_state: ResMut<St
     }
 }
 
-#[derive(Default)]
-pub struct ConcertHallBoatPreviewState {
-    spawn_time: f32,
-}
-
-fn concert_hall_boat_preview(
-    mut query: Query<(Entity, &Parent, &mut Boat), With<BoatPreview>>,
-    mut state: Local<ConcertHallBoatPreviewState>,
-    mut transform_query: Query<&mut Transform2>,
-    time: Res<Time>,
-) {
-    state.spawn_time += time.delta_seconds();
-    let spawn = if state.spawn_time > 0.8 {
-        state.spawn_time = 0.;
-        true
-    } else {
-        false
-    };
-    for (entity, parent, mut boat) in query.iter_mut() {
-        if spawn {
-            if let Ok(mut transform) = transform_query.get_mut(entity) {
-                transform.translation = Vec2::ZERO;
-            }
-            //boat.special_attack = game_state.band_special_attack_type();
-            boat.shoot = true;
-        }
-        let translation = if spawn {
-            Vec2::ZERO
-        } else if let Ok(transform) = transform_query.get(entity) {
-            transform.translation
-        } else {
-            Vec2::ZERO
-        };
-        if let Ok(mut parent_transform) = transform_query.get_mut(parent.get()) {
-            parent_transform.translation = PREVIEW_POSITION + -translation * 0.5;
-        }
-    }
-}
-
 pub mod band_selection;
+pub mod boat_preview;
 pub mod upgrades;

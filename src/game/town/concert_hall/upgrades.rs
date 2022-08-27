@@ -4,7 +4,8 @@ use bevy::prelude::*;
 
 #[derive(Default)]
 pub struct UpgradesState {
-    hovered: Option<UpgradesType>,
+    pub hovered: Option<UpgradesType>,
+    pub preview_level: u32,
 }
 
 pub struct UpgradesPlugin;
@@ -53,7 +54,7 @@ struct UpgradesDisplayInfo {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum UpgradesType {
+pub enum UpgradesType {
     Guitar,
     Drums,
     Flute,
@@ -115,7 +116,7 @@ impl UpgradesType {
             Self::Flute => game_state.attacks.shockwave,
             Self::Harmonica => game_state.attacks.bombs,
             Self::Accordion => game_state.attacks.kraken,
-            Self::Defense => 0,
+            Self::Defense => game_state.defense,
         }
     }
     fn increase_level(&self, game_state: &mut GameState) {
@@ -125,8 +126,36 @@ impl UpgradesType {
             Self::Flute => game_state.attacks.shockwave += 1,
             Self::Harmonica => game_state.attacks.bombs += 1,
             Self::Accordion => game_state.attacks.kraken += 1,
-            Self::Defense => {}
+            Self::Defense => game_state.apply_defense_upgrade(),
         }
+    }
+    pub fn attacks(&self, level: u32) -> Attacks {
+        let mut attacks = Attacks {
+            forward_cannons: 0,
+            shotgun_cannons: 0,
+            shockwave: 0,
+            bombs: 0,
+            kraken: 0,
+        };
+        match *self {
+            UpgradesType::Guitar => {
+                attacks.forward_cannons = level;
+            }
+            UpgradesType::Drums => {
+                attacks.shotgun_cannons = level;
+            }
+            UpgradesType::Flute => {
+                attacks.shockwave = level;
+            }
+            UpgradesType::Harmonica => {
+                attacks.bombs = level;
+            }
+            UpgradesType::Accordion => {
+                attacks.kraken = level;
+            }
+            UpgradesType::Defense => {}
+        }
+        attacks
     }
 }
 
@@ -145,7 +174,7 @@ fn upgrades_spawn(
                 ..Default::default()
             })
             .insert(
-                Transform2::new()
+                Transform2::from_xy(-200., 0.)
                     .with_scale(Vec2::ONE * 0.3)
                     .with_depth(DEPTH_LAYER_UPGRADES_BG),
             )
@@ -153,7 +182,7 @@ fn upgrades_spawn(
                 parent
                     .spawn_bundle(Text2dBundle {
                         text: Text::from_section(
-                            "99",
+                            "",
                             TextStyle {
                                 font: asset_library.font_bold.clone(),
                                 font_size: 100.0,
@@ -167,7 +196,7 @@ fn upgrades_spawn(
                         ..Default::default()
                     })
                     .insert(
-                        Transform2::from_xy(940., 740.).with_depth(DEPTH_LAYER_UPGRADES_ABILITY_BG),
+                        Transform2::from_xy(940., 740.).with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
                     )
                     .insert(UpgradesSkillPoints);
                 parent
@@ -212,9 +241,12 @@ fn upgrades_spawn(
                                                 texture: display_info.texture.clone(),
                                                 ..Default::default()
                                             })
-                                            .insert(Transform2::from_translation(
-                                                Vec2::new(-335., 95.) + display_info.offset,
-                                            ))
+                                            .insert(
+                                                Transform2::from_translation(
+                                                    Vec2::new(-335., 95.) + display_info.offset,
+                                                )
+                                                .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_ICON),
+                                            )
                                             .insert(Label(String::from(display_info.name)));
                                     }
                                     parent
@@ -233,7 +265,10 @@ fn upgrades_spawn(
                                             }),
                                             ..Default::default()
                                         })
-                                        .insert(Transform2::from_xy(-210., 68.));
+                                        .insert(
+                                            Transform2::from_xy(-210., 68.)
+                                                .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_TEXT),
+                                        );
                                     parent
                                         .spawn_bundle(SpriteSheetBundle {
                                             texture_atlas: asset_library
@@ -241,7 +276,10 @@ fn upgrades_spawn(
                                                 .clone(),
                                             ..Default::default()
                                         })
-                                        .insert(Transform2::from_xy(420., 68.))
+                                        .insert(
+                                            Transform2::from_xy(420., 68.)
+                                                .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_BUTTON),
+                                        )
                                         .insert(UpgradesButton {
                                             locked,
                                             upgrade: upgrade_type,
@@ -263,7 +301,6 @@ fn upgrades_spawn(
                                                 x += 10.;
                                             }
                                             if col == 1. {
-                                                x += 1.;
                                                 if j == 1 || j == 3 {
                                                     x += 1.;
                                                 }
@@ -278,7 +315,10 @@ fn upgrades_spawn(
                                                         .clone(),
                                                     ..Default::default()
                                                 })
-                                                .insert(Transform2::from_xy(x, -107.))
+                                                .insert(
+                                                    Transform2::from_xy(x, -107.)
+                                                        .with_depth(DEPTH_LAYER_UPGRADES_STAR),
+                                                )
                                                 .insert(UpgradesStar {
                                                     level: j,
                                                     upgrade: upgrade_type,
@@ -304,6 +344,7 @@ fn upgrades_skill_points(
 fn upgrades_ability_bg(
     mut query: Query<(&mut TextureAtlasSprite, &Clickable, &UpgradesAbilityBg)>,
     mut state: ResMut<UpgradesState>,
+    game_state: Res<GameState>,
 ) {
     let mut new_hover = None;
     for (mut sprite, clickable, bg) in query.iter_mut() {
@@ -313,7 +354,7 @@ fn upgrades_ability_bg(
         }
         sprite.index = 0;
         if clickable.hovered {
-            new_hover = Some(bg.upgrade);
+            new_hover = Some((bg.upgrade, bg.upgrade.current_level(game_state.as_ref())));
         }
         let mut current_hover = false;
         if let Some(hovered) = state.hovered {
@@ -329,7 +370,8 @@ fn upgrades_ability_bg(
         }
     }
     if let Some(new_hover) = new_hover {
-        state.hovered = Some(new_hover);
+        state.hovered = Some(new_hover.0);
+        state.preview_level = new_hover.1;
     }
 }
 

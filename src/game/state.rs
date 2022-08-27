@@ -12,6 +12,7 @@ pub struct GameState {
     pub checkpoint_notification: bool,
     pub health: f32,
     pub health_max: f32,
+    pub defense: u32,
     pub experience: f32,
     pub level: u32,
     pub skill_points: u32,
@@ -37,6 +38,7 @@ impl Default for GameState {
             },
             health: 20.,
             health_max: 20.,
+            defense: 1,
             experience: 0.,
             level: 0,
             skill_points: 0,
@@ -85,5 +87,11 @@ impl GameState {
 
     pub fn experience_max(&self) -> f32 {
         25. + self.level as f32 * 25.
+    }
+
+    pub fn apply_defense_upgrade(&mut self) {
+        self.health *= 1.2;
+        self.health_max *= 1.2;
+        self.defense += 1;
     }
 }
