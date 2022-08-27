@@ -96,7 +96,7 @@ fn plank_spawn(
                 bombs: 1,
                 ..Default::default()
             },
-            healthbar: true,
+            healthbar: false,
             player: false,
             health: 80.,
             speed: stats.speed,

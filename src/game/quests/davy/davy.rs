@@ -88,7 +88,7 @@ fn davy_spawn(
                 kraken: 1,
                 ..Default::default()
             },
-            healthbar: true,
+            healthbar: false,
             player: false,
             health: 100.,
             speed: stats.speed,

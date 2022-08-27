@@ -102,7 +102,7 @@ fn ringo_spawn(
                 shockwave: 1,
                 ..Default::default()
             },
-            healthbar: true,
+            healthbar: false,
             player: false,
             health: 50.,
             speed: stats.speed,

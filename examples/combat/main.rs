@@ -68,6 +68,12 @@ pub fn init(
     ev_ocean_spawn.send_default();
 }
 
+#[derive(Default)]
+struct DebugState {
+    stress_test: bool,
+    stress_pressed: bool,
+}
+
 fn debug(
     mut egui_context: ResMut<EguiContext>,
     mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
@@ -78,10 +84,12 @@ fn debug(
     mut ev_davy_spawn: EventWriter<DavySpawnEvent>,
     player_query: Query<&GlobalTransform, With<Player>>,
     mut player_health_query: Query<&mut Health, With<Player>>,
-    input: Res<Input<KeyCode>>,
+    mut input: ResMut<Input<KeyCode>>,
     mut world_locations: ResMut<WorldLocations>,
     mut game_state: ResMut<GameState>,
     mut overworld_camera: ResMut<OverworldCamera>,
+    mut local: Local<DebugState>,
+    mut commands: Commands,
 ) {
     let player_position = if let Ok(player_transform) = player_query.get_single() {
         player_transform.translation().truncate()
@@ -128,6 +136,40 @@ fn debug(
         attack_setting!("Bombs", game_state.attacks.bombs);
         attack_setting!("Kraken", game_state.attacks.kraken);
     });
+    if local.stress_test {
+        if local.stress_pressed {
+            input.release(KeyCode::Key1);
+            input.release(KeyCode::Key6);
+            input.release(KeyCode::Key7);
+            input.release(KeyCode::Key8);
+            input.release(KeyCode::Key9);
+        } else {
+            input.press(KeyCode::Key1);
+            input.press(KeyCode::Key6);
+            input.press(KeyCode::Key7);
+            input.press(KeyCode::Key8);
+            input.press(KeyCode::Key9);
+        }
+        local.stress_pressed = !local.stress_pressed;
+        if rand::random::<f32>() < 0.1 {
+            for _ in 0..10 {
+                commands
+                    .spawn_bundle(Transform2Bundle {
+                        ..Default::default()
+                    })
+                    .insert(Hurtbox {
+                        shape: CollisionShape::Rect {
+                            size: Vec2::new(9999., 9999.),
+                        },
+                        for_entity: None,
+                        auto_despawn: true,
+                        flags: std::u32::MAX,
+                        knockback_type: HurtboxKnockbackType::None,
+                        damage: 999.,
+                    });
+            }
+        }
+    }
     if input.just_pressed(KeyCode::Key1) {
         let level = if input.pressed(KeyCode::LShift) {
             OctopusLevel::Hard
@@ -226,5 +268,8 @@ fn debug(
             Vec2::ZERO,
         );
         ev_davy_spawn.send(DavySpawnEvent);
+    }
+    if input.just_pressed(KeyCode::F5) {
+        local.stress_test = true;
     }
 }
