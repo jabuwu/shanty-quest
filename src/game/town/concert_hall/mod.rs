@@ -10,6 +10,7 @@ pub struct ConcertHallPlugin;
 impl Plugin for ConcertHallPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(band_selection::BandSelectionPlugin)
+            .add_plugin(upgrades::UpgradesPlugin)
             .add_system_set(
                 SystemSet::on_enter(AppState::TownConcertHall).with_system(concert_hall_init),
             )
@@ -162,3 +163,4 @@ fn concert_hall_boat_preview(
 }
 
 pub mod band_selection;
+pub mod upgrades;

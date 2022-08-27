@@ -62,3 +62,6 @@ pub const DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT: Layer = (DepthLayer::Front, 0.01);
 pub const DEPTH_LAYER_TOWN_OUTSIDE_EXIT: Layer = (DepthLayer::Front, 0.01);
 pub const DEPTH_LAYER_TOWN_OUTSIDE_NAME: Layer = (DepthLayer::Front, 0.01);
 pub const DEPTH_LAYER_TOWN_OUTSIDE_ICON: Layer = (DepthLayer::Front, 0.02);
+
+pub const DEPTH_LAYER_UPGRADES_BG: Layer = (DepthLayer::Front, 0.5);
+pub const DEPTH_LAYER_UPGRADES_ABILITY_BG: Layer = (DepthLayer::Front, 0.51);

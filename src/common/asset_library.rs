@@ -307,6 +307,32 @@ pub struct AssetLibrary {
     pub sprite_band_selection_slot_flute_inactive: Handle<Image>,
     #[asset("sprites/AbilityIcon_Shotgun.png")]
     pub sprite_band_selection_slot_ability_shotgun: Handle<Image>,
+
+    /*******************
+     * Town / Upgrades *
+     *******************/
+    #[asset("sprites/UpgradeScreen/UpgradeBand_BG.png")]
+    pub sprite_upgrades_bg: Handle<Image>,
+    #[asset("sprites/UpgradeScreen/UpgradeBand_AbilityBG.png")]
+    pub sprite_upgrades_ability_bg: Handle<Image>,
+    pub sprite_upgrades_ability_bg_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/UpgradeScreen/GUI_Instrument_Guitar.png")]
+    pub sprite_upgrades_ability_guitar: Handle<Image>,
+    #[asset("sprites/UpgradeScreen/GUI_Instrument_Drums.png")]
+    pub sprite_upgrades_ability_drums: Handle<Image>,
+    #[asset("sprites/UpgradeScreen/GUI_Instrument_Flute.png")]
+    pub sprite_upgrades_ability_flute: Handle<Image>,
+    #[asset("sprites/UpgradeScreen/GUI_Instrument_Harmonica.png")]
+    pub sprite_upgrades_ability_harmonica: Handle<Image>,
+    #[asset("sprites/UpgradeScreen/GUI_Instrument_Accordion.png")]
+    pub sprite_upgrades_ability_accordion: Handle<Image>,
+    #[asset("sprites/UpgradeScreen/GUI_Instrument_Defense.png")]
+    pub sprite_upgrades_ability_defense: Handle<Image>,
+    #[asset("sprites/UpgradeScreen/UpgradeBand_UpgradeBtn.png")]
+    pub sprite_upgrades_button: Handle<Image>,
+    pub sprite_upgrades_button_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/UpgradeScreen/UpgradeBand_Star.png")]
+    pub sprite_upgrades_star: Handle<Image>,
 }
 
 impl AssetLibrary {
@@ -382,6 +408,22 @@ impl AssetLibrary {
             1,
         );
         self.sprite_controls_jam_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_upgrades_ability_bg.clone(),
+            Vec2::new(1115., 484.),
+            1,
+            3,
+        );
+        self.sprite_upgrades_ability_bg_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_upgrades_button.clone(),
+            Vec2::new(132., 111.),
+            4,
+            1,
+        );
+        self.sprite_upgrades_button_atlas = texture_atlas_assets.add(texture_atlas);
     }
 
     pub fn create_sound_effects(&mut self) {
