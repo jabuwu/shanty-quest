@@ -70,6 +70,7 @@ fn ringo_spawn(
     world_locations: Res<WorldLocations>,
     mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
     mut overworld_camera: ResMut<OverworldCamera>,
+    mut ev_boss_healthbar_spawn: EventWriter<BossHealthbarSpawnEvent>,
 ) {
     let spawn_position = world_locations.get_single_position("RingoSpawn");
     for _ in ev_spawn.iter() {
@@ -89,6 +90,10 @@ fn ringo_spawn(
                 ..Default::default()
             })
             .id();
+        ev_boss_healthbar_spawn.send(BossHealthbarSpawnEvent {
+            name: "Captain Ringo Yarr".to_owned(),
+            entity,
+        });
         overworld_camera.entity_focus(entity);
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),

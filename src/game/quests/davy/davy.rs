@@ -57,6 +57,7 @@ fn davy_spawn(
     world_locations: Res<WorldLocations>,
     mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
     mut overworld_camera: ResMut<OverworldCamera>,
+    mut ev_boss_healthbar_spawn: EventWriter<BossHealthbarSpawnEvent>,
 ) {
     let spawn_position = world_locations.get_single_position("DavySpawn");
     for _ in ev_spawn.iter() {
@@ -76,6 +77,10 @@ fn davy_spawn(
             })
             .id();
         overworld_camera.entity_focus(entity);
+        ev_boss_healthbar_spawn.send(BossHealthbarSpawnEvent {
+            name: "Captain Davy Bowie".to_owned(),
+            entity,
+        });
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,

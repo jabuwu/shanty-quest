@@ -21,16 +21,20 @@ pub const DEPTH_LAYER_HEALTHBAR: Layer = (DepthLayer::Front, 0.11);
 
 pub const DEPTH_LAYER_TOWN_NAME: Layer = (DepthLayer::Front, 0.);
 
-pub const DEPTH_LAYER_MAP_BACK: Layer = (DepthLayer::Front, 0.90);
-pub const DEPTH_LAYER_MAP_TILE: Layer = (DepthLayer::Front, 0.91);
-pub const DEPTH_LAYER_MAP_PLAYER: Layer = (DepthLayer::Front, 0.92);
-pub const DEPTH_LAYER_MAP_LABEL: Layer = (DepthLayer::Front, 0.93);
+pub const DEPTH_LAYER_MAP_BACK: Layer = (DepthLayer::Front, 0.95);
+pub const DEPTH_LAYER_MAP_TILE: Layer = (DepthLayer::Front, 0.951);
+pub const DEPTH_LAYER_MAP_PLAYER: Layer = (DepthLayer::Front, 0.952);
+pub const DEPTH_LAYER_MAP_LABEL: Layer = (DepthLayer::Front, 0.953);
 
 pub const DEPTH_LAYER_UI_TEXT: Layer = (DepthLayer::Front, 0.85);
 pub const DEPTH_LAYER_UI_MARKER_ICON: Layer = (DepthLayer::Front, 0.851);
 pub const DEPTH_LAYER_UI_MARKER_ARROW: Layer = (DepthLayer::Front, 0.852);
 pub const DEPTH_LAYER_UI_OBJECTIVE_BACKGROUND: Layer = (DepthLayer::Front, 0.86);
 pub const DEPTH_LAYER_UI_OBJECTIVE_TEXT: Layer = (DepthLayer::Front, 0.861);
+pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME_BACKGROUND: Layer = (DepthLayer::Front, 0.86);
+pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME: Layer = (DepthLayer::Front, 0.861);
+pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR_BORDER: Layer = (DepthLayer::Front, 0.86);
+pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR: Layer = (DepthLayer::Front, 0.861);
 
 pub const DEPTH_LAYER_BAND_SELECTION_BACK: Layer = (DepthLayer::Front, 0.5);
 pub const DEPTH_LAYER_BAND_SELECTION_SLOT: Layer = (DepthLayer::Front, 0.51);

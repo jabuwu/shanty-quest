@@ -56,7 +56,8 @@ fn player_spawn(
             player: true,
             health: 20.,
             speed: 250.,
-            attack_cooldown: 0.48,
+            //attack_cooldown: 0.48,
+            attack_cooldown: 0.1,
             knockback_resistance: 0.2,
         });
         if !game_state.quests.block_town_exit_cutscene() {

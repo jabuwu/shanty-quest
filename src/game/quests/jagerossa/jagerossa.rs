@@ -54,6 +54,7 @@ fn jagerossa_spawn(
     mut commands: Commands,
     world_locations: Res<WorldLocations>,
     mut overworld_camera: ResMut<OverworldCamera>,
+    mut ev_boss_healthbar_spawn: EventWriter<BossHealthbarSpawnEvent>,
 ) {
     let spawn_position = world_locations.get_single_position("JagerossaSpawn");
     for _ in ev_spawn.iter() {
@@ -75,6 +76,10 @@ fn jagerossa_spawn(
             })
             .id();
         overworld_camera.entity_focus(entity);
+        ev_boss_healthbar_spawn.send(BossHealthbarSpawnEvent {
+            name: "Captain Mike Jagerossa".to_owned(),
+            entity,
+        });
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: spawn_position,
@@ -82,7 +87,7 @@ fn jagerossa_spawn(
                 shotgun_cannons: 1,
                 ..Default::default()
             },
-            healthbar: true,
+            healthbar: false,
             player: false,
             health: 40.,
             speed: stats.speed,

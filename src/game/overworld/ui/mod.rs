@@ -15,6 +15,7 @@ impl Plugin for OverworldUiPlugin {
             .add_plugin(marker::MarkerPlugin)
             .add_plugin(town_marker::TownMarkerPlugin)
             .add_plugin(objective::ObjectivePlugin)
+            .add_plugin(boss_healthbar::BossHealthbarPlugin)
             .add_system(overworld_ui_spawn)
             .add_system(overworld_ui_health);
     }
@@ -82,6 +83,7 @@ fn overworld_ui_health(
     }
 }
 
+pub mod boss_healthbar;
 pub mod map;
 pub mod marker;
 pub mod objective;

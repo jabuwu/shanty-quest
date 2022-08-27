@@ -38,7 +38,7 @@ pub use super::{
         town::{Town, TownSpawnEvent},
         trigger::Trigger,
         turtle::{Turtle, TurtleLevel, TurtleSpawnEvent},
-        ui::OverworldUiSpawnEvent,
+        ui::{boss_healthbar::BossHealthbarSpawnEvent, OverworldUiSpawnEvent},
         water_ring::{WaterRing, WaterRingSpawnEvent},
         world::{World, WorldLoadEvent},
         OverworldEnterEvent, OverworldPlugin, WorldAmbienceSoundStopEvent,
