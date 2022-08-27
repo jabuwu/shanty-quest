@@ -44,6 +44,7 @@ fn town_marker_spawn(
                     .insert(
                         Transform2::from_xy(0., 0.)
                             .with_depth(DEPTH_LAYER_UI_MARKER_ICON)
+                            .with_scale(Vec2::ONE * 0.25)
                             .without_pixel_perfect(),
                     )
                     .insert(TownMarkerIcon)
@@ -58,7 +59,9 @@ fn town_marker_spawn(
                             })
                             .insert(TownMarkerArrow)
                             .insert(
-                                Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_UI_MARKER_ARROW),
+                                Transform2::from_xy(0., 0.)
+                                    .with_depth(DEPTH_LAYER_UI_MARKER_ARROW)
+                                    .without_pixel_perfect(),
                             );
                     });
             });
