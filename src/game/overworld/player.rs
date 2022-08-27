@@ -146,7 +146,11 @@ fn player_enter_town(
     }
 }
 
-fn player_upgrade_attack(input: Res<Input<KeyCode>>, mut game_state: ResMut<GameState>) {
+fn player_upgrade_attack(
+    input: Res<Input<KeyCode>>,
+    mut game_state: ResMut<GameState>,
+    mut query: Query<&mut Health, With<Player>>,
+) {
     // TODO: remove debug
     if input.just_pressed(KeyCode::F1) {
         game_state.attacks = Attacks {
@@ -156,6 +160,14 @@ fn player_upgrade_attack(input: Res<Input<KeyCode>>, mut game_state: ResMut<Game
             bombs: 1,
             kraken: 1,
         };
+    }
+    if input.just_pressed(KeyCode::Key5) {
+        for mut health in query.iter_mut() {
+            health.value = 99999.;
+            health.max = 99999.;
+            game_state.health = 99999.;
+            game_state.health_max = 99999.;
+        }
     }
 }
 
