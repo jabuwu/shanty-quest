@@ -27,6 +27,7 @@ pub const DEPTH_LAYER_MAP_TILE: Layer = (DepthLayer::Front, 0.952);
 pub const DEPTH_LAYER_MAP_PLAYER: Layer = (DepthLayer::Front, 0.954);
 pub const DEPTH_LAYER_MAP_OBJECTIVE: Layer = (DepthLayer::Front, 0.953);
 pub const DEPTH_LAYER_MAP_LABEL: Layer = (DepthLayer::Front, 0.955);
+pub const DEPTH_LAYER_MAP_COMPASS: Layer = (DepthLayer::Front, 0.956);
 
 pub const DEPTH_LAYER_UI_TEXT: Layer = (DepthLayer::Front, 0.85);
 pub const DEPTH_LAYER_UI_MARKER_ICON: Layer = (DepthLayer::Front, 0.851);

@@ -38,8 +38,19 @@ fn map_open(
             parent
                 .spawn_bundle(SpriteBundle {
                     sprite: Sprite {
+                        color: Color::BLACK,
                         ..Default::default()
                     },
+                    texture: asset_library.sprite_map_compass.clone(),
+                    ..Default::default()
+                })
+                .insert(
+                    Transform2::from_xy(230., 230.)
+                        .with_scale(Vec2::ONE * 0.25)
+                        .with_depth(DEPTH_LAYER_MAP_COMPASS),
+                );
+            parent
+                .spawn_bundle(SpriteBundle {
                     texture: asset_library.sprite_map_bg.clone(),
                     ..Default::default()
                 })
@@ -72,8 +83,8 @@ fn map_open(
                                     .spawn_bundle(SpriteBundle {
                                         sprite: Sprite {
                                             custom_size: Vec2::new(
-                                                101. / map_builder.size().x,
-                                                101. / map_builder.size().y,
+                                                102. / map_builder.size().x,
+                                                102. / map_builder.size().y,
                                             )
                                             .into(),
                                             color: Color::rgba_u8(

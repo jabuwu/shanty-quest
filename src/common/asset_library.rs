@@ -195,6 +195,8 @@ pub struct AssetLibrary {
     pub sprite_map_icon_quest: Handle<Image>,
     #[asset("sprites/Map_Icon_Town.png")]
     pub sprite_map_icon_town: Handle<Image>,
+    #[asset("sprites/Map_CompassRose.png")]
+    pub sprite_map_compass: Handle<Image>,
 
     /***********
      * Attacks *
