@@ -96,8 +96,7 @@ fn forward_cannons_fire(
                         auto_despawn: true,
                         flags: forward_cannons.hurt_flags,
                         knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.0075),
-                        //damage: 2.,
-                        damage: 10.,
+                        damage: 2.,
                     })
                     .insert(YDepth::default())
                     .insert(ForwardCannonBall { velocity })
