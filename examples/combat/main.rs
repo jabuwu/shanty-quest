@@ -151,23 +151,23 @@ fn debug(
             input.press(KeyCode::Key9);
         }
         local.stress_pressed = !local.stress_pressed;
-        if rand::random::<f32>() < 0.1 {
-            for _ in 0..10 {
-                commands
-                    .spawn_bundle(Transform2Bundle {
-                        ..Default::default()
-                    })
-                    .insert(Hurtbox {
-                        shape: CollisionShape::Rect {
-                            size: Vec2::new(9999., 9999.),
-                        },
-                        for_entity: None,
-                        auto_despawn: true,
-                        flags: std::u32::MAX,
-                        knockback_type: HurtboxKnockbackType::None,
-                        damage: 999.,
-                    });
-            }
+        for _ in 0..100 {
+            commands
+                .spawn_bundle(Transform2Bundle {
+                    ..Default::default()
+                })
+                .insert(Hurtbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(9999999., 9999999.),
+                    },
+                    for_entity: None,
+                    auto_despawn: true,
+                    //flags: std::u32::MAX,
+                    flags: DAMAGE_FLAG_ENEMY,
+                    //flags: DAMAGE_FLAG_PLAYER,
+                    knockback_type: HurtboxKnockbackType::None,
+                    damage: 999.,
+                });
         }
     }
     if input.just_pressed(KeyCode::Key1) {
@@ -270,6 +270,6 @@ fn debug(
         ev_davy_spawn.send(DavySpawnEvent);
     }
     if input.just_pressed(KeyCode::F5) {
-        local.stress_test = true;
+        local.stress_test = !local.stress_test;
     }
 }

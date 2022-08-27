@@ -8,7 +8,7 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<PlayerSpawnEvent>()
-            .add_system(player_spawn)
+            .add_system(player_spawn.before(BoatSystems::Spawn))
             .add_system(player_controls.before(BoatSystems::Update))
             .add_system(player_enter_town)
             .add_system(player_upgrade_attack)

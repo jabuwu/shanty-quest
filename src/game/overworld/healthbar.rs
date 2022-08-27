@@ -4,12 +4,17 @@ use bevy::prelude::*;
 
 const HEALTHBAR_BORDER: Vec2 = Vec2::new(8., 8.);
 
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+pub enum HealthbarSystems {
+    Spawn,
+}
+
 pub struct HealthbarPlugin;
 
 impl Plugin for HealthbarPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<HealthbarSpawnEvent>()
-            .add_system(healthbar_spawn)
+            .add_system(healthbar_spawn.label(HealthbarSystems::Spawn))
             .add_system(healthbar_update);
     }
 }

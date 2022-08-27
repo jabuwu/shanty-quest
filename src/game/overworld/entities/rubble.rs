@@ -7,7 +7,7 @@ pub struct RubblePlugin;
 impl Plugin for RubblePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<RubbleSpawnEvent>()
-            .add_system(rubble_spawn)
+            .add_system(rubble_spawn.before(HealthbarSystems::Spawn))
             .add_system(rubble_world_spawn);
     }
 }

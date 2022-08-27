@@ -7,6 +7,7 @@ const RING_SPAWN_INTEVAL: f32 = 0.15;
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
 pub enum BoatSystems {
+    Spawn,
     Update,
 }
 
@@ -15,7 +16,7 @@ pub struct BoatPlugin;
 impl Plugin for BoatPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<BoatSpawnEvent>()
-            .add_system(boat_spawn)
+            .add_system(boat_spawn.before(HealthbarSystems::Spawn))
             .add_system(
                 boat_update
                     .label(BoatSystems::Update)
@@ -238,7 +239,6 @@ fn boat_update(
             if boat.ring_timer <= 0.0 {
                 boat.ring_timer = RING_SPAWN_INTEVAL;
                 ev_water_ring_spawn.send(WaterRingSpawnEvent {
-                    entity: None,
                     position: global_transform.translation().truncate(),
                     scale: transform.scale,
                     angle: Vec2::X.angle_between(boat.facing.to_vec()),

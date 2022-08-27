@@ -7,10 +7,7 @@ pub struct ShockwavePlugin;
 
 impl Plugin for ShockwavePlugin {
     fn build(&self, app: &mut App) {
-        app.add_component_child::<Shockwave, ShockwaveSound>()
-            .add_system(shockwave_fire)
-            .add_system(shockwave_update)
-            .add_system(shockwave_sound);
+        app.add_system(shockwave_fire).add_system(shockwave_update);
     }
 }
 
@@ -27,39 +24,32 @@ struct ShockwaveWave {
 }
 
 #[derive(Component, Default)]
-struct ShockwaveSound;
-
-#[derive(Component, Default)]
 struct ShockwaveSprite;
 
-fn shockwave_sound(
-    mut commands: Commands,
-    mut ev_created: EventReader<ComponentChildCreatedEvent<ShockwaveSound>>,
-    asset_library: Res<AssetLibrary>,
-) {
-    for event in ev_created.iter() {
-        commands.entity(event.entity).insert(AudioPlusSource::new(
-            asset_library
-                .sound_effects
-                .sfx_overworld_attack_shockwave
-                .clone(),
-        ));
-    }
-}
-
 fn shockwave_fire(
-    mut query: Query<(&mut Shockwave, Entity, &Children)>,
-    mut sound_query: Query<&mut AudioPlusSource, With<ShockwaveSound>>,
+    mut query: Query<(&mut Shockwave, Entity, &GlobalTransform)>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (mut shockwave, entity, children) in query.iter_mut() {
+    for (mut shockwave, entity, global_transform) in query.iter_mut() {
         if shockwave.shoot {
-            for child in children.iter() {
-                if let Ok(mut sound) = sound_query.get_mut(*child) {
-                    sound.play();
-                }
-            }
+            commands
+                .spawn_bundle(Transform2Bundle {
+                    transform2: Transform2::from_translation(
+                        global_transform.translation().truncate(),
+                    ),
+                    ..Default::default()
+                })
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_shockwave
+                            .clone(),
+                    )
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 3. });
             let child_entity =
                 commands
                     .spawn_bundle(Transform2Bundle {

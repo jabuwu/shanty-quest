@@ -6,7 +6,6 @@ pub use super::{
     collision::{
         shape::CollisionShape, Collision, CollisionFilter, CollisionQuery, COLLISION_FLAG,
     },
-    component_child::{ComponentChild, ComponentChildCreatedEvent},
     cutscene::{
         AddAppCutscene, Cutscene, CutsceneBuilder, CutsceneContinueEvent, CutsceneSkipEvent,
         CutsceneStartEvent, Cutscenes,
@@ -28,7 +27,7 @@ pub use super::{
     transform2::{DepthLayer, Transform2, Transform2Bundle},
     world_locations::{WorldLocationRect, WorldLocations, WorldLocationsSpawnEvent},
     y_depth::YDepth,
-    CommonPlugin,
+    CommonPlugin, CommonSystems,
 };
 
 pub use global_state::{Persistent, StateTime};

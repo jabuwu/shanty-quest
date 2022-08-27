@@ -7,11 +7,9 @@ pub struct KrakenPlugin;
 
 impl Plugin for KrakenPlugin {
     fn build(&self, app: &mut App) {
-        app.add_component_child::<Kraken, KrakenSound>()
-            .add_system(kraken_fire)
+        app.add_system(kraken_fire)
             .add_system(tentacle_update)
-            .add_system(tentacle_animate)
-            .add_system(kraken_sound);
+            .add_system(tentacle_animate);
     }
 }
 
@@ -33,40 +31,30 @@ struct Tentacle {
     pub boss: bool,
 }
 
-#[derive(Component, Default)]
-struct KrakenSound;
-
-fn kraken_sound(
-    mut commands: Commands,
-    mut ev_created: EventReader<ComponentChildCreatedEvent<KrakenSound>>,
-    asset_library: Res<AssetLibrary>,
-) {
-    for event in ev_created.iter() {
-        commands
-            .entity(event.entity)
-            .insert_bundle(Transform2Bundle::default())
-            .insert(AudioPlusSource::new(
-                asset_library
-                    .sound_effects
-                    .sfx_overworld_attack_kraken
-                    .clone(),
-            ));
-    }
-}
-
 fn kraken_fire(
-    mut query: Query<(Entity, &mut Kraken, &GlobalTransform, &Children)>,
-    mut sound_query: Query<&mut AudioPlusSource, With<KrakenSound>>,
+    mut query: Query<(Entity, &mut Kraken, &GlobalTransform)>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (boat_entity, mut kraken, global_transform, children) in query.iter_mut() {
+    for (boat_entity, mut kraken, global_transform) in query.iter_mut() {
         if kraken.shoot {
-            for child in children.iter() {
-                if let Ok(mut sound) = sound_query.get_mut(*child) {
-                    sound.play();
-                }
-            }
+            commands
+                .spawn_bundle(Transform2Bundle {
+                    transform2: Transform2::from_translation(
+                        global_transform.translation().truncate(),
+                    ),
+                    ..Default::default()
+                })
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_kraken
+                            .clone(),
+                    )
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 3. });
             for i in 0..6 {
                 let close_tentacle = i == 0 && kraken.boss;
                 let (distance_min, distance_max) = if close_tentacle {

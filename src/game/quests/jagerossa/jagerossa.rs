@@ -9,7 +9,7 @@ pub struct JagerossaPlugin;
 impl Plugin for JagerossaPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<JagerossaSpawnEvent>()
-            .add_system(jagerossa_spawn)
+            .add_system(jagerossa_spawn.before(BoatSystems::Spawn))
             .add_system(jagerossa_move)
             .add_system(jagerossa_invincibility)
             .add_system(jagerossa_death_check);

@@ -7,11 +7,9 @@ pub struct BombsPlugin;
 
 impl Plugin for BombsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_component_child::<Bombs, BombsSound>()
-            .add_system(bombs_fire)
+        app.add_system(bombs_fire)
             .add_system(bomb_move)
-            .add_system(bomb_animate)
-            .add_system(bombs_sound);
+            .add_system(bomb_animate);
     }
 }
 
@@ -32,40 +30,30 @@ struct Bomb {
     pub boss: bool,
 }
 
-#[derive(Component, Default)]
-struct BombsSound;
-
-fn bombs_sound(
-    mut commands: Commands,
-    mut ev_created: EventReader<ComponentChildCreatedEvent<BombsSound>>,
-    asset_library: Res<AssetLibrary>,
-) {
-    for event in ev_created.iter() {
-        commands
-            .entity(event.entity)
-            .insert_bundle(Transform2Bundle::default())
-            .insert(AudioPlusSource::new(
-                asset_library
-                    .sound_effects
-                    .sfx_overworld_attack_bombs
-                    .clone(),
-            ));
-    }
-}
-
 fn bombs_fire(
-    mut query: Query<(Entity, &mut Bombs, &Boat, &GlobalTransform, &Children)>,
-    mut sound_query: Query<&mut AudioPlusSource, With<BombsSound>>,
+    mut query: Query<(Entity, &mut Bombs, &Boat, &GlobalTransform)>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (boat_entity, mut bombs, boat, global_transform, children) in query.iter_mut() {
+    for (boat_entity, mut bombs, boat, global_transform) in query.iter_mut() {
         if bombs.shoot {
-            for child in children.iter() {
-                if let Ok(mut sound) = sound_query.get_mut(*child) {
-                    sound.play();
-                }
-            }
+            commands
+                .spawn_bundle(Transform2Bundle {
+                    transform2: Transform2::from_translation(
+                        global_transform.translation().truncate(),
+                    ),
+                    ..Default::default()
+                })
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_bombs
+                            .clone(),
+                    )
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 3. });
             let amt = if bombs.boss { 3 } else { 1 };
             for _ in 0..amt {
                 let throw_direction =

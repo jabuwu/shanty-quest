@@ -88,7 +88,11 @@ impl Plugin for EnemySpawnsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<EnemySpawnsState>()
             .add_event::<DespawnSpawnedEntitiesEvent>()
-            .add_system(enemy_spawns)
+            .add_system(
+                enemy_spawns
+                    .before(OctopusSystems::Spawn)
+                    .before(TurtleSystems::Spawn),
+            )
             .add_system(enemy_spawns_despawn);
     }
 }

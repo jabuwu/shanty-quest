@@ -7,10 +7,8 @@ pub struct ForwardCannonsPlugin;
 
 impl Plugin for ForwardCannonsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_component_child::<ForwardCannons, ForwardCannonsSound>()
-            .add_system(forward_cannons_fire)
-            .add_system(forward_cannon_ball_move)
-            .add_system(forward_cannons_sound);
+        app.add_system(forward_cannons_fire)
+            .add_system(forward_cannon_ball_move);
     }
 }
 
@@ -25,46 +23,30 @@ struct ForwardCannonBall {
     pub velocity: Vec2,
 }
 
-#[derive(Component, Default)]
-struct ForwardCannonsSound;
-
-fn forward_cannons_sound(
-    mut commands: Commands,
-    mut ev_created: EventReader<ComponentChildCreatedEvent<ForwardCannonsSound>>,
-    asset_library: Res<AssetLibrary>,
-) {
-    for event in ev_created.iter() {
-        commands
-            .entity(event.entity)
-            .insert_bundle(Transform2Bundle::default())
-            .insert(AudioPlusSource::new(
-                asset_library
-                    .sound_effects
-                    .sfx_overworld_attack_forward_cannons
-                    .clone(),
-            ));
-    }
-}
-
 fn forward_cannons_fire(
-    mut query: Query<(
-        Entity,
-        &mut ForwardCannons,
-        &Boat,
-        &GlobalTransform,
-        &Children,
-    )>,
-    mut sound_query: Query<&mut AudioPlusSource, With<ForwardCannonsSound>>,
+    mut query: Query<(Entity, &mut ForwardCannons, &Boat, &GlobalTransform)>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (boat_entity, mut forward_cannons, boat, global_transform, children) in query.iter_mut() {
+    for (boat_entity, mut forward_cannons, boat, global_transform) in query.iter_mut() {
         if forward_cannons.shoot {
-            for child in children.iter() {
-                if let Ok(mut sound) = sound_query.get_mut(*child) {
-                    sound.play();
-                }
-            }
+            commands
+                .spawn_bundle(Transform2Bundle {
+                    transform2: Transform2::from_translation(
+                        global_transform.translation().truncate(),
+                    ),
+                    ..Default::default()
+                })
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_forward_cannons
+                            .clone(),
+                    )
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 3. });
             let forward = Vec2::from_angle(boat.direction);
             let position = global_transform.translation().truncate() + forward * 80.;
             let velocity = forward * 1200.;

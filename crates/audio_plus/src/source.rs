@@ -157,7 +157,8 @@ pub(crate) fn update_audio_sources(
                 if voice.volume_fade == 0. {
                     voice.reset()
                 } else {
-                    voice.should_assign = voice.state != AudioPlusVoiceState::Stopped;
+                    voice.should_assign =
+                        voice.state != AudioPlusVoiceState::Stopped && volume > 0.;
                     voice.volume_multiplier = volume;
                     voice.panning = panning;
                 }

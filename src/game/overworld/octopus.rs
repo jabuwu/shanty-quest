@@ -5,12 +5,21 @@ use bevy::prelude::*;
 const OCTOPUS_COLLISION_SIZE: Vec2 = Vec2::new(60., 60.);
 const OCTOPUS_HURTBOX_SIZE: Vec2 = Vec2::new(80., 80.);
 
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+pub enum OctopusSystems {
+    Spawn,
+}
+
 pub struct OctopusPlugin;
 
 impl Plugin for OctopusPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<OctopusSpawnEvent>()
-            .add_system(octopus_spawn)
+            .add_system(
+                octopus_spawn
+                    .label(OctopusSystems::Spawn)
+                    .before(HealthbarSystems::Spawn),
+            )
             .add_system(octopus_move)
             .add_system(octopus_animate);
     }

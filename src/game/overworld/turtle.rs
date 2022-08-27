@@ -5,12 +5,21 @@ use bevy::prelude::*;
 const TURTLE_COLLISION_SIZE: Vec2 = Vec2::new(60., 60.);
 const TURTLE_HURTBOX_SIZE: Vec2 = Vec2::new(80., 80.);
 
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+pub enum TurtleSystems {
+    Spawn,
+}
+
 pub struct TurtlePlugin;
 
 impl Plugin for TurtlePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<TurtleSpawnEvent>()
-            .add_system(turtle_spawn)
+            .add_system(
+                turtle_spawn
+                    .label(TurtleSystems::Spawn)
+                    .before(HealthbarSystems::Spawn),
+            )
             .add_system(turtle_move)
             .add_system(turtle_animate);
     }

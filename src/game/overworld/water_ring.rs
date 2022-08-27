@@ -27,7 +27,6 @@ impl Plugin for WaterRingPlugin {
 
 #[derive(Clone, Copy)]
 pub struct WaterRingSpawnEvent {
-    pub entity: Option<Entity>,
     pub position: Vec2,
     pub scale: Vec2,
     pub angle: f32,
@@ -53,12 +52,8 @@ fn water_ring_spawn(
             Facing::East => water_ring_settings.spawn_offset,
             _ => Vec2::ZERO,
         };
-        let mut entity = if let Some(entity) = event.entity {
-            commands.entity(entity)
-        } else {
-            commands.spawn()
-        };
-        entity
+        commands
+            .spawn()
             .insert_bundle(SpriteBundle {
                 texture: asset_library.sprite_water_ring_vfx.clone(),
                 ..Default::default()
