@@ -33,7 +33,7 @@ impl Default for EnemySpawnsState {
             medium_level: EnemySpawnLevel {
                 spawn_chances: vec![
                     (0.05, EnemySpawn::Octopus(OctopusLevel::Hard)),
-                    (0.1, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.05, EnemySpawn::Octopus(OctopusLevel::Medium)),
                     (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
@@ -43,7 +43,7 @@ impl Default for EnemySpawnsState {
             hard_level: EnemySpawnLevel {
                 spawn_chances: vec![
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Hard)),
-                    (0.1, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.05, EnemySpawn::Octopus(OctopusLevel::Medium)),
                     (0.05, EnemySpawn::Turtle(TurtleLevel::Hard)),
                     (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
@@ -54,7 +54,7 @@ impl Default for EnemySpawnsState {
             midnight_level: EnemySpawnLevel {
                 spawn_chances: vec![
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Hard)),
-                    (0.3, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.1, EnemySpawn::Octopus(OctopusLevel::Medium)),
                     (0.05, EnemySpawn::Turtle(TurtleLevel::Hard)),
                     (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),

@@ -26,6 +26,7 @@ pub struct Bombs {
 struct Bomb {
     pub velocity: Vec2,
     pub life_time: f32,
+    pub life_time_max: f32,
     pub parent: Entity,
     pub hurt_flags: u32,
     pub boss: bool,
@@ -91,6 +92,7 @@ fn bombs_fire(
                     .insert(Bomb {
                         velocity,
                         life_time: 1.75,
+                        life_time_max: 1.75,
                         parent: boat_entity,
                         hurt_flags: bombs.hurt_flags,
                         boss: bombs.boss,
@@ -148,8 +150,12 @@ fn bomb_move(
 fn bomb_animate(mut query: Query<(&mut TextureAtlasSprite, &Bomb)>) {
     for (mut sprite, bomb) in query.iter_mut() {
         let time = (bomb.life_time * 10.) % 1.;
-        let flash_mod = ((bomb.life_time * 4.) as i32).max(2);
-        let flash = ((bomb.life_time * 8.5) as i32) % flash_mod == 0;
+        let flash = if bomb.life_time < bomb.life_time_max * 0.4 {
+            let flash_mod = ((bomb.life_time * 4.) as i32).max(2);
+            ((bomb.life_time * 8.5) as i32) % flash_mod == 0
+        } else {
+            false
+        };
         if time > 0.5 {
             sprite.index = if flash { 3 } else { 1 };
         } else {
