@@ -31,8 +31,6 @@ pub struct SoundEffects {
     pub sfx_cutscene_outro1: AudioPlusSoundEffect,
     pub sfx_cutscene_outro2: AudioPlusSoundEffect,
     pub sfx_cutscene_outro3: AudioPlusSoundEffect,
-    pub sfx_cutscene_outro4: AudioPlusSoundEffect,
-    pub sfx_cutscene_outro5: AudioPlusSoundEffect,
 
     // overworld
     pub sfx_overworld_ambient: AudioPlusSoundEffect,
@@ -176,18 +174,6 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_cutscene_outro3: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.cutscene_voice_outro3.clone()],
-            volume: 0.7,
-            fade_out: 0.5,
-            ..Default::default()
-        },
-        sfx_cutscene_outro4: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.cutscene_voice_outro4.clone()],
-            volume: 0.7,
-            fade_out: 0.5,
-            ..Default::default()
-        },
-        sfx_cutscene_outro5: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.cutscene_voice_outro5.clone()],
             volume: 0.7,
             fade_out: 0.5,
             ..Default::default()

@@ -25,9 +25,11 @@ pub struct OutroCutscene;
 
 impl Cutscene for OutroCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_timed_step(step1, 11.);
+        cutscene.add_timed_step(step1, 8.5);
         cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step2, 9.5);
+        cutscene.add_timed_step(step2, 5.5);
+        cutscene.add_timed_step(reset, 0.5);
+        cutscene.add_timed_step(step3, 7.5);
         cutscene.add_timed_step(end, 1.0);
         cutscene.add_quick_step(cleanup);
     }
@@ -137,7 +139,7 @@ fn step1(
         screen_fade.fade_in(0.5);
     }
     if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value = "Outro cutscene goes here".to_owned();
+        text.sections[0].value = "And there ya go, laddie! That is when the sea trebled! When a Pirate Lord combined all the magical instruments and became a Pirate King!".to_owned();
     }
     if !cutscenes.skipping() {
         commands
@@ -173,7 +175,9 @@ fn step2(
         screen_fade.fade_in(0.5);
     }
     if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value = "Yadda yadda".to_owned();
+        text.sections[0].value =
+            "Now he be raiding the coast with the most horrible noise known to mankind..."
+                .to_owned();
     }
     if !cutscenes.skipping() {
         commands
@@ -192,6 +196,43 @@ fn step2(
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro2.clone())
+                    .as_playing(),
+            );
+    }
+}
+
+fn step3(
+    mut query: Query<&mut Text, With<CutsceneText>>,
+    mut commands: Commands,
+    mut screen_fade: ResMut<ScreenFade>,
+    state: Res<OutroCutsceneState>,
+    asset_library: Res<AssetLibrary>,
+    cutscenes: Res<Cutscenes>,
+) {
+    if !state.proceed {
+        screen_fade.fade_in(0.5);
+    }
+    if let Ok(mut text) = query.get_single_mut() {
+        text.sections[0].value =
+            "But that is another tale. Buy Ol' Nipper here another jug o' rum and I'll yapper until the sunrise! Har-har!".to_owned();
+    }
+    if !cutscenes.skipping() {
+        commands
+            .spawn_bundle(SpriteBundle {
+                texture: asset_library.cutscene_image_outro3.clone(),
+                ..Default::default()
+            })
+            .insert(
+                Transform2::from_xy(-50., -20.)
+                    .with_scale(Vec2::ONE * 5.5)
+                    .with_depth((DepthLayer::Entity, 0.3))
+                    .without_pixel_perfect(),
+            )
+            .insert(CutsceneImage {
+                velocity: Vec2::new(5., 5.),
+            })
+            .insert(
+                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro3.clone())
                     .as_playing(),
             );
     }
