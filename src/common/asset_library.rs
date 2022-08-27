@@ -29,6 +29,8 @@ pub struct AssetLibrary {
     pub sprite_dialogue_bg: Handle<Image>,
     #[asset("sprites/portrait_a.png")]
     pub sprite_dialogue_portrait_jagerossa: Handle<Image>,
+    #[asset("sprites/portrait_elvis.png")]
+    pub sprite_dialogue_portrait_elvis: Handle<Image>,
     #[asset("sprites/portrait_bowie.png")]
     pub sprite_dialogue_portrait_bowie: Handle<Image>,
     #[asset("audio/sfx/dialogue_voice_generic_01.ogg")]
