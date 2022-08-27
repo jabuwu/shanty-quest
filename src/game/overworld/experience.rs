@@ -27,16 +27,20 @@ pub struct Experience {
     infinite_distance: bool,
 }
 
-pub fn experience_spawn(mut ev_spawn: EventReader<ExperienceSpawnEvent>, mut commands: Commands) {
+pub fn experience_spawn(
+    mut ev_spawn: EventReader<ExperienceSpawnEvent>,
+    mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
+) {
     for event in ev_spawn.iter() {
         for _ in 0..event.count {
             commands
                 .spawn_bundle(SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(10., 10.).into(),
-                        color: Color::GREEN,
                         ..Default::default()
                     },
+                    texture: asset_library.sprite_exp_particle.clone(),
                     ..Default::default()
                 })
                 .insert(
