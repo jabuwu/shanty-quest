@@ -75,6 +75,7 @@ pub struct Plank2Cutscene {
 
 impl Cutscene for Plank2Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
+        cutscene.add_timed_step(|| {}, 2.5);
         cutscene.add_dialogue_step(plank2_init1);
         cutscene.add_timed_step(plank2_fade_out, 0.5);
         cutscene.add_quick_step(plank2_cleanup);

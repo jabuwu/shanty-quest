@@ -64,11 +64,11 @@ impl TurtleLevel {
             Self::Hard => TurtleInfo {
                 atlas: asset_library.sprite_turtle_hard_atlas.clone(),
                 scale: 1.5,
-                health: 7.,
+                health: 10.,
                 speed: 100.,
                 knockback_resistence: 1.0,
-                experience: 1.,
-                experience_count: 15,
+                experience: 3.,
+                experience_count: 5,
             },
         }
     }

@@ -36,7 +36,7 @@ pub fn init(mut commands: Commands) {
         })
         .insert(Transform2::from_xy(0., 0.))
         .insert(Red)
-        .insert(YDepth);
+        .insert(YDepth::default());
     commands
         .spawn_bundle(SpriteBundle {
             sprite: Sprite {
@@ -48,7 +48,7 @@ pub fn init(mut commands: Commands) {
         })
         .insert(Transform2::from_xy(0., 0.))
         .insert(Blue)
-        .insert(YDepth);
+        .insert(YDepth::default());
 }
 
 pub fn move_red(

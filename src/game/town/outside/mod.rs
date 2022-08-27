@@ -211,6 +211,7 @@ fn outside_init(
     commands
         .spawn_bundle(SpriteBundle {
             texture: asset_library.sprite_town_tavern_notify.clone(),
+            visibility: Visibility { is_visible: false },
             ..Default::default()
         })
         .insert(
@@ -227,6 +228,7 @@ fn outside_init(
     commands
         .spawn_bundle(SpriteBundle {
             texture: asset_library.sprite_town_mayor_notify.clone(),
+            visibility: Visibility { is_visible: false },
             ..Default::default()
         })
         .insert(
@@ -243,6 +245,7 @@ fn outside_init(
     commands
         .spawn_bundle(SpriteBundle {
             texture: asset_library.sprite_town_concert_hall_notify.clone(),
+            visibility: Visibility { is_visible: false },
             ..Default::default()
         })
         .insert(
@@ -389,8 +392,11 @@ fn outside_mayor_icon(
         visibility.is_visible = game_state.quests.must_talk_to_mayor();
     }
 }
-fn outside_concert_hall_icon(mut query: Query<&mut Visibility, With<ConcertHallIcon>>) {
+fn outside_concert_hall_icon(
+    mut query: Query<&mut Visibility, With<ConcertHallIcon>>,
+    game_state: Res<GameState>,
+) {
     for mut visibility in query.iter_mut() {
-        visibility.is_visible = false;
+        visibility.is_visible = game_state.skill_points > 0;
     }
 }

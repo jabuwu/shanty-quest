@@ -44,7 +44,9 @@ pub fn experience_spawn(
                     ..Default::default()
                 })
                 .insert(
-                    Transform2::from_translation(event.position).with_depth(DEPTH_LAYER_EXPERIENCE),
+                    Transform2::from_translation(event.position)
+                        .with_depth(DEPTH_LAYER_EXPERIENCE)
+                        .with_scale(Vec2::ONE * (1. + event.amount / 2.5)),
                 )
                 .insert(Experience {
                     amount: event.amount,

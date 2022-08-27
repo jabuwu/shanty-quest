@@ -12,8 +12,8 @@ const EXPERIENCE_UI_LEVEL_POSITION: Vec2 = Vec2::new(-477., -60.);
 const EXPERIENCE_UI_LEVEL_FONT_SIZE: f32 = 110.;
 
 const EXPERIENCE_UI_SKILLPOINT_POSITION: Vec2 = Vec2::new(-130., 430.);
-const EXPERIENCE_UI_SKILLPOINT_BG_SIZE: f32 = 1.2;
-const EXPERIENCE_UI_SKILLPOINT_TEXT_FONT_SIZE: f32 = 68.;
+const EXPERIENCE_UI_SKILLPOINT_BG_SIZE: f32 = 1.4;
+const EXPERIENCE_UI_SKILLPOINT_TEXT_FONT_SIZE: f32 = 72.;
 
 pub struct ExperienceUiPlugin;
 
@@ -142,7 +142,7 @@ fn experience_ui_spawn(
                                 text: Text::from_section(
                                     "",
                                     TextStyle {
-                                        font: asset_library.font_bold.clone(),
+                                        font: asset_library.font_default.clone(),
                                         font_size: EXPERIENCE_UI_SKILLPOINT_TEXT_FONT_SIZE,
                                         color: Color::WHITE,
                                     },

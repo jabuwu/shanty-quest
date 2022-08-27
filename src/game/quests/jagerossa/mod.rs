@@ -73,6 +73,7 @@ pub struct Jagerossa2Cutscene {
 
 impl Cutscene for Jagerossa2Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
+        cutscene.add_timed_step(|| {}, 2.5);
         cutscene.add_dialogue_step(jagerossa2_init1);
         cutscene.add_quick_step(jagerossa2_cleanup);
     }

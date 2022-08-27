@@ -67,8 +67,8 @@ impl OctopusLevel {
                 health: 5.,
                 speed: 150.,
                 knockback_resistence: 0.7,
-                experience: 1.,
-                experience_count: 10,
+                experience: 3.,
+                experience_count: 3,
             },
         }
     }

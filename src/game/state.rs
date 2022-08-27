@@ -38,7 +38,7 @@ impl Default for GameState {
             health: 20.,
             health_max: 20.,
             experience: 0.,
-            level: 1,
+            level: 0,
             skill_points: 0,
             checkpoint_notification: false,
             checkpoint: None,
@@ -74,7 +74,7 @@ impl GameState {
 
     pub fn add_experience(&mut self, amt: f32) -> bool {
         self.experience += amt;
-        if self.experience > self.experience_max() {
+        if self.experience >= self.experience_max() {
             self.experience -= self.experience_max();
             self.level += 1;
             true
@@ -84,6 +84,6 @@ impl GameState {
     }
 
     pub fn experience_max(&self) -> f32 {
-        100.
+        25. + self.level as f32 * 25.
     }
 }

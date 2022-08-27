@@ -75,6 +75,7 @@ pub struct Ringo2Cutscene {
 
 impl Cutscene for Ringo2Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
+        cutscene.add_timed_step(|| {}, 2.5);
         cutscene.add_dialogue_step(ringo2_init1);
         cutscene.add_timed_step(ringo2_fade_out, 0.5);
         cutscene.add_quick_step(ringo2_cleanup);

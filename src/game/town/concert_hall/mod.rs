@@ -32,7 +32,9 @@ fn concert_hall_init(
     mut ev_band_selection_spawn: EventWriter<BandSelectionSpawnEvent>,
     mut ev_ocean_spawn: EventWriter<OceanSpawnEvent>,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
+    mut game_state: ResMut<GameState>,
 ) {
+    game_state.skill_points = 0;
     commands.spawn_bundle(Camera2dBundle::default());
     ev_band_selection_spawn.send_default();
     commands
