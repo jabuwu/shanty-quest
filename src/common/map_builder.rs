@@ -16,7 +16,7 @@ pub struct MapBuilder {
 
 impl MapBuilder {
     pub fn offset(&self) -> Vec2 {
-        Vec2::new(100., -100.)
+        Vec2::new(100., 200.)
     }
 
     pub fn size(&self) -> Vec2 {

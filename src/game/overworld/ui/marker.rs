@@ -36,6 +36,7 @@ fn marker_spawn(
                 parent
                     .spawn_bundle(SpriteBundle {
                         sprite: Sprite {
+                            color: Color::rgba(1., 1., 1., 0.),
                             ..Default::default()
                         },
                         texture: asset_library.sprite_world_quest_marker_icon.clone(),
@@ -52,6 +53,7 @@ fn marker_spawn(
                         parent
                             .spawn_bundle(SpriteBundle {
                                 sprite: Sprite {
+                                    color: Color::rgba(1., 1., 1., 0.),
                                     ..Default::default()
                                 },
                                 texture: asset_library.sprite_world_quest_marker_arrow.clone(),

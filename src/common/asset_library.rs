@@ -187,6 +187,15 @@ pub struct AssetLibrary {
     #[asset("sprites/HUD_ObjectiveHeader.png")]
     pub sprite_objective_bg: Handle<Image>,
 
+    #[asset("sprites/Map_BG.png")]
+    pub sprite_map_bg: Handle<Image>,
+    #[asset("sprites/Map_Icon_Boat.png")]
+    pub sprite_map_icon_boat: Handle<Image>,
+    #[asset("sprites/Map_Icon_Quest.png")]
+    pub sprite_map_icon_quest: Handle<Image>,
+    #[asset("sprites/Map_Icon_Town.png")]
+    pub sprite_map_icon_town: Handle<Image>,
+
     /***********
      * Attacks *
      ***********/
