@@ -125,7 +125,6 @@ fn octopus_spawn(
                 stop_chance: TimedChance::new(),
                 stop_time: 0.,
             })
-            .insert(Label("Octopus".to_owned()))
             .insert(YDepth::default())
             .insert(Health::new(health))
             .insert(Hitbox {

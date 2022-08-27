@@ -84,7 +84,6 @@ fn ringo_spawn(
                 dash_chance: TimedChance::new(),
                 charge_time: 0.,
             })
-            .insert(Label("Ringo".to_owned()))
             .insert(AutoDamage {
                 despawn: true,
                 ..Default::default()

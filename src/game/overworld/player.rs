@@ -42,7 +42,6 @@ fn player_spawn(
                 invincibility: 0.,
                 dead: false,
             })
-            .insert(Label("Player".to_owned()))
             .insert(AudioPlusListener)
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {

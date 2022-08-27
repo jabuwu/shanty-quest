@@ -51,7 +51,6 @@ fn town_spawn(
                 block_timer: 0.,
             })
             .insert(YDepth::default())
-            .insert(Label(format!("Town: {}", event.town.name)))
             .with_children(|parent| {
                 parent
                     .spawn_bundle(Text2dBundle {

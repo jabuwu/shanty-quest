@@ -61,8 +61,7 @@ fn ldtk_spawn(mut ev_spawn: EventReader<LdtkSpawnEvent>, mut commands: Commands)
             .insert(Ldtk {
                 asset: event.asset.clone(),
                 state: LdtkState::Unloaded,
-            })
-            .insert(Label("Ldtk Map".to_owned()));
+            });
     }
 }
 
@@ -106,7 +105,6 @@ fn ldtk_load(
                             ..Default::default()
                         })
                         .insert_bundle(VisibilityBundle::default())
-                        .insert(Label(level.identifier.clone()))
                         .id();
                     commands.entity(map_entity).push_children(&[level_entity]);
                     for (idx, layer) in level
@@ -129,7 +127,6 @@ fn ldtk_load(
                                 ..Default::default()
                             })
                             .insert_bundle(VisibilityBundle::default())
-                            .insert(Label(layer.identifier.clone()))
                             .id();
                         commands.entity(level_entity).push_children(&[layer_entity]);
                         match layer.layer_instance_type.as_str() {

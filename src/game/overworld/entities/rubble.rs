@@ -39,7 +39,6 @@ fn rubble_spawn(
                 Transform2::from_translation(event.position).with_depth((DepthLayer::Entity, 0.)),
             )
             .insert(Rubble)
-            .insert(Label("Rubble".to_owned()))
             .insert(YDepth::default())
             .insert(Health::new(3.))
             .insert(Hitbox {

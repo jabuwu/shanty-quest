@@ -206,6 +206,11 @@ pub struct AssetLibrary {
     pub sprite_controls_dash: Handle<Image>,
     #[asset("sprites/HUD_Open_Map.png")]
     pub sprite_controls_map: Handle<Image>,
+    #[asset("sprites/HUD_Jam_Ability.png")]
+    pub sprite_controls_jam: Handle<Image>,
+    pub sprite_controls_jam_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/HUD_Jam_Ability_Keybind.png")]
+    pub sprite_controls_jam_key: Handle<Image>,
 
     #[asset("sprites/HUD_Exp_Bar_BG.png")]
     pub sprite_experience_bar_bg: Handle<Image>,
@@ -366,6 +371,14 @@ impl AssetLibrary {
             1,
         );
         self.sprite_health_bottle_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_controls_jam.clone(),
+            Vec2::new(547., 547.),
+            5,
+            1,
+        );
+        self.sprite_controls_jam_atlas = texture_atlas_assets.add(texture_atlas);
     }
 
     pub fn create_sound_effects(&mut self) {

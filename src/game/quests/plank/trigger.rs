@@ -31,7 +31,6 @@ fn plank_trigger_world_spawn(
                         .with_depth((DepthLayer::Entity, 0.)),
                 )
                 .insert(Trigger::new(CollisionShape::Rect { size: trigger.size }))
-                .insert(Label("Plank Trigger".to_owned()))
                 .insert(PlankTrigger);
         }
     }

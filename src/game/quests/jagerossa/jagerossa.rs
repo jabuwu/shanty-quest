@@ -69,7 +69,6 @@ fn jagerossa_spawn(
                 backoff_dir: Vec2::new(1., -1.),
                 backoff_chance: TimedChance::new(),
             })
-            .insert(Label("Jagerossa".to_owned()))
             .insert(AutoDamage {
                 despawn: true,
                 ..Default::default()

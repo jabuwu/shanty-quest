@@ -64,8 +64,7 @@ fn band_selection_spawn(
                     .insert(BandSelectionSlot {
                         index: 0,
                         shape: slot_shape.clone(),
-                    })
-                    .insert(Label("Band Slot 1".to_owned()));
+                    });
                 parent
                     .spawn_bundle(SpriteBundle {
                         texture: game_state.band_members[1]
@@ -78,22 +77,19 @@ fn band_selection_spawn(
                     .insert(BandSelectionSlot {
                         index: 1,
                         shape: slot_shape.clone(),
-                    })
-                    .insert(Label("Band Slot 2".to_owned()));
+                    });
                 for slot in 0..BandMember::len() {
                     let x = -276. + 138. * slot as f32;
                     let member = BandMember::from_index(slot);
                     let transform2 =
                         Transform2::from_xy(x, -115.).with_depth(DEPTH_LAYER_BAND_SELECTION_SLOT);
-                    let label = Label(format!("Band Draggable ({:?})", member));
                     if game_state.member_in_band(member) {
                         parent
                             .spawn_bundle(SpriteBundle {
                                 texture: member.selection_inactive_image(asset_library.as_ref()),
                                 ..Default::default()
                             })
-                            .insert(transform2)
-                            .insert(label);
+                            .insert(transform2);
                     } else if slot < game_state.band_unlocked_count {
                         parent
                             .spawn_bundle(SpriteBundle {
@@ -101,7 +97,6 @@ fn band_selection_spawn(
                                 ..Default::default()
                             })
                             .insert(transform2)
-                            .insert(label)
                             .insert(BandSelectionDraggable {
                                 member,
                                 shape: slot_shape.clone(),
@@ -112,8 +107,7 @@ fn band_selection_spawn(
                                 texture: asset_library.sprite_band_selection_slot_locked.clone(),
                                 ..Default::default()
                             })
-                            .insert(transform2)
-                            .insert(label);
+                            .insert(transform2);
                     }
                 }
             });

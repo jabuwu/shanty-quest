@@ -70,7 +70,6 @@ fn davy_spawn(
                 angle: 0.,
                 adjust_angle_chance: TimedChance::new(),
             })
-            .insert(Label("Davy".to_owned()))
             .insert(AutoDamage {
                 despawn: true,
                 ..Default::default()

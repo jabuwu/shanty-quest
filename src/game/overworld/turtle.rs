@@ -119,7 +119,6 @@ fn turtle_spawn(
                 relative_angle: rand::random::<f32>() * std::f32::consts::TAU,
                 sprite_angle: 0.,
             })
-            .insert(Label("Turtle".to_owned()))
             .insert(YDepth::default())
             .insert(Health::new(info.health))
             .insert(Hitbox {

@@ -39,7 +39,6 @@ fn concert_hall_init(
         .spawn_bundle(VisibilityBundle::default())
         .insert_bundle(TransformBundle::default())
         .insert(Transform2::from_translation(PREVIEW_POSITION).with_scale(Vec2::ONE * 0.5))
-        .insert(Label("Preview".to_owned()))
         .insert(BoatPreviewParent)
         .with_children(|parent| {
             let boat_entity = parent.spawn().insert(BoatPreview).id();

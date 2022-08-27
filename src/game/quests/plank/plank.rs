@@ -78,7 +78,6 @@ fn plank_spawn(
                 backoff_chance: TimedChance::new(),
                 backoff_stop: false,
             })
-            .insert(Label("Plank".to_owned()))
             .insert(AutoDamage {
                 despawn: true,
                 ..Default::default()

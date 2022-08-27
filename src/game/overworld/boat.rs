@@ -78,7 +78,6 @@ fn boat_spawn(
             )
             .insert(BoatSprite)
             .insert(YDepth::default())
-            .insert(Label("Boat Sprite".into()))
             .id();
         let mut boat_entity = if let Some(entity) = event.entity {
             commands.entity(entity)

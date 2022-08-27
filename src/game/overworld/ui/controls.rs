@@ -11,6 +11,7 @@ impl Plugin for ControlsUiPlugin {
         app.add_event::<ControlsUiSpawnEvent>()
             .add_system(controls_ui_spawn)
             .add_system(controls_ui_update_dash)
+            .add_system(controls_ui_update_jam)
             .add_system(controls_ui_update_map);
     }
 }
@@ -20,6 +21,9 @@ pub struct ControlsUiSpawnEvent;
 
 #[derive(Component)]
 pub struct ControlsUiDash;
+
+#[derive(Component)]
+pub struct ControlsUiJam;
 
 #[derive(Component)]
 pub struct ControlsUiMap;
@@ -56,13 +60,35 @@ fn controls_ui_spawn(
                             )
                             .insert(ControlsUiDash);
                         parent
+                            .spawn_bundle(SpriteSheetBundle {
+                                texture_atlas: asset_library.sprite_controls_jam_atlas.clone(),
+                                ..Default::default()
+                            })
+                            .insert(
+                                Transform2::from_xy(240., 0.)
+                                    .with_scale(Vec2::ONE * 0.5)
+                                    .with_depth(DEPTH_LAYER_UI_CONTROLS),
+                            )
+                            .insert(ControlsUiJam)
+                            .with_children(|parent| {
+                                parent
+                                    .spawn_bundle(SpriteBundle {
+                                        texture: asset_library.sprite_controls_jam_key.clone(),
+                                        ..Default::default()
+                                    })
+                                    .insert(
+                                        Transform2::from_xy(-100., 145.)
+                                            .with_depth(DEPTH_LAYER_UI_CONTROLS_KEY),
+                                    );
+                            });
+                        parent
                             .spawn_bundle(SpriteBundle {
                                 texture: asset_library.sprite_controls_map.clone(),
                                 visibility: Visibility { is_visible: false },
                                 ..Default::default()
                             })
                             .insert(
-                                Transform2::from_xy(240., 0.)
+                                Transform2::from_xy(480., 0.)
                                     .with_scale(Vec2::ONE * 0.5)
                                     .with_depth(DEPTH_LAYER_UI_CONTROLS),
                             )
@@ -85,6 +111,20 @@ pub fn controls_ui_update_dash(
         sprite
             .color
             .set_a(if player_dash_cooldown { 0.5 } else { 1. });
+    }
+}
+
+pub fn controls_ui_update_jam(
+    mut query: Query<&mut TextureAtlasSprite, With<ControlsUiJam>>,
+    player_query: Query<&Boat, With<Player>>,
+) {
+    let player_shoot = if let Ok(boat) = player_query.get_single() {
+        boat.shoot
+    } else {
+        false
+    };
+    for mut sprite in query.iter_mut() {
+        sprite.color.set_a(if player_shoot { 0.5 } else { 1. });
     }
 }
 
