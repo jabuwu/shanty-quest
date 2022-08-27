@@ -1,3 +1,4 @@
+use crate::common::prelude::*;
 use bevy::prelude::*;
 
 pub const TOWN_NAMES: [&str; 15] = [
@@ -35,6 +36,18 @@ impl Default for TownData {
             name: "Dummy Town".to_owned(),
             position: Vec2::new(800., -350.),
             spawn_offset: Vec2::new(0., -200.),
+        }
+    }
+}
+
+impl TownData {
+    pub fn build(name: &str, world_locations: &WorldLocations) -> Self {
+        let town_name = town_safe_name(name);
+        let position = world_locations.get_single_position(&town_name);
+        Self {
+            name: String::from(name),
+            position,
+            spawn_offset: Vec2::new(0., -300.),
         }
     }
 }

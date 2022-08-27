@@ -132,7 +132,7 @@ fn turtle_spawn(
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {
-                    size: TURTLE_COLLISION_SIZE,
+                    size: TURTLE_COLLISION_SIZE * info.scale,
                 },
                 flags: COLLISION_FLAG,
             })

@@ -87,11 +87,7 @@ fn town_world_spawn(
                 ev_rubble_spawn.send(TownSpawnEvent {
                     position,
                     entity: None,
-                    town: TownData {
-                        name: String::from(*name),
-                        position: position,
-                        spawn_offset: Vec2::new(0., -300.),
-                    },
+                    town: TownData::build(name, world_locations.as_ref()),
                 });
             }
         }

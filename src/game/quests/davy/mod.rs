@@ -40,7 +40,7 @@ pub struct Davy1Cutscene {
 impl Cutscene for Davy1Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
         cutscene.add_dialogue_step(davy1_init1);
-        cutscene.add_dialogue_step(davy1_cleanup);
+        cutscene.add_quick_step(davy1_cleanup);
     }
 }
 
@@ -76,7 +76,8 @@ pub struct Davy2Cutscene {
 impl Cutscene for Davy2Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
         cutscene.add_dialogue_step(davy2_init1);
-        cutscene.add_dialogue_step(davy2_cleanup);
+        cutscene.add_timed_step(davy2_fade_out, 3.);
+        cutscene.add_quick_step(davy2_cleanup);
     }
 }
 
@@ -87,9 +88,18 @@ fn davy2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState>
     }
 }
 
-fn davy2_cleanup(mut game_state: ResMut<GameState>, mut overworld_camera: ResMut<OverworldCamera>) {
+fn davy2_fade_out(mut screen_fade: ResMut<ScreenFade>) {
+    screen_fade.fade_out(3.);
+}
+
+fn davy2_cleanup(
+    mut game_state: ResMut<GameState>,
+    mut overworld_camera: ResMut<OverworldCamera>,
+    mut app_state: ResMut<State<AppState>>,
+) {
     game_state.quests.next();
     overworld_camera.reset();
+    app_state.set(AppState::OutroCutscene).unwrap();
 }
 
 pub mod davy;

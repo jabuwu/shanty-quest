@@ -86,11 +86,12 @@ fn init(
 fn skip(
     mut cutscene_state: ResMut<IntroCutsceneState>,
     input: Res<Input<KeyCode>>,
+    mouse: Res<Input<MouseButton>>,
     mut screen_fade: ResMut<ScreenFade>,
     mut ev_cutscene_skip: EventWriter<CutsceneSkipEvent<IntroCutscene>>,
     mut query: Query<&mut AudioPlusSource>,
 ) {
-    if input.just_pressed(KeyCode::Space) {
+    if input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left) {
         if !cutscene_state.proceed {
             cutscene_state.proceed = true;
             screen_fade.fade_out(1.);

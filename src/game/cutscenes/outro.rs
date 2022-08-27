@@ -1,0 +1,207 @@
+use crate::common::prelude::*;
+use crate::game::prelude::*;
+use audio_plus::prelude::*;
+use bevy::prelude::*;
+
+#[derive(Default)]
+struct OutroCutsceneState {
+    proceed: bool,
+}
+
+pub struct OutroCutscenePlugin;
+
+impl Plugin for OutroCutscenePlugin {
+    fn build(&self, app: &mut App) {
+        app.init_resource::<OutroCutsceneState>()
+            .add_cutscene::<OutroCutscene>()
+            .add_system_set(SystemSet::on_enter(AppState::OutroCutscene).with_system(init))
+            .add_system_set(SystemSet::on_update(AppState::OutroCutscene).with_system(skip))
+            .add_system_set(SystemSet::on_update(AppState::OutroCutscene).with_system(image_move));
+    }
+}
+
+#[derive(Default, Debug, Clone)]
+pub struct OutroCutscene;
+
+impl Cutscene for OutroCutscene {
+    fn build(cutscene: &mut CutsceneBuilder) {
+        cutscene.add_timed_step(step1, 11.);
+        cutscene.add_timed_step(reset, 0.5);
+        cutscene.add_timed_step(step2, 9.5);
+        cutscene.add_timed_step(end, 1.0);
+        cutscene.add_quick_step(cleanup);
+    }
+}
+
+#[derive(Component)]
+struct CutsceneText;
+
+#[derive(Component)]
+struct CutsceneImage {
+    velocity: Vec2,
+}
+
+fn init(
+    mut cutscene_state: ResMut<OutroCutsceneState>,
+    mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
+    mut screen_fade: ResMut<ScreenFade>,
+    mut ev_cutscene_start: EventWriter<CutsceneStartEvent<OutroCutscene>>,
+) {
+    *cutscene_state = OutroCutsceneState::default();
+    screen_fade.fade_in(1.);
+
+    ev_cutscene_start.send_default();
+
+    commands.spawn_bundle(Camera2dBundle::default());
+    commands
+        .spawn_bundle(Text2dBundle {
+            text: Text::from_section(
+                "Outro cutscene!\n\nPress space to skip".to_owned(),
+                TextStyle {
+                    font: asset_library.font_default.clone(),
+                    font_size: 24.0,
+                    color: Color::WHITE,
+                },
+            )
+            .with_alignment(TextAlignment {
+                horizontal: HorizontalAlign::Center,
+                vertical: VerticalAlign::Center,
+            }),
+            ..Default::default()
+        })
+        .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 0.)))
+        .insert(CutsceneText);
+    commands.spawn().insert(
+        AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro_music.clone())
+            .as_looping(),
+    );
+}
+
+fn skip(
+    mut cutscene_state: ResMut<OutroCutsceneState>,
+    input: Res<Input<KeyCode>>,
+    mouse: Res<Input<MouseButton>>,
+    mut screen_fade: ResMut<ScreenFade>,
+    mut ev_cutscene_skip: EventWriter<CutsceneSkipEvent<OutroCutscene>>,
+    mut query: Query<&mut AudioPlusSource>,
+) {
+    if input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left) {
+        if !cutscene_state.proceed {
+            cutscene_state.proceed = true;
+            screen_fade.fade_out(1.);
+            for mut source in query.iter_mut() {
+                source.stop();
+            }
+        }
+    }
+    if screen_fade.faded_out() && cutscene_state.proceed {
+        ev_cutscene_skip.send_default();
+    }
+}
+
+fn image_move(mut query: Query<(&mut Transform2, &CutsceneImage)>, time: Res<Time>) {
+    for (mut transform, image) in query.iter_mut() {
+        transform.translation += image.velocity * time.delta_seconds();
+    }
+}
+
+fn reset(mut screen_fade: ResMut<ScreenFade>, state: Res<OutroCutsceneState>) {
+    if !state.proceed {
+        screen_fade.fade_out(0.5);
+    }
+}
+
+fn end(
+    mut screen_fade: ResMut<ScreenFade>,
+    state: Res<OutroCutsceneState>,
+    mut query: Query<&mut AudioPlusSource>,
+) {
+    if !state.proceed {
+        screen_fade.fade_out(1.0);
+    }
+    for mut source in query.iter_mut() {
+        source.stop();
+    }
+}
+
+fn step1(
+    mut query: Query<&mut Text, With<CutsceneText>>,
+    mut commands: Commands,
+    mut screen_fade: ResMut<ScreenFade>,
+    state: Res<OutroCutsceneState>,
+    asset_library: Res<AssetLibrary>,
+    cutscenes: Res<Cutscenes>,
+) {
+    if !state.proceed {
+        screen_fade.fade_in(0.5);
+    }
+    if let Ok(mut text) = query.get_single_mut() {
+        text.sections[0].value = "Outro cutscene goes here".to_owned();
+    }
+    if !cutscenes.skipping() {
+        commands
+            .spawn_bundle(SpriteBundle {
+                texture: asset_library.cutscene_image_outro1.clone(),
+                ..Default::default()
+            })
+            .insert(
+                Transform2::from_xy(-50., -20.)
+                    .with_scale(Vec2::ONE * 5.5)
+                    .with_depth((DepthLayer::Entity, 0.0))
+                    .without_pixel_perfect(),
+            )
+            .insert(CutsceneImage {
+                velocity: Vec2::new(5., 5.),
+            })
+            .insert(
+                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro1.clone())
+                    .as_playing(),
+            );
+    }
+}
+
+fn step2(
+    mut query: Query<&mut Text, With<CutsceneText>>,
+    mut commands: Commands,
+    mut screen_fade: ResMut<ScreenFade>,
+    state: Res<OutroCutsceneState>,
+    asset_library: Res<AssetLibrary>,
+    cutscenes: Res<Cutscenes>,
+) {
+    if !state.proceed {
+        screen_fade.fade_in(0.5);
+    }
+    if let Ok(mut text) = query.get_single_mut() {
+        text.sections[0].value = "Yadda yadda".to_owned();
+    }
+    if !cutscenes.skipping() {
+        commands
+            .spawn_bundle(SpriteBundle {
+                texture: asset_library.cutscene_image_outro2.clone(),
+                ..Default::default()
+            })
+            .insert(
+                Transform2::from_xy(-50., -20.)
+                    .with_scale(Vec2::ONE * 5.5)
+                    .with_depth((DepthLayer::Entity, 0.1))
+                    .without_pixel_perfect(),
+            )
+            .insert(CutsceneImage {
+                velocity: Vec2::new(5., 5.),
+            })
+            .insert(
+                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro2.clone())
+                    .as_playing(),
+            );
+    }
+}
+
+fn cleanup(
+    mut app_state: ResMut<State<AppState>>,
+    mut game_state: ResMut<GameState>,
+    world_locations: Res<WorldLocations>,
+) {
+    game_state.town = TownData::build("Republic of Roll", world_locations.as_ref());
+    app_state.set(AppState::TownOutside).unwrap();
+}

@@ -40,7 +40,7 @@ pub struct Ringo1Cutscene {
 impl Cutscene for Ringo1Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
         cutscene.add_dialogue_step(ringo1_init1);
-        cutscene.add_dialogue_step(ringo1_cleanup);
+        cutscene.add_quick_step(ringo1_cleanup);
     }
 }
 
@@ -76,7 +76,8 @@ pub struct Ringo2Cutscene {
 impl Cutscene for Ringo2Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
         cutscene.add_dialogue_step(ringo2_init1);
-        cutscene.add_dialogue_step(ringo2_cleanup);
+        cutscene.add_timed_step(ringo2_fade_out, 0.5);
+        cutscene.add_quick_step(ringo2_cleanup);
     }
 }
 
@@ -87,12 +88,20 @@ fn ringo2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState
     }
 }
 
+fn ringo2_fade_out(mut screen_fade: ResMut<ScreenFade>) {
+    screen_fade.fade_out(0.5);
+}
+
 fn ringo2_cleanup(
     mut game_state: ResMut<GameState>,
     mut overworld_camera: ResMut<OverworldCamera>,
+    mut app_state: ResMut<State<AppState>>,
+    world_locations: Res<WorldLocations>,
 ) {
-    game_state.quests.next();
     overworld_camera.reset();
+    game_state.quests.next();
+    game_state.town = TownData::build("Isla de Dio", world_locations.as_ref());
+    app_state.set(AppState::TownOutside).unwrap();
 }
 
 pub mod ringo;

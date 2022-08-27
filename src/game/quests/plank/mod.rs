@@ -40,7 +40,7 @@ pub struct Plank1Cutscene {
 impl Cutscene for Plank1Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
         cutscene.add_dialogue_step(plank1_init1);
-        cutscene.add_dialogue_step(plank1_cleanup);
+        cutscene.add_quick_step(plank1_cleanup);
     }
 }
 
@@ -76,7 +76,8 @@ pub struct Plank2Cutscene {
 impl Cutscene for Plank2Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
         cutscene.add_dialogue_step(plank2_init1);
-        cutscene.add_dialogue_step(plank2_cleanup);
+        cutscene.add_timed_step(plank2_fade_out, 0.5);
+        cutscene.add_quick_step(plank2_cleanup);
     }
 }
 
@@ -87,12 +88,20 @@ fn plank2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState
     }
 }
 
+fn plank2_fade_out(mut screen_fade: ResMut<ScreenFade>) {
+    screen_fade.fade_out(0.5);
+}
+
 fn plank2_cleanup(
     mut game_state: ResMut<GameState>,
     mut overworld_camera: ResMut<OverworldCamera>,
+    mut app_state: ResMut<State<AppState>>,
+    world_locations: Res<WorldLocations>,
 ) {
-    game_state.quests.next();
     overworld_camera.reset();
+    game_state.quests.next();
+    game_state.town = TownData::build("Iron Maiden's Cove", world_locations.as_ref());
+    app_state.set(AppState::TownOutside).unwrap();
 }
 
 pub mod plank;

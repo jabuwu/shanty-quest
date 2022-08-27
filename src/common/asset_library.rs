@@ -116,6 +116,27 @@ pub struct AssetLibrary {
     #[asset("audio/voice/intro5.ogg")]
     pub cutscene_voice_intro5: Handle<AudioSource>,
 
+    #[asset("sprites/cutscene_intro1.png")]
+    pub cutscene_image_outro1: Handle<Image>,
+    #[asset("sprites/cutscene_intro2.png")]
+    pub cutscene_image_outro2: Handle<Image>,
+    #[asset("sprites/cutscene_intro3.png")]
+    pub cutscene_image_outro3: Handle<Image>,
+    #[asset("sprites/cutscene_intro4.png")]
+    pub cutscene_image_outro4: Handle<Image>,
+    #[asset("sprites/cutscene_intro5.png")]
+    pub cutscene_image_outro5: Handle<Image>,
+    #[asset("audio/voice/intro1.ogg")]
+    pub cutscene_voice_outro1: Handle<AudioSource>,
+    #[asset("audio/voice/intro2.ogg")]
+    pub cutscene_voice_outro2: Handle<AudioSource>,
+    #[asset("audio/voice/intro3.ogg")]
+    pub cutscene_voice_outro3: Handle<AudioSource>,
+    #[asset("audio/voice/intro4.ogg")]
+    pub cutscene_voice_outro4: Handle<AudioSource>,
+    #[asset("audio/voice/intro5.ogg")]
+    pub cutscene_voice_outro5: Handle<AudioSource>,
+
     /*************
      * Overworld *
      *************/

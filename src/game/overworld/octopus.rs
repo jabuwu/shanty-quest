@@ -128,7 +128,7 @@ fn octopus_spawn(
             })
             .insert(Hurtbox {
                 shape: CollisionShape::Rect {
-                    size: OCTOPUS_HURTBOX_SIZE,
+                    size: OCTOPUS_HURTBOX_SIZE * scale,
                 },
                 for_entity: None,
                 auto_despawn: false,
