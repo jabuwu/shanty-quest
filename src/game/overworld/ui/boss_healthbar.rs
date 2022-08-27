@@ -2,6 +2,7 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
+const OFFSET: Vec2 = Vec2::new(0., 20.);
 const BORDER_SIZE: f32 = 10.;
 
 pub struct BossHealthbarPlugin;
@@ -44,7 +45,10 @@ fn boss_healthbar_spawn(
             commands.entity(entity).despawn_recursive();
         }
         commands
-            .spawn_bundle(VisibilityBundle::default())
+            .spawn_bundle(VisibilityBundle {
+                visibility: Visibility { is_visible: false },
+                ..Default::default()
+            })
             .insert_bundle(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
@@ -62,7 +66,7 @@ fn boss_healthbar_spawn(
                         ..Default::default()
                     })
                     .insert(
-                        Transform2::from_xy(0., 332.)
+                        Transform2::from_translation(Vec2::new(0., 332.) + OFFSET)
                             .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME_BACKGROUND)
                             .without_pixel_perfect(),
                     );
@@ -83,7 +87,7 @@ fn boss_healthbar_spawn(
                         ..Default::default()
                     })
                     .insert(
-                        Transform2::from_xy(0., 332.)
+                        Transform2::from_translation(Vec2::new(0., 332.) + OFFSET)
                             .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME),
                     );
                 parent
@@ -96,7 +100,7 @@ fn boss_healthbar_spawn(
                         ..Default::default()
                     })
                     .insert(
-                        Transform2::from_xy(0., 304.)
+                        Transform2::from_translation(Vec2::new(0., 304.) + OFFSET)
                             .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_BORDER)
                             .without_pixel_perfect(),
                     );
@@ -110,7 +114,7 @@ fn boss_healthbar_spawn(
                         ..Default::default()
                     })
                     .insert(
-                        Transform2::from_xy(0., 304.)
+                        Transform2::from_translation(Vec2::new(0., 304.) + OFFSET)
                             .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR)
                             .without_pixel_perfect(),
                     )
@@ -132,12 +136,14 @@ fn boss_healthbar_despawn(
 }
 
 fn boss_healthbar_update(
-    query: Query<(Entity, &BossHealthbar, &Children)>,
+    mut query: Query<(Entity, &BossHealthbar, &Children, &mut Visibility)>,
     mut bar_query: Query<&mut Transform2, With<BossHealthbarBar>>,
     health_query: Query<&Health>,
     mut commands: Commands,
+    game_state: Res<GameState>,
 ) {
-    for (entity, healthbar, children) in query.iter() {
+    for (entity, healthbar, children, mut visibility) in query.iter_mut() {
+        visibility.is_visible = !game_state.quests.pirate_dialogue();
         if let Ok(health) = health_query.get(healthbar.entity) {
             let health_percent = health.value / health.max;
             for child in children.iter() {

@@ -52,6 +52,7 @@ pub struct AutoDamage {
     pub despawn: bool,
     pub invincibility: f32,
     pub already_despawned: bool,
+    pub experience: f32,
 }
 
 fn damage_check(
@@ -156,9 +157,11 @@ fn damage_auto_die(
             }
             if health.dead() && !auto_damage.already_despawned {
                 commands.entity(entity).despawn_recursive();
-                ev_experience_spawn.send(ExperienceSpawnEvent {
-                    position: transform.translation().truncate(),
-                });
+                if auto_damage.experience > 0. {
+                    ev_experience_spawn.send(ExperienceSpawnEvent {
+                        position: transform.translation().truncate(),
+                    });
+                }
                 auto_damage.already_despawned = true;
             }
         }

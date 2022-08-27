@@ -154,6 +154,9 @@ impl Quests {
         if self.ringo() && self.must_talk_to_mayor() {
             return None;
         }
+        if self.fighting() || self.pirate_dialogue() {
+            return None;
+        }
         if self.must_talk_to_mayor() {
             return Some((264., "Talk to the governor at town"));
         }

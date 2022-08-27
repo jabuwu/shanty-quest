@@ -150,6 +150,7 @@ fn octopus_spawn(
             })
             .insert(AutoDamage {
                 despawn: true,
+                experience: 1.,
                 ..Default::default()
             })
             .with_children(|parent| {
