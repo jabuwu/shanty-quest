@@ -328,7 +328,7 @@ impl AssetLibrary {
         self.sprite_turtle_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_bomb.clone(), Vec2::new(131., 130.), 2, 1);
+            TextureAtlas::from_grid(self.sprite_bomb.clone(), Vec2::new(131., 130.), 4, 1);
         self.sprite_bomb_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas =

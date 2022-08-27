@@ -145,13 +145,15 @@ fn bomb_move(
     }
 }
 
-fn bomb_animate(mut query: Query<&mut TextureAtlasSprite, With<Bomb>>, time: Res<Time>) {
-    for mut sprite in query.iter_mut() {
-        let time = (time.time_since_startup().as_secs_f32() * 10.0) % 1.;
+fn bomb_animate(mut query: Query<(&mut TextureAtlasSprite, &Bomb)>) {
+    for (mut sprite, bomb) in query.iter_mut() {
+        let time = (bomb.life_time * 10.) % 1.;
+        let flash_mod = ((bomb.life_time * 4.) as i32).max(2);
+        let flash = ((bomb.life_time * 8.5) as i32) % flash_mod == 0;
         if time > 0.5 {
-            sprite.index = 1;
+            sprite.index = if flash { 3 } else { 1 };
         } else {
-            sprite.index = 0;
+            sprite.index = if flash { 2 } else { 0 };
         }
     }
 }
