@@ -9,6 +9,7 @@ pub struct GameState {
     pub quests: Quests,
     pub dangerous_seas: bool,
     pub attacks: Attacks,
+    pub checkpoint_notification: bool,
 
     pub checkpoint: Option<Box<GameState>>,
 }
@@ -29,6 +30,7 @@ impl Default for GameState {
                 bombs: 0,
                 kraken: 0,
             },
+            checkpoint_notification: false,
             checkpoint: None,
         }
     }
@@ -36,6 +38,7 @@ impl Default for GameState {
 
 impl GameState {
     pub fn checkpoint(&mut self) {
+        self.checkpoint_notification = true;
         self.checkpoint = Some(Box::new(self.clone()));
     }
 
@@ -43,6 +46,7 @@ impl GameState {
         if let Some(checkpoint) = self.checkpoint.take() {
             *self = *checkpoint.clone();
             self.checkpoint = Some(checkpoint);
+            self.checkpoint_notification = false;
             true
         } else {
             false

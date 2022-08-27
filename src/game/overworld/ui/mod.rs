@@ -16,6 +16,7 @@ impl Plugin for OverworldUiPlugin {
             .add_plugin(town_marker::TownMarkerPlugin)
             .add_plugin(objective::ObjectivePlugin)
             .add_plugin(boss_healthbar::BossHealthbarPlugin)
+            .add_plugin(checkpoint::CheckpointPlugin)
             .add_system(overworld_ui_spawn)
             .add_system(overworld_ui_health);
     }
@@ -33,12 +34,17 @@ fn overworld_ui_spawn(
     mut ev_marker_spawn: EventWriter<MarkerSpawnEvent>,
     mut ev_town_marker_spawn: EventWriter<TownMarkerSpawnEvent>,
     mut ev_objective_spawn: EventWriter<ObjectiveSpawnEvent>,
+    mut ev_checkpoint_spawn: EventWriter<CheckpointSpawnEvent>,
     asset_library: Res<AssetLibrary>,
+    game_state: Res<GameState>,
 ) {
     for _ in ev_spawn.iter() {
         ev_marker_spawn.send_default();
         ev_town_marker_spawn.send_default();
         ev_objective_spawn.send_default();
+        if game_state.checkpoint_notification {
+            ev_checkpoint_spawn.send_default();
+        }
         commands
             .spawn_bundle(VisibilityBundle::default())
             .insert_bundle(TransformBundle::default())
@@ -84,6 +90,7 @@ fn overworld_ui_health(
 }
 
 pub mod boss_healthbar;
+pub mod checkpoint;
 pub mod map;
 pub mod marker;
 pub mod objective;

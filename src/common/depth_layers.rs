@@ -29,6 +29,9 @@ pub const DEPTH_LAYER_MAP_OBJECTIVE: Layer = (DepthLayer::Front, 0.953);
 pub const DEPTH_LAYER_MAP_LABEL: Layer = (DepthLayer::Front, 0.955);
 pub const DEPTH_LAYER_MAP_COMPASS: Layer = (DepthLayer::Front, 0.956);
 
+pub const DEPTH_LAYER_CHECKPOINT_BACKGROUND: Layer = (DepthLayer::Front, 0.96);
+pub const DEPTH_LAYER_CHECKPOINT_TEXT: Layer = (DepthLayer::Front, 0.961);
+
 pub const DEPTH_LAYER_UI_TEXT: Layer = (DepthLayer::Front, 0.85);
 pub const DEPTH_LAYER_UI_MARKER_ICON: Layer = (DepthLayer::Front, 0.851);
 pub const DEPTH_LAYER_UI_MARKER_ARROW: Layer = (DepthLayer::Front, 0.852);

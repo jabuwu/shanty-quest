@@ -40,7 +40,7 @@ fn objective_spawn(
                     .spawn_bundle(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(1., 90.).into(),
-                            color: Color::rgba(0., 0., 0., 0.9),
+                            color: Color::rgba(0., 0., 0., 0.36),
                             ..Default::default()
                         },
                         ..Default::default()

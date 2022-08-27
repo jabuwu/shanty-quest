@@ -113,7 +113,7 @@ fn map_open(
                                             (label.0 + Vec2::new(0., 50.)) / (map_builder.size())
                                                 + Vec2::new(-0.5, 0.5),
                                         )
-                                        .with_scale(Vec2::ONE * (4. / map_builder.size().x))
+                                        .with_scale(Vec2::ONE * (5.5 / map_builder.size().x))
                                         .with_depth(DEPTH_LAYER_MAP_LABEL),
                                     );
                                 parent
@@ -122,7 +122,7 @@ fn map_open(
                                             label.1.clone(),
                                             TextStyle {
                                                 font: asset_library.font_bold.clone(),
-                                                font_size: 72.,
+                                                font_size: 66.,
                                                 color: Color::BLACK,
                                             },
                                         )
@@ -134,7 +134,7 @@ fn map_open(
                                     })
                                     .insert(
                                         Transform2::from_translation(
-                                            (label.0 + Vec2::new(0., 450.)) / (map_builder.size())
+                                            (label.0 + Vec2::new(0., 550.)) / (map_builder.size())
                                                 + Vec2::new(-0.5, 0.5),
                                         )
                                         .with_scale(Vec2::new(
@@ -251,6 +251,6 @@ fn map_update_objective(
     for (mut map_player_transform, map_objective) in query.iter_mut() {
         map_player_transform.translation = map_builder.world_to_map(objective_position);
         map_player_transform.scale = Vec2::ONE * map_objective.scale
-            + (map_objective.scale * 0.15 * (time.time_since_startup().as_secs_f32() * 1.5).cos());
+            + (map_objective.scale * 0.1 * (time.time_since_startup().as_secs_f32() * 1.5).cos());
     }
 }
