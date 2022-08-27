@@ -65,43 +65,37 @@ fn forward_cannons_fire(
                     sound.play();
                 }
             }
-            for shoot_side in 0..2 {
-                let forward = Vec2::from_angle(boat.direction);
-                let mult = if shoot_side == 0 { 1. } else { -1. };
-                let side = forward.perp() * mult;
-                let position =
-                    global_transform.translation().truncate() + forward * 40. + side * 15.;
-                let velocity = forward * 1200.;
-                let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
-                scale *= 0.5;
-                commands
-                    .spawn_bundle(SpriteBundle {
-                        sprite: Sprite {
-                            color: Color::BLACK,
-                            ..Default::default()
-                        },
-                        texture: asset_library.sprite_bullet_note.clone(),
+            let forward = Vec2::from_angle(boat.direction);
+            let position = global_transform.translation().truncate() + forward * 40.;
+            let velocity = forward * 1200.;
+            let (scale, _, _) = global_transform.to_scale_rotation_translation();
+            commands
+                .spawn_bundle(SpriteBundle {
+                    sprite: Sprite {
+                        color: Color::BLACK,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(position)
-                            .with_depth((DepthLayer::Entity, 0.0))
-                            .with_scale(scale.truncate()),
-                    )
-                    .insert(Hurtbox {
-                        shape: CollisionShape::Rect {
-                            size: Vec2::new(14., 14.),
-                        },
-                        for_entity: Some(boat_entity),
-                        auto_despawn: true,
-                        flags: forward_cannons.hurt_flags,
-                        knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.0075),
-                        damage: 2.,
-                    })
-                    .insert(YDepth::default())
-                    .insert(ForwardCannonBall { velocity })
-                    .insert(TimeToLive::new(1.0));
-            }
+                    },
+                    texture: asset_library.sprite_bullet_note.clone(),
+                    ..Default::default()
+                })
+                .insert(
+                    Transform2::from_translation(position)
+                        .with_depth((DepthLayer::Entity, 0.0))
+                        .with_scale(scale.truncate()),
+                )
+                .insert(Hurtbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(14., 14.),
+                    },
+                    for_entity: Some(boat_entity),
+                    auto_despawn: true,
+                    flags: forward_cannons.hurt_flags,
+                    knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.0075),
+                    damage: 2.,
+                })
+                .insert(YDepth::default())
+                .insert(ForwardCannonBall { velocity })
+                .insert(TimeToLive::new(1.0));
         }
         forward_cannons.shoot = false;
     }

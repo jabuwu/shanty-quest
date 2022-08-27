@@ -73,7 +73,8 @@ fn shotgun_cannons_fire(
                         + forward * 20. * i as f32
                         + side * 50.;
                     let velocity = Vec2::from_angle(angle) * 900.;
-                    let (scale, _, _) = global_transform.to_scale_rotation_translation();
+                    let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
+                    scale *= 0.5;
                     commands
                         .spawn_bundle(SpriteBundle {
                             sprite: Sprite {
@@ -99,7 +100,7 @@ fn shotgun_cannons_fire(
                                 .with_scale(scale.truncate()),
                         )
                         .insert(ShotgunCannonBall { velocity })
-                        .insert(TimeToLive::new(0.25));
+                        .insert(TimeToLive::new(0.37));
                 }
             }
         }
