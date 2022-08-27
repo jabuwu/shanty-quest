@@ -80,6 +80,9 @@ fn plank_spawn(
             })
             .insert(AutoDamage {
                 despawn: true,
+                experience: 5.,
+                experience_count: 10,
+                experience_infinite_distance: true,
                 ..Default::default()
             })
             .id();

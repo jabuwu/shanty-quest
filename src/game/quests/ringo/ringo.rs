@@ -86,6 +86,9 @@ fn ringo_spawn(
             })
             .insert(AutoDamage {
                 despawn: true,
+                experience: 5.,
+                experience_count: 15,
+                experience_infinite_distance: true,
                 ..Default::default()
             })
             .id();

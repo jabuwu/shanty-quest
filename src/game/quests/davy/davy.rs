@@ -72,6 +72,9 @@ fn davy_spawn(
             })
             .insert(AutoDamage {
                 despawn: true,
+                experience: 5.,
+                experience_count: 30,
+                experience_infinite_distance: true,
                 ..Default::default()
             })
             .id();

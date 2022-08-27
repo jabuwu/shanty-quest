@@ -117,6 +117,7 @@ pub fn controls_ui_update_dash(
 pub fn controls_ui_update_jam(
     mut query: Query<&mut TextureAtlasSprite, With<ControlsUiJam>>,
     player_query: Query<&Boat, With<Player>>,
+    game_state: Res<GameState>,
 ) {
     let player_shoot = if let Ok(boat) = player_query.get_single() {
         boat.shoot
@@ -124,6 +125,17 @@ pub fn controls_ui_update_jam(
         false
     };
     for mut sprite in query.iter_mut() {
+        if game_state.attacks.kraken > 0 {
+            sprite.index = 4;
+        } else if game_state.attacks.bombs > 0 {
+            sprite.index = 3;
+        } else if game_state.attacks.shockwave > 0 {
+            sprite.index = 2;
+        } else if game_state.attacks.shotgun_cannons > 0 {
+            sprite.index = 1;
+        } else {
+            sprite.index = 0;
+        }
         sprite.color.set_a(if player_shoot { 1. } else { 0.5 });
     }
 }
