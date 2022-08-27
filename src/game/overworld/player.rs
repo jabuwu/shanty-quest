@@ -54,7 +54,7 @@ fn player_spawn(
             },
             healthbar: false,
             player: true,
-            health: 20.,
+            health: game_state.health,
             speed: 250.,
             attack_cooldown: 0.48,
             knockback_resistance: 0.2,
@@ -176,12 +176,14 @@ fn player_damage(
     mut crate_query: Query<(&mut Health, &mut Player)>,
     mut ev_death_cutscene: EventWriter<CutsceneStartEvent<DeathCutscene>>,
     cutscenes: Res<Cutscenes>,
+    mut game_state: ResMut<GameState>,
 ) {
     for event in ev_damage.iter() {
         if let Ok((mut health, mut player)) = crate_query.get_mut(event.hit) {
             if player.invincibility <= 0. {
                 if !cutscenes.running() {
                     health.damage(event.damage);
+                    game_state.health = health.value;
                 }
                 if !player.dead && health.dead() {
                     player.dead = true;

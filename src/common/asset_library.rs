@@ -256,6 +256,12 @@ pub struct AssetLibrary {
     pub sprite_town_mayor_outline: Handle<Image>,
     #[asset("sprites/City1_ConcertHall_Outline.png")]
     pub sprite_town_concert_hall_outline: Handle<Image>,
+    #[asset("sprites/WorldQuestMarker_Icon.png")]
+    pub sprite_town_tavern_notify: Handle<Image>,
+    #[asset("sprites/WorldQuestMarker_Icon.png")]
+    pub sprite_town_mayor_notify: Handle<Image>,
+    #[asset("sprites/WorldQuestMarker_Icon.png")]
+    pub sprite_town_concert_hall_notify: Handle<Image>,
 
     /***********************
      * Town / Concert Hall *

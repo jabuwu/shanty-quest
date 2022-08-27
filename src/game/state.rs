@@ -10,6 +10,8 @@ pub struct GameState {
     pub dangerous_seas: bool,
     pub attacks: Attacks,
     pub checkpoint_notification: bool,
+    pub health: f32,
+    pub health_max: f32,
 
     pub checkpoint: Option<Box<GameState>>,
 }
@@ -30,6 +32,8 @@ impl Default for GameState {
                 bombs: 0,
                 kraken: 0,
             },
+            health: 20.,
+            health_max: 20.,
             checkpoint_notification: false,
             checkpoint: None,
         }

@@ -116,7 +116,7 @@ pub const DAVY_MAYOR: [(P, &str); 3] = [
     ),
     (
         P::Mayor,
-        "Once he's... dispatched, and his instrument combined with your\norchestra...\nThen we can do business!"
+        "Once he's... dispatched, and his instrument combined with your\norchestra... Then we can do business!"
     )
 ];
 
