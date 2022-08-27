@@ -151,8 +151,8 @@ fn step1(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(-50., -20.)
-                    .with_scale(Vec2::ONE * 5.5)
+                Transform2::from_xy(-30., -10.)
+                    .with_scale(Vec2::ONE * 0.72)
                     .with_depth((DepthLayer::Entity, 0.0))
                     .without_pixel_perfect(),
             )
