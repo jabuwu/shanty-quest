@@ -66,10 +66,10 @@ impl OverworldCamera {
     pub fn arena_correction(&self, translation: Vec2) -> Option<Vec2> {
         if self.arena_enabled {
             let mut correction = Vec2::ZERO;
-            let screen_left = self.arena.0.x - self.arena.1.x - CAMERA_SIZE.x * 0.5;
-            let screen_right = self.arena.0.x + self.arena.1.x + CAMERA_SIZE.x * 0.5;
-            let screen_bottom = self.arena.0.y - self.arena.1.x - CAMERA_SIZE.y * 0.5;
-            let screen_top = self.arena.0.y + self.arena.1.x + CAMERA_SIZE.y * 0.5;
+            let screen_left = self.arena.0.x - self.arena.1.x - CAMERA_SIZE.x * 0.5 + 150.;
+            let screen_right = self.arena.0.x + self.arena.1.x + CAMERA_SIZE.x * 0.5 - 150.;
+            let screen_bottom = self.arena.0.y - self.arena.1.x - CAMERA_SIZE.y * 0.5 + 150.;
+            let screen_top = self.arena.0.y + self.arena.1.x + CAMERA_SIZE.y * 0.5 - 150.;
             if translation.x < screen_left {
                 correction.x = screen_left - translation.x;
             }
@@ -82,7 +82,7 @@ impl OverworldCamera {
             if translation.y > screen_top {
                 correction.y = screen_top - translation.y;
             }
-            Some(correction)
+            Some(correction * 0.5)
         } else {
             None
         }
