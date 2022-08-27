@@ -50,7 +50,7 @@ impl TurtleLevel {
                 speed: 150.,
                 knockback_resistence: 0.8,
                 experience: 1.,
-                experience_count: 5,
+                experience_count: 4,
             },
             Self::Medium => TurtleInfo {
                 atlas: asset_library.sprite_turtle_medium_atlas.clone(),
@@ -59,7 +59,7 @@ impl TurtleLevel {
                 speed: 200.,
                 knockback_resistence: 0.9,
                 experience: 1.,
-                experience_count: 10,
+                experience_count: 8,
             },
             Self::Hard => TurtleInfo {
                 atlas: asset_library.sprite_turtle_hard_atlas.clone(),
@@ -68,7 +68,7 @@ impl TurtleLevel {
                 speed: 100.,
                 knockback_resistence: 1.0,
                 experience: 1.,
-                experience_count: 20,
+                experience_count: 15,
             },
         }
     }

@@ -50,7 +50,7 @@ impl OctopusLevel {
                 speed: 150.,
                 knockback_resistence: 0.,
                 experience: 1.,
-                experience_count: 3,
+                experience_count: 2,
             },
             Self::Medium => OctopusInfo {
                 atlas: asset_library.sprite_octopus_medium_atlas.clone(),
@@ -59,7 +59,7 @@ impl OctopusLevel {
                 speed: 300.,
                 knockback_resistence: 0.4,
                 experience: 1.,
-                experience_count: 6,
+                experience_count: 5,
             },
             Self::Hard => OctopusInfo {
                 atlas: asset_library.sprite_octopus_hard_atlas.clone(),
@@ -68,7 +68,7 @@ impl OctopusLevel {
                 speed: 150.,
                 knockback_resistence: 0.7,
                 experience: 1.,
-                experience_count: 15,
+                experience_count: 10,
             },
         }
     }

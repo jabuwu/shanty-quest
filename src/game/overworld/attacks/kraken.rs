@@ -82,7 +82,7 @@ fn kraken_fire(
                             .with_depth((DepthLayer::Entity, 0.0))
                             .with_scale(scale.truncate()),
                     )
-                    .insert(YDepth::default())
+                    .insert(YDepth { offset: 10. })
                     .insert(Tentacle {
                         submerge_time,
                         submerge_time_max: submerge_time,

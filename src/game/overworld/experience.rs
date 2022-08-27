@@ -44,10 +44,8 @@ pub fn experience_spawn(
                     ..Default::default()
                 })
                 .insert(
-                    Transform2::from_translation(event.position)
-                        .with_depth((DepthLayer::Entity, 0.)),
+                    Transform2::from_translation(event.position).with_depth(DEPTH_LAYER_EXPERIENCE),
                 )
-                .insert(YDepth::default())
                 .insert(Experience {
                     amount: event.amount,
                     velocity: Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU)
