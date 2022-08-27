@@ -22,15 +22,20 @@ pub struct Experience {
     velocity: Vec2,
 }
 
-pub fn experience_spawn(mut ev_spawn: EventReader<ExperienceSpawnEvent>, mut commands: Commands) {
+pub fn experience_spawn(
+    mut ev_spawn: EventReader<ExperienceSpawnEvent>,
+    mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
+) {
     for event in ev_spawn.iter() {
         commands
             .spawn_bundle(SpriteBundle {
                 sprite: Sprite {
                     custom_size: Vec2::new(20., 20.).into(),
-                    color: Color::GREEN,
+                    //color: Color::rgb_u8(255, 209, 22),
                     ..Default::default()
                 },
+                texture: asset_library.sprite_exp_particle.clone(),
                 ..Default::default()
             })
             .insert(

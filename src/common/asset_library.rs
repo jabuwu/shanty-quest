@@ -136,6 +136,9 @@ pub struct AssetLibrary {
     pub sprite_ship: Handle<Image>,
     pub sprite_ship_atlas: Handle<TextureAtlas>,
 
+    #[asset("sprites/ExperienceParticle.png")]
+    pub sprite_exp_particle: Handle<Image>,
+
     #[asset("sprites/OverworldCity.png")]
     pub sprite_overworld_city: Handle<Image>,
 
