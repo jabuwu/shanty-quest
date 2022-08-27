@@ -66,7 +66,7 @@ fn forward_cannons_fire(
                 }
             }
             let forward = Vec2::from_angle(boat.direction);
-            let position = global_transform.translation().truncate() + forward * 40.;
+            let position = global_transform.translation().truncate() + forward * 80.;
             let velocity = forward * 1200.;
             let (scale, _, _) = global_transform.to_scale_rotation_translation();
             commands
