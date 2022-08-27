@@ -296,9 +296,9 @@ fn boat_attack(
                 kraken.shoot = true
             }
         }
-        boat.dash_cooldown += time.delta_seconds();
-        if boat.dash && boat.dash_cooldown > 0.6 {
-            boat.dash_cooldown = 0.;
+        boat.dash_cooldown -= time.delta_seconds();
+        if boat.dash && boat.dash_cooldown <= 0. {
+            boat.dash_cooldown = 0.6;
             dash.shoot = true
         }
         boat.dash = false;

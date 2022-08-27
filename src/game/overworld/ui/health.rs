@@ -3,7 +3,7 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 use rand::{prelude::*, rngs::StdRng, SeedableRng};
 
-const HEALTH_UI_POSITION: Vec2 = Vec2::new(-570., -270.);
+const HEALTH_UI_POSITION: Vec2 = Vec2::new(-580., -295.);
 const HEALTH_UI_SCALE: f32 = 0.55;
 
 pub struct HealthUiPlugin;

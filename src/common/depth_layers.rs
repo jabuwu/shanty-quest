@@ -42,6 +42,12 @@ pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME: Layer = (DepthLayer::Front, 0.861)
 pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR_BORDER: Layer = (DepthLayer::Front, 0.86);
 pub const DEPTH_LAYER_UI_BOSS_HEALTHBAR: Layer = (DepthLayer::Front, 0.861);
 pub const DEPTH_LAYER_UI_HEALTH_BOTTLE: Layer = (DepthLayer::Front, 0.905);
+pub const DEPTH_LAYER_UI_CONTROLS: Layer = (DepthLayer::Front, 0.905);
+pub const DEPTH_LAYER_UI_EXPERIENCE_BAR_BACK: Layer = (DepthLayer::Front, 0.905);
+pub const DEPTH_LAYER_UI_EXPERIENCE_BAR: Layer = (DepthLayer::Front, 0.906);
+pub const DEPTH_LAYER_UI_EXPERIENCE_LEVEL: Layer = (DepthLayer::Front, 0.907);
+pub const DEPTH_LAYER_UI_EXPERIENCE_SKILLPOINT_BG: Layer = (DepthLayer::Front, 0.907);
+pub const DEPTH_LAYER_UI_EXPERIENCE_SKILLPOINT_TEXT: Layer = (DepthLayer::Front, 0.908);
 
 pub const DEPTH_LAYER_BAND_SELECTION_BACK: Layer = (DepthLayer::Front, 0.5);
 pub const DEPTH_LAYER_BAND_SELECTION_SLOT: Layer = (DepthLayer::Front, 0.51);

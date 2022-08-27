@@ -1,6 +1,8 @@
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
+use self::controls::ControlsUiSpawnEvent;
+use self::experience::ExperienceUiSpawnEvent;
 use self::health::HealthUiSpawnEvent;
 use self::marker::MarkerSpawnEvent;
 use self::objective::ObjectiveSpawnEvent;
@@ -18,6 +20,8 @@ impl Plugin for OverworldUiPlugin {
             .add_plugin(boss_healthbar::BossHealthbarPlugin)
             .add_plugin(checkpoint::CheckpointPlugin)
             .add_plugin(health::HealthUiPlugin)
+            .add_plugin(controls::ControlsUiPlugin)
+            .add_plugin(experience::ExperienceUiPlugin)
             .add_system(overworld_ui_spawn);
     }
 }
@@ -32,6 +36,8 @@ fn overworld_ui_spawn(
     mut ev_objective_spawn: EventWriter<ObjectiveSpawnEvent>,
     mut ev_health_spawn: EventWriter<HealthUiSpawnEvent>,
     mut ev_checkpoint_spawn: EventWriter<CheckpointSpawnEvent>,
+    mut ev_controls_spawn: EventWriter<ControlsUiSpawnEvent>,
+    mut ev_experience_spawn: EventWriter<ExperienceUiSpawnEvent>,
     game_state: Res<GameState>,
 ) {
     for _ in ev_spawn.iter() {
@@ -39,6 +45,8 @@ fn overworld_ui_spawn(
         ev_town_marker_spawn.send_default();
         ev_objective_spawn.send_default();
         ev_health_spawn.send_default();
+        ev_controls_spawn.send_default();
+        ev_experience_spawn.send_default();
         if game_state.checkpoint_notification {
             ev_checkpoint_spawn.send_default();
         }
@@ -47,6 +55,8 @@ fn overworld_ui_spawn(
 
 pub mod boss_healthbar;
 pub mod checkpoint;
+pub mod controls;
+pub mod experience;
 pub mod health;
 pub mod map;
 pub mod marker;

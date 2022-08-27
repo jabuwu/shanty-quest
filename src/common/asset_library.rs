@@ -202,6 +202,17 @@ pub struct AssetLibrary {
     pub sprite_health_bottle: Handle<Image>,
     pub sprite_health_bottle_atlas: Handle<TextureAtlas>,
 
+    #[asset("sprites/HUD_Dash_Ability.png")]
+    pub sprite_controls_dash: Handle<Image>,
+    #[asset("sprites/HUD_Open_Map.png")]
+    pub sprite_controls_map: Handle<Image>,
+
+    #[asset("sprites/HUD_Exp_Bar_BG.png")]
+    pub sprite_experience_bar_bg: Handle<Image>,
+
+    #[asset("sprites/HUD_Skill_Points_Notify_BG.png")]
+    pub sprite_experience_skill_point_bg: Handle<Image>,
+
     /***********
      * Attacks *
      ***********/
