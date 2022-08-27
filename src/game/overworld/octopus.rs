@@ -49,6 +49,8 @@ impl OctopusLevel {
                 health: 2.5,
                 speed: 150.,
                 knockback_resistence: 0.,
+                experience: 1.,
+                experience_count: 3,
             },
             Self::Medium => OctopusInfo {
                 atlas: asset_library.sprite_octopus_medium_atlas.clone(),
@@ -56,6 +58,8 @@ impl OctopusLevel {
                 health: 3.5,
                 speed: 300.,
                 knockback_resistence: 0.4,
+                experience: 1.,
+                experience_count: 6,
             },
             Self::Hard => OctopusInfo {
                 atlas: asset_library.sprite_octopus_hard_atlas.clone(),
@@ -63,6 +67,8 @@ impl OctopusLevel {
                 health: 5.,
                 speed: 150.,
                 knockback_resistence: 0.7,
+                experience: 1.,
+                experience_count: 15,
             },
         }
     }
@@ -74,6 +80,8 @@ struct OctopusInfo {
     health: f32,
     speed: f32,
     knockback_resistence: f32,
+    experience: f32,
+    experience_count: u32,
 }
 
 #[derive(Component)]
@@ -116,6 +124,8 @@ fn octopus_spawn(
             health,
             speed,
             knockback_resistence,
+            experience,
+            experience_count,
         } = event.level.info(asset_library.as_ref());
         entity
             .insert_bundle(TransformBundle::default())
@@ -158,7 +168,8 @@ fn octopus_spawn(
             })
             .insert(AutoDamage {
                 despawn: true,
-                experience: 1.,
+                experience,
+                experience_count,
                 ..Default::default()
             })
             .with_children(|parent| {

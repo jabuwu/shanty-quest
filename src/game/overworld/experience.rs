@@ -14,32 +14,43 @@ impl Plugin for ExperiencePlugin {
 
 #[derive(Default, Clone, Copy)]
 pub struct ExperienceSpawnEvent {
+    pub amount: f32,
     pub position: Vec2,
+    pub count: u32,
+    pub infinite_distance: bool,
 }
 
 #[derive(Component)]
 pub struct Experience {
+    amount: f32,
     velocity: Vec2,
+    infinite_distance: bool,
 }
 
 pub fn experience_spawn(mut ev_spawn: EventReader<ExperienceSpawnEvent>, mut commands: Commands) {
     for event in ev_spawn.iter() {
-        commands
-            .spawn_bundle(SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Vec2::new(20., 20.).into(),
-                    color: Color::GREEN,
+        for _ in 0..event.count {
+            commands
+                .spawn_bundle(SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Vec2::new(10., 10.).into(),
+                        color: Color::GREEN,
+                        ..Default::default()
+                    },
                     ..Default::default()
-                },
-                ..Default::default()
-            })
-            .insert(
-                Transform2::from_translation(event.position).with_depth((DepthLayer::Entity, 0.)),
-            )
-            .insert(YDepth::default())
-            .insert(Experience {
-                velocity: Vec2::ZERO,
-            });
+                })
+                .insert(
+                    Transform2::from_translation(event.position)
+                        .with_depth((DepthLayer::Entity, 0.)),
+                )
+                .insert(YDepth::default())
+                .insert(Experience {
+                    amount: event.amount,
+                    velocity: Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU)
+                        * (50. + rand::random::<f32>() * 200.),
+                    infinite_distance: event.infinite_distance,
+                });
+        }
     }
 }
 
@@ -48,6 +59,8 @@ pub fn experience_consume(
     mut experience_query: Query<(Entity, &mut Transform2, &mut Experience)>,
     time: Res<Time>,
     mut commands: Commands,
+    mut game_state: ResMut<GameState>,
+    mut ev_level_up: EventWriter<LevelUpSpawnEvent>,
 ) {
     let player_position = if let Ok(player_transform) = player_query.get_single() {
         player_transform.translation().truncate()
@@ -56,13 +69,21 @@ pub fn experience_consume(
     };
     for (entity, mut transform, mut experience) in experience_query.iter_mut() {
         let difference = player_position - transform.translation;
-        if difference.length() < 200. {
-            experience.velocity += difference.normalize() * 800. * time.delta_seconds();
+        if difference.length() < 200. || experience.infinite_distance {
+            experience.velocity += difference.normalize() * 1400. * time.delta_seconds();
         }
-        if difference.length() < 100. {
+        if difference.length() < 50. {
+            if game_state.add_experience(experience.amount) {
+                game_state.skill_points += 1;
+                ev_level_up.send_default();
+            }
             commands.entity(entity).despawn();
         }
-        experience.velocity *= 0.1_f32.powf(time.delta_seconds());
+        if experience.infinite_distance {
+            experience.velocity *= 0.2_f32.powf(time.delta_seconds());
+        } else {
+            experience.velocity *= 0.025_f32.powf(time.delta_seconds());
+        }
         transform.translation += experience.velocity * time.delta_seconds();
     }
 }

@@ -71,6 +71,9 @@ fn jagerossa_spawn(
             })
             .insert(AutoDamage {
                 despawn: true,
+                experience: 25.,
+                experience_count: 20,
+                experience_infinite_distance: true,
                 ..Default::default()
             })
             .id();

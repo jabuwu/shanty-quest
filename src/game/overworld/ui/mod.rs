@@ -22,6 +22,7 @@ impl Plugin for OverworldUiPlugin {
             .add_plugin(health::HealthUiPlugin)
             .add_plugin(controls::ControlsUiPlugin)
             .add_plugin(experience::ExperienceUiPlugin)
+            .add_plugin(level_up::LevelUpPlugin)
             .add_system(overworld_ui_spawn);
     }
 }
@@ -58,6 +59,7 @@ pub mod checkpoint;
 pub mod controls;
 pub mod experience;
 pub mod health;
+pub mod level_up;
 pub mod map;
 pub mod marker;
 pub mod objective;

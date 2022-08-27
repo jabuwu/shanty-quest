@@ -12,6 +12,9 @@ pub struct GameState {
     pub checkpoint_notification: bool,
     pub health: f32,
     pub health_max: f32,
+    pub experience: f32,
+    pub level: u32,
+    pub skill_points: u32,
 
     pub checkpoint: Option<Box<GameState>>,
 }
@@ -34,6 +37,9 @@ impl Default for GameState {
             },
             health: 20.,
             health_max: 20.,
+            experience: 0.,
+            level: 1,
+            skill_points: 0,
             checkpoint_notification: false,
             checkpoint: None,
         }
@@ -64,5 +70,20 @@ impl GameState {
             }
         }
         false
+    }
+
+    pub fn add_experience(&mut self, amt: f32) -> bool {
+        self.experience += amt;
+        if self.experience > self.experience_max() {
+            self.experience -= self.experience_max();
+            self.level += 1;
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn experience_max(&self) -> f32 {
+        100.
     }
 }

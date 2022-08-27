@@ -40,7 +40,7 @@ pub use super::{
         turtle::{Turtle, TurtleLevel, TurtleSpawnEvent, TurtleSystems},
         ui::{
             boss_healthbar::BossHealthbarSpawnEvent, checkpoint::CheckpointSpawnEvent,
-            OverworldUiSpawnEvent,
+            level_up::LevelUpSpawnEvent, OverworldUiSpawnEvent,
         },
         water_ring::{WaterRing, WaterRingSpawnEvent},
         world::{World, WorldLoadEvent},

@@ -124,7 +124,7 @@ pub fn controls_ui_update_jam(
         false
     };
     for mut sprite in query.iter_mut() {
-        sprite.color.set_a(if player_shoot { 0.5 } else { 1. });
+        sprite.color.set_a(if player_shoot { 1. } else { 0.5 });
     }
 }
 
