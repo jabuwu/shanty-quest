@@ -55,7 +55,7 @@ impl TurtleLevel {
             Self::Medium => TurtleInfo {
                 atlas: asset_library.sprite_turtle_medium_atlas.clone(),
                 scale: 0.7,
-                health: 5.,
+                health: 20.,
                 speed: 450.,
                 knockback_resistence: 0.0,
                 experience: 1.,
