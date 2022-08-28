@@ -86,11 +86,13 @@ fn screen_fade_update(
         if !screen_fade.enabled {
             sprite.color.set_a(0.);
         } else {
-            screen_fade.opacity += time.delta_seconds() * screen_fade.speed;
+            let dt = time.delta_seconds().min(1. / 30.);
+            screen_fade.opacity += dt * screen_fade.speed;
             screen_fade.opacity = screen_fade.opacity.clamp(0., 1.);
-            sprite
-                .color
-                .set_a(ease(Easing::CubicInOut, screen_fade.opacity));
+            sprite.color.set_a(ease(
+                Easing::CubicInOut,
+                (screen_fade.opacity * 1.1).clamp(0., 1.),
+            ));
             if screen_fade.opacity == 1. {
                 screen_fade.state = ScreenFadeState::FadedOut;
                 screen_fade.speed = 0.;

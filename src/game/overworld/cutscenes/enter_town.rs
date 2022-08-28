@@ -28,7 +28,7 @@ pub struct EnterTownCutscene {
 
 impl Cutscene for EnterTownCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_step(init1, update1);
+        cutscene.add_step(init1, update1.before(OverworldCameraSystems::Update));
         cutscene.add_quick_step(cleanup);
     }
 }

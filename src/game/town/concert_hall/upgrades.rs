@@ -345,7 +345,9 @@ fn upgrades_ability_bg(
     mut query: Query<(&mut TextureAtlasSprite, &Clickable, &UpgradesAbilityBg)>,
     mut state: ResMut<UpgradesState>,
     game_state: Res<GameState>,
+    dialogue: Res<Dialogue>,
 ) {
+    let disable_input = dialogue.visible();
     let mut new_hover = None;
     for (mut sprite, clickable, bg) in query.iter_mut() {
         if bg.locked {
@@ -353,7 +355,7 @@ fn upgrades_ability_bg(
             continue;
         }
         sprite.index = 0;
-        if clickable.hovered {
+        if clickable.hovered && !disable_input {
             new_hover = Some((bg.upgrade, bg.upgrade.current_level(game_state.as_ref())));
         }
         let mut current_hover = false;
@@ -383,7 +385,9 @@ fn upgrades_buttons(
         &UpgradesButton,
     )>,
     mut game_state: ResMut<GameState>,
+    dialogue: Res<Dialogue>,
 ) {
+    let disable_input = dialogue.visible();
     for (clickable, mut sprite, mut transform, button) in query.iter_mut() {
         if button.locked {
             sprite.index = 3;
@@ -395,14 +399,14 @@ fn upgrades_buttons(
         }
         sprite.index = 0;
         transform.translation = Vec2::new(420., 68.);
-        if clickable.hovered {
+        if clickable.hovered && !disable_input {
             sprite.index = 1;
             if clickable.clicked {
                 transform.translation.x -= 3.;
                 transform.translation.y -= 5.;
             }
         }
-        if clickable.confirmed {
+        if clickable.confirmed && !disable_input {
             button.upgrade.increase_level(game_state.as_mut());
             if game_state.skill_points != 0 {
                 game_state.skill_points -= 1;

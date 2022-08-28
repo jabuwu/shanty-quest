@@ -5,7 +5,15 @@ use bevy::prelude::*;
 
 #[derive(Default)]
 pub struct OutsideState {
-    leave: bool,
+    leave: OutsideLeave,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+enum OutsideLeave {
+    #[default]
+    Stay,
+    LeaveToOverworld,
+    LeaveToConcertHall,
 }
 
 pub struct OutsidePlugin;
@@ -64,7 +72,9 @@ fn outside_init(
     asset_library: Res<AssetLibrary>,
     mut game_state: ResMut<GameState>,
     mut dialogue: ResMut<Dialogue>,
+    mut screen_fade: ResMut<ScreenFade>,
 ) {
+    screen_fade.fade_in(1.0);
     *state = OutsideState::default();
     commands
         .spawn_bundle(Camera2dBundle::default())
@@ -274,7 +284,6 @@ fn outside_click(
         &mut ClickableItem,
         Option<&mut Text>,
     )>,
-    mut app_state: ResMut<State<AppState>>,
     mut input: ResMut<Input<MouseButton>>,
     mut screen_fade: ResMut<ScreenFade>,
     mut state: ResMut<OutsideState>,
@@ -289,7 +298,7 @@ fn outside_click(
     mut ev_mayor_quest: EventWriter<QuestMayorEvent>,
     mut ev_barkeep_quest: EventWriter<QuestBarkeepEvent>,
 ) {
-    if state_time.just_entered() || state.leave {
+    if state_time.just_entered() || !matches!(state.leave, OutsideLeave::Stay) {
         return;
     }
     let mut highest_priority = -1;
@@ -340,7 +349,8 @@ fn outside_click(
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::ConcertHall => {
-                        app_state.set(AppState::TownConcertHall).unwrap();
+                        screen_fade.fade_out(1.);
+                        state.leave = OutsideLeave::LeaveToConcertHall;
                     }
                     ClickableAction::Leave => {
                         if game_state.quests.must_talk_to_mayor() {
@@ -355,7 +365,7 @@ fn outside_click(
                             }
                         } else {
                             screen_fade.fade_out(1.);
-                            state.leave = true;
+                            state.leave = OutsideLeave::LeaveToOverworld;
                         }
                     }
                 }
@@ -370,9 +380,13 @@ fn outside_leave(
     mut app_state: ResMut<State<AppState>>,
     mut game_state: ResMut<GameState>,
 ) {
-    if state.leave && screen_fade.faded_out() {
-        game_state.checkpoint();
-        app_state.set(AppState::Overworld).unwrap();
+    if screen_fade.faded_out() {
+        if matches!(state.leave, OutsideLeave::LeaveToOverworld) {
+            game_state.checkpoint();
+            app_state.set(AppState::Overworld).unwrap();
+        } else if matches!(state.leave, OutsideLeave::LeaveToConcertHall) {
+            app_state.set(AppState::TownConcertHall).unwrap();
+        }
     }
 }
 

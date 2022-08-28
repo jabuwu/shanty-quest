@@ -1,4 +1,5 @@
 use crate::common::prelude::*;
+use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
@@ -27,7 +28,7 @@ pub struct ExitTownCutscene {
 
 impl Cutscene for ExitTownCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_step(init1, update1);
+        cutscene.add_step(init1, update1.before(OverworldCameraSystems::Update));
     }
 }
 

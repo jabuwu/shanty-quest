@@ -5,11 +5,17 @@ use bevy::prelude::*;
 use self::boat_preview::BoatPreviewSpawnEvent;
 use self::upgrades::UpgradesSpawnEvent;
 
+#[derive(Default)]
+pub struct ConcertHallState {
+    leave: bool,
+}
+
 pub struct ConcertHallPlugin;
 
 impl Plugin for ConcertHallPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(band_selection::BandSelectionPlugin)
+        app.init_resource::<ConcertHallState>()
+            .add_plugin(band_selection::BandSelectionPlugin)
             .add_plugin(boat_preview::BoatPreviewPlugin)
             .add_plugin(upgrades::UpgradesPlugin)
             .add_system_set(
@@ -28,10 +34,14 @@ fn concert_hall_init(
     mut ev_boat_preview_spawn: EventWriter<BoatPreviewSpawnEvent>,
     mut game_state: ResMut<GameState>,
     mut dialogue: ResMut<Dialogue>,
+    mut screen_fade: ResMut<ScreenFade>,
+    mut state: ResMut<ConcertHallState>,
 ) {
+    *state = ConcertHallState::default();
     commands.spawn_bundle(Camera2dBundle::default());
     ev_upgrades_spawn.send_default();
     ev_boat_preview_spawn.send_default();
+    screen_fade.fade_in(1.);
     /*commands
     .spawn_bundle(SpriteBundle {
         texture: asset_library.sprite_town_bg_hole.clone(),
@@ -43,42 +53,22 @@ fn concert_hall_init(
             .with_scale(Vec2::ONE * 0.5),
     );*/
     commands
-        .spawn_bundle(NodeBundle {
-            style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::Center,
-                position_type: PositionType::Absolute,
-                ..Default::default()
-            },
-            color: Color::NONE.into(),
+        .spawn_bundle(Text2dBundle {
+            text: Text::from_section(
+                "Press ESC to exit",
+                TextStyle {
+                    font: asset_library.font_bold.clone(),
+                    font_size: 42.0,
+                    color: Color::rgb_u8(52, 52, 52),
+                },
+            )
+            .with_alignment(TextAlignment {
+                horizontal: HorizontalAlign::Center,
+                vertical: VerticalAlign::Center,
+            }),
             ..Default::default()
         })
-        .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
-                style: Style {
-                    align_self: AlignSelf::Center,
-                    position_type: PositionType::Relative,
-                    position: UiRect {
-                        top: Val::Px(300.),
-                        ..Default::default()
-                    },
-                    ..Default::default()
-                },
-                text: Text::from_section(
-                    "Press space to exit".to_owned(),
-                    TextStyle {
-                        font: asset_library.font_default.clone(),
-                        font_size: 42.0,
-                        color: Color::WHITE,
-                    },
-                )
-                .with_alignment(TextAlignment {
-                    horizontal: HorizontalAlign::Center,
-                    vertical: VerticalAlign::Center,
-                }),
-                ..Default::default()
-            });
-        });
+        .insert(Transform2::from_xy(0., -320.).with_depth(DEPTH_LAYER_UPGRADES_LEAVE_TEXT));
     if !game_state.quests.upgrades_dialogue {
         for (p, t) in UPGRADE_MENU.iter() {
             dialogue.add_text(*p, String::from(*t));
@@ -87,10 +77,18 @@ fn concert_hall_init(
     }
 }
 
-fn concert_hall_leave(mut keys: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
-    if keys.just_pressed(KeyCode::Space) {
+fn concert_hall_leave(
+    keys: Res<Input<KeyCode>>,
+    mut app_state: ResMut<State<AppState>>,
+    mut state: ResMut<ConcertHallState>,
+    mut screen_fade: ResMut<ScreenFade>,
+) {
+    if !state.leave && keys.just_pressed(KeyCode::Escape) {
+        state.leave = true;
+        screen_fade.fade_out(1.);
+    }
+    if screen_fade.faded_out() && state.leave {
         app_state.set(AppState::TownOutside).unwrap();
-        keys.reset(KeyCode::Space);
     }
 }
 
