@@ -75,7 +75,7 @@ fn init(
     commands
         .spawn_bundle(Text2dBundle {
             text: Text::from_section(
-                "Intro cutscene!\n\nPress space to skip".to_owned(),
+                "".to_owned(),
                 TextStyle {
                     font: asset_library.font_default.clone(),
                     font_size: 24.0,
@@ -88,7 +88,7 @@ fn init(
             }),
             ..Default::default()
         })
-        .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 0.)))
+        .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)))
         .insert(CutsceneText);
     commands.spawn().insert(
         AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro_music.clone())
@@ -222,7 +222,7 @@ fn step2_image(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(260., 150.)
+                Transform2::from_xy(245., 145.)
                     .with_scale(Vec2::ONE * 0.44)
                     .with_depth((DepthLayer::Entity, 0.1))
                     .without_pixel_perfect(),
