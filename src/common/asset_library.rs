@@ -265,6 +265,9 @@ pub struct AssetLibrary {
     #[asset("sprites/HUD_Skill_Points_Notify_BG.png")]
     pub sprite_experience_skill_point_bg: Handle<Image>,
 
+    #[asset("audio/sfx/ui_level_up_01.ogg")]
+    pub audio_sfx_level_up: Handle<AudioSource>,
+
     /***********
      * Attacks *
      ***********/
@@ -310,6 +313,26 @@ pub struct AssetLibrary {
     #[asset("audio/music/shoot_accordion_03.ogg")]
     pub audio_sfx_attack_davy_03: Handle<AudioSource>,
 
+    #[asset("audio/sfx/bomb_explode_01.ogg")]
+    pub audio_sfx_bomb_explode_01: Handle<AudioSource>,
+    #[asset("audio/sfx/bomb_explode_02.ogg")]
+    pub audio_sfx_bomb_explode_02: Handle<AudioSource>,
+    #[asset("audio/sfx/bomb_explode_03.ogg")]
+    pub audio_sfx_bomb_explode_03: Handle<AudioSource>,
+    #[asset("audio/sfx/bomb_throw_01.ogg")]
+    pub audio_sfx_bomb_throw_01: Handle<AudioSource>,
+    #[asset("audio/sfx/bomb_throw_02.ogg")]
+    pub audio_sfx_bomb_throw_02: Handle<AudioSource>,
+    #[asset("audio/sfx/bomb_throw_03.ogg")]
+    pub audio_sfx_bomb_throw_03: Handle<AudioSource>,
+
+    #[asset("audio/sfx/tentacle_appear_01.ogg")]
+    pub audio_sfx_tentacle_01: Handle<AudioSource>,
+    #[asset("audio/sfx/tentacle_appear_02.ogg")]
+    pub audio_sfx_tentacle_02: Handle<AudioSource>,
+    #[asset("audio/sfx/tentacle_appear_03.ogg")]
+    pub audio_sfx_tentacle_03: Handle<AudioSource>,
+
     /********
      * Dash *
      ********/
@@ -339,6 +362,16 @@ pub struct AssetLibrary {
     pub sprite_town_mayor_notify: Handle<Image>,
     #[asset("sprites/WorldSkillMarker_Icon.png")]
     pub sprite_town_concert_hall_notify: Handle<Image>,
+    #[asset("audio/sfx/ui_rum_refill_jingle_01.ogg")]
+    pub audio_sfx_town_rum_refill_jingle: Handle<AudioSource>,
+    #[asset("audio/sfx/ui_rum_refill_clank_01.ogg")]
+    pub audio_sfx_town_rum_refill_clank_01: Handle<AudioSource>,
+    #[asset("audio/sfx/ui_rum_refill_clank_02.ogg")]
+    pub audio_sfx_town_rum_refill_clank_02: Handle<AudioSource>,
+    #[asset("audio/sfx/ui_rum_refill_clank_03.ogg")]
+    pub audio_sfx_town_rum_refill_clank_03: Handle<AudioSource>,
+    #[asset("audio/sfx/ui_confirm_01.ogg")]
+    pub audio_sfx_upgrade_01: Handle<AudioSource>,
 
     /***********************
      * Town / Concert Hall *

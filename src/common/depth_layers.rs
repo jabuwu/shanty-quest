@@ -11,8 +11,8 @@ pub const DEPTH_LAYER_CONTROLS: Layer = (DepthLayer::Environment, 0.1);
 pub const DEPTH_LAYER_EXPERIENCE: Layer = (DepthLayer::Environment, 0.11);
 
 // ui
-pub const DEPTH_LAYER_SCREEN_FADE: Layer = (DepthLayer::Front, 1.);
-pub const DEPTH_LAYER_DAMAGE_FLASH: Layer = (DepthLayer::Front, 0.99);
+pub const DEPTH_LAYER_SCREEN_FADE: Layer = (DepthLayer::Front, 0.99);
+pub const DEPTH_LAYER_DAMAGE_FLASH: Layer = (DepthLayer::Front, 0.98);
 
 pub const DEPTH_LAYER_DIALOGUE_FADE: Layer = (DepthLayer::Front, 0.94);
 pub const DEPTH_LAYER_DIALOGUE_BACK: Layer = (DepthLayer::Front, 0.95);

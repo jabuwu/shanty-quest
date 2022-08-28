@@ -43,20 +43,26 @@ pub struct SoundEffects {
     pub sfx_overworld_enemy_damage: AudioPlusSoundEffect,
     pub sfx_overworld_map_open: AudioPlusSoundEffect,
     pub sfx_overworld_map_close: AudioPlusSoundEffect,
+    pub sfx_overworld_level_up: AudioPlusSoundEffect,
 
     // attacks
     pub sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect,
     pub sfx_overworld_attack_shotgun_cannons: AudioPlusSoundEffect,
     pub sfx_overworld_attack_shockwave: AudioPlusSoundEffect,
     pub sfx_overworld_attack_bombs: AudioPlusSoundEffect,
+    pub sfx_overworld_attack_bomb_throw: AudioPlusSoundEffect,
+    pub sfx_overworld_attack_bomb_explode: AudioPlusSoundEffect,
     pub sfx_overworld_attack_kraken: AudioPlusSoundEffect,
+    pub sfx_overworld_attack_tentacle: AudioPlusSoundEffect,
 
     // town
     pub sfx_town_ambient: AudioPlusSoundEffect,
     pub sfx_town_music: AudioPlusSoundEffect,
     pub sfx_town_outside_hover: AudioPlusSoundEffect,
     pub sfx_town_outside_click: AudioPlusSoundEffect,
+    pub sfx_town_rum_refill_jingle: AudioPlusSoundEffect,
     pub sfx_town_rum_refill_clank: AudioPlusSoundEffect,
+    pub sfx_town_upgrade: AudioPlusSoundEffect,
 }
 
 pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
@@ -91,7 +97,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_dialogue_voice_generic_06.clone(),
                 asset_library.audio_sfx_dialogue_voice_generic_07.clone(),
                 asset_library.audio_sfx_dialogue_voice_generic_08.clone(),
-                asset_library.audio_sfx_dialogue_voice_generic_09.clone()
+                asset_library.audio_sfx_dialogue_voice_generic_09.clone(),
             ],
             volume: 0.6,
             pitch_variation: 0.2,
@@ -250,13 +256,18 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             volume: 0.5,
             ..Default::default()
         },
+        sfx_overworld_level_up: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_level_up.clone()],
+            volume: 0.8,
+            ..Default::default()
+        },
         sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect {
             audio_sources: vec![
                 asset_library.audio_sfx_attack_player_01.clone(),
                 asset_library.audio_sfx_attack_player_02.clone(),
                 asset_library.audio_sfx_attack_player_03.clone(),
             ],
-            volume: 1.0,
+            volume: 0.4,
             positional: true,
             ..Default::default()
         },
@@ -266,7 +277,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_attack_jagerossa_02.clone(),
                 asset_library.audio_sfx_attack_jagerossa_03.clone(),
             ],
-            volume: 1.0,
+            volume: 0.3,
             positional: true,
             ..Default::default()
         },
@@ -276,7 +287,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_attack_ringo_02.clone(),
                 asset_library.audio_sfx_attack_ringo_03.clone(),
             ],
-            volume: 1.0,
+            volume: 0.3,
             positional: true,
             ..Default::default()
         },
@@ -286,7 +297,27 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_attack_plank_02.clone(),
                 asset_library.audio_sfx_attack_plank_03.clone(),
             ],
-            volume: 1.0,
+            volume: 0.1,
+            positional: true,
+            ..Default::default()
+        },
+        sfx_overworld_attack_bomb_throw: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_bomb_throw_01.clone(),
+                asset_library.audio_sfx_bomb_throw_02.clone(),
+                asset_library.audio_sfx_bomb_throw_03.clone(),
+            ],
+            volume: 0.1,
+            positional: true,
+            ..Default::default()
+        },
+        sfx_overworld_attack_bomb_explode: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_bomb_explode_01.clone(),
+                asset_library.audio_sfx_bomb_explode_02.clone(),
+                asset_library.audio_sfx_bomb_explode_03.clone(),
+            ],
+            volume: 0.2,
             positional: true,
             ..Default::default()
         },
@@ -296,8 +327,19 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_attack_davy_02.clone(),
                 asset_library.audio_sfx_attack_davy_03.clone(),
             ],
-            volume: 1.0,
+            volume: 0.2,
             positional: true,
+            ..Default::default()
+        },
+        sfx_overworld_attack_tentacle: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_tentacle_01.clone(),
+                asset_library.audio_sfx_tentacle_02.clone(),
+                asset_library.audio_sfx_tentacle_03.clone(),
+            ],
+            volume: 0.06,
+            positional: true,
+            pitch_variation: 0.1,
             ..Default::default()
         },
         sfx_overworld_music: AudioPlusSoundEffect::none(),
@@ -319,8 +361,22 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             volume: 1.,
             ..Default::default()
         },
+        sfx_town_rum_refill_jingle: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_town_rum_refill_jingle.clone()],
+            volume: 1.0,
+            ..Default::default()
+        },
         sfx_town_rum_refill_clank: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            audio_sources: vec![
+                asset_library.audio_sfx_town_rum_refill_clank_01.clone(),
+                asset_library.audio_sfx_town_rum_refill_clank_02.clone(),
+                asset_library.audio_sfx_town_rum_refill_clank_03.clone(),
+            ],
+            volume: 1.0,
+            ..Default::default()
+        },
+        sfx_town_upgrade: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_upgrade_01.clone()],
             volume: 1.0,
             ..Default::default()
         },

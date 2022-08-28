@@ -57,6 +57,18 @@ fn init1(
     let health = game_state.health / game_state.health_max;
     state.index = 1 + (health * 8.).round() as u32;
     commands
+        .spawn_bundle(Transform2Bundle::default())
+        .insert(
+            AudioPlusSource::new(
+                asset_library
+                    .sound_effects
+                    .sfx_town_rum_refill_jingle
+                    .clone(),
+            )
+            .as_playing(),
+        )
+        .insert(TimeToLive { seconds: 3. });
+    commands
         .spawn_bundle(TransformBundle::default())
         .insert_bundle(VisibilityBundle::default())
         .insert(Transform2::new().with_scale(Vec2::ONE * 1.5))

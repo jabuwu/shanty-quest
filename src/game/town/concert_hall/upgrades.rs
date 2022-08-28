@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 #[derive(Default)]
@@ -386,6 +387,8 @@ fn upgrades_buttons(
     )>,
     mut game_state: ResMut<GameState>,
     dialogue: Res<Dialogue>,
+    mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
 ) {
     let disable_input = dialogue.visible();
     for (clickable, mut sprite, mut transform, button) in query.iter_mut() {
@@ -410,6 +413,13 @@ fn upgrades_buttons(
             button.upgrade.increase_level(game_state.as_mut());
             if game_state.skill_points != 0 {
                 game_state.skill_points -= 1;
+                commands
+                    .spawn()
+                    .insert(
+                        AudioPlusSource::new(asset_library.sound_effects.sfx_town_upgrade.clone())
+                            .as_playing(),
+                    )
+                    .insert(TimeToLive { seconds: 3. });
             }
         }
     }

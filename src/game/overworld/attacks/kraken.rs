@@ -120,7 +120,7 @@ fn kraken_fire(
                             .with_depth((DepthLayer::Entity, 0.0))
                             .with_scale(scale.truncate()),
                     )
-                    .insert(YDepth { offset: 10. })
+                    .insert(YDepth { offset: 20. })
                     .insert(Tentacle {
                         submerge_time,
                         submerge_time_max: submerge_time,
@@ -137,17 +137,35 @@ fn kraken_fire(
 }
 
 fn tentacle_update(
-    mut query: Query<(Entity, &mut Tentacle)>,
+    mut query: Query<(Entity, &mut Tentacle, &GlobalTransform)>,
     time: Res<Time>,
     mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
 ) {
-    for (entity, mut tentacle) in query.iter_mut() {
+    for (entity, mut tentacle, global_transform) in query.iter_mut() {
         tentacle.submerge_time -= time.delta_seconds();
         tentacle.time_to_live -= time.delta_seconds();
         if tentacle.time_to_live < 0. && tentacle.spawned_hurtbox {
             commands.entity(entity).despawn();
         }
         if tentacle.submerge_time <= 0. && !tentacle.spawned_hurtbox {
+            if rand::random() {
+                commands
+                    .spawn_bundle(TransformBundle::default())
+                    .insert(Transform2::from_translation(
+                        global_transform.translation().truncate(),
+                    ))
+                    .insert(
+                        AudioPlusSource::new(
+                            asset_library
+                                .sound_effects
+                                .sfx_overworld_attack_tentacle
+                                .clone(),
+                        )
+                        .as_playing(),
+                    )
+                    .insert(TimeToLive { seconds: 4. });
+            }
             commands.entity(entity).insert(Hurtbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(32., 48.),

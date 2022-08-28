@@ -118,6 +118,21 @@ fn bombs_fire(
                         stats,
                     });
             }
+            commands
+                .spawn_bundle(TransformBundle::default())
+                .insert(Transform2::from_translation(
+                    global_transform.translation().truncate(),
+                ))
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_bomb_throw
+                            .clone(),
+                    )
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 4. });
         }
         bombs.shoot = false;
     }
@@ -127,6 +142,7 @@ fn bomb_move(
     mut query: Query<(Entity, &mut Transform2, &mut Bomb, &GlobalTransform)>,
     time: Res<Time>,
     mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
 ) {
     for (entity, mut transform, mut bomb, global_transform) in query.iter_mut() {
         transform.translation += bomb.velocity * time.delta_seconds();
@@ -161,6 +177,21 @@ fn bomb_move(
                 })
                 .insert(YDepth::default())
                 .insert(TimeToLive { seconds: 0.05 });
+            commands
+                .spawn_bundle(TransformBundle::default())
+                .insert(Transform2::from_translation(
+                    global_transform.translation().truncate(),
+                ))
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_bomb_explode
+                            .clone(),
+                    )
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 4. });
         }
     }
 }
