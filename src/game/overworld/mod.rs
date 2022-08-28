@@ -27,6 +27,8 @@ impl Plugin for OverworldPlugin {
             .add_plugin(threat_level::ThreatLevelPlugin)
             .add_plugin(turtle::TurtlePlugin)
             .add_plugin(experience::ExperiencePlugin)
+            .add_plugin(damage_flash::DamageFlashPlugin)
+            .add_plugin(damage_rum::DamageRumPlugin)
             .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
@@ -111,6 +113,8 @@ pub mod camera;
 pub mod character_controller;
 pub mod cutscenes;
 pub mod damage;
+pub mod damage_flash;
+pub mod damage_rum;
 pub mod enemy_spawns;
 pub mod entities;
 pub mod experience;

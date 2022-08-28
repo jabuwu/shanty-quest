@@ -187,15 +187,23 @@ fn player_invincibility(mut crate_query: Query<(&mut Player, &mut Boat)>, time: 
 
 fn player_damage(
     mut ev_damage: EventReader<DamageEvent>,
-    mut crate_query: Query<(&mut Health, &mut Player)>,
+    mut crate_query: Query<(&mut Health, &mut Player, &mut GlobalTransform)>,
     mut ev_death_cutscene: EventWriter<CutsceneStartEvent<DeathCutscene>>,
     cutscenes: Res<Cutscenes>,
     mut game_state: ResMut<GameState>,
+    mut overworld_camera: ResMut<OverworldCamera>,
+    mut ev_damage_flash_spawn: EventWriter<DamageFlashSpawnEvent>,
+    mut ev_damage_rum_spawn: EventWriter<DamageRumSpawnEvent>,
 ) {
     for event in ev_damage.iter() {
-        if let Ok((mut health, mut player)) = crate_query.get_mut(event.hit) {
+        if let Ok((mut health, mut player, global_transform)) = crate_query.get_mut(event.hit) {
             if player.invincibility <= 0. {
                 if !cutscenes.running() {
+                    ev_damage_flash_spawn.send_default();
+                    ev_damage_rum_spawn.send(DamageRumSpawnEvent {
+                        position: global_transform.translation().truncate(),
+                    });
+                    overworld_camera.screen_shake(1.);
                     health.damage(event.damage);
                     game_state.health = health.value;
                 }
@@ -203,7 +211,7 @@ fn player_damage(
                     player.dead = true;
                     ev_death_cutscene.send_default();
                 }
-                player.invincibility = 0.3;
+                player.invincibility = 0.7;
             }
         }
     }

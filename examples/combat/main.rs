@@ -43,6 +43,8 @@ fn main() {
         .add_plugin(jam::game::overworld::threat_level::ThreatLevelPlugin)
         .add_plugin(jam::game::overworld::experience::ExperiencePlugin)
         .add_plugin(jam::game::overworld::ui::OverworldUiPlugin)
+        .add_plugin(jam::game::overworld::damage_flash::DamageFlashPlugin)
+        .add_plugin(jam::game::overworld::damage_rum::DamageRumPlugin)
         .add_plugin(jam::game::quests::QuestsPlugin)
         .add_plugin(jam::game::town::outside::rum_refill::RumRefillPlugin)
         .init_resource::<jam::game::state::GameState>()

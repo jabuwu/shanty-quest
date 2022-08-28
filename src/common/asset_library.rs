@@ -182,6 +182,9 @@ pub struct AssetLibrary {
     pub sprite_angler_fish: Handle<Image>,
     pub sprite_angler_fish_atlas: Handle<TextureAtlas>,
 
+    #[asset("sprites/Bottle2.png")]
+    pub sprite_rum_bottle: Handle<Image>,
+
     /****************
      * Overworld UI *
      ****************/
