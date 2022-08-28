@@ -25,6 +25,8 @@ pub struct AssetLibrary {
     pub font_default: Handle<Font>,
     #[asset("fonts/Pirate Kids.otf")]
     pub font_bold: Handle<Font>,
+    #[asset("sprites/BottomFade.png")]
+    pub sprite_dialogue_fade: Handle<Image>,
     #[asset("sprites/OverworldDialogBG.png")]
     pub sprite_dialogue_bg: Handle<Image>,
     #[asset("sprites/portrait_a.png")]

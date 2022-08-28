@@ -86,6 +86,9 @@ impl Dialogue {
 }
 
 #[derive(Component)]
+pub struct DialogueFade;
+
+#[derive(Component)]
 pub struct DialogueBack;
 
 #[derive(Component)]
@@ -105,6 +108,15 @@ fn dialogue_init(
     asset_library: Res<AssetLibrary>,
 ) {
     for _ in ev_dialogue_init.iter() {
+        commands
+            .spawn_bundle(SpriteBundle {
+                texture: asset_library.sprite_dialogue_fade.clone(),
+                ..Default::default()
+            })
+            .insert(Transform2::new().with_depth(DEPTH_LAYER_DIALOGUE_FADE))
+            .insert(DialogueFade)
+            .insert(Persistent)
+            .insert(FollowCamera { offset: Vec2::ZERO });
         commands
             .spawn_bundle(Transform2Bundle {
                 transform2: Transform2::from_xy(0., -240.),
@@ -219,6 +231,7 @@ fn dialogue_update(
         Query<&mut AudioPlusSource, With<DialogueBack>>,
         Query<&mut AudioPlusSource, With<DialogueName>>,
         Query<&mut AudioPlusSource, With<DialogueText>>,
+        Query<&mut Visibility, With<DialogueFade>>,
     )>,
     screen_fade: Res<ScreenFade>,
     mut input: ResMut<Input<KeyCode>>,
@@ -268,6 +281,9 @@ fn dialogue_update(
             for mut back_visibility in queries.p0().iter_mut() {
                 back_visibility.is_visible = true;
             }
+            for mut fade_visibility in queries.p7().iter_mut() {
+                fade_visibility.is_visible = true;
+            }
             for mut dialogue_text in queries.p1().iter_mut() {
                 dialogue_text.sections[0].value = String::from(&entry.text[0..characters]);
             }
@@ -286,6 +302,9 @@ fn dialogue_update(
     if hide {
         for mut back_visibility in queries.p0().iter_mut() {
             back_visibility.is_visible = false;
+        }
+        for mut fade_visibility in queries.p7().iter_mut() {
+            fade_visibility.is_visible = false;
         }
         for mut dialogue_text in queries.p1().iter_mut() {
             if dialogue_text.sections[0].value != "" {
