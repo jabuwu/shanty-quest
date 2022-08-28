@@ -212,6 +212,12 @@ pub struct AssetLibrary {
     #[asset("audio/sfx/ui_map_close_01.ogg")]
     pub audio_sfx_map_close_01: Handle<AudioSource>,
 
+    #[asset("audio/sfx/ui_town_enter_01.ogg")]
+    pub audio_sfx_town_enter: Handle<AudioSource>,
+
+    #[asset("audio/sfx/ui_town_leave_01.ogg")]
+    pub audio_sfx_town_leave: Handle<AudioSource>,
+
     /****************
      * Overworld UI *
      ****************/

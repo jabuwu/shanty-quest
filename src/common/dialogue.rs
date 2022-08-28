@@ -264,7 +264,7 @@ fn dialogue_update(
     if let Some(entry) = dialogue.entries.get(0).cloned() {
         if allow {
             let characters = dialogue.characters();
-            let characters_sfx = characters / 9;
+            let characters_sfx = characters / 8;
             if dialogue.last_characters != characters_sfx {
                 if dialogue.last_characters == 0 {
                     for mut sound in queries.p6().iter_mut() {

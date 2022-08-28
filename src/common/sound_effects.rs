@@ -73,11 +73,11 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_dialogue_start: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
-            volume: 1.0,
+            volume: 0.0,
             ..Default::default()
         },
         sfx_dialogue_proceed: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            audio_sources: vec![asset_library.menu_sfx_button_click.clone()],
             volume: 1.0,
             ..Default::default()
         },
@@ -91,10 +91,11 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_dialogue_voice_generic_06.clone(),
                 asset_library.audio_sfx_dialogue_voice_generic_07.clone(),
                 asset_library.audio_sfx_dialogue_voice_generic_08.clone(),
-                asset_library.audio_sfx_dialogue_voice_generic_09.clone(),
+                asset_library.audio_sfx_dialogue_voice_generic_09.clone()
             ],
-            volume: 0.4,
-            pitch_variation: 0.,
+            volume: 0.6,
+            pitch_variation: 0.2,
+            chance: 0.85,
             ..Default::default()
         },
         sfx_menu_ambient: AudioPlusSoundEffect {
@@ -193,13 +194,13 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             ..Default::default()
         },
         sfx_overworld_town_enter: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.menu_sfx_play.clone()],
-            volume: 0.5,
+            audio_sources: vec![asset_library.audio_sfx_town_enter.clone()],
+            volume: 0.8,
             ..Default::default()
         },
         sfx_overworld_town_exit: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.menu_sfx_play.clone()],
-            volume: 0.5,
+            audio_sources: vec![asset_library.audio_sfx_town_leave.clone()],
+            volume: 0.8,
             ..Default::default()
         },
         sfx_overworld_dash: AudioPlusSoundEffect {
@@ -217,7 +218,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_xp_02.clone(),
                 asset_library.audio_sfx_xp_03.clone(),
             ],
-            volume: 1.0,
+            volume: 0.85,
             ..Default::default()
         },
         sfx_overworld_player_damage: AudioPlusSoundEffect {
@@ -226,17 +227,17 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_player_damage_02.clone(),
                 asset_library.audio_sfx_player_damage_03.clone(),
             ],
-            volume: 0.5,
+            volume: 0.6,
             ..Default::default()
         },
         sfx_overworld_enemy_damage: AudioPlusSoundEffect {
             audio_sources: vec![
-                asset_library.audio_sfx_player_damage_01.clone(),
-                asset_library.audio_sfx_player_damage_02.clone(),
-                asset_library.audio_sfx_player_damage_03.clone(),
+                asset_library.audio_sfx_enemy_damage_01.clone(),
+                asset_library.audio_sfx_enemy_damage_02.clone(),
+                asset_library.audio_sfx_enemy_damage_03.clone(),
             ],
             positional: true,
-            volume: 0.3,
+            volume: 0.6,
             ..Default::default()
         },
         sfx_overworld_map_open: AudioPlusSoundEffect {
