@@ -142,7 +142,7 @@ fn step1(
         screen_fade.fade_in(0.5);
     }
     if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value = "Well, ya oiled me mouth with a jug o' rum so lemme tell ya the story of treble at sea! Eh? How the Pirate Lords became... Lords?!".to_owned();
+        text.sections[0].value = "Well, ya oiled me tongue with a jug o' rum so lemme tell ya the story of treble at sea! Eh? How the Pirate Lords became... Lords?!".to_owned();
     }
     if !cutscenes.skipping() {
         commands
@@ -253,7 +253,7 @@ fn step4(
     }
     if let Ok(mut text) = query.get_single_mut() {
         text.sections[0].value =
-            "But, right as rum, men are men. Each Lord wished to get more powa, to get all other instruments! That's how this Pirate Lords War started...".to_owned();
+            "But, right as rum, pirates be pirates. Each Lord wished to get more powa, to get all other instruments! That's how this Pirate Lords War started...".to_owned();
     }
     if !cutscenes.skipping() {
         commands
