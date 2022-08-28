@@ -41,15 +41,15 @@ fn plank_stats_by_health(health_percent: f32) -> PlankStatsByHealth {
             speed: 400.,
             attack_time: 0.35,
         }
-    } else if health_percent > 0.35 {
+    } else if health_percent > 0.15 {
         PlankStatsByHealth {
             speed: 400.,
             attack_time: 0.25,
         }
     } else {
         PlankStatsByHealth {
-            speed: 600.,
-            attack_time: 0.15,
+            speed: 500.,
+            attack_time: 0.2,
         }
     }
 }
@@ -100,10 +100,11 @@ fn plank_spawn(
             },
             healthbar: false,
             player: false,
-            health: 100.,
+            health: 150.,
+            health_max: 150.,
             speed: stats.speed,
             attack_cooldown: stats.attack_time,
-            knockback_resistance: 0.0,
+            knockback_resistance: 0.9,
         });
     }
 }

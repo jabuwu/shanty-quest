@@ -53,6 +53,7 @@ fn boat_preview_spawn(
                     healthbar: false,
                     player: true,
                     health: 30.,
+                    health_max: 30.,
                     speed: 100.,
                     attack_cooldown: PLAYER_ATTACK_COOLDOWN,
                     knockback_resistance: 0.,

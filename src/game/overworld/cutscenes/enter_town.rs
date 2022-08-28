@@ -3,7 +3,7 @@ use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
-const ENTER_TOWN_TIME_SECONDS: f32 = 2.7;
+const ENTER_TOWN_TIME_SECONDS: f32 = 1.4;
 
 #[derive(Default)]
 pub struct EnterTownCutsceneState {

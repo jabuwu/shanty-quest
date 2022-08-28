@@ -51,6 +51,7 @@ pub enum HurtboxKnockbackType {
 pub struct AutoDamage {
     pub despawn: bool,
     pub invincibility: f32,
+    pub invincibility_amount: f32,
     pub already_despawned: bool,
     pub experience: f32,
     pub experience_count: u32,
@@ -152,10 +153,14 @@ fn damage_auto_die(
         if let Ok((entity, mut health, mut auto_damage, transform)) = crate_query.get_mut(event.hit)
         {
             if auto_damage.invincibility == 0. {
+                auto_damage.invincibility_amount = 0.
+            }
+            if event.damage > auto_damage.invincibility_amount {
                 if !cutscenes.running() {
-                    health.damage(event.damage);
+                    health.damage(event.damage - auto_damage.invincibility_amount);
                 }
                 auto_damage.invincibility = 0.1;
+                auto_damage.invincibility_amount = event.damage;
             }
             if health.dead() && !auto_damage.already_despawned {
                 commands.entity(entity).despawn_recursive();

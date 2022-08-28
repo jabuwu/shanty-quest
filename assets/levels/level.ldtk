@@ -2362,7 +2362,7 @@
 						},
 						{
 							"__identifier": "PlankSpawn",
-							"__grid": [174,160],
+							"__grid": [174,157],
 							"__pivot": [0,0],
 							"__tags": [],
 							"__tile": null,
@@ -2371,7 +2371,7 @@
 							"width": 100,
 							"height": 100,
 							"defUid": 81,
-							"px": [8700,8000],
+							"px": [8700,7850],
 							"fieldInstances": []
 						},
 						{

@@ -56,6 +56,7 @@ fn player_spawn(
             healthbar: false,
             player: true,
             health: game_state.health,
+            health_max: game_state.health_max,
             speed: 250.,
             attack_cooldown: PLAYER_ATTACK_COOLDOWN,
             knockback_resistance: 0.2,

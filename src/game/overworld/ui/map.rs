@@ -216,6 +216,7 @@ fn map_input(
         && input.just_pressed(KeyCode::M)
         && !cutscenes.running()
         && game_state.dangerous_seas
+        && !game_state.quests.fighting()
     {
         ev_cutscene.send_default();
     }

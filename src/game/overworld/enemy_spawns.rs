@@ -23,49 +23,54 @@ impl Default for EnemySpawnsState {
             },
             easy_level: EnemySpawnLevel {
                 spawn_chances: vec![
-                    (0.03, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.01, EnemySpawn::Octopus(OctopusLevel::Medium)),
                     (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 1.,
-                spawn_max: 5,
+                spawn_max: 15,
             },
             medium_level: EnemySpawnLevel {
                 spawn_chances: vec![
                     (0.05, EnemySpawn::Octopus(OctopusLevel::Hard)),
-                    (0.05, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.01, EnemySpawn::Octopus(OctopusLevel::Medium)),
                     (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.5,
-                spawn_max: 10,
+                spawn_max: 20,
             },
             hard_level: EnemySpawnLevel {
                 spawn_chances: vec![
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Hard)),
-                    (0.05, EnemySpawn::Octopus(OctopusLevel::Medium)),
-                    (0.05, EnemySpawn::Turtle(TurtleLevel::Hard)),
+                    (0.01, EnemySpawn::Octopus(OctopusLevel::Medium)),
+                    (0.005, EnemySpawn::Turtle(TurtleLevel::Hard)),
+                    (0.01, EnemySpawn::Turtle(TurtleLevel::Medium)),
                     (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.25,
-                spawn_max: 20,
+                spawn_max: 30,
             },
             midnight_level: EnemySpawnLevel {
                 spawn_chances: vec![
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Hard)),
                     (0.1, EnemySpawn::Octopus(OctopusLevel::Medium)),
-                    (0.05, EnemySpawn::Turtle(TurtleLevel::Hard)),
+                    (0.005, EnemySpawn::Turtle(TurtleLevel::Hard)),
+                    (0.01, EnemySpawn::Turtle(TurtleLevel::Medium)),
                     (0.15, EnemySpawn::Turtle(TurtleLevel::Easy)),
                     (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
                 ],
                 seconds_per_spawn: 0.1,
-                spawn_max: 30,
+                spawn_max: 40,
             },
             davy_level: EnemySpawnLevel {
-                spawn_chances: vec![(1., EnemySpawn::Octopus(OctopusLevel::Easy))],
+                spawn_chances: vec![
+                    (0.1, EnemySpawn::Turtle(TurtleLevel::Easy)),
+                    (1., EnemySpawn::Octopus(OctopusLevel::Easy)),
+                ],
                 seconds_per_spawn: 0.5,
-                spawn_max: 5,
+                spawn_max: 10,
             },
         }
     }
@@ -194,25 +199,31 @@ fn enemy_spawns(
         && screen_fade.faded_in()
         && *threat_level != ThreatLevel::None
     {
-        let position = camera_position + random_spawn_offset();
         for spawn_chance in level.spawn_chances.iter() {
             if rand::random::<f32>() < spawn_chance.0 {
-                match spawn_chance.1 {
-                    EnemySpawn::Octopus(level) => {
-                        let entity = commands.spawn().insert(SpawnedEntity::default()).id();
-                        ev_octopus_spawn.send(OctopusSpawnEvent {
-                            entity: Some(entity),
-                            position,
-                            level,
-                        });
-                    }
-                    EnemySpawn::Turtle(level) => {
-                        let entity = commands.spawn().insert(SpawnedEntity::default()).id();
-                        ev_turtle_spawn.send(TurtleSpawnEvent {
-                            entity: Some(entity),
-                            position,
-                            level,
-                        });
+                let count = match spawn_chance.1 {
+                    EnemySpawn::Turtle(TurtleLevel::Medium) => 2,
+                    _ => 1,
+                };
+                for _ in 0..count {
+                    let position = camera_position + random_spawn_offset();
+                    match spawn_chance.1 {
+                        EnemySpawn::Octopus(level) => {
+                            let entity = commands.spawn().insert(SpawnedEntity::default()).id();
+                            ev_octopus_spawn.send(OctopusSpawnEvent {
+                                entity: Some(entity),
+                                position,
+                                level,
+                            });
+                        }
+                        EnemySpawn::Turtle(level) => {
+                            let entity = commands.spawn().insert(SpawnedEntity::default()).id();
+                            ev_turtle_spawn.send(TurtleSpawnEvent {
+                                entity: Some(entity),
+                                position,
+                                level,
+                            });
+                        }
                     }
                 }
                 break;

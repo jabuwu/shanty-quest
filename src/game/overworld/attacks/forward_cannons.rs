@@ -26,10 +26,11 @@ impl ForwardCannonsLevel {
     fn stats(&self) -> ForwardCannonsStats {
         let level = self.0 as f32;
         ForwardCannonsStats {
-            damage: level,
-            scale: 1. + level / 4.,
+            damage: level * 0.7,
+            scale: 0.8 + level / 5.,
             speed: 1200. + level * 100.,
             hit_multiple: self.0 >= 5,
+            knockback_intensity: if self.0 >= 5 { 0.004 } else { 0.0075 },
         }
     }
 }
@@ -40,6 +41,7 @@ struct ForwardCannonsStats {
     scale: f32,
     speed: f32,
     hit_multiple: bool,
+    knockback_intensity: f32,
 }
 
 #[derive(Component)]
@@ -98,7 +100,9 @@ fn forward_cannons_fire(
                     for_entity: Some(boat_entity),
                     auto_despawn: if stats.hit_multiple { false } else { true },
                     flags: forward_cannons.hurt_flags,
-                    knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.0075),
+                    knockback_type: HurtboxKnockbackType::Velocity(
+                        velocity * stats.knockback_intensity,
+                    ),
                     damage: stats.damage,
                 })
                 .insert(YDepth::default())

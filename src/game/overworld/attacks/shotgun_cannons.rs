@@ -27,7 +27,7 @@ impl ShotgunCannonsLevel {
         if self.0 == 6 {
             // boss stats
             ShotgunCannonsStats {
-                damage: 1.,
+                damage: 0.5,
                 time_to_live: 0.37,
                 scale: 1.,
                 angle: 0.1,
@@ -114,7 +114,7 @@ fn shotgun_cannons_fire(
                             for_entity: Some(boat_entity),
                             auto_despawn: true,
                             flags: shotgun_cannons.hurt_flags,
-                            knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.01),
+                            knockback_type: HurtboxKnockbackType::None,
                             damage: stats.damage,
                         })
                         .insert(

@@ -46,7 +46,7 @@ impl OctopusLevel {
             Self::Easy => OctopusInfo {
                 atlas: asset_library.sprite_octopus_easy_atlas.clone(),
                 scale: 0.75,
-                health: 2.5,
+                health: 1.5,
                 speed: 150.,
                 knockback_resistence: 0.,
                 experience: 1.,
@@ -57,16 +57,16 @@ impl OctopusLevel {
                 scale: 1.0,
                 health: 3.5,
                 speed: 300.,
-                knockback_resistence: 0.4,
+                knockback_resistence: 0.6,
                 experience: 1.,
                 experience_count: 5,
             },
             Self::Hard => OctopusInfo {
                 atlas: asset_library.sprite_octopus_hard_atlas.clone(),
                 scale: 1.2,
-                health: 5.,
+                health: 20.,
                 speed: 150.,
-                knockback_resistence: 0.7,
+                knockback_resistence: 0.9,
                 experience: 3.,
                 experience_count: 3,
             },
@@ -86,8 +86,9 @@ struct OctopusInfo {
 
 #[derive(Component)]
 pub struct Octopus {
-    stop_chance: TimedChance,
-    stop_time: f32,
+    wander_chance: TimedChance,
+    wander_time: f32,
+    wander_direction: Vec2,
 }
 
 #[derive(Component)]
@@ -132,8 +133,9 @@ fn octopus_spawn(
             .insert_bundle(VisibilityBundle::default())
             .insert(Transform2::from_translation(event.position))
             .insert(Octopus {
-                stop_chance: TimedChance::new(),
-                stop_time: 0.,
+                wander_chance: TimedChance::new(),
+                wander_time: 0.,
+                wander_direction: Vec2::X,
             })
             .insert(YDepth::default())
             .insert(Health::new(health))
@@ -207,14 +209,21 @@ fn octopus_move(
         Vec2::ZERO
     };
     for (mut character_controller, octopus_transform, mut octopus) in queries.p0().iter_mut() {
-        if octopus.stop_time < 0. && octopus.stop_chance.check(6., 3., time.delta_seconds()) {
-            octopus.stop_time = 0.5;
+        if octopus.wander_time < 0. && octopus.wander_chance.check(6., 3., time.delta_seconds()) {
+            octopus.wander_time = 0.5;
+            octopus.wander_direction =
+                Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU) * 2.;
         }
-        octopus.stop_time -= time.delta_seconds();
-        if cutscenes.running() || octopus.stop_time > 0. {
+        octopus.wander_time -= time.delta_seconds();
+        if cutscenes.running() {
             character_controller.movement = Vec2::ZERO;
         } else {
-            let direction = player_position - octopus_transform.translation().truncate();
+            let chase_position = if octopus.wander_time > 0. {
+                octopus_transform.translation().truncate() + octopus.wander_direction
+            } else {
+                player_position
+            };
+            let direction = chase_position - octopus_transform.translation().truncate();
             character_controller.movement = direction.normalize();
         }
     }

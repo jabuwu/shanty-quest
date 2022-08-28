@@ -86,7 +86,7 @@ impl GameState {
     }
 
     pub fn experience_max(&self) -> f32 {
-        25. + self.level as f32 * 25.
+        25. + self.level as f32 * 10.
     }
 
     pub fn apply_defense_upgrade(&mut self) {

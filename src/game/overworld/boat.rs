@@ -36,6 +36,7 @@ pub struct BoatSpawnEvent {
     pub healthbar: bool,
     pub player: bool,
     pub health: f32,
+    pub health_max: f32,
     pub speed: f32,
     pub knockback_resistance: f32,
 }
@@ -148,7 +149,7 @@ fn boat_spawn(
                 shoot: false,
                 hurt_flags,
             })
-            .insert(Health::new(event.health))
+            .insert(Health::new_with_max(event.health, event.health_max))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(120., 120.),

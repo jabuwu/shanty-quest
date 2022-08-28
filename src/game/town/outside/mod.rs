@@ -77,7 +77,7 @@ fn outside_init(
     mut dialogue: ResMut<Dialogue>,
     mut screen_fade: ResMut<ScreenFade>,
 ) {
-    screen_fade.fade_in(1.0);
+    screen_fade.fade_in(0.5);
     *state = OutsideState::default();
     commands
         .spawn_bundle(Camera2dBundle::default())
@@ -352,7 +352,7 @@ fn outside_click(
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::ConcertHall => {
-                        screen_fade.fade_out(1.);
+                        screen_fade.fade_out(0.5);
                         state.leave = OutsideLeave::LeaveToConcertHall;
                     }
                     ClickableAction::Leave => {
@@ -367,7 +367,7 @@ fn outside_click(
                                 dialogue.add_text(*p, String::from(*t));
                             }
                         } else {
-                            screen_fade.fade_out(1.);
+                            screen_fade.fade_out(0.5);
                             state.leave = OutsideLeave::LeaveToOverworld;
                             for mut source in sound_query.p2().iter_mut() {
                                 source.stop();

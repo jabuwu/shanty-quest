@@ -46,7 +46,7 @@ impl TurtleLevel {
             Self::Easy => TurtleInfo {
                 atlas: asset_library.sprite_turtle_easy_atlas.clone(),
                 scale: 1.0,
-                health: 3.,
+                health: 15.,
                 speed: 150.,
                 knockback_resistence: 0.8,
                 experience: 1.,
@@ -54,21 +54,21 @@ impl TurtleLevel {
             },
             Self::Medium => TurtleInfo {
                 atlas: asset_library.sprite_turtle_medium_atlas.clone(),
-                scale: 1.0,
+                scale: 0.7,
                 health: 5.,
-                speed: 200.,
-                knockback_resistence: 0.9,
+                speed: 450.,
+                knockback_resistence: 0.0,
                 experience: 1.,
                 experience_count: 8,
             },
             Self::Hard => TurtleInfo {
                 atlas: asset_library.sprite_turtle_hard_atlas.clone(),
                 scale: 1.5,
-                health: 10.,
+                health: 50.,
                 speed: 100.,
                 knockback_resistence: 1.0,
-                experience: 3.,
-                experience_count: 5,
+                experience: 4.,
+                experience_count: 6,
             },
         }
     }
@@ -202,8 +202,13 @@ fn turtle_move(
         if cutscenes.running() {
             character_controller.movement = Vec2::ZERO;
         } else {
-            turtle.relative_angle += rand::random::<f32>() * std::f32::consts::PI * 0.01;
-            let mut direction = (player_position + Vec2::from_angle(turtle.relative_angle) * 80.)
+            let distance = turtle_transform
+                .translation()
+                .truncate()
+                .distance(player_position);
+            //turtle.relative_angle += rand::random::<f32>() * std::f32::consts::PI * 0.01;
+            let mut direction = (player_position
+                + Vec2::from_angle(turtle.relative_angle) * (40. + distance * 0.7))
                 - turtle_transform.translation().truncate();
             if direction.length() == 0. {
                 direction = Vec2::ONE;

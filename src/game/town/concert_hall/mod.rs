@@ -51,7 +51,7 @@ fn concert_hall_init(
     commands.spawn_bundle(Camera2dBundle::default());
     ev_upgrades_spawn.send_default();
     ev_boat_preview_spawn.send_default();
-    screen_fade.fade_in(1.);
+    screen_fade.fade_in(0.5);
     /*commands
     .spawn_bundle(SpriteBundle {
         texture: asset_library.sprite_town_bg_hole.clone(),
@@ -133,7 +133,7 @@ fn concert_hall_leave(
         };
         if !block_input && clickable.confirmed {
             state.leave = true;
-            screen_fade.fade_out(1.);
+            screen_fade.fade_out(0.5);
         }
     }
     if screen_fade.faded_out() && state.leave {

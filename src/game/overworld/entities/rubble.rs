@@ -40,7 +40,7 @@ fn rubble_spawn(
             )
             .insert(Rubble)
             .insert(YDepth::default())
-            .insert(Health::new(3.))
+            .insert(Health::new(1.))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(128., 128.),

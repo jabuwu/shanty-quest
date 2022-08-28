@@ -28,7 +28,7 @@ impl BombsLevel {
         if self.0 == 6 {
             // boss stats
             BombsStats {
-                damage: 5.,
+                damage: 4.,
                 knockback_intensity: 20.,
                 spawn_amount: 3,
                 velocity_min: 100.,
@@ -105,7 +105,8 @@ fn bombs_fire(
                     })
                     .insert(
                         Transform2::from_translation(position)
-                            .with_depth((DepthLayer::Entity, 0.0)),
+                            .with_depth((DepthLayer::Entity, 0.0))
+                            .with_scale(Vec2::ONE * 0.75),
                     )
                     .insert(YDepth::default())
                     .insert(Bomb {
@@ -148,7 +149,7 @@ fn bomb_move(
                 )
                 .insert(Hurtbox {
                     shape: CollisionShape::Rect {
-                        size: Vec2::new(150., 150.),
+                        size: Vec2::new(180., 180.),
                     },
                     for_entity: Some(bomb.parent),
                     auto_despawn: false,
