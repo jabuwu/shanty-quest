@@ -16,6 +16,21 @@ impl Plugin for ForwardCannonsPlugin {
 pub struct ForwardCannons {
     pub shoot: bool,
     pub hurt_flags: u32,
+    pub level: ForwardCannonsLevel,
+}
+
+#[derive(Default)]
+pub struct ForwardCannonsLevel(pub u32);
+
+impl ForwardCannonsLevel {
+    fn stats(&self) -> ForwardCannonsStats {
+        ForwardCannonsStats { damage: 2. }
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+struct ForwardCannonsStats {
+    damage: f32,
 }
 
 #[derive(Component)]
@@ -30,6 +45,7 @@ fn forward_cannons_fire(
 ) {
     for (boat_entity, mut forward_cannons, boat, global_transform) in query.iter_mut() {
         if forward_cannons.shoot {
+            let stats = forward_cannons.level.stats();
             commands
                 .spawn_bundle(Transform2Bundle {
                     transform2: Transform2::from_translation(
@@ -73,7 +89,7 @@ fn forward_cannons_fire(
                     auto_despawn: true,
                     flags: forward_cannons.hurt_flags,
                     knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.0075),
-                    damage: 2.,
+                    damage: stats.damage,
                 })
                 .insert(YDepth::default())
                 .insert(ForwardCannonBall { velocity })

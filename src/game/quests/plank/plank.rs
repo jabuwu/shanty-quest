@@ -95,7 +95,7 @@ fn plank_spawn(
             entity: Some(entity),
             position: spawn_position,
             attack: Attacks {
-                bombs: 1,
+                bombs: 6,
                 ..Default::default()
             },
             healthbar: false,

@@ -87,7 +87,7 @@ fn davy_spawn(
             entity: Some(entity),
             position: spawn_position,
             attack: Attacks {
-                kraken: 1,
+                kraken: 6,
                 ..Default::default()
             },
             healthbar: false,

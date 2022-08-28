@@ -44,6 +44,7 @@ fn main() {
         .add_plugin(jam::game::overworld::experience::ExperiencePlugin)
         .add_plugin(jam::game::overworld::ui::OverworldUiPlugin)
         .add_plugin(jam::game::quests::QuestsPlugin)
+        .add_plugin(jam::game::town::outside::rum_refill::RumRefillPlugin)
         .init_resource::<jam::game::state::GameState>()
         .add_startup_system(init)
         .add_system(debug)
@@ -123,9 +124,15 @@ fn debug(
                             $value -= 1;
                         }
                     }
-                    ui.label(format!("{}", $value));
+                    if $value == 6 {
+                        ui.label("boss");
+                    } else {
+                        ui.label(format!("{}", $value));
+                    }
                     if ui.button("+").clicked() {
-                        $value += 1;
+                        if $value < 6 {
+                            $value += 1;
+                        }
                     }
                 });
             };

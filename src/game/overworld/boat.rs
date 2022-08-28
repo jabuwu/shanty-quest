@@ -122,25 +122,27 @@ fn boat_spawn(
             .insert(ForwardCannons {
                 shoot: false,
                 hurt_flags,
+                level: ForwardCannonsLevel(event.attack.forward_cannons),
             })
             .insert(ShotgunCannons {
                 shoot: false,
                 hurt_flags,
+                level: ShotgunCannonsLevel(event.attack.shotgun_cannons),
             })
             .insert(Shockwave {
                 shoot: false,
                 hurt_flags,
-                boss: !event.player,
+                level: ShockwaveLevel(event.attack.shockwave),
             })
             .insert(Bombs {
                 shoot: false,
                 hurt_flags,
-                boss: !event.player,
+                level: BombsLevel(event.attack.bombs),
             })
             .insert(Kraken {
                 shoot: false,
                 hurt_flags,
-                boss: !event.player,
+                level: KrakenLevel(event.attack.kraken),
             })
             .insert(DashAttack {
                 shoot: false,
@@ -280,18 +282,23 @@ fn boat_attack(
         if boat.shoot && boat.shoot_cooldown > boat.shoot_cooldown_threshold {
             boat.shoot_cooldown = 0.;
             if boat.attacks.forward_cannons > 0 {
+                forward_cannons.level = ForwardCannonsLevel(boat.attacks.forward_cannons);
                 forward_cannons.shoot = true;
             }
             if boat.attacks.shotgun_cannons > 0 {
+                shotgun_cannons.level = ShotgunCannonsLevel(boat.attacks.shotgun_cannons);
                 shotgun_cannons.shoot = true
             }
             if boat.attacks.shockwave > 0 {
+                shockwave.level = ShockwaveLevel(boat.attacks.shockwave);
                 shockwave.shoot = true
             }
             if boat.attacks.bombs > 0 {
+                bombs.level = BombsLevel(boat.attacks.bombs);
                 bombs.shoot = true
             }
             if boat.attacks.kraken > 0 {
+                kraken.level = KrakenLevel(boat.attacks.kraken);
                 kraken.shoot = true
             }
         }

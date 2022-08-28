@@ -86,7 +86,7 @@ fn jagerossa_spawn(
             entity: Some(entity),
             position: spawn_position,
             attack: Attacks {
-                shotgun_cannons: 1,
+                shotgun_cannons: 6,
                 ..Default::default()
             },
             healthbar: false,

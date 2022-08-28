@@ -17,7 +17,42 @@ impl Plugin for BombsPlugin {
 pub struct Bombs {
     pub shoot: bool,
     pub hurt_flags: u32,
-    pub boss: bool,
+    pub level: BombsLevel,
+}
+
+#[derive(Default)]
+pub struct BombsLevel(pub u32);
+
+impl BombsLevel {
+    fn stats(&self) -> BombsStats {
+        if self.0 == 6 {
+            // boss stats
+            BombsStats {
+                damage: 3.,
+                knockback_intensity: 20.,
+                spawn_amount: 3,
+                velocity_min: 100.,
+                velocity_max: 1500.,
+            }
+        } else {
+            BombsStats {
+                damage: 3.,
+                knockback_intensity: 7.5,
+                spawn_amount: 1,
+                velocity_min: 200.,
+                velocity_max: 500.,
+            }
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+struct BombsStats {
+    damage: f32,
+    knockback_intensity: f32,
+    spawn_amount: u32,
+    velocity_min: f32,
+    velocity_max: f32,
 }
 
 #[derive(Component)]
@@ -27,7 +62,7 @@ struct Bomb {
     pub life_time_max: f32,
     pub parent: Entity,
     pub hurt_flags: u32,
-    pub boss: bool,
+    pub stats: BombsStats,
 }
 
 fn bombs_fire(
@@ -37,6 +72,7 @@ fn bombs_fire(
 ) {
     for (boat_entity, mut bombs, boat, global_transform) in query.iter_mut() {
         if bombs.shoot {
+            let stats = bombs.level.stats();
             commands
                 .spawn_bundle(Transform2Bundle {
                     transform2: Transform2::from_translation(
@@ -54,18 +90,13 @@ fn bombs_fire(
                     .as_playing(),
                 )
                 .insert(TimeToLive { seconds: 3. });
-            let amt = if bombs.boss { 3 } else { 1 };
-            for _ in 0..amt {
+            for _ in 0..stats.spawn_amount {
                 let throw_direction =
                     Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
                 let position = global_transform.translation().truncate() + throw_direction * 100.;
-                let (velocity_min, velocity_max) = if bombs.boss {
-                    (100., 1500.)
-                } else {
-                    (200., 500.)
-                };
                 let velocity = throw_direction
-                    * (velocity_min + rand::random::<f32>() * (velocity_max - velocity_min))
+                    * (stats.velocity_min
+                        + rand::random::<f32>() * (stats.velocity_max - stats.velocity_min))
                     + boat.movement.clamp(Vec2::NEG_ONE, Vec2::ONE) * 150.;
                 commands
                     .spawn_bundle(SpriteSheetBundle {
@@ -83,7 +114,7 @@ fn bombs_fire(
                         life_time_max: 1.75,
                         parent: boat_entity,
                         hurt_flags: bombs.hurt_flags,
-                        boss: bombs.boss,
+                        stats,
                     });
             }
         }
@@ -122,12 +153,10 @@ fn bomb_move(
                     for_entity: Some(bomb.parent),
                     auto_despawn: false,
                     flags: bomb.hurt_flags,
-                    knockback_type: HurtboxKnockbackType::Difference(if bomb.boss {
-                        20.
-                    } else {
-                        7.5
-                    }),
-                    damage: 3.,
+                    knockback_type: HurtboxKnockbackType::Difference(
+                        bomb.stats.knockback_intensity,
+                    ),
+                    damage: bomb.stats.damage,
                 })
                 .insert(YDepth::default())
                 .insert(TimeToLive { seconds: 0.05 });

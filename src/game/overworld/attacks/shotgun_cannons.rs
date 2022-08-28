@@ -16,6 +16,33 @@ impl Plugin for ShotgunCannonsPlugin {
 pub struct ShotgunCannons {
     pub shoot: bool,
     pub hurt_flags: u32,
+    pub level: ShotgunCannonsLevel,
+}
+
+#[derive(Default)]
+pub struct ShotgunCannonsLevel(pub u32);
+
+impl ShotgunCannonsLevel {
+    fn stats(&self) -> ShotgunCannonsStats {
+        if self.0 == 6 {
+            // boss stats
+            ShotgunCannonsStats {
+                damage: 1.,
+                time_to_live: 0.37,
+            }
+        } else {
+            ShotgunCannonsStats {
+                damage: 1.,
+                time_to_live: 0.37,
+            }
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+struct ShotgunCannonsStats {
+    damage: f32,
+    time_to_live: f32,
 }
 
 #[derive(Component)]
@@ -30,6 +57,7 @@ fn shotgun_cannons_fire(
 ) {
     for (boat_entity, mut shotgun_cannons, boat, global_transform) in query.iter_mut() {
         if shotgun_cannons.shoot {
+            let stats = shotgun_cannons.level.stats();
             commands
                 .spawn_bundle(Transform2Bundle {
                     transform2: Transform2::from_translation(
@@ -77,7 +105,7 @@ fn shotgun_cannons_fire(
                             auto_despawn: true,
                             flags: shotgun_cannons.hurt_flags,
                             knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.01),
-                            damage: 1.,
+                            damage: stats.damage,
                         })
                         .insert(
                             Transform2::from_translation(position)
@@ -85,7 +113,7 @@ fn shotgun_cannons_fire(
                                 .with_scale(scale.truncate()),
                         )
                         .insert(ShotgunCannonBall { velocity })
-                        .insert(TimeToLive::new(0.37));
+                        .insert(TimeToLive::new(stats.time_to_live));
                 }
             }
         }

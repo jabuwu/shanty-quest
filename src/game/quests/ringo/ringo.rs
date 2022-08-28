@@ -101,7 +101,7 @@ fn ringo_spawn(
             entity: Some(entity),
             position: spawn_position,
             attack: Attacks {
-                shockwave: 1,
+                shockwave: 6,
                 ..Default::default()
             },
             healthbar: false,

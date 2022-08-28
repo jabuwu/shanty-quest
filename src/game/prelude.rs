@@ -3,12 +3,12 @@ pub use super::{
     data::{band_members::BandMember, town_data::TownData},
     overworld::{
         attacks::{
-            bombs::Bombs,
+            bombs::{Bombs, BombsLevel},
             dash_attack::{Dash, DashAttack},
-            forward_cannons::ForwardCannons,
-            kraken::Kraken,
-            shockwave::Shockwave,
-            shotgun_cannons::ShotgunCannons,
+            forward_cannons::{ForwardCannons, ForwardCannonsLevel},
+            kraken::{Kraken, KrakenLevel},
+            shockwave::{Shockwave, ShockwaveLevel},
+            shotgun_cannons::{ShotgunCannons, ShotgunCannonsLevel},
             Attacks,
         },
         boat::{Boat, BoatSpawnEvent, BoatSystems},

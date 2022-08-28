@@ -17,7 +17,45 @@ impl Plugin for KrakenPlugin {
 pub struct Kraken {
     pub shoot: bool,
     pub hurt_flags: u32,
-    pub boss: bool,
+    pub level: KrakenLevel,
+}
+
+#[derive(Default)]
+pub struct KrakenLevel(pub u32);
+
+impl KrakenLevel {
+    fn stats(&self) -> KrakenStats {
+        if self.0 == 6 {
+            // boss stats
+            KrakenStats {
+                damage: 1.,
+                close_tentacles: 1,
+                far_tentacles: 5,
+                far_tentacle_distance_min: 150.,
+                far_tentacle_distance_max: 1650.,
+                knockback_intensity: 10.,
+            }
+        } else {
+            KrakenStats {
+                damage: 1.,
+                close_tentacles: 0,
+                far_tentacles: 6,
+                far_tentacle_distance_min: 150.,
+                far_tentacle_distance_max: 500.,
+                knockback_intensity: 5.,
+            }
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+struct KrakenStats {
+    damage: f32,
+    close_tentacles: u32,
+    far_tentacles: u32,
+    far_tentacle_distance_min: f32,
+    far_tentacle_distance_max: f32,
+    knockback_intensity: f32,
 }
 
 #[derive(Component)]
@@ -28,7 +66,7 @@ struct Tentacle {
     pub parent: Entity,
     pub hurt_flags: u32,
     pub time_to_live: f32,
-    pub boss: bool,
+    pub stats: KrakenStats,
 }
 
 fn kraken_fire(
@@ -38,6 +76,7 @@ fn kraken_fire(
 ) {
     for (boat_entity, mut kraken, global_transform) in query.iter_mut() {
         if kraken.shoot {
+            let stats = kraken.level.stats();
             commands
                 .spawn_bundle(Transform2Bundle {
                     transform2: Transform2::from_translation(
@@ -55,16 +94,15 @@ fn kraken_fire(
                     .as_playing(),
                 )
                 .insert(TimeToLive { seconds: 3. });
-            for i in 0..6 {
-                let close_tentacle = i == 0 && kraken.boss;
+            for i in 0..(stats.close_tentacles + stats.far_tentacles) {
+                let close_tentacle = i < stats.close_tentacles;
                 let (distance_min, distance_max) = if close_tentacle {
                     (100., 100.)
                 } else {
-                    if kraken.boss {
-                        (150., 1650.)
-                    } else {
-                        (150., 500.)
-                    }
+                    (
+                        stats.far_tentacle_distance_min,
+                        stats.far_tentacle_distance_max,
+                    )
                 };
                 let forward = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
                 let position = global_transform.translation().truncate()
@@ -90,7 +128,7 @@ fn kraken_fire(
                         parent: boat_entity,
                         hurt_flags: kraken.hurt_flags,
                         time_to_live: if close_tentacle { 1.5 } else { 3.0 },
-                        boss: kraken.boss,
+                        stats,
                     });
             }
         }
@@ -117,12 +155,10 @@ fn tentacle_update(
                 for_entity: Some(tentacle.parent),
                 auto_despawn: false,
                 flags: tentacle.hurt_flags,
-                knockback_type: if tentacle.boss {
-                    HurtboxKnockbackType::Difference(10.)
-                } else {
-                    HurtboxKnockbackType::Difference(5.)
-                },
-                damage: 1.,
+                knockback_type: HurtboxKnockbackType::Difference(
+                    tentacle.stats.knockback_intensity,
+                ),
+                damage: tentacle.stats.damage,
             });
             tentacle.spawned_hurtbox = true;
         }
