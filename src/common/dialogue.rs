@@ -49,7 +49,7 @@ impl DialoguePortrait {
             Self::Ringo => "Captain Ringo Yarr",
             Self::Plank => "Captain Plank Presley",
             Self::Davy => "Captain Davy Bowie",
-            Self::Mayor => "Mayor",
+            Self::Mayor => "Governor",
             Self::Barkeep => "Barkeep",
         }
     }

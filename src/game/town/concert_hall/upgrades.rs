@@ -78,13 +78,13 @@ impl UpgradesType {
     fn display_info(&self, asset_library: &AssetLibrary) -> UpgradesDisplayInfo {
         match *self {
             Self::Guitar => UpgradesDisplayInfo {
-                name: "Guitar",
-                texture: asset_library.sprite_upgrades_ability_guitar.clone(),
+                name: "Drums",
+                texture: asset_library.sprite_upgrades_ability_drums.clone(),
                 offset: Vec2::new(0., 0.),
             },
             Self::Drums => UpgradesDisplayInfo {
-                name: "Drums",
-                texture: asset_library.sprite_upgrades_ability_drums.clone(),
+                name: "Guitar",
+                texture: asset_library.sprite_upgrades_ability_guitar.clone(),
                 offset: Vec2::new(0., 0.),
             },
             Self::Flute => UpgradesDisplayInfo {
