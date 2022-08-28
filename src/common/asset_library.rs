@@ -293,23 +293,23 @@ pub struct AssetLibrary {
     pub audio_sfx_attack_jagerossa_02: Handle<AudioSource>,
     #[asset("audio/music/shoot_electricguitar_03.ogg")]
     pub audio_sfx_attack_jagerossa_03: Handle<AudioSource>,
-    #[asset("audio/music/shoot_accordion_01.ogg")]
+    #[asset("audio/music/shoot_flute_01.ogg")]
     pub audio_sfx_attack_ringo_01: Handle<AudioSource>,
-    #[asset("audio/music/shoot_accordion_02.ogg")]
+    #[asset("audio/music/shoot_flute_02.ogg")]
     pub audio_sfx_attack_ringo_02: Handle<AudioSource>,
-    #[asset("audio/music/shoot_accordion_03.ogg")]
+    #[asset("audio/music/shoot_flute_03.ogg")]
     pub audio_sfx_attack_ringo_03: Handle<AudioSource>,
-    #[asset("audio/music/shoot_strings_01.ogg")]
+    #[asset("audio/music/shoot_harmonica_01.ogg")]
     pub audio_sfx_attack_plank_01: Handle<AudioSource>,
-    #[asset("audio/music/shoot_strings_02.ogg")]
+    #[asset("audio/music/shoot_harmonica_02.ogg")]
     pub audio_sfx_attack_plank_02: Handle<AudioSource>,
-    #[asset("audio/music/shoot_strings_03.ogg")]
+    #[asset("audio/music/shoot_harmonica_03.ogg")]
     pub audio_sfx_attack_plank_03: Handle<AudioSource>,
-    #[asset("audio/music/shoot_bass_01.ogg")]
+    #[asset("audio/music/shoot_accordion_01.ogg")]
     pub audio_sfx_attack_davy_01: Handle<AudioSource>,
-    #[asset("audio/music/shoot_bass_02.ogg")]
+    #[asset("audio/music/shoot_accordion_02.ogg")]
     pub audio_sfx_attack_davy_02: Handle<AudioSource>,
-    #[asset("audio/music/shoot_bass_03.ogg")]
+    #[asset("audio/music/shoot_accordion_03.ogg")]
     pub audio_sfx_attack_davy_03: Handle<AudioSource>,
 
     /********
