@@ -7,6 +7,9 @@ struct LoadingState {
     fading: bool,
 }
 
+#[derive(Component)]
+struct LoadingText;
+
 pub struct LoadingPlugin;
 
 impl Plugin for LoadingPlugin {
@@ -43,7 +46,8 @@ fn loading_init(
             }),
             ..Default::default()
         })
-        .insert(Transform2::new().with_depth((DepthLayer::Front, 0.)));
+        .insert(Transform2::new().with_depth((DepthLayer::Front, 0.)))
+        .insert(LoadingText);
 }
 
 fn loading_update(
@@ -53,11 +57,14 @@ fn loading_update(
     mut screen_fade: ResMut<ScreenFade>,
     mut ev_dialogue_init: EventWriter<DialogueInitEvent>,
     mut state: ResMut<LoadingState>,
+    mut text_query: Query<&mut Text, With<LoadingText>>,
 ) {
     use bevy::asset::LoadState;
     match asset_library.load_state(&asset_server) {
         LoadState::Failed => {
-            panic!("Failed to load assets.");
+            for mut text in text_query.iter_mut() {
+                text.sections[0].value = "Failed to load assets.".to_owned();
+            }
         }
         LoadState::Loaded => {
             if state.fading && screen_fade.faded_out() {
