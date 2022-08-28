@@ -185,6 +185,33 @@ pub struct AssetLibrary {
     #[asset("sprites/Bottle2.png")]
     pub sprite_rum_bottle: Handle<Image>,
 
+    #[asset("audio/sfx/ui_xp_collect_01.ogg")]
+    pub audio_sfx_xp_01: Handle<AudioSource>,
+    #[asset("audio/sfx/ui_xp_collect_02.ogg")]
+    pub audio_sfx_xp_02: Handle<AudioSource>,
+    #[asset("audio/sfx/ui_xp_collect_03.ogg")]
+    pub audio_sfx_xp_03: Handle<AudioSource>,
+
+    #[asset("audio/sfx/player_take_damage_01.ogg")]
+    pub audio_sfx_player_damage_01: Handle<AudioSource>,
+    #[asset("audio/sfx/player_take_damage_02.ogg")]
+    pub audio_sfx_player_damage_02: Handle<AudioSource>,
+    #[asset("audio/sfx/player_take_damage_03.ogg")]
+    pub audio_sfx_player_damage_03: Handle<AudioSource>,
+
+    #[asset("audio/sfx/enemy_take_damage_01.ogg")]
+    pub audio_sfx_enemy_damage_01: Handle<AudioSource>,
+    #[asset("audio/sfx/enemy_take_damage_02.ogg")]
+    pub audio_sfx_enemy_damage_02: Handle<AudioSource>,
+    #[asset("audio/sfx/enemy_take_damage_03.ogg")]
+    pub audio_sfx_enemy_damage_03: Handle<AudioSource>,
+
+    #[asset("audio/sfx/ui_map_open_01.ogg")]
+    pub audio_sfx_map_open_01: Handle<AudioSource>,
+
+    #[asset("audio/sfx/ui_map_close_01.ogg")]
+    pub audio_sfx_map_close_01: Handle<AudioSource>,
+
     /****************
      * Overworld UI *
      ****************/
@@ -272,6 +299,16 @@ pub struct AssetLibrary {
     pub audio_sfx_attack_davy_02: Handle<AudioSource>,
     #[asset("audio/music/shoot_bass_03.ogg")]
     pub audio_sfx_attack_davy_03: Handle<AudioSource>,
+
+    /********
+     * Dash *
+     ********/
+    #[asset("audio/sfx/player_dash_01.ogg")]
+    pub audio_sfx_dash_01: Handle<AudioSource>,
+    #[asset("audio/sfx/player_dash_02.ogg")]
+    pub audio_sfx_dash_02: Handle<AudioSource>,
+    #[asset("audio/sfx/player_dash_03.ogg")]
+    pub audio_sfx_dash_03: Handle<AudioSource>,
 
     /********
      * Town *

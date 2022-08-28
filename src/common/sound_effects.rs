@@ -37,9 +37,12 @@ pub struct SoundEffects {
     pub sfx_overworld_music: AudioPlusSoundEffect,
     pub sfx_overworld_town_enter: AudioPlusSoundEffect,
     pub sfx_overworld_town_exit: AudioPlusSoundEffect,
-
-    // dash
     pub sfx_overworld_dash: AudioPlusSoundEffect,
+    pub sfx_overworld_experience: AudioPlusSoundEffect,
+    pub sfx_overworld_player_damage: AudioPlusSoundEffect,
+    pub sfx_overworld_enemy_damage: AudioPlusSoundEffect,
+    pub sfx_overworld_map_open: AudioPlusSoundEffect,
+    pub sfx_overworld_map_close: AudioPlusSoundEffect,
 
     // attacks
     pub sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect,
@@ -199,8 +202,50 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             ..Default::default()
         },
         sfx_overworld_dash: AudioPlusSoundEffect {
-            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            audio_sources: vec![
+                asset_library.audio_sfx_dash_01.clone(),
+                asset_library.audio_sfx_dash_02.clone(),
+                asset_library.audio_sfx_dash_03.clone(),
+            ],
+            volume: 0.25,
+            ..Default::default()
+        },
+        sfx_overworld_experience: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_xp_01.clone(),
+                asset_library.audio_sfx_xp_02.clone(),
+                asset_library.audio_sfx_xp_03.clone(),
+            ],
             volume: 1.0,
+            ..Default::default()
+        },
+        sfx_overworld_player_damage: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_player_damage_01.clone(),
+                asset_library.audio_sfx_player_damage_02.clone(),
+                asset_library.audio_sfx_player_damage_03.clone(),
+            ],
+            volume: 0.5,
+            ..Default::default()
+        },
+        sfx_overworld_enemy_damage: AudioPlusSoundEffect {
+            audio_sources: vec![
+                asset_library.audio_sfx_player_damage_01.clone(),
+                asset_library.audio_sfx_player_damage_02.clone(),
+                asset_library.audio_sfx_player_damage_03.clone(),
+            ],
+            positional: true,
+            volume: 0.3,
+            ..Default::default()
+        },
+        sfx_overworld_map_open: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_map_open_01.clone()],
+            volume: 0.5,
+            ..Default::default()
+        },
+        sfx_overworld_map_close: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_map_close_01.clone()],
+            volume: 0.5,
             ..Default::default()
         },
         sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect {

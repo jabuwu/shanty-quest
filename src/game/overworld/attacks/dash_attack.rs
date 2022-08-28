@@ -30,7 +30,7 @@ fn dash_attack_fire(
 ) {
     for (mut dash_attack, boat, entity, global_transform) in query.iter_mut() {
         if dash_attack.shoot {
-            commands
+            let audio_entity = commands
                 .spawn_bundle(Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
@@ -41,11 +41,15 @@ fn dash_attack_fire(
                     AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_dash.clone())
                         .as_playing(),
                 )
-                .insert(TimeToLive { seconds: 3. });
-            commands.entity(entity).insert(Dash {
-                velocity: boat.facing.to_vec() * 750.,
-                time_alive: 0.,
-            });
+                .insert(TimeToLive { seconds: 3. })
+                .id();
+            commands
+                .entity(entity)
+                .insert(Dash {
+                    velocity: boat.facing.to_vec() * 750.,
+                    time_alive: 0.,
+                })
+                .add_child(audio_entity);
             dash_attack.shoot = false;
         }
     }

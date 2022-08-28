@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 pub const DAMAGE_FLAG_PLAYER: u32 = 1;
@@ -144,6 +145,7 @@ fn damage_auto_die(
     time: Res<Time>,
     cutscenes: Res<Cutscenes>,
     mut ev_experience_spawn: EventWriter<ExperienceSpawnEvent>,
+    asset_library: Res<AssetLibrary>,
 ) {
     for (_, _, mut auto_damage, _) in crate_query.iter_mut() {
         auto_damage.invincibility -= time.delta_seconds();
@@ -156,6 +158,23 @@ fn damage_auto_die(
                 auto_damage.invincibility_amount = 0.
             }
             if event.damage > auto_damage.invincibility_amount {
+                if auto_damage.invincibility_amount == 0. {
+                    commands
+                        .spawn_bundle(TransformBundle::default())
+                        .insert(Transform2::from_translation(
+                            transform.translation().truncate(),
+                        ))
+                        .insert(
+                            AudioPlusSource::new(
+                                asset_library
+                                    .sound_effects
+                                    .sfx_overworld_enemy_damage
+                                    .clone(),
+                            )
+                            .as_playing(),
+                        )
+                        .insert(TimeToLive { seconds: 3. });
+                }
                 if !cutscenes.running() {
                     health.damage(event.damage - auto_damage.invincibility_amount);
                 }
