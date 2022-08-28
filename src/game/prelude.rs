@@ -26,6 +26,8 @@ pub use super::{
             AutoDamage, DamageEvent, Hitbox, Hurtbox, HurtboxKnockbackType, DAMAGE_FLAG_ENEMY,
             DAMAGE_FLAG_ENVIRONMENT, DAMAGE_FLAG_PLAYER,
         },
+        damage_flash::DamageFlashSpawnEvent,
+        damage_rum::DamageRumSpawnEvent,
         enemy_spawns::DespawnSpawnedEntitiesEvent,
         entities::rubble::{Rubble, RubbleSpawnEvent},
         experience::{Experience, ExperienceSpawnEvent},

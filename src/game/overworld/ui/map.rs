@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 pub struct MapPlugin;
@@ -34,6 +35,10 @@ fn map_open(
         .insert(Transform2::from_xy(0., 0.).without_pixel_perfect())
         .insert(FollowCamera { offset: Vec2::ZERO })
         .insert(Map)
+        .insert(
+            AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_map_open.clone())
+                .as_playing(),
+        )
         .with_children(|parent| {
             parent
                 .spawn_bundle(SpriteBundle {
@@ -179,12 +184,22 @@ fn map_wait_for_close(
     input: Res<Input<KeyCode>>,
     mouse: Res<Input<MouseButton>>,
     mut ev_continue: EventWriter<CutsceneContinueEvent<MapCutscene>>,
+    asset_library: Res<AssetLibrary>,
+    mut commands: Commands,
 ) {
     if input.just_pressed(KeyCode::Space)
         || mouse.just_pressed(MouseButton::Left)
         || input.just_pressed(KeyCode::M)
     {
         ev_continue.send_default();
+
+        commands
+            .spawn_bundle(Transform2Bundle::default())
+            .insert(
+                AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_map_close.clone())
+                    .as_playing(),
+            )
+            .insert(TimeToLive { seconds: 3. });
     }
 }
 

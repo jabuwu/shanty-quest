@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 pub struct ExperiencePlugin;
@@ -59,24 +60,37 @@ pub fn experience_spawn(
 }
 
 pub fn experience_consume(
-    player_query: Query<&GlobalTransform, With<Player>>,
+    player_query: Query<(Entity, &GlobalTransform), With<Player>>,
     mut experience_query: Query<(Entity, &mut Transform2, &mut Experience)>,
     time: Res<Time>,
     mut commands: Commands,
     mut game_state: ResMut<GameState>,
     mut ev_level_up: EventWriter<LevelUpSpawnEvent>,
+    asset_library: Res<AssetLibrary>,
 ) {
-    let player_position = if let Ok(player_transform) = player_query.get_single() {
-        player_transform.translation().truncate()
-    } else {
-        return;
-    };
+    let (player_entity, player_position) =
+        if let Ok((player_entity, player_transform)) = player_query.get_single() {
+            (player_entity, player_transform.translation().truncate())
+        } else {
+            return;
+        };
     for (entity, mut transform, mut experience) in experience_query.iter_mut() {
         let difference = player_position - transform.translation;
         if difference.length() < 200. || experience.infinite_distance {
             experience.velocity += difference.normalize() * 1400. * time.delta_seconds();
         }
         if difference.length() < 50. {
+            let sound = commands
+                .spawn_bundle(Transform2Bundle::default())
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library.sound_effects.sfx_overworld_experience.clone(),
+                    )
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 3. })
+                .id();
+            commands.entity(player_entity).add_child(sound);
             if game_state.add_experience(experience.amount) {
                 game_state.skill_points += 1;
                 ev_level_up.send_default();

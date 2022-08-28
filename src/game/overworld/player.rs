@@ -187,23 +187,49 @@ fn player_invincibility(mut crate_query: Query<(&mut Player, &mut Boat)>, time: 
 
 fn player_damage(
     mut ev_damage: EventReader<DamageEvent>,
-    mut crate_query: Query<(&mut Health, &mut Player)>,
+    mut crate_query: Query<(Entity, &mut Health, &mut Player, &mut GlobalTransform)>,
     mut ev_death_cutscene: EventWriter<CutsceneStartEvent<DeathCutscene>>,
     cutscenes: Res<Cutscenes>,
     mut game_state: ResMut<GameState>,
+    mut overworld_camera: ResMut<OverworldCamera>,
+    mut ev_damage_flash_spawn: EventWriter<DamageFlashSpawnEvent>,
+    mut ev_damage_rum_spawn: EventWriter<DamageRumSpawnEvent>,
+    mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_damage.iter() {
-        if let Ok((mut health, mut player)) = crate_query.get_mut(event.hit) {
+        if let Ok((entity, mut health, mut player, global_transform)) =
+            crate_query.get_mut(event.hit)
+        {
             if player.invincibility <= 0. {
                 if !cutscenes.running() {
+                    ev_damage_flash_spawn.send_default();
+                    ev_damage_rum_spawn.send(DamageRumSpawnEvent {
+                        position: global_transform.translation().truncate(),
+                    });
+                    overworld_camera.screen_shake(1.);
                     health.damage(event.damage);
                     game_state.health = health.value;
+                    let sound = commands
+                        .spawn_bundle(Transform2Bundle::default())
+                        .insert(
+                            AudioPlusSource::new(
+                                asset_library
+                                    .sound_effects
+                                    .sfx_overworld_player_damage
+                                    .clone(),
+                            )
+                            .as_playing(),
+                        )
+                        .insert(TimeToLive { seconds: 3. })
+                        .id();
+                    commands.entity(entity).add_child(sound);
                 }
                 if !player.dead && health.dead() {
                     player.dead = true;
                     ev_death_cutscene.send_default();
                 }
-                player.invincibility = 0.3;
+                player.invincibility = 0.7;
             }
         }
     }

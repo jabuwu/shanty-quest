@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 const BACK_FADE: f32 = 0.36;
@@ -127,6 +128,8 @@ fn update2(
     mut state: ResMut<RumRefillState>,
     mut bottle_query: Query<(&mut TextureAtlasSprite, &mut Transform2, &RumRefillBottle)>,
     time: Res<Time>,
+    mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
 ) {
     state.time += time.delta_seconds() * 5.5;
     state.time = state.time.clamp(0., 1.);
@@ -145,6 +148,18 @@ fn update2(
         } else {
             state.time = 0.
         }
+        commands
+            .spawn_bundle(Transform2Bundle::default())
+            .insert(
+                AudioPlusSource::new(
+                    asset_library
+                        .sound_effects
+                        .sfx_town_rum_refill_clank
+                        .clone(),
+                )
+                .as_playing(),
+            )
+            .insert(TimeToLive { seconds: 3. });
     }
 }
 

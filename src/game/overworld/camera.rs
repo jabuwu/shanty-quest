@@ -29,6 +29,7 @@ pub struct OverworldCamera {
     entity_focus_amount: f32,
     entity_last_position: Vec2,
     entity_focus_frames: u32,
+    screen_shake: f32,
 }
 
 impl OverworldCamera {
@@ -86,6 +87,10 @@ impl OverworldCamera {
         } else {
             None
         }
+    }
+
+    pub fn screen_shake(&mut self, amt: f32) {
+        self.screen_shake += amt;
     }
 }
 
@@ -152,6 +157,12 @@ fn overworld_camera_update(
             ease(Easing::SineInOut, overworld_camera.arena_focus),
         );
         position = position.clamp(WORLD_LIMITS.0, WORLD_LIMITS.1);
+        position += Vec2::new(
+            rand::random::<f32>() * 2. - 1.,
+            rand::random::<f32>() * 2. - 1.,
+        ) * overworld_camera.screen_shake
+            * 10.;
+        overworld_camera.screen_shake *= 0.000001_f32.powf(time.delta_seconds());
         for camera_entity in camera_query.iter() {
             if let Ok(mut camera_transform) = transform_query.get_mut(camera_entity) {
                 camera_transform.translation = position;

@@ -26,7 +26,7 @@ impl ForwardCannonsLevel {
     fn stats(&self) -> ForwardCannonsStats {
         let level = self.0 as f32;
         ForwardCannonsStats {
-            damage: level * 0.7,
+            damage: level * 0.85,
             scale: 0.8 + level / 5.,
             speed: 1200. + level * 100.,
             hit_multiple: self.0 >= 5,
@@ -57,11 +57,9 @@ fn forward_cannons_fire(
     for (boat_entity, mut forward_cannons, boat, global_transform) in query.iter_mut() {
         if forward_cannons.shoot {
             let stats = forward_cannons.level.stats();
-            commands
+            let audio_entity = commands
                 .spawn_bundle(Transform2Bundle {
-                    transform2: Transform2::from_translation(
-                        global_transform.translation().truncate(),
-                    ),
+                    transform2: Transform2::new(),
                     ..Default::default()
                 })
                 .insert(
@@ -73,7 +71,9 @@ fn forward_cannons_fire(
                     )
                     .as_playing(),
                 )
-                .insert(TimeToLive { seconds: 3. });
+                .insert(TimeToLive { seconds: 3. })
+                .id();
+            commands.entity(boat_entity).add_child(audio_entity);
             let forward = Vec2::from_angle(boat.direction);
             let position = global_transform.translation().truncate() + forward * 80.;
             let velocity = forward * stats.speed;
