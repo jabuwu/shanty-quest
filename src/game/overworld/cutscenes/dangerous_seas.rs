@@ -1,4 +1,4 @@
-use crate::common::prelude::*;
+use crate::{common::prelude::*, game::prelude::DANGEROUS_SEAS};
 use bevy::prelude::*;
 
 pub struct DangerousSeasCutscenePlugin;
@@ -23,8 +23,7 @@ impl Cutscene for DangerousSeasCutscene {
 }
 
 fn init1(mut dialogue: ResMut<Dialogue>) {
-    dialogue.add_text(
-        DialoguePortrait::Jagerossa,
-        "Careful, these be dangerous seas.".to_owned(),
-    );
+    for (p, t) in DANGEROUS_SEAS.iter() {
+        dialogue.add_text(*p, String::from(*t));
+    }
 }

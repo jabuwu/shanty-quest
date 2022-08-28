@@ -1,7 +1,13 @@
+use crate::{common::prelude::*, game::prelude::BoatSystems};
 use audio_plus::AudioPlusPlugin;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use global_state::prelude::*;
+
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+pub enum CommonSystems {
+    SafeToStateChange,
+}
 
 pub struct CommonPlugin;
 
@@ -27,20 +33,32 @@ impl Plugin for CommonPlugin {
             .add_plugin(map_builder::MapBuilderPlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
-            .add_startup_system(asset_hot_reloading);
+            .add_startup_system(asset_hot_reloading)
+            .add_system_to_stage(CoreStage::PreUpdate, nan_fix)
+            .add_system(safe_to_state_change.after(BoatSystems::Spawn));
     }
 }
 
 fn asset_hot_reloading(asset_server: Res<AssetServer>) {
+    // TODO: remove debug
     asset_server.watch_for_changes().unwrap();
 }
+
+fn nan_fix(mut query: Query<&mut Transform2>) {
+    for mut transform in query.iter_mut() {
+        if !transform.translation.is_finite() {
+            transform.translation = Vec2::new(800., -350.);
+        }
+    }
+}
+
+fn safe_to_state_change() {}
 
 pub mod app_state;
 pub mod asset_library;
 pub mod assets;
 pub mod clickable;
 pub mod collision;
-pub mod component_child;
 pub mod cutscene;
 pub mod depth_layers;
 pub mod dialogue;
@@ -58,6 +76,7 @@ pub mod prelude;
 pub mod screen_fade;
 pub mod sound_effects;
 pub mod time_to_live;
+pub mod timed_chance;
 pub mod transform2;
 pub mod world_locations;
 pub mod y_depth;

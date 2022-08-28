@@ -7,6 +7,7 @@ pub struct MapPlugin;
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(map_update_player)
+            .add_system(map_update_objective)
             .add_cutscene::<MapCutscene>()
             .add_system_set(SystemSet::on_update(AppState::Overworld).with_system(map_input));
     }
@@ -22,7 +23,11 @@ impl Cutscene for MapCutscene {
     }
 }
 
-fn map_open(mut commands: Commands, map_builder: Res<MapBuilder>) {
+fn map_open(
+    mut commands: Commands,
+    map_builder: Res<MapBuilder>,
+    asset_library: Res<AssetLibrary>,
+) {
     commands
         .spawn_bundle(VisibilityBundle::default())
         .insert_bundle(TransformBundle::default())
@@ -33,59 +38,139 @@ fn map_open(mut commands: Commands, map_builder: Res<MapBuilder>) {
             parent
                 .spawn_bundle(SpriteBundle {
                     sprite: Sprite {
-                        custom_size: Vec2::new(1., 1.).into(),
-                        color: Color::BEIGE,
+                        color: Color::BLACK,
                         ..Default::default()
                     },
+                    texture: asset_library.sprite_map_compass.clone(),
                     ..Default::default()
                 })
                 .insert(
-                    Transform2::from_xy(0., 0.)
-                        .with_scale(Vec2::new(700., 700.))
-                        .with_depth(DEPTH_LAYER_MAP_BACK)
-                        .without_pixel_perfect(),
-                )
+                    Transform2::from_xy(230., 230.)
+                        .with_scale(Vec2::ONE * 0.25)
+                        .with_depth(DEPTH_LAYER_MAP_COMPASS),
+                );
+            parent
+                .spawn_bundle(SpriteBundle {
+                    texture: asset_library.sprite_map_bg.clone(),
+                    ..Default::default()
+                })
+                .insert(Transform2::new().with_depth(DEPTH_LAYER_MAP_BACK))
                 .with_children(|parent| {
-                    for tile in map_builder.tiles.iter() {
-                        parent
-                            .spawn_bundle(SpriteBundle {
-                                sprite: Sprite {
-                                    custom_size: Vec2::new(
-                                        120. / map_builder.size().x,
-                                        120. / map_builder.size().y,
-                                    )
-                                    .into(),
-                                    color: Color::BLACK,
-                                    ..Default::default()
-                                },
-                                ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_translation(
-                                    *tile / (map_builder.size()) + Vec2::new(-0.5, 0.5),
-                                )
-                                .with_depth(DEPTH_LAYER_MAP_TILE),
-                            );
-                    }
                     parent
                         .spawn_bundle(SpriteBundle {
                             sprite: Sprite {
-                                custom_size: Vec2::new(
-                                    (100. / map_builder.size().x) * 3.,
-                                    (100. / map_builder.size().y) * 3.,
-                                )
-                                .into(),
-                                color: Color::RED,
+                                custom_size: Vec2::new(1., 1.).into(),
+                                color: Color::rgba_u8(255, 217, 162, 0),
                                 ..Default::default()
                             },
                             ..Default::default()
                         })
                         .insert(
-                            Transform2::from_xy(99999., 99999.)
-                                .with_depth(DEPTH_LAYER_MAP_PLAYER)
+                            Transform2::from_xy(0., 0.)
+                                .with_scale(Vec2::new(620., 620.))
+                                .with_depth(DEPTH_LAYER_MAP_BACK_COLOR)
                                 .without_pixel_perfect(),
                         )
-                        .insert(MapPlayer);
+                        .with_children(|parent| {
+                            for tile in map_builder.tiles.iter() {
+                                let mut alpha: f32 = 1.;
+                                let pos = *tile / (map_builder.size()) + Vec2::new(-0.5, 0.5);
+                                alpha *= ((0.5 - pos.x) * 60.).abs().clamp(0., 1.);
+                                alpha *= ((-0.5 - pos.x) * 60.).abs().clamp(0., 1.);
+                                alpha *= ((0.5 - pos.y) * 60.).abs().clamp(0., 1.);
+                                alpha *= ((-0.5 - pos.y) * 60.).abs().clamp(0., 1.);
+                                parent
+                                    .spawn_bundle(SpriteBundle {
+                                        sprite: Sprite {
+                                            custom_size: Vec2::new(
+                                                102. / map_builder.size().x,
+                                                102. / map_builder.size().y,
+                                            )
+                                            .into(),
+                                            color: Color::rgba_u8(
+                                                175,
+                                                95,
+                                                50,
+                                                (255. * alpha) as u8,
+                                            ),
+                                            ..Default::default()
+                                        },
+                                        ..Default::default()
+                                    })
+                                    .insert(
+                                        Transform2::from_translation(pos)
+                                            .with_depth(DEPTH_LAYER_MAP_TILE),
+                                    );
+                            }
+                            for label in map_builder.labels.iter() {
+                                parent
+                                    .spawn_bundle(SpriteBundle {
+                                        texture: asset_library.sprite_map_icon_town.clone(),
+                                        ..Default::default()
+                                    })
+                                    .insert(
+                                        Transform2::from_translation(
+                                            (label.0 + Vec2::new(0., 50.)) / (map_builder.size())
+                                                + Vec2::new(-0.5, 0.5),
+                                        )
+                                        .with_scale(Vec2::ONE * (5.5 / map_builder.size().x))
+                                        .with_depth(DEPTH_LAYER_MAP_LABEL),
+                                    );
+                                parent
+                                    .spawn_bundle(Text2dBundle {
+                                        text: Text::from_section(
+                                            label.1.clone(),
+                                            TextStyle {
+                                                font: asset_library.font_bold.clone(),
+                                                font_size: 66.,
+                                                color: Color::BLACK,
+                                            },
+                                        )
+                                        .with_alignment(TextAlignment {
+                                            horizontal: HorizontalAlign::Center,
+                                            vertical: VerticalAlign::Center,
+                                        }),
+                                        ..Default::default()
+                                    })
+                                    .insert(
+                                        Transform2::from_translation(
+                                            (label.0 + Vec2::new(0., 550.)) / (map_builder.size())
+                                                + Vec2::new(-0.5, 0.5),
+                                        )
+                                        .with_scale(Vec2::new(
+                                            7. / map_builder.size().x,
+                                            7. / map_builder.size().y,
+                                        ))
+                                        .with_depth(DEPTH_LAYER_MAP_LABEL),
+                                    );
+                            }
+                            parent
+                                .spawn_bundle(SpriteBundle {
+                                    texture: asset_library.sprite_map_icon_boat.clone(),
+                                    ..Default::default()
+                                })
+                                .insert(
+                                    Transform2::from_xy(99999., 99999.)
+                                        .with_depth(DEPTH_LAYER_MAP_PLAYER)
+                                        .with_scale(Vec2::ONE * (6. / map_builder.size().x))
+                                        .without_pixel_perfect(),
+                                )
+                                .insert(MapPlayer);
+                            parent
+                                .spawn_bundle(SpriteBundle {
+                                    texture: asset_library.sprite_map_icon_quest.clone(),
+                                    ..Default::default()
+                                })
+                                .insert(
+                                    Transform2::from_xy(99999., 99999.)
+                                        .with_depth(DEPTH_LAYER_MAP_OBJECTIVE)
+                                        .with_scale(Vec2::ZERO)
+                                        .without_pixel_perfect(),
+                                )
+                                .insert(MapObjective {
+                                    scale: 5.5 / map_builder.size().x,
+                                });
+                        });
                 });
         });
 }
@@ -95,7 +180,10 @@ fn map_wait_for_close(
     mouse: Res<Input<MouseButton>>,
     mut ev_continue: EventWriter<CutsceneContinueEvent<MapCutscene>>,
 ) {
-    if input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left) {
+    if input.just_pressed(KeyCode::Space)
+        || mouse.just_pressed(MouseButton::Left)
+        || input.just_pressed(KeyCode::M)
+    {
         ev_continue.send_default();
     }
 }
@@ -112,13 +200,24 @@ pub struct Map;
 #[derive(Component)]
 pub struct MapPlayer;
 
+#[derive(Component)]
+pub struct MapObjective {
+    scale: f32,
+}
+
 fn map_input(
     input: Res<Input<KeyCode>>,
     cutscenes: Res<Cutscenes>,
     state_time: Res<StateTime<AppState>>,
     mut ev_cutscene: EventWriter<CutsceneStartEvent<MapCutscene>>,
+    game_state: Res<GameState>,
 ) {
-    if state_time.time > 1. && input.just_pressed(KeyCode::M) && !cutscenes.running() {
+    if state_time.time > 1.
+        && input.just_pressed(KeyCode::M)
+        && !cutscenes.running()
+        && game_state.dangerous_seas
+        && !game_state.quests.fighting()
+    {
         ev_cutscene.send_default();
     }
 }
@@ -128,15 +227,31 @@ fn map_update_player(
     mut query: Query<&mut Transform2, With<MapPlayer>>,
     map_builder: Res<MapBuilder>,
 ) {
-    let mut player_position = if let Ok(player_transform) = player_query.get_single() {
+    let player_position = if let Ok(player_transform) = player_query.get_single() {
         player_transform.translation().truncate()
     } else {
         Vec2::new(99999., 99999.)
     };
-    player_position -= map_builder.offset();
-    player_position /= map_builder.size();
-    player_position += Vec2::new(-0.5, 0.5);
     for mut map_player_transform in query.iter_mut() {
-        map_player_transform.translation = player_position;
+        map_player_transform.translation = map_builder.world_to_map(player_position);
+    }
+}
+
+fn map_update_objective(
+    mut query: Query<(&mut Transform2, &MapObjective)>,
+    map_builder: Res<MapBuilder>,
+    game_state: Res<GameState>,
+    world_locations: Res<WorldLocations>,
+    time: Res<Time>,
+) {
+    let objective_position = if let Some(objective_marker) = game_state.quests.marker() {
+        world_locations.get_single_position(objective_marker) + Vec2::new(0., 300.)
+    } else {
+        Vec2::new(99999., 99999.)
+    };
+    for (mut map_player_transform, map_objective) in query.iter_mut() {
+        map_player_transform.translation = map_builder.world_to_map(objective_position);
+        map_player_transform.scale = Vec2::ONE * map_objective.scale
+            + (map_objective.scale * 0.1 * (time.time_since_startup().as_secs_f32() * 1.5).cos());
     }
 }

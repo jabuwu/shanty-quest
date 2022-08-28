@@ -11,7 +11,6 @@ impl Plugin for OverworldPlugin {
             .add_plugin(world::WorldPlugin)
             .add_plugin(town::TownPlugin)
             .add_plugin(boat::BoatPlugin)
-            .add_plugin(enemy::EnemyPlugin)
             .add_plugin(water_ring::WaterRingPlugin)
             .add_plugin(ocean::OceanPlugin)
             .add_plugin(healthbar::HealthbarPlugin)
@@ -26,6 +25,8 @@ impl Plugin for OverworldPlugin {
             .add_plugin(trigger::TriggerPlugin)
             .add_plugin(enemy_spawns::EnemySpawnsPlugin)
             .add_plugin(threat_level::ThreatLevelPlugin)
+            .add_plugin(turtle::TurtlePlugin)
+            .add_plugin(experience::ExperiencePlugin)
             .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
             .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
@@ -55,7 +56,7 @@ fn overworld_init(
 ) {
     screen_fade.fade_in(1.);
     ev_overworld_enter.send_default();
-    overworld_camera.reset();
+    *overworld_camera = OverworldCamera::default();
     commands
         .spawn_bundle(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
@@ -87,9 +88,9 @@ fn overworld_init_after_ldtk(
 }
 
 fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
-    if input.just_pressed(KeyCode::Escape) {
+    if input.just_pressed(KeyCode::Key0) {
         app_state.set(AppState::MainMenu).unwrap();
-        input.reset(KeyCode::Escape);
+        input.reset(KeyCode::Key0);
     }
 }
 
@@ -110,9 +111,9 @@ pub mod camera;
 pub mod character_controller;
 pub mod cutscenes;
 pub mod damage;
-pub mod enemy;
 pub mod enemy_spawns;
 pub mod entities;
+pub mod experience;
 pub mod health;
 pub mod healthbar;
 pub mod ocean;
@@ -121,6 +122,7 @@ pub mod player;
 pub mod threat_level;
 pub mod town;
 pub mod trigger;
+pub mod turtle;
 pub mod ui;
 pub mod water_ring;
 pub mod world;

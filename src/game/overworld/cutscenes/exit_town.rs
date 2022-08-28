@@ -1,8 +1,9 @@
 use crate::common::prelude::*;
+use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
-const ENTER_TOWN_TIME_SECONDS: f32 = 1.4;
+const ENTER_TOWN_TIME_SECONDS: f32 = 0.6;
 
 #[derive(Default)]
 pub struct ExitTownCutsceneState {
@@ -27,7 +28,7 @@ pub struct ExitTownCutscene {
 
 impl Cutscene for ExitTownCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_step(init1, update1);
+        cutscene.add_step(init1, update1.before(OverworldCameraSystems::Update));
     }
 }
 

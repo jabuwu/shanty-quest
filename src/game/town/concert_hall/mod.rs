@@ -1,154 +1,146 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
-use band_selection::BandSelectionSpawnEvent;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
-const PREVIEW_POSITION: Vec2 = Vec2::new(183., 102.);
+use self::boat_preview::BoatPreviewSpawnEvent;
+use self::upgrades::UpgradesSpawnEvent;
+
+#[derive(Default)]
+pub struct ConcertHallState {
+    leave: bool,
+}
 
 pub struct ConcertHallPlugin;
 
 impl Plugin for ConcertHallPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(band_selection::BandSelectionPlugin)
+        app.init_resource::<ConcertHallState>()
+            .add_plugin(band_selection::BandSelectionPlugin)
+            .add_plugin(boat_preview::BoatPreviewPlugin)
+            .add_plugin(upgrades::UpgradesPlugin)
             .add_system_set(
                 SystemSet::on_enter(AppState::TownConcertHall).with_system(concert_hall_init),
             )
             .add_system_set(
                 SystemSet::on_update(AppState::TownConcertHall).with_system(concert_hall_leave),
-            )
-            .add_system(concert_hall_boat_preview);
+            );
     }
 }
 
 #[derive(Component)]
-struct BoatPreviewParent;
+struct Leave;
 
 #[derive(Component)]
-struct BoatPreview;
+struct ClickSound;
+
+#[derive(Component)]
+struct HoverSound;
 
 fn concert_hall_init(
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
-    mut ev_band_selection_spawn: EventWriter<BandSelectionSpawnEvent>,
-    mut ev_ocean_spawn: EventWriter<OceanSpawnEvent>,
-    mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
+    mut ev_upgrades_spawn: EventWriter<UpgradesSpawnEvent>,
+    mut ev_boat_preview_spawn: EventWriter<BoatPreviewSpawnEvent>,
+    mut game_state: ResMut<GameState>,
+    mut dialogue: ResMut<Dialogue>,
+    mut screen_fade: ResMut<ScreenFade>,
+    mut state: ResMut<ConcertHallState>,
 ) {
+    *state = ConcertHallState::default();
     commands.spawn_bundle(Camera2dBundle::default());
-    ev_band_selection_spawn.send_default();
+    ev_upgrades_spawn.send_default();
+    ev_boat_preview_spawn.send_default();
+    screen_fade.fade_in(0.5);
+    /*commands
+    .spawn_bundle(SpriteBundle {
+        texture: asset_library.sprite_town_bg_hole.clone(),
+        ..Default::default()
+    })
+    .insert(
+        Transform2::new()
+            .with_depth((DepthLayer::Front, 0.))
+            .with_scale(Vec2::ONE * 0.5),
+    );*/
     commands
-        .spawn_bundle(VisibilityBundle::default())
-        .insert_bundle(TransformBundle::default())
-        .insert(Transform2::from_translation(PREVIEW_POSITION).with_scale(Vec2::ONE * 0.5))
-        .insert(Label("Preview".to_owned()))
-        .insert(BoatPreviewParent)
-        .with_children(|parent| {
-            let boat_entity = parent.spawn().insert(BoatPreview).id();
-            ev_boat_spawn.send(BoatSpawnEvent {
-                entity: Some(boat_entity),
-                position: Vec2::ZERO,
-                special_attack: SpecialAttack::Shockwave,
-                healthbar: false,
-                player: true,
-            });
-            let ocean_entity = parent.spawn().id();
-            ev_ocean_spawn.send(OceanSpawnEvent {
-                entity: Some(ocean_entity),
-            });
-        });
-    commands
-        .spawn_bundle(SpriteBundle {
-            texture: asset_library.sprite_town_bg_hole.clone(),
-            ..Default::default()
-        })
-        .insert(
-            Transform2::new()
-                .with_depth((DepthLayer::Front, 0.))
-                .with_scale(Vec2::ONE * 0.5),
-        );
-    commands
-        .spawn_bundle(NodeBundle {
-            style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::Center,
-                position_type: PositionType::Absolute,
-                ..Default::default()
-            },
-            color: Color::NONE.into(),
-            ..Default::default()
-        })
-        .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
-                style: Style {
-                    align_self: AlignSelf::Center,
-                    position_type: PositionType::Relative,
-                    position: UiRect {
-                        top: Val::Px(300.),
-                        ..Default::default()
-                    },
-                    ..Default::default()
+        .spawn_bundle(Text2dBundle {
+            text: Text::from_section(
+                "Back to Town".to_owned(),
+                TextStyle {
+                    font: asset_library.font_bold.clone(),
+                    font_size: 64.0,
+                    color: Color::BLACK,
                 },
-                text: Text::from_section(
-                    "Press space to exit".to_owned(),
-                    TextStyle {
-                        font: asset_library.font_default.clone(),
-                        font_size: 42.0,
-                        color: Color::WHITE,
-                    },
-                )
-                .with_alignment(TextAlignment {
-                    horizontal: HorizontalAlign::Center,
-                    vertical: VerticalAlign::Center,
-                }),
-                ..Default::default()
-            });
-        });
-}
-
-fn concert_hall_leave(mut keys: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
-    if keys.just_pressed(KeyCode::Space) {
-        app_state.set(AppState::TownOutside).unwrap();
-        keys.reset(KeyCode::Space);
+            )
+            .with_alignment(TextAlignment {
+                horizontal: HorizontalAlign::Center,
+                vertical: VerticalAlign::Center,
+            }),
+            ..Default::default()
+        })
+        .insert(Clickable::new(CollisionShape::Rect {
+            size: Vec2::new(350., 150.),
+        }))
+        .insert(Transform2::from_xy(0., -320.).with_depth(DEPTH_LAYER_UPGRADES_LEAVE_TEXT))
+        .insert(Leave);
+    commands
+        .spawn()
+        .insert(AudioPlusSource::new(
+            asset_library.sound_effects.sfx_town_outside_click.clone(),
+        ))
+        .insert(ClickSound);
+    commands
+        .spawn()
+        .insert(AudioPlusSource::new(
+            asset_library.sound_effects.sfx_town_outside_hover.clone(),
+        ))
+        .insert(HoverSound);
+    if !game_state.quests.upgrades_dialogue {
+        for (p, t) in UPGRADE_MENU.iter() {
+            dialogue.add_text(*p, String::from(*t));
+        }
+        game_state.quests.upgrades_dialogue = true;
     }
 }
 
-#[derive(Default)]
-pub struct ConcertHallBoatPreviewState {
-    spawn_time: f32,
-}
-
-fn concert_hall_boat_preview(
-    mut query: Query<(Entity, &Parent, &mut Boat), With<BoatPreview>>,
-    mut state: Local<ConcertHallBoatPreviewState>,
-    mut transform_query: Query<&mut Transform2>,
-    time: Res<Time>,
-    game_state: Res<GameState>,
+fn concert_hall_leave(
+    mut query: Query<(&mut Text, &Clickable), With<Leave>>,
+    mut app_state: ResMut<State<AppState>>,
+    mut state: ResMut<ConcertHallState>,
+    mut screen_fade: ResMut<ScreenFade>,
+    mut sound_query: ParamSet<(
+        Query<&mut AudioPlusSource, With<HoverSound>>,
+        Query<&mut AudioPlusSource, With<ClickSound>>,
+    )>,
+    dialogue: Res<Dialogue>,
 ) {
-    state.spawn_time += time.delta_seconds();
-    let spawn = if state.spawn_time > 0.8 {
-        state.spawn_time = 0.;
-        true
-    } else {
-        false
-    };
-    for (entity, parent, mut boat) in query.iter_mut() {
-        if spawn {
-            if let Ok(mut transform) = transform_query.get_mut(entity) {
-                transform.translation = Vec2::ZERO;
+    let block_input = state.leave || dialogue.visible();
+    for (mut text, clickable) in query.iter_mut() {
+        if clickable.just_hovered() && !block_input {
+            for mut source in sound_query.p0().iter_mut() {
+                source.play();
             }
-            boat.special_attack = game_state.band_special_attack_type();
-            boat.special_shoot = true;
         }
-        let translation = if spawn {
-            Vec2::ZERO
-        } else if let Ok(transform) = transform_query.get(entity) {
-            transform.translation
+        if clickable.just_clicked() && !block_input {
+            for mut source in sound_query.p1().iter_mut() {
+                source.play();
+            }
+        }
+        text.sections[0].style.color = if (clickable.hovered && !block_input) || state.leave {
+            Color::WHITE
         } else {
-            Vec2::ZERO
+            Color::BLACK
         };
-        if let Ok(mut parent_transform) = transform_query.get_mut(parent.get()) {
-            parent_transform.translation = PREVIEW_POSITION + -translation * 0.5;
+        if !block_input && clickable.confirmed {
+            state.leave = true;
+            screen_fade.fade_out(0.5);
         }
+    }
+    if screen_fade.faded_out() && state.leave {
+        app_state.set(AppState::TownOutside).unwrap();
     }
 }
 
 pub mod band_selection;
+pub mod boat_preview;
+pub mod upgrades;

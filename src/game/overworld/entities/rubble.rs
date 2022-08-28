@@ -7,7 +7,7 @@ pub struct RubblePlugin;
 impl Plugin for RubblePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<RubbleSpawnEvent>()
-            .add_system(rubble_spawn)
+            .add_system(rubble_spawn.before(HealthbarSystems::Spawn))
             .add_system(rubble_world_spawn);
     }
 }
@@ -39,9 +39,8 @@ fn rubble_spawn(
                 Transform2::from_translation(event.position).with_depth((DepthLayer::Entity, 0.)),
             )
             .insert(Rubble)
-            .insert(Label("Rubble".to_owned()))
             .insert(YDepth::default())
-            .insert(Health::new(3.))
+            .insert(Health::new(1.))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
                     size: Vec2::new(128., 128.),

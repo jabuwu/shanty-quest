@@ -86,11 +86,12 @@ fn init(
 fn skip(
     mut cutscene_state: ResMut<IntroCutsceneState>,
     input: Res<Input<KeyCode>>,
+    mouse: Res<Input<MouseButton>>,
     mut screen_fade: ResMut<ScreenFade>,
     mut ev_cutscene_skip: EventWriter<CutsceneSkipEvent<IntroCutscene>>,
     mut query: Query<&mut AudioPlusSource>,
 ) {
-    if input.just_pressed(KeyCode::Space) {
+    if input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left) {
         if !cutscene_state.proceed {
             cutscene_state.proceed = true;
             screen_fade.fade_out(1.);
@@ -150,13 +151,13 @@ fn step1(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(-50., -20.)
-                    .with_scale(Vec2::ONE * 5.5)
+                Transform2::from_xy(200., -50.)
+                    .with_scale(Vec2::ONE * 0.75)
                     .with_depth((DepthLayer::Entity, 0.0))
                     .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(5., 5.),
+                velocity: Vec2::new(-6., -6.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro1.clone())

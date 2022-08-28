@@ -12,6 +12,8 @@ impl Plugin for ClickablePlugin {
 #[derive(Component, Default)]
 pub struct Clickable {
     pub shape: CollisionShape,
+    pub use_global: bool,
+    pub offset: Vec2,
 
     pub disabled: bool,
 
@@ -42,18 +44,31 @@ impl Clickable {
 }
 
 fn clickable_update(
-    mut query: Query<(&mut Clickable, &Transform2)>,
+    mut query: Query<(&mut Clickable, &Transform2, &GlobalTransform)>,
     mouse: Res<Mouse>,
     input: Res<Input<MouseButton>>,
 ) {
-    for (mut clickable, transform) in query.iter_mut() {
+    for (mut clickable, transform, global_transform) in query.iter_mut() {
+        let (mut translation, shape) = if clickable.use_global {
+            if let CollisionShape::Rect { size } = &clickable.shape {
+                let (scale, _, _) = global_transform.to_scale_rotation_translation();
+                (
+                    global_transform.translation().truncate(),
+                    CollisionShape::Rect {
+                        size: *size * scale.truncate(),
+                    },
+                )
+            } else {
+                (global_transform.translation().truncate(), clickable.shape)
+            }
+        } else {
+            (transform.translation, clickable.shape)
+        };
+        translation += clickable.offset;
         clickable.last_hovered = clickable.hovered;
         clickable.last_clicked = clickable.clicked;
         clickable.confirmed = false;
-        clickable.hovered =
-            clickable
-                .shape
-                .overlaps(transform.translation, CollisionShape::Point, mouse.position);
+        clickable.hovered = shape.overlaps(translation, CollisionShape::Point, mouse.position);
         if clickable.hovered && input.just_pressed(MouseButton::Left) {
             clickable.clicked = true;
         }

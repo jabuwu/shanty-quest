@@ -3,15 +3,17 @@ use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
+pub const PLAYER_ATTACK_COOLDOWN: f32 = 0.48;
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<PlayerSpawnEvent>()
-            .add_system(player_spawn)
+            .add_system(player_spawn.before(BoatSystems::Spawn))
             .add_system(player_controls.before(BoatSystems::Update))
             .add_system(player_enter_town)
-            .add_system(player_set_attack)
+            .add_system(player_upgrade_attack)
             .add_system(player_invincibility)
             .add_system(player_damage);
     }
@@ -42,15 +44,22 @@ fn player_spawn(
                 invincibility: 0.,
                 dead: false,
             })
-            .insert(Label("Player".to_owned()))
             .insert(AudioPlusListener)
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
             position: game_state.town.position + game_state.town.spawn_offset,
-            special_attack: game_state.band_special_attack_type(),
+            attack: Attacks {
+                forward_cannons: 1,
+                ..Default::default()
+            },
             healthbar: false,
             player: true,
+            health: game_state.health,
+            health_max: game_state.health_max,
+            speed: 250.,
+            attack_cooldown: PLAYER_ATTACK_COOLDOWN,
+            knockback_resistance: 0.2,
         });
         if !game_state.quests.block_town_exit_cutscene() {
             ev_cutscene_exit_town.send(CutsceneStartEvent(ExitTownCutscene {
@@ -68,6 +77,7 @@ fn player_controls(
     input: Res<Input<MouseButton>>,
     keys: Res<Input<KeyCode>>,
     cutscenes: Res<Cutscenes>,
+    game_state: Res<GameState>,
 ) {
     if query.is_empty() {
         return;
@@ -84,20 +94,19 @@ fn player_controls(
         boat.direction = Vec2::X.angle_between(mouse_aim);
         boat.movement = mouse_aim;
         if !input.pressed(MouseButton::Left) {
-            boat.movement *= 0.05;
+            boat.movement *= 0.005;
         }
+        boat.dash = keys.pressed(KeyCode::Space);
         if keys.just_pressed(KeyCode::F) {
-            boat.shoot = true;
+            boat.shoot = !boat.shoot;
         }
-        if keys.just_pressed(KeyCode::D) {
-            boat.special_shoot = true;
-        }
+        boat.attacks = game_state.attacks;
     }
 }
 
 fn player_enter_town(
     mut game_state: ResMut<GameState>,
-    island_query: Query<(Entity, &Town)>,
+    town_query: Query<(Entity, &Town)>,
     mut player_query: Query<(Entity, &mut Player)>,
     transform_query: Query<&GlobalTransform>,
     mut ev_cutscene_enter_town: EventWriter<CutsceneStartEvent<EnterTownCutscene>>,
@@ -107,7 +116,7 @@ fn player_enter_town(
     if cutscenes.running() || state_time.just_entered() || game_state.quests.block_town_enter() {
         return;
     }
-    'outer: for (town_entity, island) in island_query.iter() {
+    'outer: for (town_entity, town) in town_query.iter() {
         let town_position = if let Ok(town_transform) = transform_query.get(town_entity) {
             town_transform.translation().truncate()
         } else {
@@ -115,6 +124,9 @@ fn player_enter_town(
         };
         for (player_entity, mut player) in player_query.iter_mut() {
             if player.disabled {
+                continue;
+            }
+            if town.block_timer > 0. {
                 continue;
             }
             let player_position = if let Ok(player_transform) = transform_query.get(player_entity) {
@@ -129,24 +141,34 @@ fn player_enter_town(
                     from: player_position,
                     to: town_position + Vec2::new(-10., -100.),
                 }));
-                game_state.town = island.town.clone();
+                game_state.town = town.town.clone();
                 break 'outer;
             }
         }
     }
 }
 
-fn player_set_attack(mut query: Query<&mut Boat, With<Player>>, input: Res<Input<KeyCode>>) {
+fn player_upgrade_attack(
+    input: Res<Input<KeyCode>>,
+    mut game_state: ResMut<GameState>,
+    mut query: Query<&mut Health, With<Player>>,
+) {
     // TODO: remove debug
-    for mut boat in query.iter_mut() {
-        if input.just_pressed(KeyCode::Key1) {
-            boat.special_attack = SpecialAttack::ShotgunCannons;
-        }
-        if input.just_pressed(KeyCode::Key2) {
-            boat.special_attack = SpecialAttack::Shockwave;
-        }
-        if input.just_pressed(KeyCode::Key3) {
-            boat.special_attack = SpecialAttack::DashAttack;
+    if input.just_pressed(KeyCode::F1) {
+        game_state.attacks = Attacks {
+            forward_cannons: 1,
+            shotgun_cannons: 1,
+            shockwave: 1,
+            bombs: 1,
+            kraken: 1,
+        };
+    }
+    if input.just_pressed(KeyCode::Key5) {
+        for mut health in query.iter_mut() {
+            health.value = 99999.;
+            health.max = 99999.;
+            game_state.health = 99999.;
+            game_state.health_max = 99999.;
         }
     }
 }
@@ -167,11 +189,16 @@ fn player_damage(
     mut ev_damage: EventReader<DamageEvent>,
     mut crate_query: Query<(&mut Health, &mut Player)>,
     mut ev_death_cutscene: EventWriter<CutsceneStartEvent<DeathCutscene>>,
+    cutscenes: Res<Cutscenes>,
+    mut game_state: ResMut<GameState>,
 ) {
     for event in ev_damage.iter() {
         if let Ok((mut health, mut player)) = crate_query.get_mut(event.hit) {
             if player.invincibility <= 0. {
-                health.damage(1.);
+                if !cutscenes.running() {
+                    health.damage(event.damage);
+                    game_state.health = health.value;
+                }
                 if !player.dead && health.dead() {
                     player.dead = true;
                     ev_death_cutscene.send_default();

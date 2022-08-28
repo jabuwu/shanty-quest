@@ -27,7 +27,7 @@ fn ttl_update(
     for (entity, mut ttl) in query.iter_mut() {
         ttl.seconds -= time.delta_seconds();
         if ttl.seconds <= 0. {
-            commands.entity(entity).despawn();
+            commands.entity(entity).despawn_recursive();
         }
     }
 }

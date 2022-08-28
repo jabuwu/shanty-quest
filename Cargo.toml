@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = "0.8"
+bevy = "^0.8.1"
 bevy_egui = "0.15"
 rand = "0.8.5"
 serde = "1.0"
@@ -13,6 +13,10 @@ bevy_kira_audio = "0.12.0"
 audio_plus = { path = "./crates/audio_plus" }
 asset_struct = { path = "./crates/asset_struct" }
 global_state = { path = "./crates/global_state" }
+grid_combiner = { path = "./crates/grid_combiner" }
 
 [profile.dev.package."*"]
 opt-level = 3
+
+[patch.crates-io]
+wgpu = { git = "https://github.com/mockersf/wgpu/", branch = "unconditional-clear-workaround" }

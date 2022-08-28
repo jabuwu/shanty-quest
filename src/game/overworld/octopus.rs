@@ -5,15 +5,23 @@ use bevy::prelude::*;
 const OCTOPUS_COLLISION_SIZE: Vec2 = Vec2::new(60., 60.);
 const OCTOPUS_HURTBOX_SIZE: Vec2 = Vec2::new(80., 80.);
 
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+pub enum OctopusSystems {
+    Spawn,
+}
+
 pub struct OctopusPlugin;
 
 impl Plugin for OctopusPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<OctopusSpawnEvent>()
-            .add_system(octopus_spawn)
+            .add_system(
+                octopus_spawn
+                    .label(OctopusSystems::Spawn)
+                    .before(HealthbarSystems::Spawn),
+            )
             .add_system(octopus_move)
-            .add_system(octopus_animate)
-            .add_system(octopus_invincibility);
+            .add_system(octopus_animate);
     }
 }
 
@@ -21,10 +29,70 @@ impl Plugin for OctopusPlugin {
 pub struct OctopusSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
+    pub level: OctopusLevel,
+}
+
+#[derive(Default, Clone, Copy)]
+pub enum OctopusLevel {
+    #[default]
+    Easy,
+    Medium,
+    Hard,
+}
+
+impl OctopusLevel {
+    fn info(&self, asset_library: &AssetLibrary) -> OctopusInfo {
+        match *self {
+            Self::Easy => OctopusInfo {
+                atlas: asset_library.sprite_octopus_easy_atlas.clone(),
+                scale: 0.75,
+                health: 1.5,
+                speed: 150.,
+                knockback_resistence: 0.,
+                experience: 1.,
+                experience_count: 2,
+            },
+            Self::Medium => OctopusInfo {
+                atlas: asset_library.sprite_octopus_medium_atlas.clone(),
+                scale: 1.0,
+                health: 3.5,
+                speed: 300.,
+                knockback_resistence: 0.6,
+                experience: 1.,
+                experience_count: 5,
+            },
+            Self::Hard => OctopusInfo {
+                atlas: asset_library.sprite_octopus_hard_atlas.clone(),
+                scale: 1.2,
+                health: 20.,
+                speed: 150.,
+                knockback_resistence: 0.9,
+                experience: 3.,
+                experience_count: 3,
+            },
+        }
+    }
+}
+
+struct OctopusInfo {
+    atlas: Handle<TextureAtlas>,
+    scale: f32,
+    health: f32,
+    speed: f32,
+    knockback_resistence: f32,
+    experience: f32,
+    experience_count: u32,
 }
 
 #[derive(Component)]
-pub struct Octopus;
+pub struct Octopus {
+    wander_chance: TimedChance,
+    wander_time: f32,
+    wander_direction: Vec2,
+}
+
+#[derive(Component)]
+pub struct OctopusSprite;
 
 fn octopus_spawn(
     mut ev_spawn: EventReader<OctopusSpawnEvent>,
@@ -51,32 +119,42 @@ fn octopus_spawn(
         } else {
             commands.spawn()
         };
+        let OctopusInfo {
+            atlas,
+            scale,
+            health,
+            speed,
+            knockback_resistence,
+            experience,
+            experience_count,
+        } = event.level.info(asset_library.as_ref());
         entity
-            .insert_bundle(SpriteSheetBundle {
-                texture_atlas: asset_library.sprite_octopus_atlas.clone(),
-                ..Default::default()
+            .insert_bundle(TransformBundle::default())
+            .insert_bundle(VisibilityBundle::default())
+            .insert(Transform2::from_translation(event.position))
+            .insert(Octopus {
+                wander_chance: TimedChance::new(),
+                wander_time: 0.,
+                wander_direction: Vec2::X,
             })
-            .insert(
-                Transform2::from_translation(event.position).with_depth((DepthLayer::Entity, 0.)),
-            )
-            .insert(Octopus)
-            .insert(Label("Octopus".to_owned()))
             .insert(YDepth::default())
-            .insert(Health::new(3.))
+            .insert(Health::new(health))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
-                    size: Vec2::new(60., 60.),
+                    size: Vec2::new(60., 60.) * scale,
                 },
                 for_entity: None,
                 flags: DAMAGE_FLAG_ENEMY,
             })
             .insert(Hurtbox {
                 shape: CollisionShape::Rect {
-                    size: OCTOPUS_HURTBOX_SIZE,
+                    size: OCTOPUS_HURTBOX_SIZE * scale,
                 },
                 for_entity: None,
                 auto_despawn: false,
                 flags: DAMAGE_FLAG_PLAYER,
+                knockback_type: HurtboxKnockbackType::None,
+                damage: 1.,
             })
             .insert(Collision {
                 shape: CollisionShape::Rect {
@@ -86,12 +164,28 @@ fn octopus_spawn(
             })
             .insert(CharacterController {
                 movement: Vec2::ZERO,
-                speed: 150.,
-                force_facing: None,
+                speed: speed,
+                knockback_resistance: knockback_resistence,
+                ..Default::default()
             })
             .insert(AutoDamage {
                 despawn: true,
+                experience,
+                experience_count,
                 ..Default::default()
+            })
+            .with_children(|parent| {
+                parent
+                    .spawn_bundle(SpriteSheetBundle {
+                        texture_atlas: atlas,
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::new()
+                            .with_depth((DepthLayer::Entity, 0.))
+                            .with_scale(Vec2::ONE * scale),
+                    )
+                    .insert(OctopusSprite);
             });
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
             entity: Some(entity.id()),
@@ -103,43 +197,58 @@ fn octopus_spawn(
 
 fn octopus_move(
     mut queries: ParamSet<(
-        Query<(&mut CharacterController, &GlobalTransform), With<Octopus>>,
+        Query<(&mut CharacterController, &GlobalTransform, &mut Octopus)>,
         Query<&GlobalTransform, With<Player>>,
     )>,
     cutscenes: Res<Cutscenes>,
+    time: Res<Time>,
 ) {
     let player_position = if let Ok(player_transform) = queries.p1().get_single() {
         player_transform.translation().truncate()
     } else {
         Vec2::ZERO
     };
-    for (mut character_controller, octopus_transform) in queries.p0().iter_mut() {
+    for (mut character_controller, octopus_transform, mut octopus) in queries.p0().iter_mut() {
+        if octopus.wander_time < 0. && octopus.wander_chance.check(6., 3., time.delta_seconds()) {
+            octopus.wander_time = 0.5;
+            octopus.wander_direction =
+                Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU) * 2.;
+        }
+        octopus.wander_time -= time.delta_seconds();
         if cutscenes.running() {
             character_controller.movement = Vec2::ZERO;
         } else {
-            let direction = player_position - octopus_transform.translation().truncate();
+            let chase_position = if octopus.wander_time > 0. {
+                octopus_transform.translation().truncate() + octopus.wander_direction
+            } else {
+                player_position
+            };
+            let direction = chase_position - octopus_transform.translation().truncate();
             character_controller.movement = direction.normalize();
         }
     }
 }
 
-fn octopus_animate(mut query: Query<&mut TextureAtlasSprite, With<Octopus>>, time: Res<Time>) {
-    for mut sprite in query.iter_mut() {
-        let time = time.time_since_startup().as_secs_f32() % 1.;
-        if time > 0.5 {
-            sprite.index = 1;
-        } else {
-            sprite.index = 0;
+fn octopus_animate(
+    query: Query<(&Children, &AutoDamage), With<Octopus>>,
+    mut child_query: Query<&mut TextureAtlasSprite, With<OctopusSprite>>,
+    time: Res<Time>,
+) {
+    for (children, auto_damage) in query.iter() {
+        for child in children.iter() {
+            if let Ok(mut sprite) = child_query.get_mut(*child) {
+                let time = time.time_since_startup().as_secs_f32() % 1.;
+                if time > 0.5 {
+                    sprite.index = 1;
+                } else {
+                    sprite.index = 0;
+                }
+                if auto_damage.invincibility > 0. {
+                    sprite.color.set_a(0.5);
+                } else {
+                    sprite.color.set_a(1.);
+                };
+            }
         }
-    }
-}
-
-fn octopus_invincibility(mut query: Query<(&mut TextureAtlasSprite, &AutoDamage)>) {
-    for (mut sprite, auto_damage) in query.iter_mut() {
-        if auto_damage.invincibility > 0. {
-            sprite.color.set_a(0.5);
-        } else {
-            sprite.color.set_a(1.);
-        };
     }
 }

@@ -3,31 +3,24 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 use jagerossa::JagerossaSpawnEvent;
 
-#[derive(Default)]
-pub enum JagerossaQuestState {
-    #[default]
-    Empty,
-}
-
 pub struct JagerossaQuestPlugin;
 
 impl Plugin for JagerossaQuestPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<JagerossaQuestState>()
-            .add_cutscene::<Jagerossa1Cutscene>()
+        app.add_cutscene::<Jagerossa1Cutscene>()
             .add_cutscene::<Jagerossa2Cutscene>()
             .add_plugin(jagerossa::JagerossaPlugin)
             .add_plugin(trigger::JagerossaTriggerPlugin);
     }
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Debug)]
 pub struct JagerossaQuest {
-    stage: JagerossaQuestStage,
+    pub stage: JagerossaQuestStage,
 }
 
-#[derive(Default, Clone)]
-enum JagerossaQuestStage {
+#[derive(Default, Clone, Debug)]
+pub enum JagerossaQuestStage {
     #[default]
     ControlsTutorial,
     Dialogue1,
@@ -45,7 +38,7 @@ pub struct Jagerossa1Cutscene {
 impl Cutscene for Jagerossa1Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
         cutscene.add_dialogue_step(jagerossa1_init1);
-        cutscene.add_dialogue_step(jagerossa1_cleanup);
+        cutscene.add_quick_step(jagerossa1_cleanup);
     }
 }
 
@@ -57,18 +50,12 @@ fn jagerossa1_init1(
 ) {
     ev_jagerossa_spawn.send_default();
 
-    dialogue.add_text(
-        DialoguePortrait::Jagerossa,
-        "Ha-ha! Sailed right into me ambush ya bilge rat!\nI'll paint ya ship black with gunpowder!"
-            .to_owned(),
-    );
-    dialogue.add_text(
-        DialoguePortrait::Jagerossa,
-        "Then I'll take yer instrument from your scorched corpse!".to_owned(),
-    );
+    for (p, t) in JAGEROSSA1.iter() {
+        dialogue.add_text(*p, String::from(*t));
+    }
 
     let rect = world_locations.get_single_rect("JagerossaArena");
-    overworld_camera.enable_arena(rect.position, rect.size);
+    overworld_camera.arena_enable(rect.position, rect.size);
 }
 
 fn jagerossa1_cleanup(mut game_state: ResMut<GameState>) {
@@ -86,32 +73,32 @@ pub struct Jagerossa2Cutscene {
 
 impl Cutscene for Jagerossa2Cutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
+        cutscene.add_timed_step(|| {}, 2.5);
         cutscene.add_dialogue_step(jagerossa2_init1);
-        cutscene.add_dialogue_step(jagerossa2_cleanup);
+        cutscene.add_quick_step(jagerossa2_cleanup);
     }
 }
 
-fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>) {
-    dialogue.add_text(
-        DialoguePortrait::Jagerossa,
-        "Well! Ya can't always get what you want... But wait, don't kill me yet!".to_owned(),
-    );
-    dialogue.add_text(DialoguePortrait::Jagerossa,"Have some sympathy fer me, poor devil...\nHow about we combine our powers?! Ha?\nWith 2 instruments, yer ship we'll be unstoppable!".to_owned());
-    dialogue.add_text(DialoguePortrait::Jagerossa,"Other Pirate Lords will scatter like tumblin' dice before our\ncombined might!\nSet sail, onwards! We need to find a town.".to_owned());
+fn jagerossa2_init1(mut dialogue: ResMut<Dialogue>, mut game_state: ResMut<GameState>) {
+    game_state.attacks.shotgun_cannons = 1;
+    for (p, t) in JAGEROSSA2.iter() {
+        dialogue.add_text(*p, String::from(*t));
+    }
 }
 
 fn jagerossa2_cleanup(
     mut game_state: ResMut<GameState>,
     mut overworld_camera: ResMut<OverworldCamera>,
-    player_query: Query<Entity, With<Player>>,
+    mut player_query: Query<(Entity, &mut Boat), With<Player>>,
     mut commands: Commands,
     world_locations: Res<WorldLocations>,
 ) {
-    if let Ok(player_entity) = player_query.get_single() {
+    if let Ok((player_entity, mut player_boat)) = player_query.get_single_mut() {
+        player_boat.shoot = false;
         commands
             .entity(player_entity)
             .insert(CharacterControllerDestination {
-                target: world_locations.get_single_position("Tortuga"),
+                target: world_locations.get_single_position("Portallica") + Vec2::new(0., -100.),
             });
     }
     game_state.quests.next();

@@ -3,9 +3,19 @@ use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
+use super::TownAmbience;
+
 #[derive(Default)]
 pub struct OutsideState {
-    leave: bool,
+    leave: OutsideLeave,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+enum OutsideLeave {
+    #[default]
+    Stay,
+    LeaveToOverworld,
+    LeaveToConcertHall,
 }
 
 pub struct OutsidePlugin;
@@ -13,9 +23,14 @@ pub struct OutsidePlugin;
 impl Plugin for OutsidePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<OutsideState>()
+            .add_plugin(rum_refill::RumRefillPlugin)
             .add_system_set(SystemSet::on_enter(AppState::TownOutside).with_system(outside_init))
             .add_system_set(SystemSet::on_update(AppState::TownOutside).with_system(outside_leave))
-            .add_system(outside_click);
+            .add_system(outside_click)
+            .add_system(outside_pulsing_icons)
+            .add_system(outside_tavern_icon)
+            .add_system(outside_mayor_icon)
+            .add_system(outside_concert_hall_icon);
     }
 }
 
@@ -40,12 +55,29 @@ struct HoverSound;
 #[derive(Component)]
 struct ClickSound;
 
+#[derive(Component)]
+struct PulsingIcon {
+    scale: Vec2,
+}
+
+#[derive(Component)]
+struct TavernIcon;
+
+#[derive(Component)]
+struct MayorIcon;
+
+#[derive(Component)]
+struct ConcertHallIcon;
+
 fn outside_init(
     mut state: ResMut<OutsideState>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
-    game_state: Res<GameState>,
+    mut game_state: ResMut<GameState>,
+    mut dialogue: ResMut<Dialogue>,
+    mut screen_fade: ResMut<ScreenFade>,
 ) {
+    screen_fade.fade_in(0.5);
     *state = OutsideState::default();
     commands
         .spawn_bundle(Camera2dBundle::default())
@@ -152,7 +184,7 @@ fn outside_init(
             text: Text::from_section(
                 "Exit Town".to_owned(),
                 TextStyle {
-                    font: asset_library.font_default.clone(),
+                    font: asset_library.font_bold.clone(),
                     font_size: 64.0,
                     color: Color::BLACK,
                 },
@@ -177,7 +209,7 @@ fn outside_init(
             text: Text::from_section(
                 game_state.town.name.clone(),
                 TextStyle {
-                    font: asset_library.font_default.clone(),
+                    font: asset_library.font_bold.clone(),
                     font_size: 64.0,
                     color: Color::BLACK,
                 },
@@ -189,6 +221,63 @@ fn outside_init(
             ..Default::default()
         })
         .insert(Transform2::from_xy(0., 330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_NAME));
+
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: asset_library.sprite_town_tavern_notify.clone(),
+            visibility: Visibility { is_visible: false },
+            ..Default::default()
+        })
+        .insert(
+            Transform2::from_xy(-554., 180.)
+                .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
+                .with_scale(Vec2::ONE * 0.5),
+        )
+        .insert(Label("Tavern Icon".to_owned()))
+        .insert(TavernIcon)
+        .insert(PulsingIcon {
+            scale: Vec2::ONE * 0.5,
+        });
+
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: asset_library.sprite_town_mayor_notify.clone(),
+            visibility: Visibility { is_visible: false },
+            ..Default::default()
+        })
+        .insert(
+            Transform2::from_xy(260., 180.)
+                .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
+                .with_scale(Vec2::ONE * 0.5),
+        )
+        .insert(Label("Mayor Icon".to_owned()))
+        .insert(MayorIcon)
+        .insert(PulsingIcon {
+            scale: Vec2::ONE * 0.5,
+        });
+
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: asset_library.sprite_town_concert_hall_notify.clone(),
+            visibility: Visibility { is_visible: false },
+            ..Default::default()
+        })
+        .insert(
+            Transform2::from_xy(-197., 311.)
+                .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
+                .with_scale(Vec2::ONE * 0.5),
+        )
+        .insert(Label("Concert Hall Icon".to_owned()))
+        .insert(ConcertHallIcon)
+        .insert(PulsingIcon {
+            scale: Vec2::ONE * 0.5,
+        });
+    if game_state.quests.end() && !game_state.quests.endgame_town_dialogue {
+        for (p, t) in JAGEROSSA_AFTER_VICTORY.iter() {
+            dialogue.add_text(*p, String::from(*t));
+        }
+        game_state.quests.endgame_town_dialogue = true;
+    }
 }
 
 fn outside_click(
@@ -198,20 +287,22 @@ fn outside_click(
         &mut ClickableItem,
         Option<&mut Text>,
     )>,
-    mut app_state: ResMut<State<AppState>>,
     mut input: ResMut<Input<MouseButton>>,
     mut screen_fade: ResMut<ScreenFade>,
     mut state: ResMut<OutsideState>,
     mut sound_query: ParamSet<(
         Query<&mut AudioPlusSource, With<HoverSound>>,
         Query<&mut AudioPlusSource, With<ClickSound>>,
+        Query<&mut AudioPlusSource, With<TownAmbience>>,
     )>,
     state_time: Res<StateTime<AppState>>,
     mut dialogue: ResMut<Dialogue>,
     cutscenes: Res<Cutscenes>,
     game_state: Res<GameState>,
+    mut ev_mayor_quest: EventWriter<QuestMayorEvent>,
+    mut ev_barkeep_quest: EventWriter<QuestBarkeepEvent>,
 ) {
-    if state_time.just_entered() || state.leave {
+    if state_time.just_entered() || !matches!(state.leave, OutsideLeave::Stay) {
         return;
     }
     let mut highest_priority = -1;
@@ -253,26 +344,34 @@ fn outside_click(
                 input.reset(MouseButton::Left);
                 match clickable_item.action {
                     ClickableAction::Tavern => {
-                        dialogue.add_text(DialoguePortrait::None, "refilled rum".to_owned());
+                        ev_barkeep_quest.send_default();
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::Mayor => {
-                        dialogue
-                            .add_text(DialoguePortrait::None, "ding dong im the mayor".to_owned());
+                        ev_mayor_quest.send_default();
                         input.reset(MouseButton::Left);
                     }
                     ClickableAction::ConcertHall => {
-                        app_state.set(AppState::TownConcertHall).unwrap();
+                        screen_fade.fade_out(0.5);
+                        state.leave = OutsideLeave::LeaveToConcertHall;
                     }
                     ClickableAction::Leave => {
                         if game_state.quests.must_talk_to_mayor() {
-                            dialogue.add_text(
-                                DialoguePortrait::Jagerossa,
-                                "We must talk to the mayor before we leave".to_owned(),
-                            );
+                            for (p, t) in MUST_TALK_TO_MAYOR.iter() {
+                                dialogue.add_text(*p, String::from(*t));
+                            }
+                        } else if !game_state.quests.talked_to_barkeep
+                            && game_state.health != game_state.health_max
+                        {
+                            for (p, t) in MUST_TALK_TO_BARKEEP.iter() {
+                                dialogue.add_text(*p, String::from(*t));
+                            }
                         } else {
-                            screen_fade.fade_out(1.);
-                            state.leave = true;
+                            screen_fade.fade_out(0.5);
+                            state.leave = OutsideLeave::LeaveToOverworld;
+                            for mut source in sound_query.p2().iter_mut() {
+                                source.stop();
+                            }
                         }
                     }
                 }
@@ -285,8 +384,48 @@ fn outside_leave(
     state: Res<OutsideState>,
     screen_fade: Res<ScreenFade>,
     mut app_state: ResMut<State<AppState>>,
+    mut game_state: ResMut<GameState>,
 ) {
-    if state.leave && screen_fade.faded_out() {
-        app_state.set(AppState::Overworld).unwrap();
+    if screen_fade.faded_out() {
+        if matches!(state.leave, OutsideLeave::LeaveToOverworld) {
+            game_state.checkpoint();
+            app_state.set(AppState::Overworld).unwrap();
+        } else if matches!(state.leave, OutsideLeave::LeaveToConcertHall) {
+            app_state.set(AppState::TownConcertHall).unwrap();
+        }
     }
 }
+
+fn outside_pulsing_icons(mut query: Query<(&mut Transform2, &PulsingIcon)>, time: Res<Time>) {
+    for (mut transform, icon) in query.iter_mut() {
+        transform.scale =
+            icon.scale + (Vec2::ONE * 0.05 * (time.time_since_startup().as_secs_f32() * 2.).sin());
+    }
+}
+
+fn outside_tavern_icon(
+    mut query: Query<&mut Visibility, With<TavernIcon>>,
+    game_state: Res<GameState>,
+) {
+    for mut visibility in query.iter_mut() {
+        visibility.is_visible = game_state.health != game_state.health_max;
+    }
+}
+fn outside_mayor_icon(
+    mut query: Query<&mut Visibility, With<MayorIcon>>,
+    game_state: Res<GameState>,
+) {
+    for mut visibility in query.iter_mut() {
+        visibility.is_visible = game_state.quests.must_talk_to_mayor();
+    }
+}
+fn outside_concert_hall_icon(
+    mut query: Query<&mut Visibility, With<ConcertHallIcon>>,
+    game_state: Res<GameState>,
+) {
+    for mut visibility in query.iter_mut() {
+        visibility.is_visible = game_state.skill_points > 0;
+    }
+}
+
+pub mod rum_refill;

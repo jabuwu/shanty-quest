@@ -7,10 +7,8 @@ pub struct ForwardCannonsPlugin;
 
 impl Plugin for ForwardCannonsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_component_child::<ForwardCannons, ForwardCannonsSound>()
-            .add_system(forward_cannons_fire)
-            .add_system(forward_cannon_ball_move)
-            .add_system(forward_cannons_sound);
+        app.add_system(forward_cannons_fire)
+            .add_system(forward_cannon_ball_move);
     }
 }
 
@@ -18,6 +16,32 @@ impl Plugin for ForwardCannonsPlugin {
 pub struct ForwardCannons {
     pub shoot: bool,
     pub hurt_flags: u32,
+    pub level: ForwardCannonsLevel,
+}
+
+#[derive(Default)]
+pub struct ForwardCannonsLevel(pub u32);
+
+impl ForwardCannonsLevel {
+    fn stats(&self) -> ForwardCannonsStats {
+        let level = self.0 as f32;
+        ForwardCannonsStats {
+            damage: level * 0.7,
+            scale: 0.8 + level / 5.,
+            speed: 1200. + level * 100.,
+            hit_multiple: self.0 >= 5,
+            knockback_intensity: if self.0 >= 5 { 0.004 } else { 0.0075 },
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+struct ForwardCannonsStats {
+    damage: f32,
+    scale: f32,
+    speed: f32,
+    hit_multiple: bool,
+    knockback_intensity: f32,
 }
 
 #[derive(Component)]
@@ -25,79 +49,65 @@ struct ForwardCannonBall {
     pub velocity: Vec2,
 }
 
-#[derive(Component, Default)]
-struct ForwardCannonsSound;
-
-fn forward_cannons_sound(
+fn forward_cannons_fire(
+    mut query: Query<(Entity, &mut ForwardCannons, &Boat, &GlobalTransform)>,
     mut commands: Commands,
-    mut ev_created: EventReader<ComponentChildCreatedEvent<ForwardCannonsSound>>,
     asset_library: Res<AssetLibrary>,
 ) {
-    for event in ev_created.iter() {
-        commands
-            .entity(event.entity)
-            .insert_bundle(Transform2Bundle::default())
-            .insert(AudioPlusSource::new(
-                asset_library
-                    .sound_effects
-                    .sfx_overworld_attack_forward_cannons
-                    .clone(),
-            ));
-    }
-}
-
-fn forward_cannons_fire(
-    mut query: Query<(
-        Entity,
-        &mut ForwardCannons,
-        &Boat,
-        &GlobalTransform,
-        &Children,
-    )>,
-    mut sound_query: Query<&mut AudioPlusSource, With<ForwardCannonsSound>>,
-    mut commands: Commands,
-) {
-    for (boat_entity, mut forward_cannons, boat, global_transform, children) in query.iter_mut() {
+    for (boat_entity, mut forward_cannons, boat, global_transform) in query.iter_mut() {
         if forward_cannons.shoot {
-            for child in children.iter() {
-                if let Ok(mut sound) = sound_query.get_mut(*child) {
-                    sound.play();
-                }
-            }
-            for shoot_side in 0..2 {
-                let forward = Vec2::from_angle(boat.direction);
-                let mult = if shoot_side == 0 { 1. } else { -1. };
-                let side = forward.perp() * mult;
-                let position =
-                    global_transform.translation().truncate() + forward * 40. + side * 15.;
-                let velocity = forward * 1200.;
-                let (scale, _, _) = global_transform.to_scale_rotation_translation();
-                commands
-                    .spawn_bundle(SpriteBundle {
-                        sprite: Sprite {
-                            custom_size: Vec2::new(8., 8.).into(),
-                            color: Color::BLACK,
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(position)
-                            .with_depth((DepthLayer::Entity, 0.0))
-                            .with_scale(scale.truncate()),
+            let stats = forward_cannons.level.stats();
+            commands
+                .spawn_bundle(Transform2Bundle {
+                    transform2: Transform2::from_translation(
+                        global_transform.translation().truncate(),
+                    ),
+                    ..Default::default()
+                })
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_forward_cannons
+                            .clone(),
                     )
-                    .insert(Hurtbox {
-                        shape: CollisionShape::Rect {
-                            size: Vec2::new(14., 14.),
-                        },
-                        for_entity: Some(boat_entity),
-                        auto_despawn: true,
-                        flags: forward_cannons.hurt_flags,
-                    })
-                    .insert(YDepth::default())
-                    .insert(ForwardCannonBall { velocity })
-                    .insert(TimeToLive::new(1.0));
-            }
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 3. });
+            let forward = Vec2::from_angle(boat.direction);
+            let position = global_transform.translation().truncate() + forward * 80.;
+            let velocity = forward * stats.speed;
+            let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
+            scale *= stats.scale;
+            commands
+                .spawn_bundle(SpriteBundle {
+                    sprite: Sprite {
+                        color: Color::BLACK,
+                        ..Default::default()
+                    },
+                    texture: asset_library.sprite_bullet_note.clone(),
+                    ..Default::default()
+                })
+                .insert(
+                    Transform2::from_translation(position)
+                        .with_depth((DepthLayer::Entity, 0.0))
+                        .with_scale(scale.truncate()),
+                )
+                .insert(Hurtbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(14., 14.) * stats.scale,
+                    },
+                    for_entity: Some(boat_entity),
+                    auto_despawn: if stats.hit_multiple { false } else { true },
+                    flags: forward_cannons.hurt_flags,
+                    knockback_type: HurtboxKnockbackType::Velocity(
+                        velocity * stats.knockback_intensity,
+                    ),
+                    damage: stats.damage,
+                })
+                .insert(YDepth::default())
+                .insert(ForwardCannonBall { velocity })
+                .insert(TimeToLive::new(1.0));
         }
         forward_cannons.shoot = false;
     }

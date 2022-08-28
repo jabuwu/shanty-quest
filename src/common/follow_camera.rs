@@ -37,6 +37,9 @@ fn follow_camera(
         if let Ok(mut transform) = transform_query.get_mut(follow_entity) {
             transform.translation.x = camera_translation.x + follow_camera.offset.x;
             transform.translation.y = camera_translation.y + follow_camera.offset.y;
+
+            transform.translation.x = transform.translation.x.round();
+            transform.translation.y = transform.translation.y.round();
         }
     }
 }

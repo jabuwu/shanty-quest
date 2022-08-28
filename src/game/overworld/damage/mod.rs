@@ -20,6 +20,7 @@ impl Plugin for DamagePlugin {
 pub struct DamageEvent {
     pub hit: Entity,
     pub hurt: Entity,
+    pub damage: f32,
 }
 
 #[derive(Component)]
@@ -35,13 +36,26 @@ pub struct Hurtbox {
     pub for_entity: Option<Entity>,
     pub auto_despawn: bool,
     pub flags: u32,
+    pub knockback_type: HurtboxKnockbackType,
+    pub damage: f32,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum HurtboxKnockbackType {
+    None,
+    Velocity(Vec2),
+    Difference(f32),
 }
 
 #[derive(Component, Default)]
 pub struct AutoDamage {
     pub despawn: bool,
     pub invincibility: f32,
+    pub invincibility_amount: f32,
     pub already_despawned: bool,
+    pub experience: f32,
+    pub experience_count: u32,
+    pub experience_infinite_distance: bool,
 }
 
 fn damage_check(
@@ -51,6 +65,7 @@ fn damage_check(
     mut ev_damage: EventWriter<DamageEvent>,
     mut commands: Commands,
     cutscenes: Res<Cutscenes>,
+    mut ev_knockback: EventWriter<KnockbackEvent>,
 ) {
     if cutscenes.running() {
         return;
@@ -88,7 +103,28 @@ fn damage_check(
                 .shape
                 .overlaps(hitbox_translation, hurtbox.shape, hurtbox_translation)
             {
-                ev_damage.send(DamageEvent { hit, hurt });
+                match hurtbox.knockback_type {
+                    HurtboxKnockbackType::Velocity(force) => {
+                        ev_knockback.send(KnockbackEvent {
+                            entity: hitbox_entity,
+                            force,
+                        });
+                    }
+                    HurtboxKnockbackType::Difference(mult_force) => {
+                        let difference = hitbox_translation - hurtbox_translation;
+                        let force = (1.0 - (difference.length() / 500.).clamp(0., 1.)) * mult_force;
+                        ev_knockback.send(KnockbackEvent {
+                            entity: hitbox_entity,
+                            force: difference.normalize() * force,
+                        });
+                    }
+                    _ => {}
+                }
+                ev_damage.send(DamageEvent {
+                    hit,
+                    hurt,
+                    damage: hurtbox.damage,
+                });
                 if hurtbox.auto_despawn {
                     despawn = true;
                     break;
@@ -103,22 +139,39 @@ fn damage_check(
 
 fn damage_auto_die(
     mut ev_damage: EventReader<DamageEvent>,
-    mut crate_query: Query<(Entity, &mut Health, &mut AutoDamage)>,
+    mut crate_query: Query<(Entity, &mut Health, &mut AutoDamage, &GlobalTransform)>,
     mut commands: Commands,
     time: Res<Time>,
+    cutscenes: Res<Cutscenes>,
+    mut ev_experience_spawn: EventWriter<ExperienceSpawnEvent>,
 ) {
-    for (_, _, mut auto_damage) in crate_query.iter_mut() {
+    for (_, _, mut auto_damage, _) in crate_query.iter_mut() {
         auto_damage.invincibility -= time.delta_seconds();
         auto_damage.invincibility = auto_damage.invincibility.max(0.);
     }
     for event in ev_damage.iter() {
-        if let Ok((entity, mut health, mut auto_damage)) = crate_query.get_mut(event.hit) {
+        if let Ok((entity, mut health, mut auto_damage, transform)) = crate_query.get_mut(event.hit)
+        {
             if auto_damage.invincibility == 0. {
-                health.damage(1.);
+                auto_damage.invincibility_amount = 0.
+            }
+            if event.damage > auto_damage.invincibility_amount {
+                if !cutscenes.running() {
+                    health.damage(event.damage - auto_damage.invincibility_amount);
+                }
                 auto_damage.invincibility = 0.1;
+                auto_damage.invincibility_amount = event.damage;
             }
             if health.dead() && !auto_damage.already_despawned {
                 commands.entity(entity).despawn_recursive();
+                if auto_damage.experience > 0. {
+                    ev_experience_spawn.send(ExperienceSpawnEvent {
+                        amount: auto_damage.experience,
+                        position: transform.translation().truncate(),
+                        count: auto_damage.experience_count,
+                        infinite_distance: auto_damage.experience_infinite_distance,
+                    });
+                }
                 auto_damage.already_despawned = true;
             }
         }

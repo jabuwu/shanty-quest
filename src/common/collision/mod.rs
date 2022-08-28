@@ -45,15 +45,15 @@ impl CollisionQuery {
         position: Vec2,
         shape: CollisionShape,
         filter: Option<CollisionFilter>,
-    ) -> Option<Entity> {
+    ) -> Option<(Entity, Vec2)> {
         for entry in self.entries.iter() {
             if shape.overlaps(position, entry.shape, entry.position) {
                 if let Some(ref filter) = filter {
                     if filter.exclude_entity != entry.entity && filter.flags & entry.flags != 0 {
-                        return Some(entry.entity);
+                        return Some((entry.entity, entry.position - position));
                     }
                 } else {
-                    return Some(entry.entity);
+                    return Some((entry.entity, entry.position - position));
                 }
             }
         }
@@ -120,12 +120,14 @@ impl CollisionQuery {
     pub fn update(&mut self, query: &Query<(Entity, &GlobalTransform, &Collision)>) {
         self.entries.clear();
         for (entity, transform, collision) in query.iter() {
-            self.entries.push(CollisionQueryEntry {
-                entity,
-                position: transform.translation().truncate(),
-                shape: collision.shape,
-                flags: collision.flags,
-            });
+            if transform.translation().is_finite() {
+                self.entries.push(CollisionQueryEntry {
+                    entity,
+                    position: transform.translation().truncate(),
+                    shape: collision.shape,
+                    flags: collision.flags,
+                });
+            }
         }
     }
 }

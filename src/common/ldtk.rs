@@ -1,7 +1,12 @@
-use crate::common::prelude::*;
+use crate::{
+    common::prelude::*,
+    game::data::town_data::{town_safe_name, TOWN_NAMES},
+};
 use asset_struct::AssetStruct;
 use bevy::prelude::*;
 use std::collections::HashMap;
+
+use grid_combiner::{GridCombiner, GridPoint};
 
 pub struct LdtkPlugin;
 
@@ -56,8 +61,7 @@ fn ldtk_spawn(mut ev_spawn: EventReader<LdtkSpawnEvent>, mut commands: Commands)
             .insert(Ldtk {
                 asset: event.asset.clone(),
                 state: LdtkState::Unloaded,
-            })
-            .insert(Label("Ldtk Map".to_owned()));
+            });
     }
 }
 
@@ -75,6 +79,7 @@ fn ldtk_load(
         if let Some(ldtk_asset) = ldtk_assets.get(&ldtk.asset) {
             let ldtk_map = &ldtk_asset.map;
             if !ldtk.state.is_loaded() {
+                let mut grid_combiner = GridCombiner::new();
                 world_location.clear();
                 map_builder.reset();
                 let mut texture_atlases = HashMap::new();
@@ -100,7 +105,6 @@ fn ldtk_load(
                             ..Default::default()
                         })
                         .insert_bundle(VisibilityBundle::default())
-                        .insert(Label(level.identifier.clone()))
                         .id();
                     commands.entity(map_entity).push_children(&[level_entity]);
                     for (idx, layer) in level
@@ -123,7 +127,6 @@ fn ldtk_load(
                                 ..Default::default()
                             })
                             .insert_bundle(VisibilityBundle::default())
-                            .insert(Label(layer.identifier.clone()))
                             .id();
                         commands.entity(level_entity).push_children(&[layer_entity]);
                         match layer.layer_instance_type.as_str() {
@@ -154,6 +157,10 @@ fn ldtk_load(
                             "IntGrid" => {
                                 if let Some(i) = layer.tileset_def_uid {
                                     for tile in layer.auto_layer_tiles.iter() {
+                                        grid_combiner.add_point(GridPoint::new(
+                                            (tile.px[0] + level.world_x) / 100,
+                                            (tile.px[1] + level.world_y) / -100,
+                                        ));
                                         map_builder.add_tile(Vec2::new(
                                             tile.px[0] as f32 + level.world_x as f32,
                                             (tile.px[1] as f32 + level.world_y as f32) * -1.0,
@@ -170,6 +177,19 @@ fn ldtk_load(
                             }
                             "Entities" => {
                                 for entity in layer.entity_instances.iter() {
+                                    for name in TOWN_NAMES.iter() {
+                                        let town_name = town_safe_name(*name);
+                                        if town_name == entity.identifier {
+                                            map_builder.add_label(
+                                                Vec2::new(
+                                                    entity.px[0] as f32 + level.world_x as f32,
+                                                    (entity.px[1] as f32 + level.world_y as f32)
+                                                        * -1.0,
+                                                ),
+                                                name,
+                                            );
+                                        }
+                                    }
                                     world_location.add(
                                         &entity.identifier,
                                         Vec2::new(
@@ -183,6 +203,21 @@ fn ldtk_load(
                             _ => (),
                         }
                     }
+                }
+                let rects = grid_combiner.combine();
+                for rect in rects.iter() {
+                    let (mut pos, mut size) = rect.to_position_size();
+                    pos *= 100.;
+                    size *= 100.;
+                    commands
+                        .spawn_bundle(TransformBundle::default())
+                        .insert(
+                            Transform2::from_translation(pos).with_depth((DepthLayer::Front, 1.)),
+                        )
+                        .insert(Collision {
+                            shape: CollisionShape::Rect { size },
+                            flags: COLLISION_FLAG,
+                        });
                 }
                 ev_world_locations_spawn.send_default();
                 ldtk.state = LdtkState::Loaded;
@@ -217,11 +252,5 @@ fn ldtk_spawn_tile(
             tile.px[0] as f32,
             tile.px[1] as f32 * -1.0,
         ))
-        .insert(Collision {
-            shape: CollisionShape::Rect {
-                size: Vec2::new(100., 100.),
-            },
-            flags: COLLISION_FLAG,
-        })
         .id()
 }

@@ -69,7 +69,7 @@ pub fn init(
         .insert(CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
-            force_facing: None,
+            ..Default::default()
         })
         .insert(Hitbox {
             shape: CollisionShape::Rect {
@@ -108,7 +108,7 @@ pub fn init(
             .insert(CharacterController {
                 movement: Vec2::ZERO,
                 speed: 300.,
-                force_facing: None,
+                ..Default::default()
             })
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
@@ -157,6 +157,8 @@ fn player_control(
                     for_entity: Some(player_entity),
                     auto_despawn: true,
                     flags: 1,
+                    knockback_type: HurtboxKnockbackType::None,
+                    damage: 1.,
                 });
         }
         if keys.pressed(KeyCode::W) {

@@ -7,10 +7,7 @@ pub struct ShockwavePlugin;
 
 impl Plugin for ShockwavePlugin {
     fn build(&self, app: &mut App) {
-        app.add_component_child::<Shockwave, ShockwaveSound>()
-            .add_system(shockwave_fire)
-            .add_system(shockwave_update)
-            .add_system(shockwave_sound);
+        app.add_system(shockwave_fire).add_system(shockwave_update);
     }
 }
 
@@ -18,59 +15,115 @@ impl Plugin for ShockwavePlugin {
 pub struct Shockwave {
     pub shoot: bool,
     pub hurt_flags: u32,
+    pub level: ShockwaveLevel,
 }
 
-#[derive(Component, Default)]
-struct ShockwaveWave {
-    time_alive: f32,
-    _velocity: Vec2,
-}
+#[derive(Default)]
+pub struct ShockwaveLevel(pub u32);
 
-#[derive(Component, Default)]
-struct ShockwaveSound;
-
-fn shockwave_sound(
-    mut commands: Commands,
-    mut ev_created: EventReader<ComponentChildCreatedEvent<ShockwaveSound>>,
-    asset_library: Res<AssetLibrary>,
-) {
-    for event in ev_created.iter() {
-        commands.entity(event.entity).insert(AudioPlusSource::new(
-            asset_library.sound_effects.sfx_placeholder_sound.clone(),
-        ));
+impl ShockwaveLevel {
+    fn stats(&self) -> ShockwaveStats {
+        if self.0 == 6 {
+            // boss stats
+            ShockwaveStats {
+                damage: 1.5,
+                knockback_intensity: 15.,
+                scale: 1.,
+            }
+        } else {
+            let level = self.0 as f32;
+            ShockwaveStats {
+                damage: 0.25 * level,
+                knockback_intensity: 5.,
+                scale: 1. + level * 0.1,
+            }
+        }
     }
 }
 
+#[derive(Copy, Clone, Debug)]
+struct ShockwaveStats {
+    damage: f32,
+    knockback_intensity: f32,
+    scale: f32,
+}
+
+#[derive(Component)]
+struct ShockwaveWave {
+    time_alive: f32,
+    stats: ShockwaveStats,
+}
+
+#[derive(Component, Default)]
+struct ShockwaveSprite;
+
 fn shockwave_fire(
-    mut query: Query<(&mut Shockwave, &Boat, Entity, &Children)>,
-    mut sound_query: Query<&mut AudioPlusSource, With<ShockwaveSound>>,
+    mut query: Query<(&mut Shockwave, Entity, &GlobalTransform)>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
 ) {
-    for (mut shockwave, boat, entity, children) in query.iter_mut() {
+    for (mut shockwave, entity, global_transform) in query.iter_mut() {
         if shockwave.shoot {
-            for child in children.iter() {
-                if let Ok(mut sound) = sound_query.get_mut(*child) {
-                    sound.play();
-                }
-            }
-            let velocity = boat.facing.to_vec() * 200.;
-            let child_entity = commands
-                .spawn_bundle(SpriteBundle {
-                    sprite: Sprite {
-                        custom_size: Vec2::new(1., 1.).into(),
-                        color: Color::WHITE,
-                        ..Default::default()
-                    },
-                    texture: asset_library.sprite_shockwave_vfx.clone(),
+            let stats = shockwave.level.stats();
+            commands
+                .spawn_bundle(Transform2Bundle {
+                    transform2: Transform2::from_translation(
+                        global_transform.translation().truncate(),
+                    ),
                     ..Default::default()
                 })
-                .insert(Transform2::new().with_depth(DEPTH_LAYER_SHOCKWAVE))
+                .insert(
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_shockwave
+                            .clone(),
+                    )
+                    .as_playing(),
+                )
+                .insert(TimeToLive { seconds: 3. });
+            let child_entity = commands
+                .spawn_bundle(Transform2Bundle {
+                    ..Default::default()
+                })
+                .insert_bundle(VisibilityBundle::default())
                 .insert(ShockwaveWave {
                     time_alive: 0.,
-                    _velocity: velocity,
+                    stats,
                 })
                 .insert(TimeToLive::new(0.75))
+                .with_children(|parent| {
+                    parent
+                        .spawn_bundle(SpriteBundle {
+                            sprite: Sprite {
+                                custom_size: Vec2::new(1., 1.).into(),
+                                color: Color::WHITE,
+                                ..Default::default()
+                            },
+                            texture: asset_library.sprite_shockwave_vfx.clone(),
+                            ..Default::default()
+                        })
+                        .insert(Transform2::new().with_depth(DEPTH_LAYER_SHOCKWAVE))
+                        .insert(ShockwaveSprite);
+                    parent
+                        .spawn_bundle(Transform2Bundle {
+                            ..Default::default()
+                        })
+                        .insert(Transform2::new().with_depth((DepthLayer::Front, 0.98)))
+                        .insert(Hurtbox {
+                            shape: CollisionShape::Rect {
+                                size: Vec2::new(400., 400.) * stats.scale,
+                            },
+                            for_entity: Some(entity),
+                            auto_despawn: false,
+                            flags: shockwave.hurt_flags,
+                            knockback_type: HurtboxKnockbackType::Difference(
+                                stats.knockback_intensity,
+                            ),
+                            damage: stats.damage,
+                        })
+                        .insert(TimeToLive { seconds: 0.05 });
+                })
                 .id();
             commands.entity(entity).add_child(child_entity);
         }
@@ -79,13 +132,17 @@ fn shockwave_fire(
 }
 
 fn shockwave_update(
-    mut query: Query<(&mut ShockwaveWave, &mut Transform2, &mut Sprite)>,
+    mut query: Query<(&mut ShockwaveWave, &Children)>,
+    mut child_query: Query<(&mut Transform2, &mut Sprite), With<ShockwaveSprite>>,
     time: Res<Time>,
 ) {
-    for (mut wave, mut transform, mut sprite) in query.iter_mut() {
+    for (mut wave, children) in query.iter_mut() {
         wave.time_alive += time.delta_seconds();
-        transform.scale = Vec2::ONE * (32. + wave.time_alive * 2000.);
-        //transform.translation += wave.velocity * time.delta_seconds();
-        sprite.color.set_a(1. - wave.time_alive / 0.75);
+        for child in children.iter() {
+            if let Ok((mut transform, mut sprite)) = child_query.get_mut(*child) {
+                transform.scale = Vec2::ONE * (32. + wave.time_alive * 2000.) * wave.stats.scale;
+                sprite.color.set_a(1. - wave.time_alive / 0.75);
+            }
+        }
     }
 }
