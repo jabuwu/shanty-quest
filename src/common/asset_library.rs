@@ -113,8 +113,6 @@ pub struct AssetLibrary {
     pub cutscene_image_intro3: Handle<Image>,
     #[asset("sprites/cutscene_intro4.png")]
     pub cutscene_image_intro4: Handle<Image>,
-    #[asset("sprites/cutscene_intro5.png")]
-    pub cutscene_image_intro5: Handle<Image>,
     #[asset("audio/voice/intro1.ogg")]
     pub cutscene_voice_intro1: Handle<AudioSource>,
     #[asset("audio/voice/intro2.ogg")]
