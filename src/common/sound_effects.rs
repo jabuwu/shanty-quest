@@ -56,6 +56,7 @@ pub struct SoundEffects {
     pub sfx_town_music: AudioPlusSoundEffect,
     pub sfx_town_outside_hover: AudioPlusSoundEffect,
     pub sfx_town_outside_click: AudioPlusSoundEffect,
+    pub sfx_town_rum_refill_clank: AudioPlusSoundEffect,
 }
 
 pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
@@ -315,6 +316,11 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         sfx_town_outside_click: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.menu_sfx_button_click.clone()],
             volume: 1.,
+            ..Default::default()
+        },
+        sfx_town_rum_refill_clank: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
+            volume: 1.0,
             ..Default::default()
         },
     }
