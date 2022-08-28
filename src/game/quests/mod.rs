@@ -9,6 +9,8 @@ use crate::game::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
+use super::town::outside::rum_refill::RumRefillCutscene;
+
 pub struct QuestsPlugin;
 
 impl Plugin for QuestsPlugin {
@@ -351,6 +353,7 @@ fn quests_barkeep(
     mut ev_barkeep: EventReader<QuestBarkeepEvent>,
     mut dialogue: ResMut<Dialogue>,
     mut game_state: ResMut<GameState>,
+    mut ev_rum_refill_cutscene: EventWriter<CutsceneStartEvent<RumRefillCutscene>>,
 ) {
     let mut fallback_dialogue = true;
     for _ in ev_barkeep.iter() {
@@ -396,10 +399,9 @@ fn quests_barkeep(
             }
             game_state.quests.barkeep_dialogue = (game_state.quests.barkeep_dialogue + 1) % 6;
         }
-        dialogue.add_text(
-            DialoguePortrait::None,
-            "Rum supplied restored\nTODO: play cool animation here".to_owned(),
-        );
+        if game_state.health != game_state.health_max {
+            ev_rum_refill_cutscene.send_default();
+        }
     }
 }
 

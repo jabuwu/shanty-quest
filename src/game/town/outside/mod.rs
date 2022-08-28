@@ -23,6 +23,7 @@ pub struct OutsidePlugin;
 impl Plugin for OutsidePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<OutsideState>()
+            .add_plugin(rum_refill::RumRefillPlugin)
             .add_system_set(SystemSet::on_enter(AppState::TownOutside).with_system(outside_init))
             .add_system_set(SystemSet::on_update(AppState::TownOutside).with_system(outside_leave))
             .add_system(outside_click)
@@ -297,7 +298,7 @@ fn outside_click(
     state_time: Res<StateTime<AppState>>,
     mut dialogue: ResMut<Dialogue>,
     cutscenes: Res<Cutscenes>,
-    mut game_state: ResMut<GameState>,
+    game_state: Res<GameState>,
     mut ev_mayor_quest: EventWriter<QuestMayorEvent>,
     mut ev_barkeep_quest: EventWriter<QuestBarkeepEvent>,
 ) {
@@ -343,7 +344,6 @@ fn outside_click(
                 input.reset(MouseButton::Left);
                 match clickable_item.action {
                     ClickableAction::Tavern => {
-                        game_state.health = game_state.health_max;
                         ev_barkeep_quest.send_default();
                         input.reset(MouseButton::Left);
                     }
@@ -427,3 +427,5 @@ fn outside_concert_hall_icon(
         visibility.is_visible = game_state.skill_points > 0;
     }
 }
+
+pub mod rum_refill;

@@ -63,6 +63,9 @@ pub const DEPTH_LAYER_TOWN_OUTSIDE_EXIT: Layer = (DepthLayer::Front, 0.01);
 pub const DEPTH_LAYER_TOWN_OUTSIDE_NAME: Layer = (DepthLayer::Front, 0.01);
 pub const DEPTH_LAYER_TOWN_OUTSIDE_ICON: Layer = (DepthLayer::Front, 0.02);
 
+pub const DEPTH_LAYER_TOWN_OUTSIDE_RUM_REFILL_BG: Layer = (DepthLayer::Front, 0.1);
+pub const DEPTH_LAYER_TOWN_OUTSIDE_RUM_REFILL_BOTTLE: Layer = (DepthLayer::Front, 0.11);
+
 pub const DEPTH_LAYER_UPGRADES_LEAVE_TEXT: Layer = (DepthLayer::Front, 0.5);
 pub const DEPTH_LAYER_UPGRADES_BG: Layer = (DepthLayer::Front, 0.5);
 pub const DEPTH_LAYER_UPGRADES_SKILLPOINT: Layer = (DepthLayer::Front, 0.501);
