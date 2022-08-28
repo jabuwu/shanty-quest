@@ -26,9 +26,9 @@ impl ShockwaveLevel {
         if self.0 == 6 {
             // boss stats
             ShockwaveStats {
-                damage: 1.5,
+                damage: 1.,
                 knockback_intensity: 15.,
-                scale: 1.,
+                scale: 0.7,
             }
         } else {
             let level = self.0 as f32;

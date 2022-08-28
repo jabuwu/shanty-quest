@@ -93,7 +93,7 @@ fn davy_spawn(
             healthbar: false,
             player: false,
             health: 250.,
-            health_max: 200.,
+            health_max: 300.,
             speed: stats.speed,
             attack_cooldown: stats.attack_time,
             knockback_resistance: 1.0,
