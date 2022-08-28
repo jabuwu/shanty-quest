@@ -12,6 +12,11 @@ pub const MUST_TALK_TO_BARKEEP: [(P, &str); 1] = [(
     "Yer a brave soul no doubt! But I advise a visit to the tavern over yonder,\nand stocking up on barrels o' rum! How else can a ship sail!?",
 )];
 
+pub const UPGRADE_MENU: [(P, &str); 1] = [(
+    P::Jagerossa,
+    "This here is how ya make yer ship and musicians better! Ye can't be the\nPirate King with a rottin' hulk untuned instrument, eh?",
+)];
+
 pub const JAGEROSSA1: [(P, &str); 2] = [
     (
         P::Jagerossa,
@@ -36,6 +41,17 @@ pub const JAGEROSSA2: [(P, &str); 3] = [
         P::Jagerossa,
         "Other Pirate Lords will scatter like tumblin' dice before our\ncombined might!\nSet sail, onwards! We need to find a town."
     )
+];
+
+pub const JAGEROSSA_AFTER_VICTORY: [(P, &str); 2] = [
+    (
+        P::Jagerossa,
+        "Har! Ya got what ya wanted! Now yer can sail the high seas as the\nPirate King!",
+    ),
+    (
+        P::Jagerossa,
+        "But the question is... How long 'til the Royal Navy tries to take the\ncolonies back?",
+    ),
 ];
 
 pub const DANGEROUS_SEAS: [(P, &str); 1] = [(
@@ -153,11 +169,33 @@ pub const MAYOR_RANDOM5: [(P, &str); 1] = [(
     "Where is that rumship? Townsfolk are getting restless...",
 )];
 
+pub const MAYOR_AFTER_VICTORY1: [(P, &str); 1] =
+    [(P::Mayor, "Oh, Pirate King! How can the Genes serve you?")];
+
+pub const MAYOR_AFTER_VICTORY2: [(P, &str); 1] = [(P::Mayor, "Enjoying your reign, Pirate King?")];
+
+pub const MAYOR_AFTER_VICTORY3: [(P, &str); 1] = [(
+    P::Mayor,
+    "Me? Of course I haven't sent that intercepted missive meant for the\nRoyal Navy!",
+)];
+
+pub const MAYOR_AFTER_VICTORY4: [(P, &str); 1] = [(
+    P::Mayor,
+    "Ah, yes! The trade is blossoming again. But someone has to do\nsomething about those pesky sea monsters!",
+)];
+
+pub const MAYOR_AFTER_VICTORY5: [(P, &str); 1] = [(P::Mayor, "Pirate King! Welcome to our town.")];
+
+pub const MAYOR_AFTER_VICTORY6: [(P, &str); 1] = [(
+    P::Mayor,
+    "Yes, oh yes! The trade flows. Rum, sugar, cotton!",
+)];
+
 pub const BARKEEP1: [(P, &str); 3] = [
     (P::Barkeep, "Eh? Piss off scoundrel! We have no more rum..."),
     (
         P::Barkeep,
-        "Oh... Thousand apologies, Pirate Lord! Boy!\nFetch ye the best caskets of rum!",
+        "Oh... Thousand apologies, Pirate Lord!\nBoy! Fetch ye the best caskets of rum!",
     ),
     (
         P::Barkeep,

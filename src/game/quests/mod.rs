@@ -30,8 +30,11 @@ impl Plugin for QuestsPlugin {
 pub struct Quests {
     pub active_quest: Quest,
     pub mayor_dialogue: u32,
+    pub mayor_after_dialogue: u32,
     pub barkeep_dialogue: u32,
     pub talked_to_barkeep: bool,
+    pub endgame_town_dialogue: bool,
+    pub upgrades_dialogue: bool,
 }
 
 #[derive(Default, Clone, Copy)]
@@ -197,6 +200,13 @@ impl Quests {
         }
     }
 
+    pub fn end(&self) -> bool {
+        match &self.active_quest {
+            Quest::End => true,
+            _ => false,
+        }
+    }
+
     pub fn next(&mut self) {
         self.active_quest.next();
     }
@@ -268,34 +278,71 @@ fn quests_mayor(
             _ => {}
         }
         if fallback_dialogue {
-            match game_state.quests.mayor_dialogue % 5 {
-                0 => {
-                    for (p, t) in MAYOR_RANDOM1.iter() {
-                        dialogue.add_text(*p, String::from(*t));
+            if game_state.quests.end() {
+                match game_state.quests.mayor_after_dialogue % 6 {
+                    0 => {
+                        for (p, t) in MAYOR_AFTER_VICTORY1.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    1 => {
+                        for (p, t) in MAYOR_AFTER_VICTORY2.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    2 => {
+                        for (p, t) in MAYOR_AFTER_VICTORY3.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    3 => {
+                        for (p, t) in MAYOR_AFTER_VICTORY4.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    4 => {
+                        for (p, t) in MAYOR_AFTER_VICTORY5.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    _ => {
+                        for (p, t) in MAYOR_AFTER_VICTORY6.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
                     }
                 }
-                1 => {
-                    for (p, t) in MAYOR_RANDOM2.iter() {
-                        dialogue.add_text(*p, String::from(*t));
+                game_state.quests.mayor_after_dialogue =
+                    (game_state.quests.mayor_after_dialogue + 1) % 6;
+            } else {
+                match game_state.quests.mayor_dialogue % 5 {
+                    0 => {
+                        for (p, t) in MAYOR_RANDOM1.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    1 => {
+                        for (p, t) in MAYOR_RANDOM2.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    2 => {
+                        for (p, t) in MAYOR_RANDOM3.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    3 => {
+                        for (p, t) in MAYOR_RANDOM4.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
+                    }
+                    _ => {
+                        for (p, t) in MAYOR_RANDOM5.iter() {
+                            dialogue.add_text(*p, String::from(*t));
+                        }
                     }
                 }
-                2 => {
-                    for (p, t) in MAYOR_RANDOM3.iter() {
-                        dialogue.add_text(*p, String::from(*t));
-                    }
-                }
-                3 => {
-                    for (p, t) in MAYOR_RANDOM4.iter() {
-                        dialogue.add_text(*p, String::from(*t));
-                    }
-                }
-                _ => {
-                    for (p, t) in MAYOR_RANDOM5.iter() {
-                        dialogue.add_text(*p, String::from(*t));
-                    }
-                }
+                game_state.quests.mayor_dialogue = (game_state.quests.mayor_dialogue + 1) % 5;
             }
-            game_state.quests.mayor_dialogue = (game_state.quests.mayor_dialogue + 1) % 5;
         }
     }
 }

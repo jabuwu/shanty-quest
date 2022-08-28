@@ -62,7 +62,8 @@ fn outside_init(
     mut state: ResMut<OutsideState>,
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
-    game_state: Res<GameState>,
+    mut game_state: ResMut<GameState>,
+    mut dialogue: ResMut<Dialogue>,
 ) {
     *state = OutsideState::default();
     commands
@@ -258,6 +259,12 @@ fn outside_init(
         .insert(PulsingIcon {
             scale: Vec2::ONE * 0.5,
         });
+    if game_state.quests.end() && !game_state.quests.endgame_town_dialogue {
+        for (p, t) in JAGEROSSA_AFTER_VICTORY.iter() {
+            dialogue.add_text(*p, String::from(*t));
+        }
+        game_state.quests.endgame_town_dialogue = true;
+    }
 }
 
 fn outside_click(

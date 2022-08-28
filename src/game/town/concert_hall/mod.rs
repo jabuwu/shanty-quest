@@ -1,4 +1,5 @@
 use crate::common::prelude::*;
+use crate::game::prelude::*;
 use bevy::prelude::*;
 
 use self::boat_preview::BoatPreviewSpawnEvent;
@@ -25,6 +26,8 @@ fn concert_hall_init(
     asset_library: Res<AssetLibrary>,
     mut ev_upgrades_spawn: EventWriter<UpgradesSpawnEvent>,
     mut ev_boat_preview_spawn: EventWriter<BoatPreviewSpawnEvent>,
+    mut game_state: ResMut<GameState>,
+    mut dialogue: ResMut<Dialogue>,
 ) {
     commands.spawn_bundle(Camera2dBundle::default());
     ev_upgrades_spawn.send_default();
@@ -76,6 +79,12 @@ fn concert_hall_init(
                 ..Default::default()
             });
         });
+    if !game_state.quests.upgrades_dialogue {
+        for (p, t) in UPGRADE_MENU.iter() {
+            dialogue.add_text(*p, String::from(*t));
+        }
+        game_state.quests.upgrades_dialogue = true;
+    }
 }
 
 fn concert_hall_leave(mut keys: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {

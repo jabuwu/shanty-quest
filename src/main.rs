@@ -92,6 +92,16 @@ fn debug_dialogue(
                 ui.horizontal(|ui| {
                     dialogue_button_for!(ui, BARKEEP_RANDOM5);
                     dialogue_button_for!(ui, BARKEEP_RANDOM6);
+                    dialogue_button_for!(ui, UPGRADE_MENU);
+                    dialogue_button_for!(ui, JAGEROSSA_AFTER_VICTORY);
+                    dialogue_button_for!(ui, MAYOR_AFTER_VICTORY1);
+                });
+                ui.horizontal(|ui| {
+                    dialogue_button_for!(ui, MAYOR_AFTER_VICTORY2);
+                    dialogue_button_for!(ui, MAYOR_AFTER_VICTORY3);
+                    dialogue_button_for!(ui, MAYOR_AFTER_VICTORY4);
+                    dialogue_button_for!(ui, MAYOR_AFTER_VICTORY5);
+                    dialogue_button_for!(ui, MAYOR_AFTER_VICTORY6);
                 });
             });
     });
