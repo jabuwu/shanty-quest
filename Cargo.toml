@@ -17,3 +17,6 @@ grid_combiner = { path = "./crates/grid_combiner" }
 
 [profile.dev.package."*"]
 opt-level = 3
+
+[patch.crates-io]
+wgpu = { git = "https://github.com/mockersf/wgpu/", branch = "unconditional-clear-workaround" }
