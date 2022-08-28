@@ -25,11 +25,11 @@ pub struct OutroCutscene;
 
 impl Cutscene for OutroCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_timed_step(step1, 8.5);
+        cutscene.add_timed_step(step1, 13.);
         cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step2, 5.5);
+        cutscene.add_timed_step(step2, 9.);
         cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step3, 7.5);
+        cutscene.add_timed_step(step3, 9.);
         cutscene.add_timed_step(end, 1.0);
         cutscene.add_quick_step(cleanup);
     }

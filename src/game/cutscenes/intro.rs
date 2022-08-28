@@ -24,15 +24,15 @@ pub struct IntroCutscene;
 
 impl Cutscene for IntroCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_timed_step(step1, 11.);
+        cutscene.add_timed_step(step1, 14.);
         cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step2, 9.5);
+        cutscene.add_timed_step(step2, 12.8);
         cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step3, 12.5);
+        cutscene.add_timed_step(step3, 16.5);
         cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step4, 10.5);
+        cutscene.add_timed_step(step4, 15.5);
         cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step5, 8.5);
+        cutscene.add_timed_step(step5, 10.5);
         cutscene.add_timed_step(end, 1.0);
         cutscene.add_quick_step(cleanup);
     }
