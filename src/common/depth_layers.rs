@@ -12,7 +12,10 @@ pub const DEPTH_LAYER_EXPERIENCE: Layer = (DepthLayer::Environment, 0.11);
 
 // ui
 pub const DEPTH_LAYER_SCREEN_FADE: Layer = (DepthLayer::Front, 0.99);
-pub const DEPTH_LAYER_DAMAGE_FLASH: Layer = (DepthLayer::Front, 0.98);
+pub const DEPTH_LAYER_DAMAGE_FLASH: Layer = (DepthLayer::Front, 0.982);
+pub const DEPTH_LAYER_HEALTH_AURA_1: Layer = (DepthLayer::Front, 0.38);
+pub const DEPTH_LAYER_HEALTH_AURA_2: Layer = (DepthLayer::Front, 0.381);
+pub const DEPTH_LAYER_VIGNETTE: Layer = (DepthLayer::Front, 0.985);
 
 pub const DEPTH_LAYER_DIALOGUE_FADE: Layer = (DepthLayer::Front, 0.94);
 pub const DEPTH_LAYER_DIALOGUE_BACK: Layer = (DepthLayer::Front, 0.95);

@@ -40,6 +40,7 @@ pub struct SoundEffects {
     pub sfx_overworld_dash: AudioPlusSoundEffect,
     pub sfx_overworld_experience: AudioPlusSoundEffect,
     pub sfx_overworld_player_damage: AudioPlusSoundEffect,
+    pub sfx_overworld_player_died: AudioPlusSoundEffect,
     pub sfx_overworld_enemy_damage: AudioPlusSoundEffect,
     pub sfx_overworld_map_open: AudioPlusSoundEffect,
     pub sfx_overworld_map_close: AudioPlusSoundEffect,
@@ -234,6 +235,11 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_player_damage_03.clone(),
             ],
             volume: 0.6,
+            ..Default::default()
+        },
+        sfx_overworld_player_died: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_player_died.clone()],
+            volume: 0.8,
             ..Default::default()
         },
         sfx_overworld_enemy_damage: AudioPlusSoundEffect {

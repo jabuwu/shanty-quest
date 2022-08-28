@@ -202,6 +202,8 @@ pub struct AssetLibrary {
     pub audio_sfx_player_damage_02: Handle<AudioSource>,
     #[asset("audio/sfx/player_take_damage_03.ogg")]
     pub audio_sfx_player_damage_03: Handle<AudioSource>,
+    #[asset("audio/sfx/player_died_jingle_01.ogg")]
+    pub audio_sfx_player_died: Handle<AudioSource>,
 
     #[asset("audio/sfx/enemy_take_damage_01.ogg")]
     pub audio_sfx_enemy_damage_01: Handle<AudioSource>,
@@ -233,6 +235,8 @@ pub struct AssetLibrary {
     pub sprite_world_town_marker_icon: Handle<Image>,
     #[asset("sprites/HUD_ObjectiveHeader.png")]
     pub sprite_objective_bg: Handle<Image>,
+    #[asset("sprites/ScreenEdges.png")]
+    pub sprite_screen_edges: Handle<Image>,
 
     #[asset("sprites/Map_BG.png")]
     pub sprite_map_bg: Handle<Image>,

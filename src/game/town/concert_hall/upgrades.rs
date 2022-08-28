@@ -308,6 +308,9 @@ fn upgrades_spawn(
                                                 if j == 2 {
                                                     x += 3.;
                                                 }
+                                                if j == 4 {
+                                                    x -= 3.;
+                                                }
                                             }
                                             parent
                                                 .spawn_bundle(SpriteBundle {

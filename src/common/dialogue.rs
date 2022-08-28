@@ -264,7 +264,7 @@ fn dialogue_update(
         Query<&mut AudioPlusSource, With<DialogueBack>>,
         Query<&mut AudioPlusSource, With<DialogueName>>,
         Query<&mut AudioPlusSource, With<DialogueText>>,
-        Query<&mut Visibility, With<DialogueFade>>,
+        Query<&mut Sprite, With<DialogueFade>>,
     )>,
     screen_fade: Res<ScreenFade>,
     mut input: ResMut<Input<KeyCode>>,
@@ -314,8 +314,9 @@ fn dialogue_update(
             for mut back_visibility in queries.p0().iter_mut() {
                 back_visibility.is_visible = true;
             }
-            for mut fade_visibility in queries.p7().iter_mut() {
-                fade_visibility.is_visible = true;
+            for mut fade_sprite in queries.p7().iter_mut() {
+                let a = fade_sprite.color.a();
+                fade_sprite.color.set_a(0.1_f32.lerp(a, 1.));
             }
             for mut dialogue_text in queries.p1().iter_mut() {
                 dialogue_text.sections[0].value = String::from(&entry.text[0..characters]);
@@ -336,8 +337,9 @@ fn dialogue_update(
         for mut back_visibility in queries.p0().iter_mut() {
             back_visibility.is_visible = false;
         }
-        for mut fade_visibility in queries.p7().iter_mut() {
-            fade_visibility.is_visible = false;
+        for mut fade_sprite in queries.p7().iter_mut() {
+            let a = fade_sprite.color.a();
+            fade_sprite.color.set_a(0.1_f32.lerp(a, 0.));
         }
         for mut dialogue_text in queries.p1().iter_mut() {
             if dialogue_text.sections[0].value != "" {

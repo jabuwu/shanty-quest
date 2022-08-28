@@ -1,7 +1,8 @@
 use crate::common::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
-const DEATH_SECONDS: f32 = 0.3;
+const DEATH_SECONDS: f32 = 1.;
 
 pub struct DeathCutscenePlugin;
 
@@ -21,8 +22,25 @@ impl Cutscene for DeathCutscene {
     }
 }
 
-fn init1(mut screen_fade: ResMut<ScreenFade>) {
-    screen_fade.fade_out(DEATH_SECONDS);
+fn init1(
+    mut screen_fade: ResMut<ScreenFade>,
+    asset_library: Res<AssetLibrary>,
+    mut commands: Commands,
+) {
+    screen_fade.fade_out(0.3);
+    commands
+        .spawn_bundle(Transform2Bundle::default())
+        .insert(
+            AudioPlusSource::new(
+                asset_library
+                    .sound_effects
+                    .sfx_overworld_player_died
+                    .clone(),
+            )
+            .as_playing(),
+        )
+        .insert(TimeToLive { seconds: 8. })
+        .insert(Persistent);
 }
 
 fn cleanup(mut app_state: ResMut<State<AppState>>) {

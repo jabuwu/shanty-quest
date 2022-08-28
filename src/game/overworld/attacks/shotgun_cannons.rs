@@ -27,7 +27,7 @@ impl ShotgunCannonsLevel {
         if self.0 == 6 {
             // boss stats
             ShotgunCannonsStats {
-                damage: 0.5,
+                damage: 2.5,
                 time_to_live: 0.37,
                 scale: 1.,
                 angle: 0.1,
@@ -86,7 +86,7 @@ fn shotgun_cannons_fire(
                 )
                 .insert(TimeToLive { seconds: 3. });
             for shoot_side in 0..2 {
-                let forward = boat.facing.to_vec();
+                let forward = Vec2::from_angle(boat.direction);
                 let mult = if shoot_side == 0 { 1. } else { -1. };
                 let side = forward.perp() * mult;
                 for i in -stats.count..=stats.count {

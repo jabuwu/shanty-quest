@@ -4,9 +4,11 @@ use bevy::prelude::*;
 use self::controls::ControlsUiSpawnEvent;
 use self::experience::ExperienceUiSpawnEvent;
 use self::health::HealthUiSpawnEvent;
+use self::health_aura::HealthAuraSpawnEvent;
 use self::marker::MarkerSpawnEvent;
 use self::objective::ObjectiveSpawnEvent;
 use self::town_marker::TownMarkerSpawnEvent;
+use self::vignette::VignetteSpawnEvent;
 
 pub struct OverworldUiPlugin;
 
@@ -23,6 +25,8 @@ impl Plugin for OverworldUiPlugin {
             .add_plugin(controls::ControlsUiPlugin)
             .add_plugin(experience::ExperienceUiPlugin)
             .add_plugin(level_up::LevelUpPlugin)
+            .add_plugin(health_aura::HealthAuraPlugin)
+            .add_plugin(vignette::VignettePlugin)
             .add_system(overworld_ui_spawn);
     }
 }
@@ -39,6 +43,8 @@ fn overworld_ui_spawn(
     mut ev_checkpoint_spawn: EventWriter<CheckpointSpawnEvent>,
     mut ev_controls_spawn: EventWriter<ControlsUiSpawnEvent>,
     mut ev_experience_spawn: EventWriter<ExperienceUiSpawnEvent>,
+    mut ev_vignette_spawn: EventWriter<VignetteSpawnEvent>,
+    mut ev_health_aura_spawn: EventWriter<HealthAuraSpawnEvent>,
     game_state: Res<GameState>,
 ) {
     for _ in ev_spawn.iter() {
@@ -48,6 +54,8 @@ fn overworld_ui_spawn(
         ev_health_spawn.send_default();
         ev_controls_spawn.send_default();
         ev_experience_spawn.send_default();
+        ev_vignette_spawn.send_default();
+        ev_health_aura_spawn.send_default();
         if game_state.checkpoint_notification {
             ev_checkpoint_spawn.send_default();
         }
@@ -59,8 +67,10 @@ pub mod checkpoint;
 pub mod controls;
 pub mod experience;
 pub mod health;
+pub mod health_aura;
 pub mod level_up;
 pub mod map;
 pub mod marker;
 pub mod objective;
 pub mod town_marker;
+pub mod vignette;
