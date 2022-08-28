@@ -259,7 +259,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
             audio_sources: vec![asset_library.menu_music.clone()],
             volume: 0.2,
             fade_in: 0.2,
-            fade_out: 0.2,
+            fade_out: 1.0,
             ..Default::default()
         },
         sfx_town_outside_hover: AudioPlusSoundEffect {

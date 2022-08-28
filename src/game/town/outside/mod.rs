@@ -3,6 +3,8 @@ use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
+use super::TownAmbience;
+
 #[derive(Default)]
 pub struct OutsideState {
     leave: OutsideLeave,
@@ -290,6 +292,7 @@ fn outside_click(
     mut sound_query: ParamSet<(
         Query<&mut AudioPlusSource, With<HoverSound>>,
         Query<&mut AudioPlusSource, With<ClickSound>>,
+        Query<&mut AudioPlusSource, With<TownAmbience>>,
     )>,
     state_time: Res<StateTime<AppState>>,
     mut dialogue: ResMut<Dialogue>,
@@ -366,6 +369,9 @@ fn outside_click(
                         } else {
                             screen_fade.fade_out(1.);
                             state.leave = OutsideLeave::LeaveToOverworld;
+                            for mut source in sound_query.p2().iter_mut() {
+                                source.stop();
+                            }
                         }
                     }
                 }

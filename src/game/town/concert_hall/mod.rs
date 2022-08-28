@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use audio_plus::prelude::*;
 use bevy::prelude::*;
 
 use self::boat_preview::BoatPreviewSpawnEvent;
@@ -26,6 +27,15 @@ impl Plugin for ConcertHallPlugin {
             );
     }
 }
+
+#[derive(Component)]
+struct Leave;
+
+#[derive(Component)]
+struct ClickSound;
+
+#[derive(Component)]
+struct HoverSound;
 
 fn concert_hall_init(
     mut commands: Commands,
@@ -55,11 +65,11 @@ fn concert_hall_init(
     commands
         .spawn_bundle(Text2dBundle {
             text: Text::from_section(
-                "Press ESC to exit",
+                "Back to Town".to_owned(),
                 TextStyle {
                     font: asset_library.font_bold.clone(),
-                    font_size: 42.0,
-                    color: Color::rgb_u8(52, 52, 52),
+                    font_size: 64.0,
+                    color: Color::BLACK,
                 },
             )
             .with_alignment(TextAlignment {
@@ -68,7 +78,23 @@ fn concert_hall_init(
             }),
             ..Default::default()
         })
-        .insert(Transform2::from_xy(0., -320.).with_depth(DEPTH_LAYER_UPGRADES_LEAVE_TEXT));
+        .insert(Clickable::new(CollisionShape::Rect {
+            size: Vec2::new(350., 150.),
+        }))
+        .insert(Transform2::from_xy(0., -320.).with_depth(DEPTH_LAYER_UPGRADES_LEAVE_TEXT))
+        .insert(Leave);
+    commands
+        .spawn()
+        .insert(AudioPlusSource::new(
+            asset_library.sound_effects.sfx_town_outside_click.clone(),
+        ))
+        .insert(ClickSound);
+    commands
+        .spawn()
+        .insert(AudioPlusSource::new(
+            asset_library.sound_effects.sfx_town_outside_hover.clone(),
+        ))
+        .insert(HoverSound);
     if !game_state.quests.upgrades_dialogue {
         for (p, t) in UPGRADE_MENU.iter() {
             dialogue.add_text(*p, String::from(*t));
@@ -78,14 +104,37 @@ fn concert_hall_init(
 }
 
 fn concert_hall_leave(
-    keys: Res<Input<KeyCode>>,
+    mut query: Query<(&mut Text, &Clickable), With<Leave>>,
     mut app_state: ResMut<State<AppState>>,
     mut state: ResMut<ConcertHallState>,
     mut screen_fade: ResMut<ScreenFade>,
+    mut sound_query: ParamSet<(
+        Query<&mut AudioPlusSource, With<HoverSound>>,
+        Query<&mut AudioPlusSource, With<ClickSound>>,
+    )>,
+    dialogue: Res<Dialogue>,
 ) {
-    if !state.leave && keys.just_pressed(KeyCode::Escape) {
-        state.leave = true;
-        screen_fade.fade_out(1.);
+    let block_input = state.leave || dialogue.visible();
+    for (mut text, clickable) in query.iter_mut() {
+        if clickable.just_hovered() && !block_input {
+            for mut source in sound_query.p0().iter_mut() {
+                source.play();
+            }
+        }
+        if clickable.just_clicked() && !block_input {
+            for mut source in sound_query.p1().iter_mut() {
+                source.play();
+            }
+        }
+        text.sections[0].style.color = if (clickable.hovered && !block_input) || state.leave {
+            Color::WHITE
+        } else {
+            Color::BLACK
+        };
+        if !block_input && clickable.confirmed {
+            state.leave = true;
+            screen_fade.fade_out(1.);
+        }
     }
     if screen_fade.faded_out() && state.leave {
         app_state.set(AppState::TownOutside).unwrap();
