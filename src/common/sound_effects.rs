@@ -73,12 +73,12 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_dialogue_start: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
-            volume: 0.0,
+            volume: 1.0,
             ..Default::default()
         },
         sfx_dialogue_proceed: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_placeholder.clone()],
-            volume: 0.0,
+            volume: 1.0,
             ..Default::default()
         },
         sfx_dialogue_repeat: AudioPlusSoundEffect {
