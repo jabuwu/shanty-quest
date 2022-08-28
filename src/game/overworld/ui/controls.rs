@@ -136,7 +136,7 @@ pub fn controls_ui_update_jam(
         } else {
             sprite.index = 0;
         }
-        sprite.color.set_a(if player_shoot { 1. } else { 0.5 });
+        sprite.color.set_a(if player_shoot { 0.5 } else { 1. });
     }
 }
 

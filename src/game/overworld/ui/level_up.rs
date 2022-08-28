@@ -26,12 +26,12 @@ fn level_up_spawn(
             .insert_bundle(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
-            .insert(TimeToLive { seconds: 1.5 })
+            .insert(TimeToLive { seconds: 2.5 })
             .with_children(|parent| {
                 parent
                     .spawn_bundle(SpriteBundle {
                         sprite: Sprite {
-                            custom_size: Vec2::new(400., 90.).into(),
+                            custom_size: Vec2::new(400., 110.).into(),
                             color: Color::rgba(0., 0., 0., 0.36),
                             ..Default::default()
                         },
@@ -60,6 +60,26 @@ fn level_up_spawn(
                     })
                     .insert(
                         Transform2::from_translation(LEVEL_UP_POSITION)
+                            .with_depth(DEPTH_LAYER_LEVEL_UP_TEXT),
+                    );
+                parent
+                    .spawn_bundle(Text2dBundle {
+                        text: Text::from_section(
+                            "Spend skill points at town",
+                            TextStyle {
+                                font: asset_library.font_bold.clone(),
+                                font_size: 22.0,
+                                color: Color::WHITE,
+                            },
+                        )
+                        .with_alignment(TextAlignment {
+                            horizontal: HorizontalAlign::Center,
+                            vertical: VerticalAlign::Center,
+                        }),
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::from_translation(LEVEL_UP_POSITION + Vec2::new(0., -32.))
                             .with_depth(DEPTH_LAYER_LEVEL_UP_TEXT),
                     );
             });

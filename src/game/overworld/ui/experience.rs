@@ -155,7 +155,7 @@ fn experience_ui_spawn(
                             })
                             .insert(
                                 Transform2::from_translation(
-                                    EXPERIENCE_UI_SKILLPOINT_POSITION + Vec2::new(0., -10.),
+                                    EXPERIENCE_UI_SKILLPOINT_POSITION + Vec2::new(60., -10.),
                                 )
                                 .with_depth(DEPTH_LAYER_UI_EXPERIENCE_SKILLPOINT_TEXT),
                             )
@@ -197,7 +197,7 @@ fn experience_ui_skill_points_update(
         }
         for mut text in text_query.iter_mut() {
             text.sections[0].value = format!(
-                "{} Skill Point{} to spend!",
+                "{} Skill Point{} to spend at town!",
                 skill_points,
                 if skill_points == 1 { "" } else { "s" }
             );
