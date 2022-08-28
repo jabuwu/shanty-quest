@@ -314,13 +314,13 @@ fn step4(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(-50., -20.)
-                    .with_scale(Vec2::ONE * 0.5)
+                Transform2::from_xy(0., 180.)
+                    .with_scale(Vec2::ONE * 0.42)
                     .with_depth((DepthLayer::Entity, 0.4))
                     .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(0., -20.),
+                velocity: Vec2::new(0., -15.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro4.clone())
@@ -357,7 +357,7 @@ fn step5(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(-200., -130.)
+                Transform2::from_xy(-150., -100.)
                     .with_scale(Vec2::ONE * 0.65)
                     .with_depth((DepthLayer::Entity, 0.5))
                     .without_pixel_perfect(),

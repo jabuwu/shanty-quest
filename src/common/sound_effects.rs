@@ -113,7 +113,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_menu_music: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.menu_music.clone()],
-            volume: 0.8,
+            volume: 0.65,
             fade_out: 1.7,
             ..Default::default()
         },
