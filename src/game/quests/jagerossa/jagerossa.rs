@@ -91,7 +91,7 @@ fn jagerossa_spawn(
             },
             healthbar: false,
             player: false,
-            health: 40.,
+            health: 25.,
             speed: stats.speed,
             attack_cooldown: stats.attack_time,
             knockback_resistance: 0.8,

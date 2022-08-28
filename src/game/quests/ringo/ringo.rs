@@ -106,7 +106,7 @@ fn ringo_spawn(
             },
             healthbar: false,
             player: false,
-            health: 50.,
+            health: 200.,
             speed: stats.speed,
             attack_cooldown: stats.attack_time,
             knockback_resistance: 0.9,
@@ -154,7 +154,7 @@ fn ringo_move(
                 .translation()
                 .truncate()
                 .distance(player_position)
-                < 250.;
+                < 350.;
             let destination = if ringo.charge_time > -1. {
                 player_position
             } else {

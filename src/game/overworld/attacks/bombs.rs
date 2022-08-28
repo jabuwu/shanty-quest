@@ -28,7 +28,7 @@ impl BombsLevel {
         if self.0 == 6 {
             // boss stats
             BombsStats {
-                damage: 3.,
+                damage: 5.,
                 knockback_intensity: 20.,
                 spawn_amount: 3,
                 velocity_min: 100.,
@@ -38,7 +38,7 @@ impl BombsLevel {
             BombsStats {
                 damage: 3.,
                 knockback_intensity: 7.5,
-                spawn_amount: 1,
+                spawn_amount: self.0,
                 velocity_min: 200.,
                 velocity_max: 500.,
             }

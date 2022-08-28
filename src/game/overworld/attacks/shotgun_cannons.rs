@@ -29,11 +29,18 @@ impl ShotgunCannonsLevel {
             ShotgunCannonsStats {
                 damage: 1.,
                 time_to_live: 0.37,
+                scale: 1.,
+                angle: 0.1,
+                count: 1,
             }
         } else {
+            let level = self.0 as f32;
             ShotgunCannonsStats {
-                damage: 1.,
+                damage: level / 3.,
                 time_to_live: 0.37,
+                scale: 1. + level / 5.,
+                angle: if self.0 == 5 { 0.1 } else { 0.1 + level / 30. },
+                count: if self.0 == 5 { 2 } else { 1 },
             }
         }
     }
@@ -43,6 +50,9 @@ impl ShotgunCannonsLevel {
 struct ShotgunCannonsStats {
     damage: f32,
     time_to_live: f32,
+    scale: f32,
+    angle: f32,
+    count: i32,
 }
 
 #[derive(Component)]
@@ -79,15 +89,15 @@ fn shotgun_cannons_fire(
                 let forward = boat.facing.to_vec();
                 let mult = if shoot_side == 0 { 1. } else { -1. };
                 let side = forward.perp() * mult;
-                for i in -1..=1 {
+                for i in -stats.count..=stats.count {
                     let mut angle = Vec2::X.angle_between(side);
-                    angle -= std::f32::consts::PI * 0.1 * i as f32 * mult;
+                    angle -= std::f32::consts::PI * stats.angle * i as f32 * mult;
                     let position = global_transform.translation().truncate()
                         + forward * 20. * i as f32
                         + side * 50.;
                     let velocity = Vec2::from_angle(angle) * 900.;
                     let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
-                    scale *= 0.5;
+                    scale *= stats.scale * 0.5;
                     commands
                         .spawn_bundle(SpriteBundle {
                             sprite: Sprite {
@@ -99,7 +109,7 @@ fn shotgun_cannons_fire(
                         })
                         .insert(Hurtbox {
                             shape: CollisionShape::Rect {
-                                size: Vec2::new(32., 32.),
+                                size: Vec2::new(32., 32.) * stats.scale,
                             },
                             for_entity: Some(boat_entity),
                             auto_despawn: true,

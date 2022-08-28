@@ -26,13 +26,16 @@ impl ShockwaveLevel {
         if self.0 == 6 {
             // boss stats
             ShockwaveStats {
-                damage: 1.,
+                damage: 1.5,
                 knockback_intensity: 15.,
+                scale: 1.,
             }
         } else {
+            let level = self.0 as f32;
             ShockwaveStats {
-                damage: 1.,
+                damage: 0.25 * level,
                 knockback_intensity: 5.,
+                scale: 1. + level * 0.1,
             }
         }
     }
@@ -42,11 +45,13 @@ impl ShockwaveLevel {
 struct ShockwaveStats {
     damage: f32,
     knockback_intensity: f32,
+    scale: f32,
 }
 
-#[derive(Component, Default)]
+#[derive(Component)]
 struct ShockwaveWave {
     time_alive: f32,
+    stats: ShockwaveStats,
 }
 
 #[derive(Component, Default)]
@@ -82,7 +87,10 @@ fn shockwave_fire(
                     ..Default::default()
                 })
                 .insert_bundle(VisibilityBundle::default())
-                .insert(ShockwaveWave { time_alive: 0. })
+                .insert(ShockwaveWave {
+                    time_alive: 0.,
+                    stats,
+                })
                 .insert(TimeToLive::new(0.75))
                 .with_children(|parent| {
                     parent
@@ -104,7 +112,7 @@ fn shockwave_fire(
                         .insert(Transform2::new().with_depth((DepthLayer::Front, 0.98)))
                         .insert(Hurtbox {
                             shape: CollisionShape::Rect {
-                                size: Vec2::new(400., 400.),
+                                size: Vec2::new(400., 400.) * stats.scale,
                             },
                             for_entity: Some(entity),
                             auto_despawn: false,
@@ -132,7 +140,7 @@ fn shockwave_update(
         wave.time_alive += time.delta_seconds();
         for child in children.iter() {
             if let Ok((mut transform, mut sprite)) = child_query.get_mut(*child) {
-                transform.scale = Vec2::ONE * (32. + wave.time_alive * 2000.);
+                transform.scale = Vec2::ONE * (32. + wave.time_alive * 2000.) * wave.stats.scale;
                 sprite.color.set_a(1. - wave.time_alive / 0.75);
             }
         }

@@ -24,13 +24,22 @@ pub struct ForwardCannonsLevel(pub u32);
 
 impl ForwardCannonsLevel {
     fn stats(&self) -> ForwardCannonsStats {
-        ForwardCannonsStats { damage: 2. }
+        let level = self.0 as f32;
+        ForwardCannonsStats {
+            damage: level,
+            scale: 1. + level / 4.,
+            speed: 1200. + level * 100.,
+            hit_multiple: self.0 >= 5,
+        }
     }
 }
 
 #[derive(Copy, Clone, Debug)]
 struct ForwardCannonsStats {
     damage: f32,
+    scale: f32,
+    speed: f32,
+    hit_multiple: bool,
 }
 
 #[derive(Component)]
@@ -65,8 +74,9 @@ fn forward_cannons_fire(
                 .insert(TimeToLive { seconds: 3. });
             let forward = Vec2::from_angle(boat.direction);
             let position = global_transform.translation().truncate() + forward * 80.;
-            let velocity = forward * 1200.;
-            let (scale, _, _) = global_transform.to_scale_rotation_translation();
+            let velocity = forward * stats.speed;
+            let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
+            scale *= stats.scale;
             commands
                 .spawn_bundle(SpriteBundle {
                     sprite: Sprite {
@@ -83,10 +93,10 @@ fn forward_cannons_fire(
                 )
                 .insert(Hurtbox {
                     shape: CollisionShape::Rect {
-                        size: Vec2::new(14., 14.),
+                        size: Vec2::new(14., 14.) * stats.scale,
                     },
                     for_entity: Some(boat_entity),
-                    auto_despawn: true,
+                    auto_despawn: if stats.hit_multiple { false } else { true },
                     flags: forward_cannons.hurt_flags,
                     knockback_type: HurtboxKnockbackType::Velocity(velocity * 0.0075),
                     damage: stats.damage,
