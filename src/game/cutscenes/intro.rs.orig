@@ -24,26 +24,17 @@ pub struct IntroCutscene;
 
 impl Cutscene for IntroCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_timed_step(step1_fade_in, 0.0); // 1.5s
-        cutscene.add_timed_step(step1_image, 12.75);
-        cutscene.add_timed_step(step1_fade_out, 2.0); // 2.5s
-
-        cutscene.add_timed_step(step2_start_audio, 0.5); // start audio during fade out
-
-        cutscene.add_timed_step(step2_fade_in, 0.0); // 2.5sec
-        cutscene.add_timed_step(step2_image, 9.5);
-
-        cutscene.add_timed_step(step2_fade_out, 1.0); //1s fade, Runs near "Find them they did!"
-
-        cutscene.add_timed_step(step3_fade_in, 0.0); // 1.5sec
-        cutscene.add_timed_step(step3_image, 2.0);
-
-        cutscene.add_timed_step(step3_start_audio, 15.75);
-        cutscene.add_timed_step(step3_fade_out, 1.5); //1..5s
-
-        cutscene.add_timed_step(step4, 14.5);
-        cutscene.add_timed_step(step4_fade_out, 1.5); //1..5s
-
+<<<<<<< HEAD
+        cutscene.add_timed_step(step1, 14.);
+=======
+        cutscene.add_timed_step(step1, 1.1); // 11
+>>>>>>> Cutscene work
+        cutscene.add_timed_step(reset, 0.5);
+        cutscene.add_timed_step(step2, 12.8);
+        cutscene.add_timed_step(reset, 0.5);
+        cutscene.add_timed_step(step3, 16.5);
+        cutscene.add_timed_step(reset, 0.5);
+        cutscene.add_timed_step(step4, 15.5);
         cutscene.add_timed_step(reset, 0.5);
         cutscene.add_timed_step(step5, 10.5);
         cutscene.add_timed_step(end, 1.0);
@@ -130,6 +121,12 @@ fn reset(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
     }
 }
 
+fn reset_fast(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
+    if !state.proceed {
+        screen_fade.fade_out(0.1);
+    }
+}
+
 fn end(
     mut screen_fade: ResMut<ScreenFade>,
     state: Res<IntroCutsceneState>,
@@ -143,20 +140,19 @@ fn end(
     }
 }
 
-fn step1_fade_in(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
-    if !state.proceed {
-        screen_fade.fade_in(2.5);
-    }
-}
-
-fn step1_image(
+fn step1(
     mut query: Query<&mut Text, With<CutsceneText>>,
     mut commands: Commands,
+    mut screen_fade: ResMut<ScreenFade>,
+    state: Res<IntroCutsceneState>,
     asset_library: Res<AssetLibrary>,
     cutscenes: Res<Cutscenes>,
 ) {
+    if !state.proceed {
+        screen_fade.fade_in(0.5);
+    }
     if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value = "Well, ya oiled me tongue with a jug o' rum so lemme tell ya the story of treble at sea! Eh? How the Pirate Lords became... Lords?!".to_owned();
+        text.sections[0].value = "Well, ya oiled me mouth with a jug o' rum so lemme tell ya the story of treble at sea! Eh? How the Pirate Lords became... Lords?!".to_owned();
     }
     if !cutscenes.skipping() {
         commands
@@ -180,41 +176,21 @@ fn step1_image(
     }
 }
 
-fn step1_fade_out(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
-    if !state.proceed {
-        screen_fade.fade_out(2.5);
-    }
-}
-
-fn step2_start_audio(
+fn step2(
     mut query: Query<&mut Text, With<CutsceneText>>,
-    cutscenes: Res<Cutscenes>,
-    asset_library: Res<AssetLibrary>,
     mut commands: Commands,
+    mut screen_fade: ResMut<ScreenFade>,
+    state: Res<IntroCutsceneState>,
+    asset_library: Res<AssetLibrary>,
+    cutscenes: Res<Cutscenes>,
 ) {
+    if !state.proceed {
+        screen_fade.fade_in(0.5);
+    }
     if let Ok(mut text) = query.get_single_mut() {
         text.sections[0].value =
             "Royal Navy beat those scurvy dogs 'gain and 'gain! Driven them to seek Rockdorado and the fabled lost weapons... Find them they did!".to_owned();
     }
-    if !cutscenes.skipping() {
-        commands.spawn().insert(
-            AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro2.clone())
-                .as_playing(),
-        );
-    }
-}
-
-fn step2_fade_in(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
-    if !state.proceed {
-        screen_fade.fade_in(1.5);
-    }
-}
-
-fn step2_image(
-    mut commands: Commands,
-    asset_library: Res<AssetLibrary>,
-    cutscenes: Res<Cutscenes>,
-) {
     if !cutscenes.skipping() {
         commands
             .spawn_bundle(SpriteBundle {
@@ -222,34 +198,36 @@ fn step2_image(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(260., 150.)
-                    .with_scale(Vec2::ONE * 0.44)
+                Transform2::from_xy(0., 100.)
+                    .with_scale(Vec2::ONE * 0.4)
                     .with_depth((DepthLayer::Entity, 0.1))
                     .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(-20., -6.),
-            });
+                velocity: Vec2::new(0., -20.),
+            })
+            .insert(
+                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro2.clone())
+                    .as_playing(),
+            );
     }
 }
 
-fn step2_fade_out(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
-    if !state.proceed {
-        screen_fade.fade_out(1.0);
-    }
-}
-
-fn step3_fade_in(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
-    if !state.proceed {
-        screen_fade.fade_in(1.5);
-    }
-}
-
-fn step3_image(
+fn step3(
+    mut query: Query<&mut Text, With<CutsceneText>>,
     mut commands: Commands,
+    mut screen_fade: ResMut<ScreenFade>,
+    state: Res<IntroCutsceneState>,
     asset_library: Res<AssetLibrary>,
     cutscenes: Res<Cutscenes>,
 ) {
+    if !state.proceed {
+        screen_fade.fade_in(0.5);
+    }
+    if let Ok(mut text) = query.get_single_mut() {
+        text.sections[0].value =
+            "Each Cap'n grabbed an instrument!\nHah. Gave 'em terrible powers of horrid noise, magical projectiles, power over sea monsters! With that, they smashed the Royal Navy ta bits!".to_owned();
+    }
     if !cutscenes.skipping() {
         commands
             .spawn_bundle(SpriteBundle {
@@ -257,38 +235,18 @@ fn step3_image(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(0., -100.)
+                Transform2::from_xy(0., -90.)
                     .with_scale(Vec2::ONE * 0.4)
                     .with_depth((DepthLayer::Entity, 0.3))
                     .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(0., 4.),
-            });
-    }
-}
-
-fn step3_start_audio(
-    mut query: Query<&mut Text, With<CutsceneText>>,
-    mut commands: Commands,
-    asset_library: Res<AssetLibrary>,
-    cutscenes: Res<Cutscenes>,
-) {
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value =
-            "Each Cap'n grabbed an instrument!\nHah. Gave 'em terrible powers of horrid noise, magical projectiles, power over sea monsters! With that, they smashed the Royal Navy ta bits!".to_owned();
-    }
-    if !cutscenes.skipping() {
-        commands.spawn().insert(
-            AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro3.clone())
-                .as_playing(),
-        );
-    }
-}
-
-fn step3_fade_out(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
-    if !state.proceed {
-        screen_fade.fade_out(1.5);
+                velocity: Vec2::new(0., 10.),
+            })
+            .insert(
+                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro3.clone())
+                    .as_playing(),
+            );
     }
 }
 
@@ -305,7 +263,7 @@ fn step4(
     }
     if let Ok(mut text) = query.get_single_mut() {
         text.sections[0].value =
-            "But, right as rum, pirates be pirates. Each Lord wished to get more powa, to get all other instruments! That's how this Pirate Lords War started...".to_owned();
+            "But, right as rum, men are men. Each Lord wished to get more powa, to get all other instruments! That's how this Pirate Lords War started...".to_owned();
     }
     if !cutscenes.skipping() {
         commands
@@ -315,7 +273,7 @@ fn step4(
             })
             .insert(
                 Transform2::from_xy(-50., -20.)
-                    .with_scale(Vec2::ONE * 0.5)
+                    .with_scale(Vec2::ONE * 0.4)
                     .with_depth((DepthLayer::Entity, 0.4))
                     .without_pixel_perfect(),
             )
@@ -326,12 +284,6 @@ fn step4(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro4.clone())
                     .as_playing(),
             );
-    }
-}
-
-fn step4_fade_out(mut screen_fade: ResMut<ScreenFade>, state: Res<IntroCutsceneState>) {
-    if !state.proceed {
-        screen_fade.fade_out(1.5);
     }
 }
 
@@ -357,13 +309,13 @@ fn step5(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(-200., -130.)
+                Transform2::from_xy(100., 30.)
                     .with_scale(Vec2::ONE * 0.65)
                     .with_depth((DepthLayer::Entity, 0.5))
                     .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(8., 6.),
+                velocity: Vec2::new(6., 6.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro5.clone())
