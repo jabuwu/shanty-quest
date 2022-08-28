@@ -357,6 +357,7 @@ fn quests_barkeep(
 ) {
     let mut fallback_dialogue = true;
     for _ in ev_barkeep.iter() {
+        let need_rum = game_state.health != game_state.health_max;
         if !game_state.quests.talked_to_barkeep {
             game_state.quests.talked_to_barkeep = true;
             for (p, t) in BARKEEP1.iter() {
@@ -364,7 +365,7 @@ fn quests_barkeep(
             }
             fallback_dialogue = false;
         }
-        if fallback_dialogue {
+        if fallback_dialogue && !need_rum {
             match game_state.quests.barkeep_dialogue % 6 {
                 0 => {
                     for (p, t) in BARKEEP_RANDOM1.iter() {
@@ -399,7 +400,7 @@ fn quests_barkeep(
             }
             game_state.quests.barkeep_dialogue = (game_state.quests.barkeep_dialogue + 1) % 6;
         }
-        if game_state.health != game_state.health_max {
+        if need_rum {
             ev_rum_refill_cutscene.send_default();
         }
     }
