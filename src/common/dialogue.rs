@@ -217,6 +217,39 @@ fn dialogue_init(
                     .insert(DialoguePortraitComp {
                         portrait: DialoguePortrait::Davy,
                     });
+                parent
+                    .spawn_bundle(SpriteBundle {
+                        texture: asset_library.sprite_dialogue_portrait_ringo.clone(),
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    )
+                    .insert(DialoguePortraitComp {
+                        portrait: DialoguePortrait::Ringo,
+                    });
+                parent
+                    .spawn_bundle(SpriteBundle {
+                        texture: asset_library.sprite_dialogue_portrait_barkeep.clone(),
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    )
+                    .insert(DialoguePortraitComp {
+                        portrait: DialoguePortrait::Barkeep,
+                    });
+                parent
+                    .spawn_bundle(SpriteBundle {
+                        texture: asset_library.sprite_dialogue_portrait_governor.clone(),
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    )
+                    .insert(DialoguePortraitComp {
+                        portrait: DialoguePortrait::Mayor,
+                    });
             });
     }
 }

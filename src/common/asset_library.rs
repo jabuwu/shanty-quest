@@ -35,6 +35,12 @@ pub struct AssetLibrary {
     pub sprite_dialogue_portrait_elvis: Handle<Image>,
     #[asset("sprites/portrait_bowie.png")]
     pub sprite_dialogue_portrait_bowie: Handle<Image>,
+    #[asset("sprites/portrait_ringo.png")]
+    pub sprite_dialogue_portrait_ringo: Handle<Image>,
+    #[asset("sprites/portrait_barkeep.png")]
+    pub sprite_dialogue_portrait_barkeep: Handle<Image>,
+    #[asset("sprites/portrait_governor.png")]
+    pub sprite_dialogue_portrait_governor: Handle<Image>,
     #[asset("audio/sfx/dialogue_voice_generic_01.ogg")]
     pub audio_sfx_dialogue_voice_generic_01: Handle<AudioSource>,
     #[asset("audio/sfx/dialogue_voice_generic_02.ogg")]
