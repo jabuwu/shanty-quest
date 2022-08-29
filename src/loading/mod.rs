@@ -35,7 +35,7 @@ fn loading_init(
             text: Text::from_section(
                 "Loading".to_owned(),
                 TextStyle {
-                    font: asset_library.font_default.clone(),
+                    font: asset_library.font_bold.clone(),
                     font_size: 68.0,
                     color: Color::WHITE,
                 },
