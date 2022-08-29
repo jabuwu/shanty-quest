@@ -210,7 +210,7 @@ fn menu_setup(
         .insert(
             Transform2::from_xy(553., -321.)
                 .with_depth((DepthLayer::Front, 0.2))
-                .with_scale(Vec2::ONE * 0.5),
+                .with_scale(Vec2::ONE * 0.32),
         );
 
     commands
@@ -231,6 +231,28 @@ fn menu_setup(
         })
         .insert(
             Transform2::from_xy(-632., -378.)
+                .with_depth((DepthLayer::Front, 0.2))
+                .with_scale(Vec2::ONE * 0.5),
+        );
+
+    commands
+        .spawn_bundle(Text2dBundle {
+            text: Text::from_section(
+                "v1.0",
+                TextStyle {
+                    font: asset_library.font_bold.clone(),
+                    font_size: 48.0,
+                    color: Color::BLACK,
+                },
+            )
+            .with_alignment(TextAlignment {
+                horizontal: HorizontalAlign::Left,
+                vertical: VerticalAlign::Bottom,
+            }),
+            ..Default::default()
+        })
+        .insert(
+            Transform2::from_xy(-632., -352.)
                 .with_depth((DepthLayer::Front, 0.2))
                 .with_scale(Vec2::ONE * 0.5),
         );
