@@ -20,3 +20,6 @@ opt-level = 3
 
 [patch.crates-io]
 wgpu = { git = "https://github.com/mockersf/wgpu/", branch = "unconditional-clear-workaround" }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = "0.3.59"

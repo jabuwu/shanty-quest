@@ -169,7 +169,7 @@ fn overworld_camera_update(
             if let Ok(mut camera_transform) = transform_query.get_mut(camera_entity) {
                 camera_transform.translation = position;
                 camera_transform.scale = Vec2::ONE;
-                if overworld_camera.zoom_out {
+                if DEV_BUILD && overworld_camera.zoom_out {
                     camera_transform.scale = Vec2::ONE * 3.;
                 }
             }
