@@ -29,7 +29,6 @@ fn volume_slider_spawn(
             .insert_bundle(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::from_xy(41., -312.).without_pixel_perfect())
-            .insert(Label("a".into()))
             .with_children(|parent| {
                 parent
                     .spawn_bundle(SpriteBundle {
@@ -69,27 +68,28 @@ fn volume_slider_spawn(
                             .with_scale(Vec2::ONE * 0.5)
                             .with_depth((DepthLayer::Front, 0.51)),
                     );
-                parent
-                    .spawn_bundle(Text2dBundle {
-                        text: Text::from_section(
-                            "change volume anytime with O/P",
-                            TextStyle {
-                                font: asset_library.font_bold.clone(),
-                                font_size: 28.0,
-                                color: Color::BLACK,
-                            },
-                        )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Center,
-                            vertical: VerticalAlign::Center,
-                        }),
-                        ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(Vec2::new(0., -40.))
-                            .with_depth((DepthLayer::Front, 0.51)),
-                    );
             });
+        commands
+            .spawn_bundle(Text2dBundle {
+                text: Text::from_section(
+                    "change volume anytime with O/P",
+                    TextStyle {
+                        font: asset_library.font_bold.clone(),
+                        font_size: 24.0,
+                        color: Color::BLACK,
+                    },
+                )
+                .with_alignment(TextAlignment {
+                    horizontal: HorizontalAlign::Center,
+                    vertical: VerticalAlign::Center,
+                }),
+                ..Default::default()
+            })
+            .insert(
+                Transform2::from_translation(Vec2::new(40., -353.))
+                    .with_depth((DepthLayer::Front, 0.51)),
+            )
+            .insert(Label("A".into()));
     }
 }
 

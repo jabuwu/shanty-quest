@@ -1,4 +1,4 @@
-use crate::{common::prelude::*, game::state::GameState};
+use crate::{common::prelude::*, game::state::GameState, DEV_BUILD};
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
@@ -27,7 +27,8 @@ impl Plugin for MainMenuPlugin {
             .add_system(menu_logo)
             .add_system(menu_shine)
             .add_system(menu_button)
-            .add_system(menu_background_move);
+            .add_system(menu_background_move)
+            .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(menu_outro_debug));
     }
 }
 
@@ -207,7 +208,29 @@ fn menu_setup(
             ..Default::default()
         })
         .insert(
-            Transform2::from_xy(528., -305.)
+            Transform2::from_xy(553., -321.)
+                .with_depth((DepthLayer::Front, 0.2))
+                .with_scale(Vec2::ONE * 0.5),
+        );
+
+    commands
+        .spawn_bundle(Text2dBundle {
+            text: Text::from_section(
+                "A game for Bevy Jam #2",
+                TextStyle {
+                    font: asset_library.font_bold.clone(),
+                    font_size: 48.0,
+                    color: Color::BLACK,
+                },
+            )
+            .with_alignment(TextAlignment {
+                horizontal: HorizontalAlign::Left,
+                vertical: VerticalAlign::Bottom,
+            }),
+            ..Default::default()
+        })
+        .insert(
+            Transform2::from_xy(-632., -378.)
                 .with_depth((DepthLayer::Front, 0.2))
                 .with_scale(Vec2::ONE * 0.5),
         );
@@ -322,6 +345,15 @@ fn menu_background_move(mut query: Query<&mut Transform2, With<Background>>, tim
         let x = ease(Easing::BackInOut, baf_x) * 10. - 5.;
         let y = ease(Easing::BackInOut, baf_y) * 10. - 5.;
         transform.translation = Vec2::new(x, y);
+    }
+}
+
+fn menu_outro_debug(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
+    if DEV_BUILD {
+        if input.just_pressed(KeyCode::Key0) {
+            app_state.set(AppState::OutroCutscene).unwrap();
+            input.reset(KeyCode::Key0);
+        }
     }
 }
 
