@@ -79,3 +79,5 @@ pub const DEPTH_LAYER_UPGRADES_ABILITY_ICON: Layer = (DepthLayer::Front, 0.502);
 pub const DEPTH_LAYER_UPGRADES_ABILITY_TEXT: Layer = (DepthLayer::Front, 0.502);
 pub const DEPTH_LAYER_UPGRADES_ABILITY_BUTTON: Layer = (DepthLayer::Front, 0.502);
 pub const DEPTH_LAYER_UPGRADES_STAR: Layer = (DepthLayer::Front, 0.502);
+
+pub const DEPTH_LAYER_DEATH_SCREEN: Layer = (DepthLayer::Front, 0.);

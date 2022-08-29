@@ -27,7 +27,7 @@ impl ShotgunCannonsLevel {
         if self.0 == 6 {
             // boss stats
             ShotgunCannonsStats {
-                damage: 1.,
+                damage: 10.,
                 time_to_live: 0.37,
                 scale: 1.,
                 angle: 0.1,

@@ -445,6 +445,12 @@ pub struct AssetLibrary {
     pub sprite_upgrades_button_atlas: Handle<TextureAtlas>,
     #[asset("sprites/UpgradeScreen/UpgradeBand_Star.png")]
     pub sprite_upgrades_star: Handle<Image>,
+
+    /********
+     * Dead *
+     ********/
+    #[asset("sprites/UpgradeScreen/UpgradeBand_Star.png")]
+    pub sprite_dead: Handle<Image>,
 }
 
 impl AssetLibrary {

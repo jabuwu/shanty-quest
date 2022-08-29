@@ -111,6 +111,7 @@ fn dialogue_init(
         commands
             .spawn_bundle(SpriteBundle {
                 texture: asset_library.sprite_dialogue_fade.clone(),
+                visibility: Visibility { is_visible: false },
                 ..Default::default()
             })
             .insert(Transform2::new().with_depth(DEPTH_LAYER_DIALOGUE_FADE))
@@ -130,6 +131,7 @@ fn dialogue_init(
             .with_children(|parent| {
                 parent
                     .spawn_bundle(SpriteBundle {
+                        visibility: Visibility { is_visible: false },
                         texture: asset_library.sprite_dialogue_bg.clone(),
                         ..Default::default()
                     })
@@ -187,6 +189,7 @@ fn dialogue_init(
                 parent
                     .spawn_bundle(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_jagerossa.clone(),
+                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     })
                     .insert(
@@ -198,6 +201,7 @@ fn dialogue_init(
                 parent
                     .spawn_bundle(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_elvis.clone(),
+                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     })
                     .insert(
@@ -209,6 +213,7 @@ fn dialogue_init(
                 parent
                     .spawn_bundle(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_bowie.clone(),
+                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     })
                     .insert(
@@ -220,6 +225,7 @@ fn dialogue_init(
                 parent
                     .spawn_bundle(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_ringo.clone(),
+                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     })
                     .insert(
@@ -231,6 +237,7 @@ fn dialogue_init(
                 parent
                     .spawn_bundle(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_barkeep.clone(),
+                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     })
                     .insert(
@@ -242,6 +249,7 @@ fn dialogue_init(
                 parent
                     .spawn_bundle(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_governor.clone(),
+                        visibility: Visibility { is_visible: false },
                         ..Default::default()
                     })
                     .insert(
