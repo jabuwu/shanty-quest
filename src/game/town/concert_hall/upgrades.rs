@@ -19,7 +19,8 @@ impl Plugin for UpgradesPlugin {
             .add_system(upgrades_skill_points)
             .add_system(upgrades_ability_bg)
             .add_system(upgrades_buttons)
-            .add_system(upgrades_stars);
+            .add_system(upgrades_stars)
+            .add_system(upgrades_description);
     }
 }
 
@@ -45,6 +46,16 @@ pub struct UpgradesButton {
 pub struct UpgradesStar {
     level: u32,
     upgrade: UpgradesType,
+}
+
+#[derive(Component)]
+struct UpgradesDescriptionBg {
+    index: u32,
+}
+
+#[derive(Component)]
+struct UpgradesDescriptionText {
+    index: u32,
 }
 
 #[derive(Debug, Clone)]
@@ -157,6 +168,20 @@ impl UpgradesType {
             UpgradesType::Defense => {}
         }
         attacks
+    }
+    fn upgrade_text(&self) -> Vec<&str> {
+        match *self {
+            Self::Guitar => vec!["Increase damage"],
+            Self::Drums => vec!["Increase spread", "Minor damage increase"],
+            Self::Flute => vec![
+                "Increase size",
+                "Increase knockback",
+                "Minor damage increase",
+            ],
+            Self::Harmonica => vec!["Throw additional bomb"],
+            Self::Accordion => vec!["More tentacles"],
+            Self::Defense => vec!["Increase damage resistance"],
+        }
     }
 }
 
@@ -333,6 +358,44 @@ fn upgrades_spawn(
                         }
                     });
             });
+        for y in 0..3 {
+            commands
+                .spawn_bundle(SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Vec2::new(300., 40.).into(),
+                        color: Color::rgba(0., 0., 0., 0.36),
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                })
+                .insert(
+                    Transform2::from_xy(390., -10. + (y as f32) * -55.)
+                        .with_depth(DEPTH_LAYER_UPGRADES_INFO_BG),
+                )
+                .insert(UpgradesDescriptionBg { index: y })
+                .with_children(|parent| {
+                    parent
+                        .spawn_bundle(Text2dBundle {
+                            text: Text::from_section(
+                                "Increase damage",
+                                TextStyle {
+                                    font: asset_library.font_bold.clone(),
+                                    font_size: 24.0,
+                                    color: Color::WHITE,
+                                },
+                            )
+                            .with_alignment(TextAlignment {
+                                horizontal: HorizontalAlign::Center,
+                                vertical: VerticalAlign::Center,
+                            }),
+                            ..Default::default()
+                        })
+                        .insert(
+                            Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_UPGRADES_INFO_TEXT),
+                        )
+                        .insert(UpgradesDescriptionText { index: y });
+                });
+        }
     }
 }
 
@@ -431,5 +494,42 @@ fn upgrades_buttons(
 fn upgrades_stars(mut query: Query<(&mut Visibility, &UpgradesStar)>, game_state: Res<GameState>) {
     for (mut visibility, star) in query.iter_mut() {
         visibility.is_visible = star.upgrade.current_level(game_state.as_ref()) > star.level;
+    }
+}
+
+fn upgrades_description(
+    mut bg_query: Query<(&mut Visibility, &UpgradesDescriptionBg)>,
+    mut text_query: Query<(&mut Text, &UpgradesDescriptionText)>,
+    upgrades_state: Res<UpgradesState>,
+) {
+    if let Some(upgrade) = upgrades_state.hovered {
+        let upgrade_text = upgrade.upgrade_text();
+        for (mut bg_visibility, bg) in bg_query.iter_mut() {
+            if bg.index < upgrade_text.len() as u32 {
+                bg_visibility.is_visible = true;
+            } else {
+                bg_visibility.is_visible = false;
+            }
+        }
+        for (mut text, txt) in text_query.iter_mut() {
+            if txt.index < upgrade_text.len() as u32 {
+                if text.sections[0].value != upgrade_text[txt.index as usize] {
+                    text.sections[0].value = upgrade_text[txt.index as usize].to_owned();
+                }
+            } else {
+                if text.sections[0].value != "" {
+                    text.sections[0].value = "".to_owned();
+                }
+            }
+        }
+    } else {
+        for (mut bg_visibility, _) in bg_query.iter_mut() {
+            bg_visibility.is_visible = false;
+        }
+        for (mut text, _) in text_query.iter_mut() {
+            if text.sections[0].value != "" {
+                text.sections[0].value = "".to_owned();
+            }
+        }
     }
 }

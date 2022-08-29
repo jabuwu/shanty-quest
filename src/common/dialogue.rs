@@ -110,8 +110,11 @@ fn dialogue_init(
     for _ in ev_dialogue_init.iter() {
         commands
             .spawn_bundle(SpriteBundle {
+                sprite: Sprite {
+                    color: Color::rgba(1., 1., 1., 0.),
+                    ..Default::default()
+                },
                 texture: asset_library.sprite_dialogue_fade.clone(),
-                visibility: Visibility { is_visible: false },
                 ..Default::default()
             })
             .insert(Transform2::new().with_depth(DEPTH_LAYER_DIALOGUE_FADE))

@@ -68,7 +68,7 @@ fn loading_update(
         }
         LoadState::Loaded => {
             if state.fading && screen_fade.faded_out() {
-                app_state.set(AppState::MainMenu).unwrap();
+                app_state.set(AppState::TownOutside).unwrap();
                 ev_dialogue_init.send_default();
             }
             if !state.fading {
