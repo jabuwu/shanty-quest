@@ -28,17 +28,10 @@ fn rubble_spawn(
 ) {
     for event in ev_spawn.iter() {
         let entity = commands
-            .spawn_bundle(SpriteBundle {
-                texture: asset_library.sprite_rubble.clone(),
-                ..Default::default()
-            })
-            .insert(
-                Transform2::from_translation(event.position)
-                    .with_scale(Vec2::new(0.25, 0.25))
-                    .with_depth((DepthLayer::Entity, 0.)),
-            )
+            .spawn_bundle(TransformBundle::default())
+            .insert_bundle(VisibilityBundle::default())
+            .insert(Transform2::from_translation(event.position))
             .insert(Rubble)
-            .insert(YDepth::default())
             .insert(Health::new(1.))
             .insert(Hitbox {
                 shape: CollisionShape::Rect {
@@ -56,6 +49,19 @@ fn rubble_spawn(
             .insert(AutoDamage {
                 despawn: true,
                 ..Default::default()
+            })
+            .with_children(|parent| {
+                parent
+                    .spawn_bundle(SpriteBundle {
+                        texture: asset_library.sprite_rubble.clone(),
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::new()
+                            .with_scale(Vec2::new(0.25, 0.25))
+                            .with_depth((DepthLayer::Entity, 0.)),
+                    )
+                    .insert(YDepth::default());
             })
             .id();
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
