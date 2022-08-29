@@ -140,9 +140,25 @@ pub struct AssetLibrary {
     /*************
      * Overworld *
      *************/
-    #[asset("sprites/Ship1.png")]
-    pub sprite_ship: Handle<Image>,
-    pub sprite_ship_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/Ships/Ship_Red.png")]
+    pub sprite_ship_red: Handle<Image>,
+    pub sprite_ship_red_atlas: Handle<TextureAtlas>,
+
+    #[asset("sprites/Ships/Ship_Blue.png")]
+    pub sprite_ship_blue: Handle<Image>,
+    pub sprite_ship_blue_atlas: Handle<TextureAtlas>,
+
+    #[asset("sprites/Ships/Ship_Green.png")]
+    pub sprite_ship_green: Handle<Image>,
+    pub sprite_ship_green_atlas: Handle<TextureAtlas>,
+
+    #[asset("sprites/Ships/Ship_Purple.png")]
+    pub sprite_ship_purple: Handle<Image>,
+    pub sprite_ship_purple_atlas: Handle<TextureAtlas>,
+
+    #[asset("sprites/Ships/Ship_Brown.png")]
+    pub sprite_ship_brown: Handle<Image>,
+    pub sprite_ship_brown_atlas: Handle<TextureAtlas>,
 
     #[asset("sprites/ExperienceParticle.png")]
     pub sprite_exp_particle: Handle<Image>,
@@ -431,8 +447,21 @@ pub struct AssetLibrary {
 impl AssetLibrary {
     pub fn create_texture_atlases(&mut self, texture_atlas_assets: &mut Assets<TextureAtlas>) {
         let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_ship.clone(), Vec2::new(250., 350.), 5, 1);
-        self.sprite_ship_atlas = texture_atlas_assets.add(texture_atlas);
+            TextureAtlas::from_grid(self.sprite_ship_red.clone(), Vec2::new(250., 350.), 5, 1);
+        self.sprite_ship_red_atlas = texture_atlas_assets.add(texture_atlas);
+
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_ship_brown.clone(), Vec2::new(250., 350.), 5, 1);
+        self.sprite_ship_brown_atlas = texture_atlas_assets.add(texture_atlas);
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_ship_green.clone(), Vec2::new(250., 350.), 5, 1);
+        self.sprite_ship_green_atlas = texture_atlas_assets.add(texture_atlas);
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_ship_blue.clone(), Vec2::new(250., 350.), 5, 1);
+        self.sprite_ship_blue_atlas = texture_atlas_assets.add(texture_atlas);
+        let texture_atlas =
+            TextureAtlas::from_grid(self.sprite_ship_purple.clone(), Vec2::new(250., 350.), 5, 1);
+        self.sprite_ship_purple_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas = TextureAtlas::from_grid(
             self.sprite_octopus_easy.clone(),

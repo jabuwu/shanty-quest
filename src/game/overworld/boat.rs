@@ -69,7 +69,7 @@ fn boat_spawn(
     for event in ev_spawn.iter() {
         let sprite_entity = commands
             .spawn_bundle(SpriteSheetBundle {
-                texture_atlas: asset_library.sprite_ship_atlas.clone(),
+                texture_atlas: asset_library.sprite_ship_red_atlas.clone(),
                 ..Default::default()
             })
             .insert(
