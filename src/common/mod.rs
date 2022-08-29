@@ -33,6 +33,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(map_builder::MapBuilderPlugin)
             .add_plugin(force_camera_ratio::ForceCameraRatioPlugin)
             .add_plugin(wasm::WasmPlugin)
+            .add_plugin(volume_control::VolumeControlPlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_startup_system(asset_hot_reloading)
@@ -82,6 +83,7 @@ pub mod sound_effects;
 pub mod time_to_live;
 pub mod timed_chance;
 pub mod transform2;
+pub mod volume_control;
 pub mod wasm;
 pub mod world_locations;
 pub mod y_depth;

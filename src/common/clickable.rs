@@ -41,6 +41,10 @@ impl Clickable {
     pub fn just_clicked(&self) -> bool {
         return self.clicked && !self.last_clicked;
     }
+
+    pub fn just_released(&self) -> bool {
+        return !self.clicked && self.last_clicked;
+    }
 }
 
 fn clickable_update(

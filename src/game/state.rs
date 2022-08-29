@@ -59,6 +59,7 @@ impl GameState {
             let GameState {
                 experience,
                 level,
+                skill_points,
                 dangerous_seas,
                 ..
             } = *self;
@@ -67,6 +68,7 @@ impl GameState {
             self.checkpoint_notification = false;
             self.experience = experience;
             self.level = level;
+            self.skill_points = skill_points;
             self.dangerous_seas = dangerous_seas;
             true
         } else {

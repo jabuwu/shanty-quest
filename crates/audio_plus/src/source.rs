@@ -130,6 +130,7 @@ pub(crate) fn update_audio_sources(
         if source.sound_effect.channel != AudioPlusMixerChannel::None {
             volume *= mixer.get_volume(source.sound_effect.channel);
         }
+        volume *= mixer.get_master_volume();
         let AudioPlusSource {
             voices,
             sound_effect,

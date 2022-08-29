@@ -33,11 +33,11 @@ impl KrakenLevel {
                 far_tentacles: 5,
                 far_tentacle_distance_min: 150.,
                 far_tentacle_distance_max: 1650.,
-                knockback_intensity: 7.,
+                knockback_intensity: 6.,
             }
         } else {
             KrakenStats {
-                damage: self.0 as f32,
+                damage: 1.5,
                 close_tentacles: 0,
                 far_tentacles: 2 * self.0,
                 far_tentacle_distance_min: 150.,

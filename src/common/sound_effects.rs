@@ -11,6 +11,7 @@ pub struct SoundEffects {
     pub sfx_dialogue_start: AudioPlusSoundEffect,
     pub sfx_dialogue_proceed: AudioPlusSoundEffect,
     pub sfx_dialogue_repeat: AudioPlusSoundEffect,
+    pub sfx_audio_preview: AudioPlusSoundEffect,
 
     // main menu
     pub sfx_menu_ambient: AudioPlusSoundEffect,
@@ -383,6 +384,11 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_town_upgrade: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_upgrade_01.clone()],
+            volume: 1.0,
+            ..Default::default()
+        },
+        sfx_audio_preview: AudioPlusSoundEffect {
+            audio_sources: vec![asset_library.audio_sfx_preview.clone()],
             volume: 1.0,
             ..Default::default()
         },

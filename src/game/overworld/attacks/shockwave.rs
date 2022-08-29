@@ -27,7 +27,7 @@ impl ShockwaveLevel {
             // boss stats
             ShockwaveStats {
                 damage: 1.,
-                knockback_intensity: 15.,
+                knockback_intensity: 8.,
                 scale: 0.7,
             }
         } else {

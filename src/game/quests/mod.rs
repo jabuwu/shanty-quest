@@ -439,7 +439,7 @@ pub fn quests_skip(
     if !DEV_BUILD {
         return;
     }
-    if input.just_pressed(KeyCode::P) {
+    if input.just_pressed(KeyCode::L) {
         game_state.skill_points += 1;
     }
     if *app_state.current() != AppState::Overworld {

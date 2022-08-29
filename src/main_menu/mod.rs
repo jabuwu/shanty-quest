@@ -2,6 +2,8 @@ use crate::{common::prelude::*, game::state::GameState};
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
+use self::slider::VolumeSliderSpawnEvent;
+
 const LOGO_POSITION: Vec2 = Vec2::new(0., 115.);
 const LOGO_SCALE: Vec2 = Vec2::new(0.84, 0.84);
 const LOGO_MOVEMENT_GROW: Vec2 = Vec2::new(1., 1.4);
@@ -18,7 +20,8 @@ pub struct MainMenuPlugin;
 
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<MenuState>()
+        app.add_plugin(slider::VolumeSliderPlugin)
+            .init_resource::<MenuState>()
             .add_system_set(SystemSet::on_enter(AppState::MainMenu).with_system(menu_setup))
             .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(menu_fade))
             .add_system(menu_logo)
@@ -68,11 +71,13 @@ fn menu_setup(
     asset_library: Res<AssetLibrary>,
     mut cutscenes: ResMut<Cutscenes>,
     mut dialogue: ResMut<Dialogue>,
+    mut ev_volume_slider_spawn: EventWriter<VolumeSliderSpawnEvent>,
 ) {
     *menu_state = MenuState::default();
     cutscenes.clear();
     dialogue.clear();
     screen_fade.fade_in(1.);
+    ev_volume_slider_spawn.send_default();
     commands.spawn_bundle(Camera2dBundle::default());
     commands
         .spawn()
@@ -203,10 +208,9 @@ fn menu_setup(
         })
         .insert(
             Transform2::from_xy(528., -305.)
-                .with_depth((DepthLayer::Front, 1.))
+                .with_depth((DepthLayer::Front, 0.2))
                 .with_scale(Vec2::ONE * 0.5),
-        )
-        .insert(Label("a".into()));
+        );
 }
 
 fn menu_logo(mut query: Query<(&mut Logo, &mut Transform2, &mut Sprite)>, time: Res<Time>) {
@@ -320,3 +324,5 @@ fn menu_background_move(mut query: Query<&mut Transform2, With<Background>>, tim
         transform.translation = Vec2::new(x, y);
     }
 }
+
+pub mod slider;

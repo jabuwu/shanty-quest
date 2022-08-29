@@ -59,6 +59,8 @@ pub struct AssetLibrary {
     pub audio_sfx_dialogue_voice_generic_08: Handle<AudioSource>,
     #[asset("audio/sfx/dialogue_voice_generic_09.ogg")]
     pub audio_sfx_dialogue_voice_generic_09: Handle<AudioSource>,
+    #[asset("audio/sfx/ui_button_click_01.ogg")]
+    pub audio_sfx_preview: Handle<AudioSource>,
 
     /*********
      * Level *
@@ -97,6 +99,12 @@ pub struct AssetLibrary {
     pub menu_sprite_volume: Handle<Image>,
     #[asset("sprites/FullscreenRecommended.png")]
     pub menu_fullscreen_recommended: Handle<Image>,
+    #[asset("sprites/slider_back.png")]
+    pub menu_slider_back: Handle<Image>,
+    #[asset("sprites/slider_knob.png")]
+    pub menu_slider_knob: Handle<Image>,
+    #[asset("sprites/icon_volume.png")]
+    pub menu_slider_icon: Handle<Image>,
 
     #[asset("audio/music/menu.ogg")]
     pub menu_music: Handle<AudioSource>,

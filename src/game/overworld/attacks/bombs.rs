@@ -29,7 +29,7 @@ impl BombsLevel {
             // boss stats
             BombsStats {
                 damage: 2.5,
-                knockback_intensity: 20.,
+                knockback_intensity: 10.,
                 spawn_amount: 3,
                 velocity_min: 100.,
                 velocity_max: 1500.,
