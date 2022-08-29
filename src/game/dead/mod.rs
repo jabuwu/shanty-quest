@@ -43,9 +43,9 @@ fn town_init(
         .spawn_bundle(Text2dBundle {
             text: Text::from_section(
                 if state.can_respawn {
-                    "Yer swimmin' with the fishes now\nPress space to respawn at last town"
+                    "Yer swimmin' with the fishes now\nLeft click to respawn at last town"
                 } else {
-                    "Yer swimmin' with the fishes now\nPress space to restart"
+                    "Yer swimmin' with the fishes now\nLeft click to restart"
                 },
                 TextStyle {
                     font: asset_library.font_bold.clone(),
@@ -65,10 +65,13 @@ fn town_init(
 fn town_update(
     mut state: ResMut<DeadState>,
     keys: Res<Input<KeyCode>>,
+    mouse: Res<Input<MouseButton>>,
     mut app_state: ResMut<State<AppState>>,
     mut screen_fade: ResMut<ScreenFade>,
 ) {
-    if !state.can_leave && keys.just_pressed(KeyCode::Space) {
+    if !state.can_leave
+        && (keys.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left))
+    {
         state.can_leave = true;
         screen_fade.fade_out(0.5);
     }
