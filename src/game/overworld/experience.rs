@@ -35,6 +35,8 @@ pub fn experience_spawn(
 ) {
     for event in ev_spawn.iter() {
         for _ in 0..event.count {
+            let angle = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
+            let velocity = angle * (50. + rand::random::<f32>() * 200.);
             commands
                 .spawn_bundle(SpriteBundle {
                     sprite: Sprite {
@@ -45,14 +47,13 @@ pub fn experience_spawn(
                     ..Default::default()
                 })
                 .insert(
-                    Transform2::from_translation(event.position)
+                    Transform2::from_translation(event.position + angle * 20.)
                         .with_depth(DEPTH_LAYER_EXPERIENCE)
                         .with_scale(Vec2::ONE * (1. + event.amount / 2.5)),
                 )
                 .insert(Experience {
                     amount: event.amount,
-                    velocity: Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU)
-                        * (50. + rand::random::<f32>() * 200.),
+                    velocity,
                     infinite_distance: event.infinite_distance,
                 });
         }

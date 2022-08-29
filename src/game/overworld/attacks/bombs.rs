@@ -91,6 +91,7 @@ fn bombs_fire(
                 )
                 .insert(TimeToLive { seconds: 3. });
             for _ in 0..stats.spawn_amount {
+                let time_to_live = 1.5 + rand::random::<f32>() * 0.35;
                 let throw_direction =
                     Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
                 let position = global_transform.translation().truncate() + throw_direction * 100.;
@@ -111,8 +112,8 @@ fn bombs_fire(
                     .insert(YDepth::default())
                     .insert(Bomb {
                         velocity,
-                        life_time: 1.75,
-                        life_time_max: 1.75,
+                        life_time: time_to_live,
+                        life_time_max: time_to_live,
                         parent: boat_entity,
                         hurt_flags: bombs.hurt_flags,
                         stats,
@@ -154,9 +155,9 @@ fn bomb_move(
                 .spawn_bundle(SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(150., 150.).into(),
-                        color: Color::RED,
                         ..Default::default()
                     },
+                    texture: asset_library.sprite_bomb_explosion.clone(),
                     ..Default::default()
                 })
                 .insert(

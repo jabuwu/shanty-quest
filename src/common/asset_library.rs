@@ -282,6 +282,8 @@ pub struct AssetLibrary {
     #[asset("sprites/Bomb2.png")]
     pub sprite_bomb: Handle<Image>,
     pub sprite_bomb_atlas: Handle<TextureAtlas>,
+    #[asset("sprites/BombExplosion.png")]
+    pub sprite_bomb_explosion: Handle<Image>,
     #[asset("sprites/Tentacle.png")]
     pub sprite_tentacle: Handle<Image>,
     pub sprite_tentacle_atlas: Handle<TextureAtlas>,

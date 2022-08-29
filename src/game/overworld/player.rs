@@ -94,7 +94,7 @@ fn player_controls(
         boat.direction = Vec2::X.angle_between(mouse_aim);
         boat.movement = mouse_aim;
         if !input.pressed(MouseButton::Left) {
-            boat.movement *= 0.005;
+            boat.movement *= 0.0001;
         }
         boat.dash = keys.pressed(KeyCode::Space);
         if keys.just_pressed(KeyCode::F) {
