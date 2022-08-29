@@ -23,20 +23,19 @@ pub struct Rubble;
 fn rubble_spawn(
     mut ev_spawn: EventReader<RubbleSpawnEvent>,
     mut commands: Commands,
+    asset_library: Res<AssetLibrary>,
     mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
 ) {
     for event in ev_spawn.iter() {
         let entity = commands
             .spawn_bundle(SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Vec2::new(128., 128.).into(),
-                    color: Color::DARK_GRAY,
-                    ..Default::default()
-                },
+                texture: asset_library.sprite_rubble.clone(),
                 ..Default::default()
             })
             .insert(
-                Transform2::from_translation(event.position).with_depth((DepthLayer::Entity, 0.)),
+                Transform2::from_translation(event.position)
+                    .with_scale(Vec2::new(0.25, 0.25))
+                    .with_depth((DepthLayer::Entity, 0.)),
             )
             .insert(Rubble)
             .insert(YDepth::default())
