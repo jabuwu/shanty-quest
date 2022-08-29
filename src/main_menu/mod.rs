@@ -195,6 +195,18 @@ fn menu_setup(
                         .with_depth((DepthLayer::Front, 0.4)),
                 );
         });
+
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: asset_library.menu_fullscreen_recommended.clone(),
+            ..Default::default()
+        })
+        .insert(
+            Transform2::from_xy(528., -305.)
+                .with_depth((DepthLayer::Front, 1.))
+                .with_scale(Vec2::ONE * 0.5),
+        )
+        .insert(Label("a".into()));
 }
 
 fn menu_logo(mut query: Query<(&mut Logo, &mut Transform2, &mut Sprite)>, time: Res<Time>) {

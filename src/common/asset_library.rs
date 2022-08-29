@@ -95,6 +95,8 @@ pub struct AssetLibrary {
     pub menu_sprite_skull: Handle<Image>,
     #[asset("sprites/icon_volume.png")]
     pub menu_sprite_volume: Handle<Image>,
+    #[asset("sprites/FullscreenRecommended.png")]
+    pub menu_fullscreen_recommended: Handle<Image>,
 
     #[asset("audio/music/menu.ogg")]
     pub menu_music: Handle<AudioSource>,

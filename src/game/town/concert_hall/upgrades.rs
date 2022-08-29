@@ -244,8 +244,7 @@ fn upgrades_spawn(
                     .insert(
                         Transform2::from_xy(-10., -730.)
                             .with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
-                    )
-                    .insert(Label("A".into()));
+                    );
                 parent
                     .spawn_bundle(Transform2Bundle::default())
                     .insert_bundle(VisibilityBundle::default())
