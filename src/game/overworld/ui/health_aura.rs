@@ -80,10 +80,10 @@ fn health_aura_update(
     let pulse = 1. + (time.time_since_startup().as_secs_f32() * 3.).sin() * 0.3;
     for (mut sprite, aura) in query.iter_mut() {
         if aura.sides {
-            let intensity = 1.0 - (health * 4.).clamp(0., 1.);
+            let intensity = 1.0 - (health * 2.5).clamp(0., 1.);
             sprite.color.set_a(intensity * pulse);
         } else {
-            let intensity = (1.0 - (health * 20.).clamp(0., 1.)).clamp(0., 0.3);
+            let intensity = (1.0 - (health * 15.).clamp(0., 1.)).clamp(0., 0.3);
             sprite.color.set_a(intensity * pulse);
         }
     }
