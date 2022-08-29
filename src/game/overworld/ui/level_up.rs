@@ -76,7 +76,7 @@ fn level_up_spawn(
                             ..Default::default()
                         })
                         .insert(
-                            Transform2::from_translation(LEVEL_UP_POSITION)
+                            Transform2::from_translation(LEVEL_UP_POSITION + Vec2::new(0., 11.))
                                 .with_depth(DEPTH_LAYER_LEVEL_UP_TEXT),
                         );
                     parent
@@ -96,7 +96,7 @@ fn level_up_spawn(
                             ..Default::default()
                         })
                         .insert(
-                            Transform2::from_translation(LEVEL_UP_POSITION + Vec2::new(0., -32.))
+                            Transform2::from_translation(LEVEL_UP_POSITION + Vec2::new(0., -21.))
                                 .with_depth(DEPTH_LAYER_LEVEL_UP_TEXT),
                         );
                 });
