@@ -27,7 +27,7 @@ impl Plugin for BoatPlugin {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct BoatSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,
@@ -39,6 +39,7 @@ pub struct BoatSpawnEvent {
     pub health_max: f32,
     pub speed: f32,
     pub knockback_resistance: f32,
+    pub texture_atlas: Handle<TextureAtlas>,
 }
 
 #[derive(Component)]
@@ -64,12 +65,11 @@ fn boat_spawn(
     mut ev_spawn: EventReader<BoatSpawnEvent>,
     mut commands: Commands,
     mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
-    asset_library: Res<AssetLibrary>,
 ) {
     for event in ev_spawn.iter() {
         let sprite_entity = commands
             .spawn_bundle(SpriteSheetBundle {
-                texture_atlas: asset_library.sprite_ship_red_atlas.clone(),
+                texture_atlas: event.texture_atlas.clone(),
                 ..Default::default()
             })
             .insert(

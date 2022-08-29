@@ -58,6 +58,7 @@ fn davy_spawn(
     mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
     mut overworld_camera: ResMut<OverworldCamera>,
     mut ev_boss_healthbar_spawn: EventWriter<BossHealthbarSpawnEvent>,
+    asset_library: Res<AssetLibrary>,
 ) {
     let spawn_position = world_locations.get_single_position("DavySpawn");
     for _ in ev_spawn.iter() {
@@ -97,6 +98,7 @@ fn davy_spawn(
             speed: stats.speed,
             attack_cooldown: stats.attack_time,
             knockback_resistance: 1.0,
+            texture_atlas: asset_library.sprite_ship_brown_atlas.clone(),
         });
     }
 }

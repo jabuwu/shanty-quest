@@ -32,6 +32,7 @@ fn boat_preview_spawn(
     mut commands: Commands,
     mut ev_boat_spawn: EventWriter<BoatSpawnEvent>,
     mut ev_ocean_spawn: EventWriter<OceanSpawnEvent>,
+    asset_library: Res<AssetLibrary>,
 ) {
     for _ in ev_boat_preview_spawn.iter() {
         commands
@@ -57,6 +58,7 @@ fn boat_preview_spawn(
                     speed: 100.,
                     attack_cooldown: PLAYER_ATTACK_COOLDOWN,
                     knockback_resistance: 0.,
+                    texture_atlas: asset_library.sprite_ship_purple_atlas.clone(),
                 });
                 let ocean_entity = parent.spawn().id();
                 ev_ocean_spawn.send(OceanSpawnEvent {

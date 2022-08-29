@@ -35,6 +35,7 @@ fn player_spawn(
     mut commands: Commands,
     game_state: Res<GameState>,
     mut ev_cutscene_exit_town: EventWriter<CutsceneStartEvent<ExitTownCutscene>>,
+    asset_library: Res<AssetLibrary>,
 ) {
     for _ in ev_spawn.iter() {
         let entity = commands
@@ -60,6 +61,7 @@ fn player_spawn(
             speed: 250.,
             attack_cooldown: PLAYER_ATTACK_COOLDOWN,
             knockback_resistance: 0.2,
+            texture_atlas: asset_library.sprite_ship_purple_atlas.clone(),
         });
         if !game_state.quests.block_town_exit_cutscene() {
             ev_cutscene_exit_town.send(CutsceneStartEvent(ExitTownCutscene {

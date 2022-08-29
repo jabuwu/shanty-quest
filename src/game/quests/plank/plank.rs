@@ -62,6 +62,7 @@ fn plank_spawn(
     mut ev_enemies_despawn: EventWriter<DespawnSpawnedEntitiesEvent>,
     mut overworld_camera: ResMut<OverworldCamera>,
     mut ev_boss_healthbar_spawn: EventWriter<BossHealthbarSpawnEvent>,
+    asset_library: Res<AssetLibrary>,
 ) {
     let spawn_position = world_locations.get_single_position("PlankSpawn");
     for _ in ev_spawn.iter() {
@@ -105,6 +106,7 @@ fn plank_spawn(
             speed: stats.speed,
             attack_cooldown: stats.attack_time,
             knockback_resistance: 0.9,
+            texture_atlas: asset_library.sprite_ship_blue_atlas.clone(),
         });
     }
 }
