@@ -199,7 +199,7 @@ fn step2_start_audio(
     if !cutscenes.skipping() {
         if let Ok(mut text) = query.get_single_mut() {
             text.sections[0].value =
-            "Royal Navy beat those scurvy dogs 'gain and 'gain! Driven them to seek Rockdorado and the fabled lost weapons... Find them they did!".to_owned();
+            "Royal Navy beat those scurvy dogs 'gain and again! Driven them to seek Rockdorado and the fabled lost weapons... Find them they did!".to_owned();
         }
         commands.spawn().insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro2.clone())

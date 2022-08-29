@@ -23,8 +23,12 @@ fn town_init(
     mut commands: Commands,
     asset_library: Res<AssetLibrary>,
     mut game_state: ResMut<GameState>,
+    mut cutscenes: ResMut<Cutscenes>,
+    mut dialogue: ResMut<Dialogue>,
     mut screen_fade: ResMut<ScreenFade>,
 ) {
+    cutscenes.clear();
+    dialogue.clear();
     screen_fade.fade_in(0.2);
     state.can_respawn = game_state.restore_checkpoint();
     state.can_leave = false;

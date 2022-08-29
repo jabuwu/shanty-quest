@@ -34,7 +34,7 @@ impl ShockwaveLevel {
             let level = self.0 as f32;
             ShockwaveStats {
                 damage: 0.25 * level,
-                knockback_intensity: 3. + level * 2.,
+                knockback_intensity: 3. + ((level - 1.) / 5.) * 2.,
                 scale: 0.5 + level * 0.15,
             }
         }

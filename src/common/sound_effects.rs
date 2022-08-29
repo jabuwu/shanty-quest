@@ -225,7 +225,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_xp_02.clone(),
                 asset_library.audio_sfx_xp_03.clone(),
             ],
-            volume: 0.85,
+            volume: 0.45,
             ..Default::default()
         },
         sfx_overworld_player_damage: AudioPlusSoundEffect {
