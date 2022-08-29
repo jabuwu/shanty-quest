@@ -94,4 +94,13 @@ impl GameState {
         self.health_max *= 1.2;
         self.defense += 1;
     }
+
+    pub fn has_all_unlocks(&self) -> bool {
+        self.attacks.forward_cannons == 5
+            && self.attacks.shotgun_cannons == 5
+            && self.attacks.shockwave == 5
+            && self.attacks.bombs == 5
+            && self.attacks.kraken == 5
+            && self.defense == 5
+    }
 }

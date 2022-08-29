@@ -103,9 +103,13 @@ fn skip(
     mut screen_fade: ResMut<ScreenFade>,
     mut ev_cutscene_skip: EventWriter<CutsceneSkipEvent<IntroCutscene>>,
     mut query: Query<&mut AudioPlusSource>,
+    mut text_query: Query<&mut Text, With<CutsceneText>>,
 ) {
     if input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left) {
         if !cutscene_state.proceed {
+            if let Ok(mut text) = text_query.get_single_mut() {
+                text.sections[0].value = "".to_owned();
+            }
             cutscene_state.proceed = true;
             screen_fade.fade_out(1.);
             for mut source in query.iter_mut() {
@@ -155,10 +159,10 @@ fn step1_image(
     asset_library: Res<AssetLibrary>,
     cutscenes: Res<Cutscenes>,
 ) {
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value = "Well, ya oiled me tongue with a jug o' rum so lemme tell ya the story of treble at sea! Eh? How the Pirate Lords became... Lords?!".to_owned();
-    }
     if !cutscenes.skipping() {
+        if let Ok(mut text) = query.get_single_mut() {
+            text.sections[0].value = "Well, ya oiled me tongue with a jug o' rum so lemme tell ya the story of treble at sea! Eh? How the Pirate Lords became... Lords?!".to_owned();
+        }
         commands
             .spawn_bundle(SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),
@@ -192,11 +196,11 @@ fn step2_start_audio(
     asset_library: Res<AssetLibrary>,
     mut commands: Commands,
 ) {
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value =
-            "Royal Navy beat those scurvy dogs 'gain and 'gain! Driven them to seek Rockdorado and the fabled lost weapons... Find them they did!".to_owned();
-    }
     if !cutscenes.skipping() {
+        if let Ok(mut text) = query.get_single_mut() {
+            text.sections[0].value =
+            "Royal Navy beat those scurvy dogs 'gain and 'gain! Driven them to seek Rockdorado and the fabled lost weapons... Find them they did!".to_owned();
+        }
         commands.spawn().insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro2.clone())
                 .as_playing(),
@@ -274,11 +278,11 @@ fn step3_start_audio(
     asset_library: Res<AssetLibrary>,
     cutscenes: Res<Cutscenes>,
 ) {
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value =
-            "Each Cap'n grabbed an instrument!\nHah. Gave 'em terrible powers of horrid noise, magical projectiles, power over sea monsters! With that, they smashed the Royal Navy ta bits!".to_owned();
-    }
     if !cutscenes.skipping() {
+        if let Ok(mut text) = query.get_single_mut() {
+            text.sections[0].value =
+            "Each Cap'n grabbed an instrument!\nHah. Gave 'em terrible powers of horrid noise, magical projectiles, power over sea monsters! With that, they smashed the Royal Navy ta bits!".to_owned();
+        }
         commands.spawn().insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro3.clone())
                 .as_playing(),
@@ -303,11 +307,11 @@ fn step4(
     if !state.proceed {
         screen_fade.fade_in(0.5);
     }
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value =
-            "But, right as rum, pirates be pirates. Each Lord wished to get more powa, to get all other instruments! That's how this Pirate Lords War started...".to_owned();
-    }
     if !cutscenes.skipping() {
+        if let Ok(mut text) = query.get_single_mut() {
+            text.sections[0].value =
+            "But, right as rum, pirates be pirates. Each Lord wished to get more powa, to get all other instruments! That's how this Pirate Lords War started...".to_owned();
+        }
         commands
             .spawn_bundle(SpriteBundle {
                 texture: asset_library.cutscene_image_intro4.clone(),
@@ -346,11 +350,11 @@ fn step5(
     if !state.proceed {
         screen_fade.fade_in(0.5);
     }
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value =
-            "That's why the rum ships sail less and less... Now! Buy me another jug or I'll yapper no more tales.".to_owned();
-    }
     if !cutscenes.skipping() {
+        if let Ok(mut text) = query.get_single_mut() {
+            text.sections[0].value =
+            "That's why the rum ships sail less and less... Now! Buy me another jug or I'll yapper no more tales.".to_owned();
+        }
         commands
             .spawn_bundle(SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),

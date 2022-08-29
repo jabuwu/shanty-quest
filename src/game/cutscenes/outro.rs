@@ -61,7 +61,7 @@ fn init(
     commands
         .spawn_bundle(Text2dBundle {
             text: Text::from_section(
-                "Outro cutscene!\n\nPress space to skip".to_owned(),
+                "".to_owned(),
                 TextStyle {
                     font: asset_library.font_default.clone(),
                     font_size: 24.0,
@@ -89,9 +89,13 @@ fn skip(
     mut screen_fade: ResMut<ScreenFade>,
     mut ev_cutscene_skip: EventWriter<CutsceneSkipEvent<OutroCutscene>>,
     mut query: Query<&mut AudioPlusSource>,
+    mut text_query: Query<&mut Text, With<CutsceneText>>,
 ) {
     if input.just_pressed(KeyCode::Space) || mouse.just_pressed(MouseButton::Left) {
         if !cutscene_state.proceed {
+            if let Ok(mut text) = text_query.get_single_mut() {
+                text.sections[0].value = "".to_owned();
+            }
             cutscene_state.proceed = true;
             screen_fade.fade_out(1.);
             for mut source in query.iter_mut() {
@@ -134,10 +138,10 @@ fn step1(
     if !state.proceed {
         screen_fade.fade_in(0.5);
     }
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value = "And there ya go, laddie! That is when the sea trebled! When a Pirate Lord combined all the magical instruments and became a Pirate King!".to_owned();
-    }
     if !cutscenes.skipping() {
+        if let Ok(mut text) = query.get_single_mut() {
+            text.sections[0].value = "And there ya go, laddie! That is when the sea trebled! When a Pirate Lord combined all the magical instruments and became a Pirate King!".to_owned();
+        }
         commands
             .spawn_bundle(SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),
@@ -170,12 +174,12 @@ fn step2_start_audio(
     asset_library: Res<AssetLibrary>,
     mut commands: Commands,
 ) {
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value =
-            "Now he be raiding the coast with the most horrible noise known to mankind..."
-                .to_owned();
-    }
     if !cutscenes.skipping() {
+        if let Ok(mut text) = query.get_single_mut() {
+            text.sections[0].value =
+                "Now he be raiding the coast with the most horrible noise known to mankind..."
+                    .to_owned();
+        }
         commands.spawn().insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro2.clone())
                 .as_playing(),
@@ -228,12 +232,12 @@ fn step3(
     if !state.proceed {
         screen_fade.fade_in(1.0);
     }
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value =
+    if !cutscenes.skipping() {
+        if let Ok(mut text) = query.get_single_mut() {
+            text.sections[0].value =
             "Buy Ol' Nipper here another jug o' rum and I'll yapper until the sunrise! Har-har!"
                 .to_owned();
-    }
-    if !cutscenes.skipping() {
+        }
         commands
             .spawn_bundle(SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),

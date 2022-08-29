@@ -303,7 +303,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_attack_plank_02.clone(),
                 asset_library.audio_sfx_attack_plank_03.clone(),
             ],
-            volume: 0.1,
+            volume: 0.15,
             positional: true,
             ..Default::default()
         },
@@ -323,7 +323,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_bomb_explode_02.clone(),
                 asset_library.audio_sfx_bomb_explode_03.clone(),
             ],
-            volume: 0.1,
+            volume: 0.2,
             positional: true,
             ..Default::default()
         },

@@ -28,12 +28,12 @@ impl KrakenLevel {
         if self.0 == 6 {
             // boss stats
             KrakenStats {
-                damage: 1.,
+                damage: 1.5,
                 close_tentacles: 1,
                 far_tentacles: 5,
                 far_tentacle_distance_min: 150.,
                 far_tentacle_distance_max: 1650.,
-                knockback_intensity: 10.,
+                knockback_intensity: 7.,
             }
         } else {
             KrakenStats {

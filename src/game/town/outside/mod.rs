@@ -424,7 +424,7 @@ fn outside_concert_hall_icon(
     game_state: Res<GameState>,
 ) {
     for mut visibility in query.iter_mut() {
-        visibility.is_visible = game_state.skill_points > 0;
+        visibility.is_visible = game_state.skill_points > 0 && !game_state.has_all_unlocks();
     }
 }
 

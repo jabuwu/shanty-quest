@@ -32,7 +32,7 @@ struct DavyStatsByHealth {
 }
 
 fn davy_stats_by_health(health_percent: f32) -> DavyStatsByHealth {
-    if health_percent > 0.5 {
+    if health_percent > 0.6 {
         DavyStatsByHealth {
             speed: 150.,
             attack_time: 0.75,
@@ -92,8 +92,8 @@ fn davy_spawn(
             },
             healthbar: false,
             player: false,
-            health: 250.,
-            health_max: 300.,
+            health: 500.,
+            health_max: 500.,
             speed: stats.speed,
             attack_cooldown: stats.attack_time,
             knockback_resistance: 1.0,
