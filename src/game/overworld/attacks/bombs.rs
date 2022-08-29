@@ -31,7 +31,7 @@ impl BombsLevel {
                 damage: 2.5,
                 knockback_intensity: 10.,
                 spawn_amount: 3,
-                velocity_min: 100.,
+                velocity_min: 50.,
                 velocity_max: 1500.,
             }
         } else {

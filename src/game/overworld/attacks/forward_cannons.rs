@@ -26,7 +26,7 @@ impl ForwardCannonsLevel {
     fn stats(&self) -> ForwardCannonsStats {
         let level = self.0 as f32;
         ForwardCannonsStats {
-            damage: level * 0.75,
+            damage: level * 0.8,
             scale: 0.8 + level / 5.,
             speed: 1200. + level * 100.,
             hit_multiple: self.0 >= 5,

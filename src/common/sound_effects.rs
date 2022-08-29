@@ -196,7 +196,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_overworld_ambient: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_sea.clone()],
-            volume: 0.4,
+            volume: 0.1,
             fade_in: 1.,
             fade_out: 1.,
             ..Default::default()
@@ -217,7 +217,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
                 asset_library.audio_sfx_dash_02.clone(),
                 asset_library.audio_sfx_dash_03.clone(),
             ],
-            volume: 0.25,
+            volume: 0.1,
             ..Default::default()
         },
         sfx_overworld_experience: AudioPlusSoundEffect {
@@ -265,7 +265,7 @@ pub fn sound_effects_create(asset_library: &AssetLibrary) -> SoundEffects {
         },
         sfx_overworld_level_up: AudioPlusSoundEffect {
             audio_sources: vec![asset_library.audio_sfx_level_up.clone()],
-            volume: 0.8,
+            volume: 0.5,
             ..Default::default()
         },
         sfx_overworld_attack_forward_cannons: AudioPlusSoundEffect {
