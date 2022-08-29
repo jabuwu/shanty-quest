@@ -40,7 +40,7 @@ impl Default for GameState {
             health_max: 20.,
             defense: 1,
             experience: 0.,
-            level: 0,
+            level: 1,
             skill_points: 0,
             checkpoint_notification: false,
             checkpoint: None,
@@ -56,9 +56,18 @@ impl GameState {
 
     pub fn restore_checkpoint(&mut self) -> bool {
         if let Some(checkpoint) = self.checkpoint.take() {
+            let GameState {
+                experience,
+                level,
+                dangerous_seas,
+                ..
+            } = *self;
             *self = *checkpoint.clone();
             self.checkpoint = Some(checkpoint);
             self.checkpoint_notification = false;
+            self.experience = experience;
+            self.level = level;
+            self.dangerous_seas = dangerous_seas;
             true
         } else {
             false
@@ -86,7 +95,7 @@ impl GameState {
     }
 
     pub fn experience_max(&self) -> f32 {
-        5. + self.level as f32 * 10.
+        5. + (self.level - 1) as f32 * 10.
     }
 
     pub fn apply_defense_upgrade(&mut self) {
