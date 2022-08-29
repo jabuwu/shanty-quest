@@ -28,6 +28,7 @@ pub struct CharacterController {
     pub force_facing: Option<Facing>,
     pub knockback: Vec2,
     pub knockback_resistance: f32,
+    pub arena_adjustment: bool,
 }
 
 #[derive(Clone, Copy)]
@@ -105,10 +106,12 @@ fn character_controller_update(
             }
             velocity += character_controller.knockback;
             character_controller.knockback *= 0.01_f32.powf(time.delta_seconds());
-            if let Some(correction) =
-                overworld_camera.arena_correction(global_transform.translation().truncate())
-            {
-                velocity += correction;
+            if character_controller.arena_adjustment {
+                if let Some(correction) =
+                    overworld_camera.arena_correction(global_transform.translation().truncate())
+                {
+                    velocity += correction;
+                }
             }
             let velocity_x = Vec2::X * velocity;
             let velocity_y = Vec2::Y * velocity;

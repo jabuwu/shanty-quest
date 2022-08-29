@@ -118,6 +118,7 @@ fn boat_spawn(
                 movement: Vec2::ZERO,
                 speed: event.speed,
                 knockback_resistance: event.knockback_resistance,
+                arena_adjustment: true,
                 ..Default::default()
             })
             .insert(ForwardCannons {

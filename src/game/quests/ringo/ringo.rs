@@ -157,7 +157,7 @@ fn ringo_move(
                 .translation()
                 .truncate()
                 .distance(player_position)
-                < 350.;
+                < 275.;
             let destination = if ringo.charge_time > -1. {
                 player_position
             } else {
