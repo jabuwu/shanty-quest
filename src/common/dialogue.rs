@@ -310,14 +310,8 @@ fn dialogue_update(
             let characters = dialogue.characters();
             let characters_sfx = characters / 8;
             if dialogue.last_characters != characters_sfx {
-                if dialogue.last_characters == 0 {
-                    for mut sound in queries.p6().iter_mut() {
-                        sound.play();
-                    }
-                } else {
-                    for mut sound in queries.p5().iter_mut() {
-                        sound.play();
-                    }
+                for mut sound in queries.p5().iter_mut() {
+                    sound.play();
                 }
                 dialogue.last_characters = characters_sfx;
             }
