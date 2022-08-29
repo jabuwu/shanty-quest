@@ -62,6 +62,7 @@ fn objective_spawn(
                     .insert(
                         Transform2::from_xy(530., 335.)
                             .with_depth(DEPTH_LAYER_UI_OBJECTIVE_TEXT)
+                            .with_scale(Vec2::ONE * 0.5)
                             .without_pixel_perfect(),
                     )
                     .insert(ObjectiveHud);
