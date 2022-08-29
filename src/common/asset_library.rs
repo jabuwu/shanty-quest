@@ -71,6 +71,9 @@ pub struct AssetLibrary {
     #[asset("levels/WaterTileMap.png")]
     pub levelwater_tilemap: Handle<Image>,
 
+    #[asset("levels/DecorTilemap.png")]
+    pub decor_tilemap: Handle<Image>,
+
     /*************
      * Main Menu *
      *************/
@@ -449,7 +452,7 @@ pub struct AssetLibrary {
     /********
      * Dead *
      ********/
-    #[asset("sprites/UpgradeScreen/UpgradeBand_Star.png")]
+    #[asset("sprites/DeathSkull.png")]
     pub sprite_dead: Handle<Image>,
 }
 

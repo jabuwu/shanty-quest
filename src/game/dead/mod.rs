@@ -39,9 +39,9 @@ fn town_init(
         .spawn_bundle(Text2dBundle {
             text: Text::from_section(
                 if state.can_respawn {
-                    "Yer swimmin' with the fishes now\n\nPress space to respawn at last town"
+                    "Yer swimmin' with the fishes now\nPress space to respawn at last town"
                 } else {
-                    "Yer swimmin' with the fishes now\n\nPress space to restart"
+                    "Yer swimmin' with the fishes now\nPress space to restart"
                 },
                 TextStyle {
                     font: asset_library.font_bold.clone(),
@@ -55,7 +55,7 @@ fn town_init(
             }),
             ..Default::default()
         })
-        .insert(Transform2::from_xy(0., -100.).with_depth(DEPTH_LAYER_DEATH_SCREEN));
+        .insert(Transform2::from_xy(0., -175.).with_depth(DEPTH_LAYER_DEATH_SCREEN));
 }
 
 fn town_update(
