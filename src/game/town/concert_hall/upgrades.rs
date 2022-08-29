@@ -226,6 +226,27 @@ fn upgrades_spawn(
                     )
                     .insert(UpgradesSkillPoints);
                 parent
+                    .spawn_bundle(Text2dBundle {
+                        text: Text::from_section(
+                            "Level up to unlock additional skill points.",
+                            TextStyle {
+                                font: asset_library.font_bold.clone(),
+                                font_size: 90.0,
+                                color: Color::BLACK,
+                            },
+                        )
+                        .with_alignment(TextAlignment {
+                            horizontal: HorizontalAlign::Center,
+                            vertical: VerticalAlign::Center,
+                        }),
+                        ..Default::default()
+                    })
+                    .insert(
+                        Transform2::from_xy(-10., -730.)
+                            .with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
+                    )
+                    .insert(Label("A".into()));
+                parent
                     .spawn_bundle(Transform2Bundle::default())
                     .insert_bundle(VisibilityBundle::default())
                     .with_children(|parent| {
@@ -501,7 +522,11 @@ fn upgrades_description(
     mut bg_query: Query<(&mut Visibility, &UpgradesDescriptionBg)>,
     mut text_query: Query<(&mut Text, &UpgradesDescriptionText)>,
     upgrades_state: Res<UpgradesState>,
+    screen_fade: Res<ScreenFade>,
 ) {
+    if !screen_fade.faded_in() {
+        return;
+    }
     if let Some(upgrade) = upgrades_state.hovered {
         let upgrade_text = upgrade.upgrade_text();
         for (mut bg_visibility, bg) in bg_query.iter_mut() {
