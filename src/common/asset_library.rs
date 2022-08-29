@@ -291,7 +291,7 @@ pub struct AssetLibrary {
     #[asset("sprites/HUD_Skill_Points_Notify_BG.png")]
     pub sprite_experience_skill_point_bg: Handle<Image>,
 
-    #[asset("audio/sfx/ui_level_up_01.oggg")]
+    #[asset("audio/sfx/ui_level_up_01.ogg")]
     pub audio_sfx_level_up: Handle<AudioSource>,
 
     /***********
