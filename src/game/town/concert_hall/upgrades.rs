@@ -387,6 +387,7 @@ fn upgrades_spawn(
                         color: Color::rgba(0., 0., 0., 0.36),
                         ..Default::default()
                     },
+                    visibility: Visibility { is_visible: false },
                     ..Default::default()
                 })
                 .insert(
@@ -398,7 +399,7 @@ fn upgrades_spawn(
                     parent
                         .spawn_bundle(Text2dBundle {
                             text: Text::from_section(
-                                "Increase damage",
+                                "",
                                 TextStyle {
                                     font: asset_library.font_bold.clone(),
                                     font_size: 24.0,

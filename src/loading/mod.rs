@@ -70,7 +70,11 @@ fn loading_init(
             },
             ..Default::default()
         })
-        .insert(Transform2::from_xy(0., -70.).with_depth((DepthLayer::Front, 0.)))
+        .insert(
+            Transform2::from_xy(0., -70.)
+                .with_scale(Vec2::new(0., 1.))
+                .with_depth((DepthLayer::Front, 0.1)),
+        )
         .insert(LoadingProgress);
 }
 
@@ -82,19 +86,21 @@ fn loading_update(
     mut ev_dialogue_init: EventWriter<DialogueInitEvent>,
     mut state: ResMut<LoadingState>,
     mut text_query: Query<&mut Text, With<LoadingText>>,
-    mut progress_query: Query<&mut Transform2, With<LoadingProgress>>,
+    mut progress_query: Query<(&mut Transform2, &mut Sprite), With<LoadingProgress>>,
 ) {
     use bevy::asset::LoadState;
-    let progress = asset_library.load_progress(&asset_server);
-    for mut progress_transform in progress_query.iter_mut() {
-        progress_transform.scale.x = progress;
-        progress_transform.translation.x = -80. * (1. - progress);
-    }
-    match asset_library.load_state(&asset_server) {
+    let failed = match asset_library.load_state(&asset_server) {
         LoadState::Failed => {
             for mut text in text_query.iter_mut() {
                 text.sections[0].value = "Failed to load assets.".to_owned();
+                text.sections[0].style.color = Color::rgb(1., 0.3, 0.3);
             }
+            for (mut progress_transform, mut sprite) in progress_query.iter_mut() {
+                progress_transform.scale.x = 1.;
+                progress_transform.translation.x = 0.;
+                sprite.color = Color::rgb(1., 0.3, 0.3);
+            }
+            true
         }
         LoadState::Loaded => {
             if state.fading && screen_fade.faded_out() {
@@ -107,7 +113,15 @@ fn loading_update(
                 screen_fade.fade_out(0.1);
                 state.fading = true;
             }
+            false
         }
-        _ => {}
+        _ => false,
+    };
+    if !failed {
+        let progress = asset_library.load_progress(&asset_server);
+        for (mut progress_transform, _) in progress_query.iter_mut() {
+            progress_transform.scale.x = progress;
+            progress_transform.translation.x = -80. * (1. - progress);
+        }
     }
 }
