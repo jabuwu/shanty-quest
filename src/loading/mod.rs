@@ -10,6 +10,9 @@ struct LoadingState {
 #[derive(Component)]
 struct LoadingText;
 
+#[derive(Component)]
+struct LoadingProgress;
+
 pub struct LoadingPlugin;
 
 impl Plugin for LoadingPlugin {
@@ -48,6 +51,27 @@ fn loading_init(
         })
         .insert(Transform2::new().with_depth((DepthLayer::Front, 0.)))
         .insert(LoadingText);
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                custom_size: Vec2::new(160., 12.).into(),
+                color: Color::BLACK,
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Transform2::from_xy(0., -70.).with_depth((DepthLayer::Front, 0.)));
+    commands
+        .spawn_bundle(SpriteBundle {
+            sprite: Sprite {
+                custom_size: Vec2::new(160., 12.).into(),
+                color: Color::WHITE,
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .insert(Transform2::from_xy(0., -70.).with_depth((DepthLayer::Front, 0.)))
+        .insert(LoadingProgress);
 }
 
 fn loading_update(
@@ -58,8 +82,14 @@ fn loading_update(
     mut ev_dialogue_init: EventWriter<DialogueInitEvent>,
     mut state: ResMut<LoadingState>,
     mut text_query: Query<&mut Text, With<LoadingText>>,
+    mut progress_query: Query<&mut Transform2, With<LoadingProgress>>,
 ) {
     use bevy::asset::LoadState;
+    let progress = asset_library.load_progress(&asset_server);
+    for mut progress_transform in progress_query.iter_mut() {
+        progress_transform.scale.x = progress;
+        progress_transform.translation.x = -80. * (1. - progress);
+    }
     match asset_library.load_state(&asset_server) {
         LoadState::Failed => {
             for mut text in text_query.iter_mut() {
