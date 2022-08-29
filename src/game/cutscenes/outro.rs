@@ -25,11 +25,13 @@ pub struct OutroCutscene;
 
 impl Cutscene for OutroCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_timed_step(step1, 13.);
-        cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step2, 9.);
-        cutscene.add_timed_step(reset, 0.5);
-        cutscene.add_timed_step(step3, 9.);
+        cutscene.add_timed_step(step1, 12.5); // 13s
+        cutscene.add_timed_step(step1_fade_out, 0.5); // 1.5s fade
+        cutscene.add_timed_step(step2_start_audio, 1.0); // start audio during fade out
+
+        cutscene.add_timed_step(step2, 8.5); // 9s
+        cutscene.add_timed_step(step2_fade_out, 1.0);
+        cutscene.add_timed_step(step3, 9.); // 9
         cutscene.add_timed_step(end, 1.0);
         cutscene.add_quick_step(cleanup);
     }
@@ -72,7 +74,7 @@ fn init(
             }),
             ..Default::default()
         })
-        .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 0.)))
+        .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)))
         .insert(CutsceneText);
     commands.spawn().insert(
         AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro_music.clone())
@@ -108,12 +110,6 @@ fn image_move(mut query: Query<(&mut Transform2, &CutsceneImage)>, time: Res<Tim
     }
 }
 
-fn reset(mut screen_fade: ResMut<ScreenFade>, state: Res<OutroCutsceneState>) {
-    if !state.proceed {
-        screen_fade.fade_out(0.5);
-    }
-}
-
 fn end(
     mut screen_fade: ResMut<ScreenFade>,
     state: Res<OutroCutsceneState>,
@@ -144,17 +140,17 @@ fn step1(
     if !cutscenes.skipping() {
         commands
             .spawn_bundle(SpriteBundle {
-                texture: asset_library.cutscene_image_outro1.clone(),
+                texture: asset_library.cutscene_image_intro1.clone(),
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(-50., -20.)
-                    .with_scale(Vec2::ONE * 5.5)
+                Transform2::from_xy(200., -50.)
+                    .with_scale(Vec2::ONE * 0.65)
                     .with_depth((DepthLayer::Entity, 0.0))
                     .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(5., 5.),
+                velocity: Vec2::new(-6., -6.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro1.clone())
@@ -162,9 +158,32 @@ fn step1(
             );
     }
 }
+fn step1_fade_out(mut screen_fade: ResMut<ScreenFade>, state: Res<OutroCutsceneState>) {
+    if !state.proceed {
+        screen_fade.fade_out(1.5);
+    }
+}
+
+fn step2_start_audio(
+    mut query: Query<&mut Text, With<CutsceneText>>,
+    cutscenes: Res<Cutscenes>,
+    asset_library: Res<AssetLibrary>,
+    mut commands: Commands,
+) {
+    if let Ok(mut text) = query.get_single_mut() {
+        text.sections[0].value =
+            "Now he be raiding the coast with the most horrible noise known to mankind..."
+                .to_owned();
+    }
+    if !cutscenes.skipping() {
+        commands.spawn().insert(
+            AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro2.clone())
+                .as_playing(),
+        );
+    }
+}
 
 fn step2(
-    mut query: Query<&mut Text, With<CutsceneText>>,
     mut commands: Commands,
     mut screen_fade: ResMut<ScreenFade>,
     state: Res<OutroCutsceneState>,
@@ -172,12 +191,7 @@ fn step2(
     cutscenes: Res<Cutscenes>,
 ) {
     if !state.proceed {
-        screen_fade.fade_in(0.5);
-    }
-    if let Ok(mut text) = query.get_single_mut() {
-        text.sections[0].value =
-            "Now he be raiding the coast with the most horrible noise known to mankind..."
-                .to_owned();
+        screen_fade.fade_in(1.5);
     }
     if !cutscenes.skipping() {
         commands
@@ -186,18 +200,20 @@ fn step2(
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(-50., -20.)
-                    .with_scale(Vec2::ONE * 5.5)
-                    .with_depth((DepthLayer::Entity, 0.1))
+                Transform2::from_xy(0., -50.)
+                    .with_scale(Vec2::ONE * 0.42)
+                    .with_depth((DepthLayer::Entity, 0.4))
                     .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(5., 5.),
-            })
-            .insert(
-                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro2.clone())
-                    .as_playing(),
-            );
+                velocity: Vec2::new(0., -15.),
+            });
+    }
+}
+
+fn step2_fade_out(mut screen_fade: ResMut<ScreenFade>, state: Res<OutroCutsceneState>) {
+    if !state.proceed {
+        screen_fade.fade_out(1.0);
     }
 }
 
@@ -210,26 +226,27 @@ fn step3(
     cutscenes: Res<Cutscenes>,
 ) {
     if !state.proceed {
-        screen_fade.fade_in(0.5);
+        screen_fade.fade_in(1.0);
     }
     if let Ok(mut text) = query.get_single_mut() {
         text.sections[0].value =
-            "But that is another tale. Buy Ol' Nipper here another jug o' rum and I'll yapper until the sunrise! Har-har!".to_owned();
+            "Buy Ol' Nipper here another jug o' rum and I'll yapper until the sunrise! Har-har!"
+                .to_owned();
     }
     if !cutscenes.skipping() {
         commands
             .spawn_bundle(SpriteBundle {
-                texture: asset_library.cutscene_image_outro3.clone(),
+                texture: asset_library.cutscene_image_intro1.clone(),
                 ..Default::default()
             })
             .insert(
-                Transform2::from_xy(-50., -20.)
-                    .with_scale(Vec2::ONE * 5.5)
-                    .with_depth((DepthLayer::Entity, 0.3))
+                Transform2::from_xy(-150., -100.)
+                    .with_scale(Vec2::ONE * 0.65)
+                    .with_depth((DepthLayer::Entity, 0.5))
                     .without_pixel_perfect(),
             )
             .insert(CutsceneImage {
-                velocity: Vec2::new(5., 5.),
+                velocity: Vec2::new(8., 6.),
             })
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro3.clone())
