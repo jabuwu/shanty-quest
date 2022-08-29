@@ -4,8 +4,8 @@ use self::{
     plank::{PlankQuest, PlankQuestStage},
     ringo::{RingoQuest, RingoQuestStage},
 };
-use crate::common::prelude::*;
 use crate::game::prelude::*;
+use crate::{common::prelude::*, DEV_BUILD};
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
@@ -436,13 +436,15 @@ pub fn quests_skip(
     mut player_query: Query<&mut Transform2, With<Player>>,
     app_state: Res<State<AppState>>,
 ) {
+    if !DEV_BUILD {
+        return;
+    }
     if input.just_pressed(KeyCode::P) {
         game_state.skill_points += 1;
     }
     if *app_state.current() != AppState::Overworld {
         return;
     }
-    // TODO: remove debug
     if input.just_pressed(KeyCode::F2) {
         game_state.quests.active_quest = Quest::End;
         game_state.quests.talked_to_barkeep = true;

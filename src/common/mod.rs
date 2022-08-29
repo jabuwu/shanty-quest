@@ -1,4 +1,4 @@
-use crate::{common::prelude::*, game::prelude::BoatSystems};
+use crate::{common::prelude::*, game::prelude::BoatSystems, DEV_BUILD};
 use audio_plus::AudioPlusPlugin;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
@@ -40,8 +40,9 @@ impl Plugin for CommonPlugin {
 }
 
 fn asset_hot_reloading(asset_server: Res<AssetServer>) {
-    // TODO: remove debug
-    asset_server.watch_for_changes().unwrap();
+    if DEV_BUILD {
+        asset_server.watch_for_changes().unwrap();
+    }
 }
 
 fn nan_fix(mut query: Query<&mut Transform2>) {

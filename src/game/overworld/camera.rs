@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use crate::DEV_BUILD;
 use bevy::prelude::*;
 
 const CAMERA_SIZE: Vec2 = Vec2::new(1280., 768.);
@@ -69,8 +70,8 @@ impl OverworldCamera {
             let mut correction = Vec2::ZERO;
             let screen_left = self.arena.0.x - self.arena.1.x - CAMERA_SIZE.x * 0.5 + 150.;
             let screen_right = self.arena.0.x + self.arena.1.x + CAMERA_SIZE.x * 0.5 - 150.;
-            let screen_bottom = self.arena.0.y - self.arena.1.x - CAMERA_SIZE.y * 0.5 + 150.;
-            let screen_top = self.arena.0.y + self.arena.1.x + CAMERA_SIZE.y * 0.5 - 150.;
+            let screen_bottom = self.arena.0.y - self.arena.1.y - CAMERA_SIZE.y * 0.5 + 150.;
+            let screen_top = self.arena.0.y + self.arena.1.y + CAMERA_SIZE.y * 0.5 - 150.;
             if translation.x < screen_left {
                 correction.x = screen_left - translation.x;
             }
@@ -112,9 +113,10 @@ fn overworld_camera_update(
     } else {
         None
     };
-    // TODO: remove debug
-    if input.just_pressed(KeyCode::F3) {
-        overworld_camera.zoom_out = !overworld_camera.zoom_out;
+    if DEV_BUILD {
+        if input.just_pressed(KeyCode::F3) {
+            overworld_camera.zoom_out = !overworld_camera.zoom_out;
+        }
     }
     if let Some(player_position) = player_position {
         let mut position = player_position;

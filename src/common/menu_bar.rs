@@ -2,6 +2,8 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use std::collections::HashMap;
 
+use crate::DEV_BUILD;
+
 pub struct MenuBarPlugin;
 
 impl Plugin for MenuBarPlugin {
@@ -36,8 +38,10 @@ pub fn menu_bar(
     mut menu_bar: ResMut<MenuBar>,
     input: Res<Input<KeyCode>>,
 ) {
-    if input.just_pressed(KeyCode::Grave) {
-        menu_bar.opened = !menu_bar.opened;
+    if DEV_BUILD {
+        if input.just_pressed(KeyCode::Grave) {
+            menu_bar.opened = !menu_bar.opened;
+        }
     }
     if menu_bar.opened {
         egui::TopBottomPanel::top("top_panel").show(egui_context.ctx_mut(), |ui| {

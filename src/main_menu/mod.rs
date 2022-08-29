@@ -292,7 +292,7 @@ fn menu_fade(
 ) {
     if menu_state.play && screen_fade.faded_out() {
         *game_state = GameState::default();
-        app_state.set(AppState::TownOutside).unwrap();
+        app_state.set(AppState::IntroCutscene).unwrap();
     }
 }
 

@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use crate::DEV_BUILD;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
@@ -90,9 +91,11 @@ fn overworld_init_after_ldtk(
 }
 
 fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
-    if input.just_pressed(KeyCode::Key0) {
-        app_state.set(AppState::MainMenu).unwrap();
-        input.reset(KeyCode::Key0);
+    if DEV_BUILD {
+        if input.just_pressed(KeyCode::Key0) {
+            app_state.set(AppState::MainMenu).unwrap();
+            input.reset(KeyCode::Key0);
+        }
     }
 }
 

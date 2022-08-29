@@ -1,5 +1,6 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
+use crate::DEV_BUILD;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
@@ -155,22 +156,23 @@ fn player_upgrade_attack(
     mut game_state: ResMut<GameState>,
     mut query: Query<&mut Health, With<Player>>,
 ) {
-    // TODO: remove debug
-    if input.just_pressed(KeyCode::F1) {
-        game_state.attacks = Attacks {
-            forward_cannons: 1,
-            shotgun_cannons: 1,
-            shockwave: 1,
-            bombs: 1,
-            kraken: 1,
-        };
-    }
-    if input.just_pressed(KeyCode::Key5) {
-        for mut health in query.iter_mut() {
-            health.value = 99999.;
-            health.max = 99999.;
-            game_state.health = 99999.;
-            game_state.health_max = 99999.;
+    if DEV_BUILD {
+        if input.just_pressed(KeyCode::F1) {
+            game_state.attacks = Attacks {
+                forward_cannons: 1,
+                shotgun_cannons: 1,
+                shockwave: 1,
+                bombs: 1,
+                kraken: 1,
+            };
+        }
+        if input.just_pressed(KeyCode::Key5) {
+            for mut health in query.iter_mut() {
+                health.value = 99999.;
+                health.max = 99999.;
+                game_state.health = 99999.;
+                game_state.health_max = 99999.;
+            }
         }
     }
 }
