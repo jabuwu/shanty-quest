@@ -142,7 +142,7 @@ fn experience_ui_spawn(
                                 text: Text::from_section(
                                     "",
                                     TextStyle {
-                                        font: asset_library.font_default.clone(),
+                                        font: asset_library.font_bold.clone(),
                                         font_size: EXPERIENCE_UI_SKILLPOINT_TEXT_FONT_SIZE,
                                         color: Color::WHITE,
                                     },
