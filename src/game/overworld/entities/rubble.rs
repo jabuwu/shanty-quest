@@ -28,8 +28,8 @@ fn rubble_spawn(
 ) {
     for event in ev_spawn.iter() {
         let entity = commands
-            .spawn_bundle(TransformBundle::default())
-            .insert_bundle(VisibilityBundle::default())
+            .spawn(TransformBundle::default())
+            .insert(VisibilityBundle::default())
             .insert(Transform2::from_translation(event.position))
             .insert(Rubble)
             .insert(Health::new(1.))
@@ -52,7 +52,7 @@ fn rubble_spawn(
             })
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.sprite_rubble.clone(),
                         ..Default::default()
                     })

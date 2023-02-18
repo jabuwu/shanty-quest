@@ -13,7 +13,7 @@ impl Plugin for ThreatLevelPlugin {
     }
 }
 
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Resource)]
 pub enum ThreatLevel {
     #[default]
     None,

@@ -58,7 +58,7 @@ fn forward_cannons_fire(
         if forward_cannons.shoot {
             let stats = forward_cannons.level.stats();
             let audio_entity = commands
-                .spawn_bundle(Transform2Bundle {
+                .spawn(Transform2Bundle {
                     transform2: Transform2::new(),
                     ..Default::default()
                 })
@@ -80,7 +80,7 @@ fn forward_cannons_fire(
             let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
             scale *= stats.scale;
             commands
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     sprite: Sprite {
                         color: Color::BLACK,
                         ..Default::default()

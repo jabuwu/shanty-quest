@@ -74,7 +74,7 @@ fn bombs_fire(
         if bombs.shoot {
             let stats = bombs.level.stats();
             commands
-                .spawn_bundle(Transform2Bundle {
+                .spawn(Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),
@@ -100,7 +100,7 @@ fn bombs_fire(
                         + rand::random::<f32>() * (stats.velocity_max - stats.velocity_min))
                     + boat.movement.clamp(Vec2::NEG_ONE, Vec2::ONE) * 150.;
                 commands
-                    .spawn_bundle(SpriteSheetBundle {
+                    .spawn(SpriteSheetBundle {
                         texture_atlas: asset_library.sprite_bomb_atlas.clone(),
                         ..Default::default()
                     })
@@ -120,7 +120,7 @@ fn bombs_fire(
                     });
             }
             commands
-                .spawn_bundle(TransformBundle::default())
+                .spawn(TransformBundle::default())
                 .insert(Transform2::from_translation(
                     global_transform.translation().truncate(),
                 ))
@@ -152,7 +152,7 @@ fn bomb_move(
         if bomb.life_time < 0. {
             commands.entity(entity).despawn();
             commands
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(150., 150.).into(),
                         ..Default::default()
@@ -179,7 +179,7 @@ fn bomb_move(
                 .insert(YDepth::default())
                 .insert(TimeToLive { seconds: 0.05 });
             commands
-                .spawn_bundle(TransformBundle::default())
+                .spawn(TransformBundle::default())
                 .insert(Transform2::from_translation(
                     global_transform.translation().truncate(),
                 ))

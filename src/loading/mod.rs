@@ -2,7 +2,7 @@ use crate::common::prelude::*;
 use asset_struct::AssetStruct;
 use bevy::prelude::*;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 struct LoadingState {
     fading: bool,
 }
@@ -32,9 +32,9 @@ fn loading_init(
     asset_library.load_assets(&asset_server);
     asset_library.create_texture_atlases(texture_atlas_assets.as_mut());
     asset_library.create_sound_effects();
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     commands
-        .spawn_bundle(Text2dBundle {
+        .spawn(Text2dBundle {
             text: Text::from_section(
                 "Loading".to_owned(),
                 TextStyle {
@@ -52,7 +52,7 @@ fn loading_init(
         .insert(Transform2::new().with_depth((DepthLayer::Front, 0.)))
         .insert(LoadingText);
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(160., 12.).into(),
                 color: Color::BLACK,
@@ -62,7 +62,7 @@ fn loading_init(
         })
         .insert(Transform2::from_xy(0., -70.).with_depth((DepthLayer::Front, 0.)));
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(160., 12.).into(),
                 color: Color::WHITE,

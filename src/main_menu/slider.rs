@@ -25,13 +25,13 @@ fn volume_slider_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::from_xy(41., -312.).without_pixel_perfect())
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.menu_slider_back.clone(),
                         ..Default::default()
                     })
@@ -41,7 +41,7 @@ fn volume_slider_spawn(
                             .with_depth((DepthLayer::Front, 0.5)),
                     );
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.menu_slider_knob.clone(),
                         ..Default::default()
                     })
@@ -59,7 +59,7 @@ fn volume_slider_spawn(
                         ..Default::default()
                     });
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.menu_slider_icon.clone(),
                         ..Default::default()
                     })
@@ -70,7 +70,7 @@ fn volume_slider_spawn(
                     );
             });
         commands
-            .spawn_bundle(Text2dBundle {
+            .spawn(Text2dBundle {
                 text: Text::from_section(
                     "change volume anytime with O/P",
                     TextStyle {
@@ -103,7 +103,7 @@ fn volume_slider_update(
     for (mut transform, clickable) in query.iter_mut() {
         if clickable.just_clicked() {
             commands
-                .spawn()
+                .spawn_empty()
                 .insert(
                     AudioPlusSource::new(asset_library.sound_effects.sfx_menu_button_click.clone())
                         .as_playing(),
@@ -112,7 +112,7 @@ fn volume_slider_update(
         }
         if clickable.just_released() {
             commands
-                .spawn()
+                .spawn_empty()
                 .insert(
                     AudioPlusSource::new(asset_library.sound_effects.sfx_audio_preview.clone())
                         .as_playing(),

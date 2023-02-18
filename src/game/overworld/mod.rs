@@ -61,19 +61,19 @@ fn overworld_init(
     ev_overworld_enter.send_default();
     *overworld_camera = OverworldCamera::default();
     commands
-        .spawn_bundle(Camera2dBundle::default())
+        .spawn(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     ev_player_spawn.send_default();
     ev_world_load.send_default();
     commands
-        .spawn()
+        .spawn_empty()
         .insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_ambient.clone())
                 .as_looping(),
         )
         .insert(WorldAmbienceSound);
     commands
-        .spawn()
+        .spawn_empty()
         .insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_music.clone())
                 .as_looping(),

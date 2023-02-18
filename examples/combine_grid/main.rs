@@ -9,7 +9,7 @@ fn random_color() -> Color {
     )
 }
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 struct State {
     combiner: Option<GridCombiner>,
 }
@@ -25,7 +25,7 @@ fn main() {
 }
 
 fn init(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 }
 
 fn draw_combiner(mut commands: Commands, mut state: ResMut<State>) {
@@ -38,7 +38,7 @@ fn draw_combiner(mut commands: Commands, mut state: ResMut<State>) {
         ));
     }
     for point in combiner.points().iter() {
-        commands.spawn_bundle(SpriteBundle {
+        commands.spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: (Vec2::ONE * 16.).into(),
                 color: Color::RED,
@@ -59,7 +59,7 @@ fn draw_combined(mut commands: Commands, mut state: ResMut<State>, input: Res<In
             let rects = combiner.combine();
             for rect in rects.iter() {
                 let (pos, size) = rect.to_position_size();
-                commands.spawn_bundle(SpriteBundle {
+                commands.spawn(SpriteBundle {
                     sprite: Sprite {
                         custom_size: (size * 16.).into(),
                         color: random_color(),

@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 use super::TownAmbience;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct OutsideState {
     leave: OutsideLeave,
 }
@@ -80,22 +80,22 @@ fn outside_init(
     screen_fade.fade_in(0.5);
     *state = OutsideState::default();
     commands
-        .spawn_bundle(Camera2dBundle::default())
+        .spawn(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     commands
-        .spawn()
+        .spawn_empty()
         .insert(AudioPlusSource::new(
             asset_library.sound_effects.sfx_town_outside_hover.clone(),
         ))
         .insert(HoverSound);
     commands
-        .spawn()
+        .spawn_empty()
         .insert(AudioPlusSource::new(
             asset_library.sound_effects.sfx_town_outside_click.clone(),
         ))
         .insert(ClickSound);
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: asset_library.sprite_town_bg.clone(),
             ..Default::default()
         })
@@ -105,11 +105,11 @@ fn outside_init(
                 .with_scale(Vec2::ONE * 0.5),
         );
     commands
-        .spawn_bundle(VisibilityBundle {
+        .spawn(VisibilityBundle {
             visibility: Visibility { is_visible: false },
             ..Default::default()
         })
-        .insert_bundle(TransformBundle::default())
+        .insert(TransformBundle::default())
         .insert(Transform2::from_xy(-493., -84.))
         .insert(ClickableItem {
             click_priority: 1,
@@ -121,7 +121,7 @@ fn outside_init(
         }))
         .with_children(|parent| {
             parent
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     texture: asset_library.sprite_town_tavern_outline.clone(),
                     ..Default::default()
                 })
@@ -130,11 +130,11 @@ fn outside_init(
                 );
         });
     commands
-        .spawn_bundle(VisibilityBundle {
+        .spawn(VisibilityBundle {
             visibility: Visibility { is_visible: false },
             ..Default::default()
         })
-        .insert_bundle(TransformBundle::default())
+        .insert(TransformBundle::default())
         .insert(Transform2::from_xy(369., 0.))
         .insert(ClickableItem {
             click_priority: 0,
@@ -146,7 +146,7 @@ fn outside_init(
         }))
         .with_children(|parent| {
             parent
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     texture: asset_library.sprite_town_mayor_outline.clone(),
                     ..Default::default()
                 })
@@ -155,11 +155,11 @@ fn outside_init(
                 );
         });
     commands
-        .spawn_bundle(VisibilityBundle {
+        .spawn(VisibilityBundle {
             visibility: Visibility { is_visible: false },
             ..Default::default()
         })
-        .insert_bundle(TransformBundle::default())
+        .insert(TransformBundle::default())
         .insert(Transform2::from_xy(-229., 72.))
         .insert(ClickableItem {
             click_priority: 0,
@@ -171,7 +171,7 @@ fn outside_init(
         }))
         .with_children(|parent| {
             parent
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     texture: asset_library.sprite_town_concert_hall_outline.clone(),
                     ..Default::default()
                 })
@@ -180,7 +180,7 @@ fn outside_init(
                 );
         });
     commands
-        .spawn_bundle(Text2dBundle {
+        .spawn(Text2dBundle {
             text: Text::from_section(
                 "Exit Town".to_owned(),
                 TextStyle {
@@ -205,7 +205,7 @@ fn outside_init(
         })
         .insert(Transform2::from_xy(470., -330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_EXIT));
     commands
-        .spawn_bundle(Text2dBundle {
+        .spawn(Text2dBundle {
             text: Text::from_section(
                 game_state.town.name.clone(),
                 TextStyle {
@@ -223,7 +223,7 @@ fn outside_init(
         .insert(Transform2::from_xy(0., 330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_NAME));
 
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: asset_library.sprite_town_tavern_notify.clone(),
             visibility: Visibility { is_visible: false },
             ..Default::default()
@@ -240,7 +240,7 @@ fn outside_init(
         });
 
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: asset_library.sprite_town_mayor_notify.clone(),
             visibility: Visibility { is_visible: false },
             ..Default::default()
@@ -257,7 +257,7 @@ fn outside_init(
         });
 
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: asset_library.sprite_town_concert_hall_notify.clone(),
             visibility: Visibility { is_visible: false },
             ..Default::default()
@@ -398,8 +398,7 @@ fn outside_leave(
 
 fn outside_pulsing_icons(mut query: Query<(&mut Transform2, &PulsingIcon)>, time: Res<Time>) {
     for (mut transform, icon) in query.iter_mut() {
-        transform.scale =
-            icon.scale + (Vec2::ONE * 0.05 * (time.time_since_startup().as_secs_f32() * 2.).sin());
+        transform.scale = icon.scale + (Vec2::ONE * 0.05 * (time.elapsed_seconds() * 2.).sin());
     }
 }
 

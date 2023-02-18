@@ -30,7 +30,7 @@ pub enum DavyQuestStage {
     Dialogue2,
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct Davy1Cutscene {
     pub boat: Option<Entity>,
     pub from: Vec2,
@@ -66,7 +66,7 @@ fn davy1_cleanup(mut game_state: ResMut<GameState>) {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct Davy2Cutscene {
     pub boat: Option<Entity>,
     pub from: Vec2,

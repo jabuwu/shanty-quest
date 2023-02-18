@@ -40,7 +40,7 @@ fn player_spawn(
 ) {
     for _ in ev_spawn.iter() {
         let entity = commands
-            .spawn()
+            .spawn_empty()
             .insert(Player {
                 disabled: false,
                 invincibility: 0.,
@@ -215,7 +215,7 @@ fn player_damage(
                     health.damage(event.damage);
                     game_state.health = health.value;
                     let sound = commands
-                        .spawn_bundle(Transform2Bundle::default())
+                        .spawn(Transform2Bundle::default())
                         .insert(
                             AudioPlusSource::new(
                                 asset_library

@@ -31,13 +31,13 @@ fn objective_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(1., 90.).into(),
                             color: Color::rgba(0., 0., 0., 0.36),
@@ -52,7 +52,7 @@ fn objective_spawn(
                     )
                     .insert(ObjectiveBackground);
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             ..Default::default()
                         },
@@ -67,7 +67,7 @@ fn objective_spawn(
                     )
                     .insert(ObjectiveHud);
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             "",
                             TextStyle {

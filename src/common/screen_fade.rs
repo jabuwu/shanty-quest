@@ -16,6 +16,7 @@ impl Plugin for ScreenFadePlugin {
     }
 }
 
+#[derive(Resource)]
 pub struct ScreenFade {
     enabled: bool,
     opacity: f32,
@@ -64,7 +65,7 @@ struct ScreenFadeComp;
 
 fn screen_fade_init(mut commands: Commands) {
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(50000., 50000.).into(),
                 color: Color::BLACK,

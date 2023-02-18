@@ -23,7 +23,7 @@ impl AddGlobalState for App {
 #[derive(Component)]
 pub struct Persistent;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct StateTime<T>
 where
     T: Resource,

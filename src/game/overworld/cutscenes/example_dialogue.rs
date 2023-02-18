@@ -1,7 +1,7 @@
 use crate::common::prelude::*;
 use bevy::prelude::*;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct ExampleDialogueCutsceneState;
 
 pub struct ExampleDialogueCutscenePlugin;
@@ -13,7 +13,7 @@ impl Plugin for ExampleDialogueCutscenePlugin {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct ExampleDialogueCutscene {
     pub boat: Option<Entity>,
     pub from: Vec2,

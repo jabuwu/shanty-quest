@@ -31,7 +31,7 @@ fn dash_attack_fire(
     for (mut dash_attack, boat, entity, global_transform) in query.iter_mut() {
         if dash_attack.shoot {
             let audio_entity = commands
-                .spawn_bundle(Transform2Bundle {
+                .spawn(Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),

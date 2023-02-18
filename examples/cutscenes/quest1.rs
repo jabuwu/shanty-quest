@@ -9,7 +9,7 @@ impl Plugin for Q1A1Plugin {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct Q1A1Cutscene {
     pub birdup: f32,
     pub time: f32,

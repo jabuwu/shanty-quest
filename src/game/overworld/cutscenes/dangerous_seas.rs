@@ -9,7 +9,7 @@ impl Plugin for DangerousSeasCutscenePlugin {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct DangerousSeasCutscene {
     pub boat: Option<Entity>,
     pub from: Vec2,

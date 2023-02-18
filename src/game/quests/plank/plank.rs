@@ -69,7 +69,7 @@ fn plank_spawn(
         let stats = plank_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
-            .spawn()
+            .spawn_empty()
             .insert(Plank {
                 target: world_locations.get_single_position("PlankMoveTo"),
                 angle: 0.,

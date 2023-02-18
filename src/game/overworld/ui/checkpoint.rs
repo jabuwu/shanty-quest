@@ -22,14 +22,14 @@ fn checkpoint_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
             .insert(TimeToLive { seconds: 1.5 })
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(400., 90.).into(),
                             color: Color::rgba(0., 0., 0., 0.36),
@@ -43,7 +43,7 @@ fn checkpoint_spawn(
                             .without_pixel_perfect(),
                     );
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             "Checkpoint",
                             TextStyle {

@@ -28,7 +28,7 @@ pub enum JagerossaQuestStage {
     Dialogue2,
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct Jagerossa1Cutscene {
     pub boat: Option<Entity>,
     pub from: Vec2,
@@ -64,7 +64,7 @@ fn jagerossa1_cleanup(mut game_state: ResMut<GameState>) {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct Jagerossa2Cutscene {
     pub boat: Option<Entity>,
     pub from: Vec2,

@@ -1,3 +1,5 @@
+use bevy::prelude::*;
+
 const CHANNEL_COUNT: usize = 2;
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum AudioPlusMixerChannel {
@@ -6,6 +8,7 @@ pub enum AudioPlusMixerChannel {
     Sfx = 2,
 }
 
+#[derive(Resource)]
 pub struct AudioPlusMixer {
     master_volume: f32,
     volumes: [f32; CHANNEL_COUNT],

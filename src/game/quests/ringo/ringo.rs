@@ -78,7 +78,7 @@ fn ringo_spawn(
         let stats = ringo_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
-            .spawn()
+            .spawn_empty()
             .insert(Ringo {
                 target: world_locations.get_single_position("RingoMoveTo"),
                 angle: 0.,

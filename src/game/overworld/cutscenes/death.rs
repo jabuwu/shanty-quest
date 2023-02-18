@@ -12,7 +12,7 @@ impl Plugin for DeathCutscenePlugin {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct DeathCutscene;
 
 impl Cutscene for DeathCutscene {
@@ -29,7 +29,7 @@ fn init1(
 ) {
     screen_fade.fade_out(0.3);
     commands
-        .spawn_bundle(Transform2Bundle::default())
+        .spawn(Transform2Bundle::default())
         .insert(
             AudioPlusSource::new(
                 asset_library

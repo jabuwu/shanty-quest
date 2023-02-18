@@ -17,7 +17,7 @@ impl Plugin for DialoguePlugin {
 #[derive(Default, Clone, Copy)]
 pub struct DialogueInitEvent;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct Dialogue {
     entries: VecDeque<DialogueEntry>,
     time: f32,
@@ -109,7 +109,7 @@ fn dialogue_init(
 ) {
     for _ in ev_dialogue_init.iter() {
         commands
-            .spawn_bundle(SpriteBundle {
+            .spawn(SpriteBundle {
                 sprite: Sprite {
                     color: Color::rgba(1., 1., 1., 0.),
                     ..Default::default()
@@ -122,18 +122,18 @@ fn dialogue_init(
             .insert(Persistent)
             .insert(FollowCamera { offset: Vec2::ZERO });
         commands
-            .spawn_bundle(Transform2Bundle {
+            .spawn(Transform2Bundle {
                 transform2: Transform2::from_xy(0., -240.),
                 ..Default::default()
             })
-            .insert_bundle(VisibilityBundle::default())
+            .insert(VisibilityBundle::default())
             .insert(FollowCamera {
                 offset: Vec2::new(0., -240.),
             })
             .insert(Persistent)
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         visibility: Visibility { is_visible: false },
                         texture: asset_library.sprite_dialogue_bg.clone(),
                         ..Default::default()
@@ -148,7 +148,7 @@ fn dialogue_init(
                         asset_library.sound_effects.sfx_dialogue_proceed.clone(),
                     ));
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             "",
                             TextStyle {
@@ -169,7 +169,7 @@ fn dialogue_init(
                         asset_library.sound_effects.sfx_dialogue_start.clone(),
                     ));
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             "",
                             TextStyle {
@@ -190,7 +190,7 @@ fn dialogue_init(
                         asset_library.sound_effects.sfx_dialogue_repeat.clone(),
                     ));
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_jagerossa.clone(),
                         visibility: Visibility { is_visible: false },
                         ..Default::default()
@@ -202,7 +202,7 @@ fn dialogue_init(
                         portrait: DialoguePortrait::Jagerossa,
                     });
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_elvis.clone(),
                         visibility: Visibility { is_visible: false },
                         ..Default::default()
@@ -214,7 +214,7 @@ fn dialogue_init(
                         portrait: DialoguePortrait::Plank,
                     });
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_bowie.clone(),
                         visibility: Visibility { is_visible: false },
                         ..Default::default()
@@ -226,7 +226,7 @@ fn dialogue_init(
                         portrait: DialoguePortrait::Davy,
                     });
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_ringo.clone(),
                         visibility: Visibility { is_visible: false },
                         ..Default::default()
@@ -238,7 +238,7 @@ fn dialogue_init(
                         portrait: DialoguePortrait::Ringo,
                     });
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_barkeep.clone(),
                         visibility: Visibility { is_visible: false },
                         ..Default::default()
@@ -250,7 +250,7 @@ fn dialogue_init(
                         portrait: DialoguePortrait::Barkeep,
                     });
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_governor.clone(),
                         visibility: Visibility { is_visible: false },
                         ..Default::default()

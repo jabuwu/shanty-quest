@@ -50,14 +50,14 @@ fn ldtk_spawn(mut ev_spawn: EventReader<LdtkSpawnEvent>, mut commands: Commands)
         let mut ldtk_entity = if let Some(entity) = event.entity {
             commands.entity(entity)
         } else {
-            commands.spawn()
+            commands.spawn_empty()
         };
         ldtk_entity
-            .insert_bundle(Transform2Bundle {
+            .insert(Transform2Bundle {
                 transform2: Transform2::from_translation(event.position),
                 ..Default::default()
             })
-            .insert_bundle(VisibilityBundle::default())
+            .insert(VisibilityBundle::default())
             .insert(Ldtk {
                 asset: event.asset.clone(),
                 state: LdtkState::Unloaded,
@@ -91,20 +91,22 @@ fn ldtk_load(
                         Vec2::new(tileset.tile_grid_size as f32, tileset.tile_grid_size as f32),
                         (tileset.px_wid / tileset.tile_grid_size) as usize,
                         (tileset.px_hei / tileset.tile_grid_size) as usize,
+                        None,
+                        None,
                     );
                     let texture_atlas_handle = texture_atlas_assets.add(texture_atlas);
                     texture_atlases.insert(tileset.uid as i32, texture_atlas_handle);
                 }
                 for level in ldtk_map.levels.iter() {
                     let level_entity = commands
-                        .spawn_bundle(Transform2Bundle {
+                        .spawn(Transform2Bundle {
                             transform2: Transform2::from_xy(
                                 level.world_x as f32,
                                 level.world_y as f32 * -1.0,
                             ),
                             ..Default::default()
                         })
-                        .insert_bundle(VisibilityBundle::default())
+                        .insert(VisibilityBundle::default())
                         .id();
                     commands.entity(map_entity).push_children(&[level_entity]);
                     for (idx, layer) in level
@@ -119,14 +121,14 @@ fn ldtk_load(
                             continue;
                         }
                         let layer_entity = commands
-                            .spawn_bundle(Transform2Bundle {
+                            .spawn(Transform2Bundle {
                                 transform2: Transform2::from_xy(0.0, 0.0).with_depth((
                                     DepthLayer::Environment,
                                     0.5 - idx as f32 / 100.0,
                                 )),
                                 ..Default::default()
                             })
-                            .insert_bundle(VisibilityBundle::default())
+                            .insert(VisibilityBundle::default())
                             .id();
                         commands.entity(level_entity).push_children(&[layer_entity]);
                         match layer.layer_instance_type.as_str() {
@@ -210,7 +212,7 @@ fn ldtk_load(
                     pos *= 100.;
                     size *= 100.;
                     commands
-                        .spawn_bundle(TransformBundle::default())
+                        .spawn(TransformBundle::default())
                         .insert(
                             Transform2::from_translation(pos).with_depth((DepthLayer::Front, 1.)),
                         )
@@ -243,7 +245,7 @@ fn ldtk_spawn_tile(
         _ => (),
     }
     commands
-        .spawn_bundle(SpriteSheetBundle {
+        .spawn(SpriteSheetBundle {
             sprite,
             texture_atlas: texture_atlases[&tileset_uid].clone(),
             ..Default::default()

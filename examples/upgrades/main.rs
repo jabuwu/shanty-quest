@@ -9,15 +9,17 @@ pub struct Editable;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Upgrades".to_string(),
-            width: 1280.,
-            height: 720.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "Upgrades".to_string(),
+                width: 1280.,
+                height: 720.,
+                resizable: false,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(CommonPlugin)
         .init_resource::<GameState>()
         .add_plugin(UpgradesPlugin)
@@ -35,6 +37,6 @@ pub fn init(
     asset_library.load_assets(&asset_server);
     asset_library.create_texture_atlases(texture_atlases.as_mut());
     asset_library.create_sound_effects();
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     ev_upgrades_spawn.send_default();
 }

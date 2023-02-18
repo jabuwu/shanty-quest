@@ -7,8 +7,8 @@ edition = "2021"
 resolver = "2"
 
 [dependencies]
-bevy = "0.8.0"
-bevy_kira_audio = "0.12.0"
+bevy = "0.9.1"
+bevy_kira_audio = "0.13.0"
 rand = "0.8.5"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

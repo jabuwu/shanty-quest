@@ -45,11 +45,11 @@ fn boss_healthbar_spawn(
             commands.entity(entity).despawn_recursive();
         }
         commands
-            .spawn_bundle(VisibilityBundle {
+            .spawn(VisibilityBundle {
                 visibility: Visibility { is_visible: false },
                 ..Default::default()
             })
-            .insert_bundle(TransformBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
             .insert(BossHealthbar {
@@ -57,7 +57,7 @@ fn boss_healthbar_spawn(
             })
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(250., 26.).into(),
                             color: Color::rgba(0., 0., 0., 0.9),
@@ -71,7 +71,7 @@ fn boss_healthbar_spawn(
                             .without_pixel_perfect(),
                     );
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             event.name.clone(),
                             TextStyle {
@@ -91,7 +91,7 @@ fn boss_healthbar_spawn(
                             .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME),
                     );
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(650., 30.).into(),
                             color: Color::BLACK,
@@ -105,7 +105,7 @@ fn boss_healthbar_spawn(
                             .without_pixel_perfect(),
                     );
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(650. - BORDER_SIZE, 30. - BORDER_SIZE).into(),
                             color: Color::RED,

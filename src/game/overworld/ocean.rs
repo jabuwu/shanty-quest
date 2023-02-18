@@ -42,10 +42,10 @@ fn ocean_spawn(
         let mut ocean_entity = if let Some(entity) = event.entity {
             commands.entity(entity)
         } else {
-            commands.spawn()
+            commands.spawn_empty()
         };
         ocean_entity
-            .insert_bundle(SpriteBundle {
+            .insert(SpriteBundle {
                 sprite: Sprite {
                     custom_size: Vec2::new(50000., 50000.).into(),
                     color: Color::rgb_u8(0, 167, 217),
@@ -75,8 +75,8 @@ fn ocean_spawn(
                         )
                     };
                     parent
-                        .spawn_bundle(Transform2Bundle::default())
-                        .insert_bundle(VisibilityBundle::default())
+                        .spawn(Transform2Bundle::default())
+                        .insert(VisibilityBundle::default())
                         .insert(OceanOverlay {
                             time: 0.,
                             wavey,
@@ -86,7 +86,7 @@ fn ocean_spawn(
                             for x in -10..=10 {
                                 for y in -10..=10 {
                                     parent
-                                        .spawn_bundle(SpriteBundle {
+                                        .spawn(SpriteBundle {
                                             sprite: Sprite {
                                                 custom_size: Vec2::new(OCEAN_WIDTH, OCEAN_HEIGHT)
                                                     .into(),

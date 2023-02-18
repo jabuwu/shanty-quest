@@ -27,13 +27,13 @@ fn health_aura_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(1280., 768.).into(),
                             color: Color::RED,
@@ -49,7 +49,7 @@ fn health_aura_spawn(
                     )
                     .insert(HealthAura { sides: true });
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(1280., 768.).into(),
                             color: Color::rgb(0.1, 0., 0.),
@@ -77,7 +77,7 @@ fn health_aura_update(
     } else {
         1.
     };
-    let pulse = 1. + (time.time_since_startup().as_secs_f32() * 3.).sin() * 0.3;
+    let pulse = 1. + (time.elapsed_seconds() * 3.).sin() * 0.3;
     for (mut sprite, aura) in query.iter_mut() {
         if aura.sides {
             let intensity = 1.0 - (health * 2.5).clamp(0., 1.);

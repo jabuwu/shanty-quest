@@ -28,7 +28,7 @@ pub struct CollisionQueryEntry {
     pub flags: u32,
 }
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct CollisionQuery {
     entries: Vec<CollisionQueryEntry>,
 }

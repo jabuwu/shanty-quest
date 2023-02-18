@@ -3,15 +3,17 @@ use jam::common::prelude::*;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Player".to_string(),
-            width: 1280.,
-            height: 720.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "Player".to_string(),
+                width: 1280.,
+                height: 720.,
+                resizable: false,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(CommonPlugin)
         .add_startup_system(init)
         .add_system(move_red)
@@ -24,9 +26,9 @@ pub struct Red;
 pub struct Blue;
 
 pub fn init(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(64., 64.).into(),
                 color: Color::RED,
@@ -38,7 +40,7 @@ pub fn init(mut commands: Commands) {
         .insert(Red)
         .insert(YDepth::default());
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(64., 64.).into(),
                 color: Color::BLUE,

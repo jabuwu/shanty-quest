@@ -28,13 +28,13 @@ fn town_marker_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             color: Color::rgba(1., 1., 1., 0.),
                             ..Default::default()
@@ -51,7 +51,7 @@ fn town_marker_spawn(
                     .insert(TownMarkerIcon)
                     .with_children(|parent| {
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 sprite: Sprite {
                                     color: Color::rgba(1., 1., 1., 0.),
                                     ..Default::default()

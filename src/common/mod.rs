@@ -1,4 +1,4 @@
-use crate::{common::prelude::*, game::prelude::BoatSystems, DEV_BUILD};
+use crate::{common::prelude::*, game::prelude::BoatSystems};
 use audio_plus::AudioPlusPlugin;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
@@ -36,15 +36,8 @@ impl Plugin for CommonPlugin {
             .add_plugin(volume_control::VolumeControlPlugin)
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
-            .add_startup_system(asset_hot_reloading)
             .add_system_to_stage(CoreStage::PreUpdate, nan_fix)
             .add_system(safe_to_state_change.after(BoatSystems::Spawn));
-    }
-}
-
-fn asset_hot_reloading(asset_server: Res<AssetServer>) {
-    if DEV_BUILD {
-        asset_server.watch_for_changes().unwrap();
     }
 }
 

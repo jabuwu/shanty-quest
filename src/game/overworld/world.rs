@@ -32,7 +32,7 @@ fn world_spawn(
         });
 
         commands
-            .spawn_bundle(Text2dBundle {
+            .spawn(Text2dBundle {
                 text: Text::from_section(
                     "Hold left mouse button to move!\nPress space to dash!\nPress F to start jamming!",
                     TextStyle {

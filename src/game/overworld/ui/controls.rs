@@ -35,21 +35,21 @@ fn controls_ui_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(Transform2Bundle {
+                    .spawn(Transform2Bundle {
                         transform2: Transform2::from_translation(CONTROLS_UI_POSITION)
                             .with_scale(Vec2::ONE * CONTROLS_UI_SCALE),
                         ..Default::default()
                     })
-                    .insert_bundle(VisibilityBundle::default())
+                    .insert(VisibilityBundle::default())
                     .with_children(|parent| {
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 texture: asset_library.sprite_controls_dash.clone(),
                                 ..Default::default()
                             })
@@ -60,7 +60,7 @@ fn controls_ui_spawn(
                             )
                             .insert(ControlsUiDash);
                         parent
-                            .spawn_bundle(SpriteSheetBundle {
+                            .spawn(SpriteSheetBundle {
                                 texture_atlas: asset_library.sprite_controls_jam_atlas.clone(),
                                 ..Default::default()
                             })
@@ -72,7 +72,7 @@ fn controls_ui_spawn(
                             .insert(ControlsUiJam)
                             .with_children(|parent| {
                                 parent
-                                    .spawn_bundle(SpriteBundle {
+                                    .spawn(SpriteBundle {
                                         texture: asset_library.sprite_controls_jam_key.clone(),
                                         ..Default::default()
                                     })
@@ -82,7 +82,7 @@ fn controls_ui_spawn(
                                     );
                             });
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 texture: asset_library.sprite_controls_map.clone(),
                                 visibility: Visibility { is_visible: false },
                                 ..Default::default()

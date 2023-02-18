@@ -10,6 +10,7 @@ use bevy_kira_audio::{AudioApp, AudioChannel, AudioControl, AudioInstance};
 macro_rules! channels {
     ( $( $x:ident ),* ) => {
         $(
+            #[derive(Resource)]
             pub struct $x;
         )*
         pub fn add_audio_channels(app: &mut App) {

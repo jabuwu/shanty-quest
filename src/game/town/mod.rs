@@ -34,7 +34,7 @@ fn town_ambience(
         state.last_playing = playing;
         if playing {
             commands
-                .spawn()
+                .spawn_empty()
                 .insert(
                     AudioPlusSource::new(asset_library.sound_effects.sfx_town_ambient.clone())
                         .as_looping(),
@@ -42,7 +42,7 @@ fn town_ambience(
                 .insert(Persistent)
                 .insert(TownAmbience);
             commands
-                .spawn()
+                .spawn_empty()
                 .insert(
                     AudioPlusSource::new(asset_library.sound_effects.sfx_town_music.clone())
                         .as_looping(),

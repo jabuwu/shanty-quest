@@ -12,7 +12,7 @@ impl Plugin for WorldLocationsPlugin {
 #[derive(Default, Clone)]
 pub struct WorldLocationsSpawnEvent;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct WorldLocations {
     positions: HashMap<String, Vec<WorldLocationRect>>,
 }

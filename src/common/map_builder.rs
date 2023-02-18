@@ -8,7 +8,7 @@ impl Plugin for MapBuilderPlugin {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct MapBuilder {
     pub tiles: Vec<Vec2>,
     pub labels: Vec<(Vec2, String)>,

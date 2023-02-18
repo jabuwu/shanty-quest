@@ -45,7 +45,7 @@ fn band_selection_spawn(
             size: Vec2::new(121., 129.),
         };
         commands
-            .spawn_bundle(SpriteBundle {
+            .spawn(SpriteBundle {
                 texture: asset_library.sprite_band_selection_bg.clone(),
                 ..Default::default()
             })
@@ -53,7 +53,7 @@ fn band_selection_spawn(
             .insert(BandSelection)
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: game_state.band_members[0]
                             .selection_active_image(asset_library.as_ref()),
                         ..Default::default()
@@ -66,7 +66,7 @@ fn band_selection_spawn(
                         shape: slot_shape.clone(),
                     });
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: game_state.band_members[1]
                             .selection_active_image(asset_library.as_ref()),
                         ..Default::default()
@@ -85,14 +85,14 @@ fn band_selection_spawn(
                         Transform2::from_xy(x, -115.).with_depth(DEPTH_LAYER_BAND_SELECTION_SLOT);
                     if game_state.member_in_band(member) {
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 texture: member.selection_inactive_image(asset_library.as_ref()),
                                 ..Default::default()
                             })
                             .insert(transform2);
                     } else if slot < game_state.band_unlocked_count {
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 texture: member.selection_active_image(asset_library.as_ref()),
                                 ..Default::default()
                             })
@@ -103,7 +103,7 @@ fn band_selection_spawn(
                             });
                     } else {
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 texture: asset_library.sprite_band_selection_slot_locked.clone(),
                                 ..Default::default()
                             })

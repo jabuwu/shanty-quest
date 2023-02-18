@@ -12,20 +12,19 @@ impl Plugin for TavernPlugin {
 }
 
 fn town_init(mut commands: Commands, asset_library: Res<AssetLibrary>, game_state: Res<GameState>) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     commands
-        .spawn_bundle(NodeBundle {
+        .spawn(NodeBundle {
             style: Style {
                 size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
                 justify_content: JustifyContent::Center,
                 position_type: PositionType::Absolute,
                 ..Default::default()
             },
-            color: Color::NONE.into(),
             ..Default::default()
         })
         .with_children(|parent| {
-            parent.spawn_bundle(TextBundle {
+            parent.spawn(TextBundle {
                 style: Style {
                     align_self: AlignSelf::Center,
                     position_type: PositionType::Relative,

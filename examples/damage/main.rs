@@ -12,15 +12,17 @@ pub struct Editable;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Damage".to_string(),
-            width: 1280.,
-            height: 720.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "Damage".to_string(),
+                width: 1280.,
+                height: 720.,
+                resizable: false,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(CommonPlugin)
         .add_plugin(CharacterControllerPlugin)
         .add_plugin(DamagePlugin)
@@ -49,9 +51,9 @@ pub fn init(
     mut ev_healthbar_spawn: EventWriter<HealthbarSpawnEvent>,
 ) {
     asset_library.load_assets(&asset_server);
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     let player_entity = commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(32., 32.).into(),
                 color: Color::GREEN,
@@ -90,7 +92,7 @@ pub fn init(
         let x = (100. + rand::random::<f32>() * 400.) * if rand::random() { 1. } else { -1. };
         let y = (100. + rand::random::<f32>() * 200.) * if rand::random() { 1. } else { -1. };
         let crate_entity = commands
-            .spawn_bundle(SpriteBundle {
+            .spawn(SpriteBundle {
                 sprite: Sprite {
                     custom_size: Vec2::new(20., 20.).into(),
                     color: Color::ORANGE,
@@ -140,7 +142,7 @@ fn player_control(
         if mouse_buttons.just_pressed(MouseButton::Left) {
             let velocity = (mouse.position - transform.translation).normalize() * 900.;
             commands
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(8., 8.).into(),
                         color: Color::BLACK,

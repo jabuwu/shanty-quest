@@ -65,7 +65,7 @@ fn davy_spawn(
         let stats = davy_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
-            .spawn()
+            .spawn_empty()
             .insert(Davy {
                 target: world_locations.get_single_position("DavyMoveTo"),
                 angle: 0.,

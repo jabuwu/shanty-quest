@@ -41,15 +41,17 @@ pub struct Editable;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Easings".to_string(),
-            width: 1280.,
-            height: 720.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "Easings".to_string(),
+                width: 1280.,
+                height: 720.,
+                resizable: false,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(CommonPlugin)
         .add_startup_system(init)
         .add_system(update)
@@ -69,17 +71,17 @@ pub fn init(
     asset_server: Res<AssetServer>,
 ) {
     asset_library.load_assets(&asset_server);
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     for (i, easing) in EASINGS.iter().enumerate() {
         let x = (i % 10) as f32 * 120. - 550.;
         let y = (i / 10) as f32 * -200. + 170.;
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(Transform2::from_xy(x, y))
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(16., 16.).into(),
                             color: Color::RED,
@@ -94,7 +96,7 @@ pub fn init(
                     })
                     .insert(Transform2::new());
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             format!("{:?}", *easing),
                             TextStyle {

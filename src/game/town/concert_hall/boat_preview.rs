@@ -36,11 +36,11 @@ fn boat_preview_spawn(
 ) {
     for _ in ev_boat_preview_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(Transform2::from_translation(PREVIEW_POSITION).with_scale(Vec2::ONE * 0.75))
             .with_children(|parent| {
-                let boat_entity = parent.spawn().insert(BoatPreview).id();
+                let boat_entity = parent.spawn_empty().insert(BoatPreview).id();
                 ev_boat_spawn.send(BoatSpawnEvent {
                     entity: Some(boat_entity),
                     position: Vec2::ZERO,
@@ -60,7 +60,7 @@ fn boat_preview_spawn(
                     knockback_resistance: 0.,
                     texture_atlas: asset_library.sprite_ship_purple_atlas.clone(),
                 });
-                let ocean_entity = parent.spawn().id();
+                let ocean_entity = parent.spawn_empty().id();
                 ev_ocean_spawn.send(OceanSpawnEvent {
                     entity: Some(ocean_entity),
                 });

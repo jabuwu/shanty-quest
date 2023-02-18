@@ -10,15 +10,17 @@ pub struct Editable;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Dialogue".to_string(),
-            width: 1280.,
-            height: 720.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.3, 0.3, 0.3)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "Dialogue".to_string(),
+                width: 1280.,
+                height: 720.,
+                resizable: false,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(CommonPlugin)
         .add_plugin(CharacterControllerPlugin)
         .add_startup_system(init)
@@ -38,7 +40,7 @@ pub fn init(
 ) {
     asset_library.load_assets(&asset_server);
     ev_dialogue_init.send_default();
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     dialogue.add_text(DialoguePortrait::None, "hi".to_owned());
     dialogue.add_text(
         DialoguePortrait::None,
@@ -50,7 +52,7 @@ pub fn init(
     dialogue.add_text(DialoguePortrait::Jagerossa, "4) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
     dialogue.add_text(DialoguePortrait::Jagerossa, "5) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(32., 32.).into(),
                 color: Color::GREEN,

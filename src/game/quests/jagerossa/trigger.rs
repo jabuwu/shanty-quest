@@ -25,7 +25,7 @@ fn jagerossa_trigger_world_spawn(
         let triggers = world_locations.get_multiple_rect("JagerossaTrigger");
         for trigger in triggers {
             commands
-                .spawn_bundle(TransformBundle::default())
+                .spawn(TransformBundle::default())
                 .insert(
                     Transform2::from_translation(trigger.position)
                         .with_depth((DepthLayer::Entity, 0.)),

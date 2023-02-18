@@ -35,10 +35,10 @@ fn town_spawn(
         let mut entity = if let Some(entity) = event.entity {
             commands.entity(entity)
         } else {
-            commands.spawn()
+            commands.spawn_empty()
         };
         entity
-            .insert_bundle(SpriteBundle {
+            .insert(SpriteBundle {
                 texture: asset_library.sprite_overworld_city.clone(),
                 ..Default::default()
             })
@@ -53,7 +53,7 @@ fn town_spawn(
             .insert(YDepth::default())
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             event.town.name.clone(),
                             TextStyle {

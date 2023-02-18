@@ -3,7 +3,7 @@ use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct UpgradesState {
     pub hovered: Option<UpgradesType>,
     pub preview_level: u32,
@@ -195,7 +195,7 @@ fn upgrades_spawn(
     for _ in ev_upgrades_spawn.iter() {
         *state = UpgradesState::default();
         commands
-            .spawn_bundle(SpriteBundle {
+            .spawn(SpriteBundle {
                 texture: asset_library.sprite_upgrades_bg.clone(),
                 ..Default::default()
             })
@@ -206,7 +206,7 @@ fn upgrades_spawn(
             )
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             "",
                             TextStyle {
@@ -226,7 +226,7 @@ fn upgrades_spawn(
                     )
                     .insert(UpgradesSkillPoints);
                 parent
-                    .spawn_bundle(Text2dBundle {
+                    .spawn(Text2dBundle {
                         text: Text::from_section(
                             "Level up to unlock additional skill points.",
                             TextStyle {
@@ -246,8 +246,8 @@ fn upgrades_spawn(
                             .with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
                     );
                 parent
-                    .spawn_bundle(Transform2Bundle::default())
-                    .insert_bundle(VisibilityBundle::default())
+                    .spawn(Transform2Bundle::default())
+                    .insert(VisibilityBundle::default())
                     .with_children(|parent| {
                         for i in 0..6 {
                             let row = (i / 2) as f32;
@@ -258,7 +258,7 @@ fn upgrades_spawn(
                             let display_info = upgrade_type.display_info(asset_library.as_ref());
                             let locked = upgrade_type.current_level(game_state.as_ref()) == 0;
                             parent
-                                .spawn_bundle(SpriteSheetBundle {
+                                .spawn(SpriteSheetBundle {
                                     texture_atlas: asset_library
                                         .sprite_upgrades_ability_bg_atlas
                                         .clone(),
@@ -283,7 +283,7 @@ fn upgrades_spawn(
                                 .with_children(|parent| {
                                     if !locked {
                                         parent
-                                            .spawn_bundle(SpriteBundle {
+                                            .spawn(SpriteBundle {
                                                 texture: display_info.texture.clone(),
                                                 ..Default::default()
                                             })
@@ -296,7 +296,7 @@ fn upgrades_spawn(
                                             .insert(Label(String::from(display_info.name)));
                                     }
                                     parent
-                                        .spawn_bundle(Text2dBundle {
+                                        .spawn(Text2dBundle {
                                             text: Text::from_section(
                                                 if locked { "Locked" } else { display_info.name },
                                                 TextStyle {
@@ -316,7 +316,7 @@ fn upgrades_spawn(
                                                 .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_TEXT),
                                         );
                                     parent
-                                        .spawn_bundle(SpriteSheetBundle {
+                                        .spawn(SpriteSheetBundle {
                                             texture_atlas: asset_library
                                                 .sprite_upgrades_button_atlas
                                                 .clone(),
@@ -358,7 +358,7 @@ fn upgrades_spawn(
                                                 }
                                             }
                                             parent
-                                                .spawn_bundle(SpriteBundle {
+                                                .spawn(SpriteBundle {
                                                     texture: asset_library
                                                         .sprite_upgrades_star
                                                         .clone(),
@@ -380,7 +380,7 @@ fn upgrades_spawn(
             });
         for y in 0..3 {
             commands
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(300., 40.).into(),
                         color: Color::rgba(0., 0., 0., 0.36),
@@ -396,7 +396,7 @@ fn upgrades_spawn(
                 .insert(UpgradesDescriptionBg { index: y })
                 .with_children(|parent| {
                     parent
-                        .spawn_bundle(Text2dBundle {
+                        .spawn(Text2dBundle {
                             text: Text::from_section(
                                 "",
                                 TextStyle {
@@ -501,7 +501,7 @@ fn upgrades_buttons(
             if game_state.skill_points != 0 {
                 game_state.skill_points -= 1;
                 commands
-                    .spawn()
+                    .spawn_empty()
                     .insert(
                         AudioPlusSource::new(asset_library.sound_effects.sfx_town_upgrade.clone())
                             .as_playing(),

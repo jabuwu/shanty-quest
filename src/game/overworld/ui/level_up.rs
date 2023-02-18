@@ -2,7 +2,7 @@ use crate::common::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 struct LevelUpState {
     last_spawn_time: f32,
 }
@@ -30,11 +30,11 @@ fn level_up_spawn(
     mut state: ResMut<LevelUpState>,
 ) {
     for _ in ev_spawn.iter() {
-        if time.time_since_startup().as_secs_f32() > state.last_spawn_time + 4.5 {
-            state.last_spawn_time = time.time_since_startup().as_secs_f32();
+        if time.elapsed_seconds() > state.last_spawn_time + 4.5 {
+            state.last_spawn_time = time.elapsed_seconds();
             commands
-                .spawn_bundle(VisibilityBundle::default())
-                .insert_bundle(TransformBundle::default())
+                .spawn(VisibilityBundle::default())
+                .insert(TransformBundle::default())
                 .insert(FollowCamera { offset: Vec2::ZERO })
                 .insert(Transform2::new().without_pixel_perfect())
                 .insert(TimeToLive { seconds: 4.5 })
@@ -46,7 +46,7 @@ fn level_up_spawn(
                 )
                 .with_children(|parent| {
                     parent
-                        .spawn_bundle(SpriteBundle {
+                        .spawn(SpriteBundle {
                             sprite: Sprite {
                                 custom_size: Vec2::new(400., 110.).into(),
                                 color: Color::rgba(0., 0., 0., 0.36),
@@ -60,7 +60,7 @@ fn level_up_spawn(
                                 .without_pixel_perfect(),
                         );
                     parent
-                        .spawn_bundle(Text2dBundle {
+                        .spawn(Text2dBundle {
                             text: Text::from_section(
                                 "Level Up",
                                 TextStyle {
@@ -80,7 +80,7 @@ fn level_up_spawn(
                                 .with_depth(DEPTH_LAYER_LEVEL_UP_TEXT),
                         );
                     parent
-                        .spawn_bundle(Text2dBundle {
+                        .spawn(Text2dBundle {
                             text: Text::from_section(
                                 "Spend skill points at town",
                                 TextStyle {

@@ -41,13 +41,13 @@ fn healthbar_spawn(mut ev_spawn: EventReader<HealthbarSpawnEvent>, mut commands:
         let mut entity = if let Some(entity) = event.entity {
             commands.entity(entity)
         } else {
-            commands.spawn()
+            commands.spawn_empty()
         };
         entity
             .insert(Healthbar { size: event.size })
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Some(event.size + HEALTHBAR_BORDER),
                             color: Color::BLACK,
@@ -60,7 +60,7 @@ fn healthbar_spawn(mut ev_spawn: EventReader<HealthbarSpawnEvent>, mut commands:
                             .with_depth(DEPTH_LAYER_HEALTHBAR_BORDER),
                     );
                 parent
-                    .spawn_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         sprite: Sprite {
                             custom_size: Some(event.size),
                             color: Color::RED,

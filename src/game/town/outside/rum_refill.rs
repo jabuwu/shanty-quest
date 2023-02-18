@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 const BACK_FADE: f32 = 0.36;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 struct RumRefillState {
     opacity: f32,
     time: f32,
@@ -34,7 +34,7 @@ struct RumRefillBottle {
     from: Vec2,
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct RumRefillCutscene;
 
 impl Cutscene for RumRefillCutscene {
@@ -57,7 +57,7 @@ fn init1(
     let health = game_state.health / game_state.health_max;
     state.index = 1 + (health * 8.).round() as u32;
     commands
-        .spawn_bundle(Transform2Bundle::default())
+        .spawn(Transform2Bundle::default())
         .insert(
             AudioPlusSource::new(
                 asset_library
@@ -69,13 +69,13 @@ fn init1(
         )
         .insert(TimeToLive { seconds: 3. });
     commands
-        .spawn_bundle(TransformBundle::default())
-        .insert_bundle(VisibilityBundle::default())
+        .spawn(TransformBundle::default())
+        .insert(VisibilityBundle::default())
         .insert(Transform2::new().with_scale(Vec2::ONE * 1.5))
         .insert(RumRefillParent)
         .with_children(|parent| {
             parent
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(9999., 9999.).into(),
                         color: Color::rgba(1., 1., 1., 0.),
@@ -91,7 +91,7 @@ fn init1(
                 let to = Vec2::new(x, 0.);
                 let from = Vec2::new(x + 100., 0.);
                 parent
-                    .spawn_bundle(SpriteSheetBundle {
+                    .spawn(SpriteSheetBundle {
                         sprite: TextureAtlasSprite {
                             color: Color::rgba(brightness, brightness, brightness, 0.),
                             ..Default::default()
@@ -161,7 +161,7 @@ fn update2(
             state.time = 0.
         }
         commands
-            .spawn_bundle(Transform2Bundle::default())
+            .spawn(Transform2Bundle::default())
             .insert(
                 AudioPlusSource::new(
                     asset_library

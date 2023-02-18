@@ -1,6 +1,8 @@
+use bevy::prelude::*;
+
 use crate::game::prelude::*;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Resource)]
 pub struct GameState {
     pub town: TownData,
     pub band_members: [BandMember; 2],

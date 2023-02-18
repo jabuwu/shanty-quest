@@ -1,4 +1,4 @@
-pub const DEV_BUILD: bool = false;
+pub const DEV_BUILD: bool = true;
 
 pub mod common;
 pub mod game;

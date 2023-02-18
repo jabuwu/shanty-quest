@@ -46,7 +46,7 @@ fn damage_rum_spawn(
         let bottles = 2 + rand::random::<u32>() % 5;
         for _ in 0..bottles {
             commands
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     sprite: Sprite {
                         color: Color::rgba(1., 1., 1., 0.),
                         ..Default::default()

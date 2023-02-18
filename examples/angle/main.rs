@@ -12,15 +12,17 @@ pub struct Editable;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Angle".to_string(),
-            width: 1280.,
-            height: 720.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "Angle".to_string(),
+                width: 1280.,
+                height: 720.,
+                resizable: false,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(CommonPlugin)
         .add_plugin(CharacterControllerPlugin)
         .add_plugin(OverworldCameraPlugin)
@@ -33,9 +35,9 @@ fn main() {
 pub struct PointToMouse;
 
 pub fn init(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(64., 8.).into(),
                 color: Color::GREEN,

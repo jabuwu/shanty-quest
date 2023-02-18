@@ -15,7 +15,7 @@ impl<T> CutsceneType for T where T: Cutscene + Default + Clone + Send + Sync + '
 
 const UPDATE_BUFFER: u32 = 3;
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Resource)]
 pub struct Cutscenes {
     running_cutscene: Option<RunningCutscene>,
     backlog_cutscenes: VecDeque<(String, TypeId)>,
@@ -94,13 +94,13 @@ impl Plugin for CutscenePlugin {
 pub trait AddAppCutscene {
     fn add_cutscene<T>(&mut self) -> &mut Self
     where
-        T: CutsceneType;
+        T: CutsceneType + Resource;
 }
 
 impl AddAppCutscene for App {
     fn add_cutscene<T>(&mut self) -> &mut Self
     where
-        T: CutsceneType,
+        T: CutsceneType + Resource,
     {
         self.init_resource::<T>();
         self.init_resource::<CutsceneInitialValues<T>>();
@@ -152,8 +152,8 @@ pub struct CutsceneBuilder<'a> {
 impl<'a> CutsceneBuilder<'a> {
     pub fn add_step<ParamsA, ParamsB>(
         &mut self,
-        init: impl IntoSystemDescriptor<ParamsA> + ParallelSystemDescriptorCoercion<ParamsA>,
-        update: impl IntoSystemDescriptor<ParamsB> + ParallelSystemDescriptorCoercion<ParamsB>,
+        init: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
+        update: impl IntoSystemDescriptor<ParamsB> + IntoSystemDescriptor<ParamsB>,
     ) -> &mut Self {
         let type_id = self.type_id;
         let step = self.step;
@@ -196,14 +196,14 @@ impl<'a> CutsceneBuilder<'a> {
 
     pub fn add_update_step<ParamsA>(
         &mut self,
-        update: impl IntoSystemDescriptor<ParamsA> + ParallelSystemDescriptorCoercion<ParamsA>,
+        update: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
     ) -> &mut Self {
         self.add_step(|| {}, update)
     }
 
     pub fn add_quick_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemDescriptor<ParamsA> + ParallelSystemDescriptorCoercion<ParamsA>,
+        init: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
     ) -> &mut Self {
         let step = self.step;
         self.add_step(init, move |mut state: ResMut<Cutscenes>| {
@@ -214,7 +214,7 @@ impl<'a> CutsceneBuilder<'a> {
 
     pub fn add_dialogue_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemDescriptor<ParamsA> + ParallelSystemDescriptorCoercion<ParamsA>,
+        init: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
     ) -> &mut Self {
         let step = self.step;
         self.add_step(
@@ -236,7 +236,7 @@ impl<'a> CutsceneBuilder<'a> {
 
     pub fn add_timed_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemDescriptor<ParamsA> + ParallelSystemDescriptorCoercion<ParamsA>,
+        init: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
         seconds: f32,
     ) -> &mut Self {
         let step = self.step;
@@ -290,7 +290,7 @@ where
     _phantom: PhantomData<T>,
 }
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 struct CutsceneInitialValues<T>(VecDeque<T>)
 where
     T: CutsceneType;

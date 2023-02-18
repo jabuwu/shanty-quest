@@ -66,7 +66,7 @@ fn shockwave_fire(
         if shockwave.shoot {
             let stats = shockwave.level.stats();
             commands
-                .spawn_bundle(Transform2Bundle {
+                .spawn(Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),
@@ -83,10 +83,10 @@ fn shockwave_fire(
                 )
                 .insert(TimeToLive { seconds: 3. });
             let child_entity = commands
-                .spawn_bundle(Transform2Bundle {
+                .spawn(Transform2Bundle {
                     ..Default::default()
                 })
-                .insert_bundle(VisibilityBundle::default())
+                .insert(VisibilityBundle::default())
                 .insert(ShockwaveWave {
                     time_alive: 0.,
                     stats,
@@ -94,7 +94,7 @@ fn shockwave_fire(
                 .insert(TimeToLive::new(0.75))
                 .with_children(|parent| {
                     parent
-                        .spawn_bundle(SpriteBundle {
+                        .spawn(SpriteBundle {
                             sprite: Sprite {
                                 custom_size: Vec2::new(1., 1.).into(),
                                 color: Color::WHITE,
@@ -106,7 +106,7 @@ fn shockwave_fire(
                         .insert(Transform2::new().with_depth(DEPTH_LAYER_SHOCKWAVE))
                         .insert(ShockwaveSprite);
                     parent
-                        .spawn_bundle(Transform2Bundle {
+                        .spawn(Transform2Bundle {
                             ..Default::default()
                         })
                         .insert(Transform2::new().with_depth((DepthLayer::Front, 0.98)))

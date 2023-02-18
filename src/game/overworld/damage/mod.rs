@@ -160,7 +160,7 @@ fn damage_auto_die(
             if event.damage > auto_damage.invincibility_amount {
                 if auto_damage.invincibility_amount == 0. {
                     commands
-                        .spawn_bundle(TransformBundle::default())
+                        .spawn(TransformBundle::default())
                         .insert(Transform2::from_translation(
                             transform.translation().truncate(),
                         ))

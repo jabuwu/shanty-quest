@@ -7,4 +7,4 @@ edition = "2021"
 quote = "1.0"
 syn = "1.0"
 asset_struct_macros = { path = "./macros" }
-bevy = { version = "0.8.0", default-features = false }
+bevy = { version = "0.9.1", default-features = false }

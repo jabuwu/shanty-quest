@@ -20,7 +20,7 @@ impl Plugin for OverworldCameraPlugin {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct OverworldCamera {
     arena: (Vec2, Vec2),
     arena_enabled: bool,

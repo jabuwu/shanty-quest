@@ -78,7 +78,7 @@ fn kraken_fire(
         if kraken.shoot {
             let stats = kraken.level.stats();
             commands
-                .spawn_bundle(Transform2Bundle {
+                .spawn(Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),
@@ -111,7 +111,7 @@ fn kraken_fire(
                 let (scale, _, _) = global_transform.to_scale_rotation_translation();
                 let submerge_time = if close_tentacle { 0. } else { 1.0 };
                 commands
-                    .spawn_bundle(SpriteSheetBundle {
+                    .spawn(SpriteSheetBundle {
                         texture_atlas: asset_library.sprite_tentacle_atlas.clone(),
                         ..Default::default()
                     })
@@ -151,7 +151,7 @@ fn tentacle_update(
         if tentacle.submerge_time <= 0. && !tentacle.spawned_hurtbox {
             if rand::random() {
                 commands
-                    .spawn_bundle(TransformBundle::default())
+                    .spawn(TransformBundle::default())
                     .insert(Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ))
@@ -192,7 +192,7 @@ fn tentacle_animate(mut query: Query<(&mut TextureAtlasSprite, &Tentacle)>, time
                 sprite.index = 1;
             }
         } else {
-            let time = (time.time_since_startup().as_secs_f32() * 3.) % 1.;
+            let time = (time.elapsed_seconds() * 3.) % 1.;
             if time > 0.5 {
                 sprite.index = 3;
             } else {

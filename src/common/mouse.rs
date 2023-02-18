@@ -9,7 +9,7 @@ impl Plugin for MousePlugin {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct Mouse {
     pub position: Vec2,
 }

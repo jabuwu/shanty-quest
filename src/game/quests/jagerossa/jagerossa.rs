@@ -61,7 +61,7 @@ fn jagerossa_spawn(
     for _ in ev_spawn.iter() {
         let stats = jagerossa_stats_by_health(1.);
         let entity = commands
-            .spawn()
+            .spawn_empty()
             .insert(Jagerossa {
                 target: world_locations.get_single_position("JagerossaMoveTo"),
                 angle: 0.,

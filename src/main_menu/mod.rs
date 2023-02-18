@@ -11,7 +11,7 @@ const BUTTON_SCALE: Vec2 = Vec2::new(0.72, 0.72);
 const BUTTON_POSITION: Vec2 = Vec2::new(80., -200.);
 const BUTTON_TEXT_SCALE: Vec2 = Vec2::new(0.8, 0.8);
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 struct MenuState {
     play: bool,
 }
@@ -79,33 +79,33 @@ fn menu_setup(
     dialogue.clear();
     screen_fade.fade_in(1.);
     ev_volume_slider_spawn.send_default();
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     commands
-        .spawn()
+        .spawn_empty()
         .insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_menu_ambient.clone()).as_looping(),
         )
         .insert(Sound);
     commands
-        .spawn()
+        .spawn_empty()
         .insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_menu_music.clone()).as_looping(),
         )
         .insert(Sound);
     let hover_audio = commands
-        .spawn()
+        .spawn_empty()
         .insert(AudioPlusSource::new(
             asset_library.sound_effects.sfx_menu_button_hover.clone(),
         ))
         .id();
     let click_audio = commands
-        .spawn()
+        .spawn_empty()
         .insert(AudioPlusSource::new(
             asset_library.sound_effects.sfx_menu_button_click.clone(),
         ))
         .id();
     let click_confirm_audio = commands
-        .spawn()
+        .spawn_empty()
         .insert(AudioPlusSource::new(
             asset_library
                 .sound_effects
@@ -114,7 +114,7 @@ fn menu_setup(
         ))
         .id();
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: asset_library.menu_sprite_back.clone(),
             ..Default::default()
         })
@@ -126,7 +126,7 @@ fn menu_setup(
         )
         .insert(Background);
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 color: Color::rgba(1., 1., 1., 0.),
                 ..Default::default()
@@ -138,7 +138,7 @@ fn menu_setup(
         .insert(Label("Logo".to_owned()))
         .insert(Logo { x: 0. });
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             sprite: Sprite {
                 color: Color::rgba(1., 1., 1., 0.),
                 ..Default::default()
@@ -154,7 +154,7 @@ fn menu_setup(
         .insert(Shine { x: 0. })
         .insert(Label("Shine".to_owned()));
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: asset_library.menu_sprite_button_back.clone(),
             ..Default::default()
         })
@@ -176,7 +176,7 @@ fn menu_setup(
         .insert(Label("Play Button".to_owned()))
         .with_children(|parent| {
             parent
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     texture: asset_library.menu_sprite_button_play_normal.clone(),
                     ..Default::default()
                 })
@@ -191,7 +191,7 @@ fn menu_setup(
                     press: asset_library.menu_sprite_button_play_press.clone(),
                 });
             parent
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     texture: asset_library.menu_sprite_skull.clone(),
                     ..Default::default()
                 })
@@ -203,7 +203,7 @@ fn menu_setup(
         });
 
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: asset_library.menu_fullscreen_recommended.clone(),
             ..Default::default()
         })
@@ -214,7 +214,7 @@ fn menu_setup(
         );
 
     commands
-        .spawn_bundle(Text2dBundle {
+        .spawn(Text2dBundle {
             text: Text::from_section(
                 "A game for Bevy Jam #2",
                 TextStyle {
@@ -236,9 +236,9 @@ fn menu_setup(
         );
 
     commands
-        .spawn_bundle(Text2dBundle {
+        .spawn(Text2dBundle {
             text: Text::from_section(
-                "v1.0",
+                "v1.1 (Bevy 0.9.1)",
                 TextStyle {
                     font: asset_library.font_bold.clone(),
                     font_size: 48.0,
@@ -359,7 +359,7 @@ fn menu_fade(
 
 fn menu_background_move(mut query: Query<&mut Transform2, With<Background>>, time: Res<Time>) {
     for mut transform in query.iter_mut() {
-        let time = time.time_since_startup().as_secs_f32();
+        let time = time.elapsed_seconds();
         let time_x = (time * 0.1) % 2.;
         let time_y = (time * 0.12) % 2.;
         let baf_x = if time_x < 1. { time_x } else { 2.0 - time_x };

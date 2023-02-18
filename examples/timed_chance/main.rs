@@ -7,15 +7,17 @@ pub struct Editable;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Timed Chance".to_string(),
-            width: 1280.,
-            height: 720.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "Timed Chance".to_string(),
+                width: 1280.,
+                height: 720.,
+                resizable: false,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(CommonPlugin)
         .add_startup_system(init)
         .add_system(update)
@@ -33,11 +35,9 @@ pub fn init(
     asset_server: Res<AssetServer>,
 ) {
     asset_library.load_assets(&asset_server);
-    commands
-        .spawn_bundle(Camera2dBundle::default())
-        .insert(Timed {
-            chance: TimedChance::new(),
-        });
+    commands.spawn(Camera2dBundle::default()).insert(Timed {
+        chance: TimedChance::new(),
+    });
 }
 
 pub fn update(mut query: Query<&mut Timed>, time: Res<Time>) {

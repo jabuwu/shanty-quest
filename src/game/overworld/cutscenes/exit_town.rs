@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 const ENTER_TOWN_TIME_SECONDS: f32 = 0.6;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct ExitTownCutsceneState {
     time: f32,
 }
@@ -19,7 +19,7 @@ impl Plugin for ExitTownCutscenePlugin {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct ExitTownCutscene {
     pub boat: Option<Entity>,
     pub from: Vec2,
@@ -38,7 +38,7 @@ fn init1(
     asset_library: Res<AssetLibrary>,
 ) {
     *state = ExitTownCutsceneState::default();
-    commands.spawn().insert(
+    commands.spawn_empty().insert(
         AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_town_exit.clone())
             .as_playing(),
     );

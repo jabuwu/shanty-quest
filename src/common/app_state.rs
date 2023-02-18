@@ -1,6 +1,7 @@
+use bevy::prelude::*;
 use global_state::prelude::*;
 
-#[derive(GlobalState, Default, Debug, Clone, Eq, PartialEq, Hash)]
+#[derive(GlobalState, Default, Debug, Clone, Eq, PartialEq, Hash, Resource)]
 pub enum AppState {
     #[default]
     Loading,

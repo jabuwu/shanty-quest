@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use self::boat_preview::BoatPreviewSpawnEvent;
 use self::upgrades::UpgradesSpawnEvent;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct ConcertHallState {
     leave: bool,
 }
@@ -48,12 +48,12 @@ fn concert_hall_init(
     mut state: ResMut<ConcertHallState>,
 ) {
     *state = ConcertHallState::default();
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     ev_upgrades_spawn.send_default();
     ev_boat_preview_spawn.send_default();
     screen_fade.fade_in(0.5);
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: asset_library.sprite_town_bg_hole.clone(),
             ..Default::default()
         })
@@ -63,7 +63,7 @@ fn concert_hall_init(
                 .with_scale(Vec2::ONE * 0.5),
         );
     commands
-        .spawn_bundle(Text2dBundle {
+        .spawn(Text2dBundle {
             text: Text::from_section(
                 "Back to Town".to_owned(),
                 TextStyle {
@@ -84,13 +84,13 @@ fn concert_hall_init(
         .insert(Transform2::from_xy(0., -320.).with_depth(DEPTH_LAYER_UPGRADES_LEAVE_TEXT))
         .insert(Leave);
     commands
-        .spawn()
+        .spawn_empty()
         .insert(AudioPlusSource::new(
             asset_library.sound_effects.sfx_town_outside_click.clone(),
         ))
         .insert(ClickSound);
     commands
-        .spawn()
+        .spawn_empty()
         .insert(AudioPlusSource::new(
             asset_library.sound_effects.sfx_town_outside_hover.clone(),
         ))

@@ -12,7 +12,7 @@ impl Plugin for MenuBarPlugin {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct MenuBar {
     opened: bool,
     open: HashMap<String, bool>,

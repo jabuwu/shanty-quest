@@ -38,7 +38,7 @@ pub fn experience_spawn(
             let angle = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
             let velocity = angle * (50. + rand::random::<f32>() * 200.);
             commands
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(10., 10.).into(),
                         ..Default::default()
@@ -82,7 +82,7 @@ pub fn experience_consume(
         }
         if difference.length() < 50. {
             let sound = commands
-                .spawn_bundle(Transform2Bundle::default())
+                .spawn(Transform2Bundle::default())
                 .insert(
                     AudioPlusSource::new(
                         asset_library.sound_effects.sfx_overworld_experience.clone(),

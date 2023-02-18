@@ -69,7 +69,7 @@ fn shotgun_cannons_fire(
         if shotgun_cannons.shoot {
             let stats = shotgun_cannons.level.stats();
             commands
-                .spawn_bundle(Transform2Bundle {
+                .spawn(Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),
@@ -99,7 +99,7 @@ fn shotgun_cannons_fire(
                     let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
                     scale *= stats.scale * 0.5;
                     commands
-                        .spawn_bundle(SpriteBundle {
+                        .spawn(SpriteBundle {
                             sprite: Sprite {
                                 color: Color::BLACK,
                                 ..Default::default()

@@ -1,4 +1,3 @@
-use crate::common::prelude::*;
 use bevy::prelude::*;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -63,6 +62,14 @@ impl Default for CollisionShape {
     fn default() -> Self {
         Self::None
     }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct Rect<T> {
+    left: T,
+    right: T,
+    bottom: T,
+    top: T,
 }
 
 pub fn rect_extents(position: Vec2, size: Vec2) -> Rect<f32> {

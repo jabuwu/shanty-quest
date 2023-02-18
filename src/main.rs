@@ -2,18 +2,28 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use jam::common::prelude::*;
 use jam::game::prelude::*;
+use jam::DEV_BUILD;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Shanty Quest: Treble at Sea".to_string(),
-            width: 1280.,
-            height: 768.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(
+            DefaultPlugins
+                .set(WindowPlugin {
+                    window: WindowDescriptor {
+                        title: "Shanty Quest: Treble at Sea".to_string(),
+                        width: 1280.,
+                        height: 768.,
+                        resizable: false,
+                        ..default()
+                    },
+                    ..default()
+                })
+                .set(AssetPlugin {
+                    watch_for_changes: DEV_BUILD,
+                    ..Default::default()
+                }),
+        )
         .add_plugin(jam::common::CommonPlugin)
         .add_plugin(jam::loading::LoadingPlugin)
         .add_plugin(jam::main_menu::MainMenuPlugin)

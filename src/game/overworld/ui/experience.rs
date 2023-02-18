@@ -49,21 +49,21 @@ fn experience_ui_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(Transform2Bundle {
+                    .spawn(Transform2Bundle {
                         transform2: Transform2::from_translation(EXPERIENCE_UI_POSITION)
                             .with_scale(Vec2::ONE * EXPERIENCE_UI_SCALE),
                         ..Default::default()
                     })
-                    .insert_bundle(VisibilityBundle::default())
+                    .insert(VisibilityBundle::default())
                     .with_children(|parent| {
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 texture: asset_library.sprite_experience_bar_bg.clone(),
                                 ..Default::default()
                             })
@@ -72,7 +72,7 @@ fn experience_ui_spawn(
                                     .with_depth(DEPTH_LAYER_UI_EXPERIENCE_BAR_BACK),
                             );
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 sprite: Sprite {
                                     custom_size: Vec2::new(586., 50.).into(),
                                     color: Color::rgb_u8(255, 209, 22),
@@ -86,7 +86,7 @@ fn experience_ui_spawn(
                             )
                             .insert(ExperienceUiBar);
                         parent
-                            .spawn_bundle(Text2dBundle {
+                            .spawn(Text2dBundle {
                                 text: Text::from_section(
                                     "Lvl",
                                     TextStyle {
@@ -106,7 +106,7 @@ fn experience_ui_spawn(
                                     .with_depth(DEPTH_LAYER_UI_EXPERIENCE_LEVEL),
                             );
                         parent
-                            .spawn_bundle(Text2dBundle {
+                            .spawn(Text2dBundle {
                                 text: Text::from_section(
                                     "",
                                     TextStyle {
@@ -127,7 +127,7 @@ fn experience_ui_spawn(
                             )
                             .insert(ExperienceUiLevelText);
                         parent
-                            .spawn_bundle(SpriteBundle {
+                            .spawn(SpriteBundle {
                                 texture: asset_library.sprite_experience_skill_point_bg.clone(),
                                 ..Default::default()
                             })
@@ -138,7 +138,7 @@ fn experience_ui_spawn(
                             )
                             .insert(ExperienceUiSkillPointsBg);
                         parent
-                            .spawn_bundle(Text2dBundle {
+                            .spawn(Text2dBundle {
                                 text: Text::from_section(
                                     "",
                                     TextStyle {

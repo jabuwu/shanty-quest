@@ -16,7 +16,7 @@ pub struct DamageFlashSpawnEvent;
 fn damage_flash_spawn(mut ev_spawn: EventReader<DamageFlashSpawnEvent>, mut commands: Commands) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(SpriteBundle {
+            .spawn(SpriteBundle {
                 sprite: Sprite {
                     custom_size: Vec2::new(9999., 9999.).into(),
                     color: Color::rgba(1., 0., 0., 0.12),

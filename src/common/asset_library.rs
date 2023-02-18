@@ -4,7 +4,7 @@ use asset_struct::AssetStruct;
 use bevy::prelude::*;
 use bevy_kira_audio::AudioSource;
 
-#[derive(Default, AssetStruct)]
+#[derive(Default, AssetStruct, Resource)]
 pub struct AssetLibrary {
     pub sound_effects: SoundEffects,
 
@@ -468,21 +468,51 @@ pub struct AssetLibrary {
 
 impl AssetLibrary {
     pub fn create_texture_atlases(&mut self, texture_atlas_assets: &mut Assets<TextureAtlas>) {
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_ship_red.clone(), Vec2::new(250., 350.), 5, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_ship_red.clone(),
+            Vec2::new(250., 350.),
+            5,
+            1,
+            None,
+            None,
+        );
         self.sprite_ship_red_atlas = texture_atlas_assets.add(texture_atlas);
 
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_ship_brown.clone(), Vec2::new(250., 350.), 5, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_ship_brown.clone(),
+            Vec2::new(250., 350.),
+            5,
+            1,
+            None,
+            None,
+        );
         self.sprite_ship_brown_atlas = texture_atlas_assets.add(texture_atlas);
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_ship_green.clone(), Vec2::new(250., 350.), 5, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_ship_green.clone(),
+            Vec2::new(250., 350.),
+            5,
+            1,
+            None,
+            None,
+        );
         self.sprite_ship_green_atlas = texture_atlas_assets.add(texture_atlas);
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_ship_blue.clone(), Vec2::new(250., 350.), 5, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_ship_blue.clone(),
+            Vec2::new(250., 350.),
+            5,
+            1,
+            None,
+            None,
+        );
         self.sprite_ship_blue_atlas = texture_atlas_assets.add(texture_atlas);
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_ship_purple.clone(), Vec2::new(250., 350.), 5, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_ship_purple.clone(),
+            Vec2::new(250., 350.),
+            5,
+            1,
+            None,
+            None,
+        );
         self.sprite_ship_purple_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas = TextureAtlas::from_grid(
@@ -490,6 +520,8 @@ impl AssetLibrary {
             Vec2::new(131., 130.),
             2,
             1,
+            None,
+            None,
         );
         self.sprite_octopus_easy_atlas = texture_atlas_assets.add(texture_atlas);
 
@@ -498,6 +530,8 @@ impl AssetLibrary {
             Vec2::new(131., 130.),
             2,
             1,
+            None,
+            None,
         );
         self.sprite_octopus_medium_atlas = texture_atlas_assets.add(texture_atlas);
 
@@ -506,11 +540,19 @@ impl AssetLibrary {
             Vec2::new(131., 130.),
             2,
             1,
+            None,
+            None,
         );
         self.sprite_octopus_hard_atlas = texture_atlas_assets.add(texture_atlas);
 
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_turtle_easy.clone(), Vec2::new(131., 130.), 2, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_turtle_easy.clone(),
+            Vec2::new(131., 130.),
+            2,
+            1,
+            None,
+            None,
+        );
         self.sprite_turtle_easy_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas = TextureAtlas::from_grid(
@@ -518,23 +560,49 @@ impl AssetLibrary {
             Vec2::new(131., 130.),
             2,
             1,
+            None,
+            None,
         );
         self.sprite_turtle_medium_atlas = texture_atlas_assets.add(texture_atlas);
 
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_turtle_hard.clone(), Vec2::new(131., 130.), 2, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_turtle_hard.clone(),
+            Vec2::new(131., 130.),
+            2,
+            1,
+            None,
+            None,
+        );
         self.sprite_turtle_hard_atlas = texture_atlas_assets.add(texture_atlas);
 
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_turtle.clone(), Vec2::new(131., 130.), 2, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_turtle.clone(),
+            Vec2::new(131., 130.),
+            2,
+            1,
+            None,
+            None,
+        );
         self.sprite_turtle_atlas = texture_atlas_assets.add(texture_atlas);
 
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_bomb.clone(), Vec2::new(131., 130.), 4, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_bomb.clone(),
+            Vec2::new(131., 130.),
+            4,
+            1,
+            None,
+            None,
+        );
         self.sprite_bomb_atlas = texture_atlas_assets.add(texture_atlas);
 
-        let texture_atlas =
-            TextureAtlas::from_grid(self.sprite_tentacle.clone(), Vec2::new(131., 211.), 4, 1);
+        let texture_atlas = TextureAtlas::from_grid(
+            self.sprite_tentacle.clone(),
+            Vec2::new(131., 211.),
+            4,
+            1,
+            None,
+            None,
+        );
         self.sprite_tentacle_atlas = texture_atlas_assets.add(texture_atlas);
 
         let texture_atlas = TextureAtlas::from_grid(
@@ -542,6 +610,8 @@ impl AssetLibrary {
             Vec2::new(102., 163.),
             3,
             1,
+            None,
+            None,
         );
         self.sprite_health_bottle_atlas = texture_atlas_assets.add(texture_atlas);
 
@@ -550,6 +620,8 @@ impl AssetLibrary {
             Vec2::new(547., 547.),
             5,
             1,
+            None,
+            None,
         );
         self.sprite_controls_jam_atlas = texture_atlas_assets.add(texture_atlas);
 
@@ -558,6 +630,8 @@ impl AssetLibrary {
             Vec2::new(1115., 484.),
             1,
             3,
+            None,
+            None,
         );
         self.sprite_upgrades_ability_bg_atlas = texture_atlas_assets.add(texture_atlas);
 
@@ -566,6 +640,8 @@ impl AssetLibrary {
             Vec2::new(132., 111.),
             4,
             1,
+            None,
+            None,
         );
         self.sprite_upgrades_button_atlas = texture_atlas_assets.add(texture_atlas);
     }

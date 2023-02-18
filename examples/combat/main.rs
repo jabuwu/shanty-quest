@@ -17,15 +17,17 @@ pub struct Editable;
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Combat".to_string(),
-            width: 1280.,
-            height: 720.,
-            resizable: false,
-            ..default()
-        })
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "Combat".to_string(),
+                width: 1280.,
+                height: 720.,
+                resizable: false,
+                ..default()
+            },
+            ..default()
+        }))
         .add_plugin(CommonPlugin)
         .add_plugin(jam::game::overworld::player::PlayerPlugin)
         .add_plugin(jam::game::overworld::character_controller::CharacterControllerPlugin)
@@ -65,7 +67,7 @@ pub fn init(
     asset_library.create_texture_atlases(texture_atlases.as_mut());
     asset_library.create_sound_effects();
     commands
-        .spawn_bundle(Camera2dBundle::default())
+        .spawn(Camera2dBundle::default())
         .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
     ev_player_spawn.send_default();
     ev_ocean_spawn.send_default();
@@ -162,7 +164,7 @@ fn debug(
         local.stress_pressed = !local.stress_pressed;
         for _ in 0..100 {
             commands
-                .spawn_bundle(Transform2Bundle {
+                .spawn(Transform2Bundle {
                     ..Default::default()
                 })
                 .insert(Hurtbox {

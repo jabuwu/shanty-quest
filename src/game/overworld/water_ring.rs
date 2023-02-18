@@ -4,7 +4,7 @@ use bevy_egui::{egui, EguiContext};
 
 pub struct WaterRingPlugin;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 pub struct WaterRingSettings {
     pub start_scale: f32,
     pub max_life_time: f32,
@@ -53,8 +53,8 @@ fn water_ring_spawn(
             _ => Vec2::ZERO,
         };
         commands
-            .spawn()
-            .insert_bundle(SpriteBundle {
+            .spawn_empty()
+            .insert(SpriteBundle {
                 texture: asset_library.sprite_water_ring_vfx.clone(),
                 ..Default::default()
             })

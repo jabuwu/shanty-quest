@@ -14,7 +14,7 @@ impl Plugin for MapPlugin {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct MapCutscene;
 
 impl Cutscene for MapCutscene {
@@ -30,8 +30,8 @@ fn map_open(
     asset_library: Res<AssetLibrary>,
 ) {
     commands
-        .spawn_bundle(VisibilityBundle::default())
-        .insert_bundle(TransformBundle::default())
+        .spawn(VisibilityBundle::default())
+        .insert(TransformBundle::default())
         .insert(Transform2::from_xy(0., 0.).without_pixel_perfect())
         .insert(FollowCamera { offset: Vec2::ZERO })
         .insert(Map)
@@ -41,7 +41,7 @@ fn map_open(
         )
         .with_children(|parent| {
             parent
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     sprite: Sprite {
                         color: Color::BLACK,
                         ..Default::default()
@@ -55,14 +55,14 @@ fn map_open(
                         .with_depth(DEPTH_LAYER_MAP_COMPASS),
                 );
             parent
-                .spawn_bundle(SpriteBundle {
+                .spawn(SpriteBundle {
                     texture: asset_library.sprite_map_bg.clone(),
                     ..Default::default()
                 })
                 .insert(Transform2::new().with_depth(DEPTH_LAYER_MAP_BACK))
                 .with_children(|parent| {
                     parent
-                        .spawn_bundle(SpriteBundle {
+                        .spawn(SpriteBundle {
                             sprite: Sprite {
                                 custom_size: Vec2::new(1., 1.).into(),
                                 color: Color::rgba_u8(255, 217, 162, 0),
@@ -85,7 +85,7 @@ fn map_open(
                                 alpha *= ((0.5 - pos.y) * 60.).abs().clamp(0., 1.);
                                 alpha *= ((-0.5 - pos.y) * 60.).abs().clamp(0., 1.);
                                 parent
-                                    .spawn_bundle(SpriteBundle {
+                                    .spawn(SpriteBundle {
                                         sprite: Sprite {
                                             custom_size: Vec2::new(
                                                 102. / map_builder.size().x,
@@ -109,7 +109,7 @@ fn map_open(
                             }
                             for label in map_builder.labels.iter() {
                                 parent
-                                    .spawn_bundle(SpriteBundle {
+                                    .spawn(SpriteBundle {
                                         texture: asset_library.sprite_map_icon_town.clone(),
                                         ..Default::default()
                                     })
@@ -122,7 +122,7 @@ fn map_open(
                                         .with_depth(DEPTH_LAYER_MAP_LABEL),
                                     );
                                 parent
-                                    .spawn_bundle(Text2dBundle {
+                                    .spawn(Text2dBundle {
                                         text: Text::from_section(
                                             label.1.clone(),
                                             TextStyle {
@@ -150,7 +150,7 @@ fn map_open(
                                     );
                             }
                             parent
-                                .spawn_bundle(SpriteBundle {
+                                .spawn(SpriteBundle {
                                     texture: asset_library.sprite_map_icon_boat.clone(),
                                     ..Default::default()
                                 })
@@ -162,7 +162,7 @@ fn map_open(
                                 )
                                 .insert(MapPlayer);
                             parent
-                                .spawn_bundle(SpriteBundle {
+                                .spawn(SpriteBundle {
                                     texture: asset_library.sprite_map_icon_quest.clone(),
                                     ..Default::default()
                                 })
@@ -194,7 +194,7 @@ fn map_wait_for_close(
         ev_continue.send_default();
 
         commands
-            .spawn_bundle(Transform2Bundle::default())
+            .spawn(Transform2Bundle::default())
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_map_close.clone())
                     .as_playing(),
@@ -267,6 +267,6 @@ fn map_update_objective(
     for (mut map_player_transform, map_objective) in query.iter_mut() {
         map_player_transform.translation = map_builder.world_to_map(objective_position);
         map_player_transform.scale = Vec2::ONE * map_objective.scale
-            + (map_objective.scale * 0.1 * (time.time_since_startup().as_secs_f32() * 1.5).cos());
+            + (map_objective.scale * 0.1 * (time.elapsed_seconds() * 1.5).cos());
     }
 }

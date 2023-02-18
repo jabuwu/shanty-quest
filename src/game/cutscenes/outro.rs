@@ -3,7 +3,7 @@ use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
 
-#[derive(Default)]
+#[derive(Default, Resource)]
 struct OutroCutsceneState {
     proceed: bool,
 }
@@ -20,7 +20,7 @@ impl Plugin for OutroCutscenePlugin {
     }
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Resource)]
 pub struct OutroCutscene;
 
 impl Cutscene for OutroCutscene {
@@ -57,9 +57,9 @@ fn init(
 
     ev_cutscene_start.send_default();
 
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
     commands
-        .spawn_bundle(Text2dBundle {
+        .spawn(Text2dBundle {
             text: Text::from_section(
                 "".to_owned(),
                 TextStyle {
@@ -76,7 +76,7 @@ fn init(
         })
         .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)))
         .insert(CutsceneText);
-    commands.spawn().insert(
+    commands.spawn_empty().insert(
         AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro_music.clone())
             .as_looping(),
     );
@@ -143,7 +143,7 @@ fn step1(
             text.sections[0].value = "And there ya go, laddie! That is when the sea trebled! When a Pirate Lord combined all the magical instruments and became a Pirate King!".to_owned();
         }
         commands
-            .spawn_bundle(SpriteBundle {
+            .spawn(SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),
                 ..Default::default()
             })
@@ -180,7 +180,7 @@ fn step2_start_audio(
                 "Now he be raiding the coast with the most horrible noise known to mankind..."
                     .to_owned();
         }
-        commands.spawn().insert(
+        commands.spawn_empty().insert(
             AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro2.clone())
                 .as_playing(),
         );
@@ -199,7 +199,7 @@ fn step2(
     }
     if !cutscenes.skipping() {
         commands
-            .spawn_bundle(SpriteBundle {
+            .spawn(SpriteBundle {
                 texture: asset_library.cutscene_image_outro2.clone(),
                 ..Default::default()
             })
@@ -239,7 +239,7 @@ fn step3(
                 .to_owned();
         }
         commands
-            .spawn_bundle(SpriteBundle {
+            .spawn(SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),
                 ..Default::default()
             })

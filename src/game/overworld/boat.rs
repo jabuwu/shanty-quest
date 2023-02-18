@@ -68,7 +68,7 @@ fn boat_spawn(
 ) {
     for event in ev_spawn.iter() {
         let sprite_entity = commands
-            .spawn_bundle(SpriteSheetBundle {
+            .spawn(SpriteSheetBundle {
                 texture_atlas: event.texture_atlas.clone(),
                 ..Default::default()
             })
@@ -83,7 +83,7 @@ fn boat_spawn(
         let mut boat_entity = if let Some(entity) = event.entity {
             commands.entity(entity)
         } else {
-            commands.spawn()
+            commands.spawn_empty()
         };
         let hurt_flags = if event.player {
             DAMAGE_FLAG_ENEMY | DAMAGE_FLAG_ENVIRONMENT
@@ -91,8 +91,8 @@ fn boat_spawn(
             DAMAGE_FLAG_PLAYER
         };
         boat_entity
-            .insert_bundle(TransformBundle::default())
-            .insert_bundle(VisibilityBundle::default())
+            .insert(TransformBundle::default())
+            .insert(VisibilityBundle::default())
             .insert(Transform2::from_translation(event.position))
             .insert(Boat {
                 movement: Vec2::ZERO,

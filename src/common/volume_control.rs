@@ -32,7 +32,7 @@ fn volume_control(
     }
     if play_sample {
         commands
-            .spawn()
+            .spawn_empty()
             .insert(
                 AudioPlusSource::new(asset_library.sound_effects.sfx_audio_preview.clone())
                     .as_playing(),

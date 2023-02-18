@@ -117,7 +117,7 @@ fn octopus_spawn(
         let mut entity = if let Some(entity) = event.entity {
             commands.entity(entity)
         } else {
-            commands.spawn()
+            commands.spawn_empty()
         };
         let OctopusInfo {
             atlas,
@@ -129,8 +129,8 @@ fn octopus_spawn(
             experience_count,
         } = event.level.info(asset_library.as_ref());
         entity
-            .insert_bundle(TransformBundle::default())
-            .insert_bundle(VisibilityBundle::default())
+            .insert(TransformBundle::default())
+            .insert(VisibilityBundle::default())
             .insert(Transform2::from_translation(event.position))
             .insert(Octopus {
                 wander_chance: TimedChance::new(),
@@ -176,7 +176,7 @@ fn octopus_spawn(
             })
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(SpriteSheetBundle {
+                    .spawn(SpriteSheetBundle {
                         texture_atlas: atlas,
                         ..Default::default()
                     })
@@ -237,7 +237,7 @@ fn octopus_animate(
     for (children, auto_damage) in query.iter() {
         for child in children.iter() {
             if let Ok(mut sprite) = child_query.get_mut(*child) {
-                let time = time.time_since_startup().as_secs_f32() % 1.;
+                let time = time.elapsed_seconds() % 1.;
                 if time > 0.5 {
                     sprite.index = 1;
                 } else {

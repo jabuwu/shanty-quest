@@ -49,18 +49,18 @@ fn health_ui_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn_bundle(VisibilityBundle::default())
-            .insert_bundle(TransformBundle::default())
+            .spawn(VisibilityBundle::default())
+            .insert(TransformBundle::default())
             .insert(FollowCamera { offset: Vec2::ZERO })
             .insert(Transform2::new().without_pixel_perfect())
             .with_children(|parent| {
                 parent
-                    .spawn_bundle(Transform2Bundle {
+                    .spawn(Transform2Bundle {
                         transform2: Transform2::from_translation(HEALTH_UI_POSITION)
                             .with_scale(Vec2::ONE * HEALTH_UI_SCALE),
                         ..Default::default()
                     })
-                    .insert_bundle(VisibilityBundle::default())
+                    .insert(VisibilityBundle::default())
                     .with_children(|parent| {
                         let amt = 10;
                         let mut rng = StdRng::from_seed(Default::default());
@@ -68,7 +68,7 @@ fn health_ui_spawn(
                             let settings = random_bottle_settings();
                             let brightness = 0.7 + rng.gen::<f32>() * 0.3;
                             parent
-                                .spawn_bundle(SpriteSheetBundle {
+                                .spawn(SpriteSheetBundle {
                                     sprite: TextureAtlasSprite {
                                         color: Color::rgb(brightness, brightness, brightness),
                                         ..Default::default()
