@@ -31,7 +31,7 @@ impl Plugin for CommonPlugin {
             .add_plugin(follow_camera::FollowCameraPlugin)
             .add_plugin(world_locations::WorldLocationsPlugin)
             .add_plugin(map_builder::MapBuilderPlugin)
-            .add_plugin(force_camera_ratio::ForceCameraRatioPlugin)
+            .add_plugin(force_camera_ratio::ForceRatioPlugin)
             .add_plugin(wasm::WasmPlugin)
             .add_plugin(volume_control::VolumeControlPlugin)
             .add_global_state::<app_state::AppState>()

@@ -14,7 +14,7 @@ fn main() {
                     primary_window: Some(Window {
                         title: "Shanty Quest: Treble at Sea".to_string(),
                         resolution: WindowResolution::new(1280., 768.),
-                        resizable: false,
+                        resizable: true,
                         ..default()
                     }),
                     ..default()
