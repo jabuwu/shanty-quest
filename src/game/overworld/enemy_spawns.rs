@@ -96,8 +96,8 @@ impl Plugin for EnemySpawnsPlugin {
             .add_event::<DespawnSpawnedEntitiesEvent>()
             .add_system(
                 enemy_spawns
-                    .before(OctopusSystems::Spawn)
-                    .before(TurtleSystems::Spawn),
+                    .before(OctopusSet::Spawn)
+                    .before(TurtleSet::Spawn),
             )
             .add_system(enemy_spawns_despawn);
     }
@@ -155,7 +155,7 @@ fn enemy_spawns(
     mut state: ResMut<EnemySpawnsState>,
     time: Res<Time>,
 ) {
-    if cutscenes.running() && matches!(app_state.current(), AppState::Overworld) {
+    if cutscenes.running() && matches!(app_state.0, AppState::Overworld) {
         return;
     }
     let camera_position = if let Ok(camera_transform) = queries.p0().get_single() {

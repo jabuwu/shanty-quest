@@ -1,6 +1,6 @@
 use crate::common::prelude::*;
 use asset_struct::AssetStruct;
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
 
 #[derive(Default, Resource)]
 struct LoadingState {
@@ -18,8 +18,8 @@ pub struct LoadingPlugin;
 impl Plugin for LoadingPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<LoadingState>()
-            .add_system_set(SystemSet::on_enter(AppState::Loading).with_system(loading_init))
-            .add_system_set(SystemSet::on_update(AppState::Loading).with_system(loading_update));
+            .add_system(loading_init.in_schedule(OnEnter(AppState::Loading)))
+            .add_system(loading_update.in_set(OnUpdate(AppState::Loading)));
     }
 }
 
@@ -43,10 +43,8 @@ fn loading_init(
                     color: Color::WHITE,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Center,
-                vertical: VerticalAlign::Center,
-            }),
+            .with_alignment(TextAlignment::Center),
+            text_anchor: Anchor::Center,
             ..Default::default()
         })
         .insert(Transform2::new().with_depth((DepthLayer::Front, 0.)))
@@ -79,7 +77,7 @@ fn loading_init(
 }
 
 fn loading_update(
-    mut app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
     asset_library: Res<AssetLibrary>,
     asset_server: Res<AssetServer>,
     mut screen_fade: ResMut<ScreenFade>,
@@ -104,7 +102,7 @@ fn loading_update(
         }
         LoadState::Loaded => {
             if state.fading && screen_fade.faded_out() {
-                app_state.set(AppState::MainMenu).unwrap();
+                app_state.set(AppState::MainMenu);
                 ev_dialogue_init.send_default();
             }
             if !state.fading {

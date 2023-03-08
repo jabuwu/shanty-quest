@@ -8,9 +8,10 @@ pub struct CollisionPlugin;
 
 impl Plugin for CollisionPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<CollisionQuery>().add_system_to_stage(
-            CoreStage::PostUpdate,
-            update_collision_query.before(TransformSystem::TransformPropagate),
+        app.init_resource::<CollisionQuery>().add_system(
+            update_collision_query
+                .in_base_set(CoreSet::PostUpdate)
+                .before(TransformSystem::TransformPropagate),
         );
     }
 }

@@ -407,14 +407,15 @@ fn quests_barkeep(
 }
 
 fn quests_debug(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     game_state: Res<GameState>,
 ) {
     menu_bar.item("Quest", |open| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
         egui::Window::new("Quest")
             .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_context.get_mut(), |ui| {
                 ui.label(format!(
                     "Active Quest: {}",
                     match game_state.quests.active_quest {
@@ -442,7 +443,7 @@ pub fn quests_skip(
     if input.just_pressed(KeyCode::L) {
         game_state.skill_points += 1;
     }
-    if *app_state.current() != AppState::Overworld {
+    if app_state.0 != AppState::Overworld {
         return;
     }
     if input.just_pressed(KeyCode::F2) {

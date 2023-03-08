@@ -1,6 +1,7 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 pub struct ObjectivePlugin;
 
@@ -76,10 +77,8 @@ fn objective_spawn(
                                 color: Color::WHITE,
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Right,
-                            vertical: VerticalAlign::Top,
-                        }),
+                        .with_alignment(TextAlignment::Right),
+                        text_anchor: Anchor::TopLeft,
                         ..Default::default()
                     })
                     .insert(
@@ -102,7 +101,7 @@ fn objective_update(
             background_transform.translation.x = 625. - width * 0.5;
         }
         for mut hud_visibility in hud_query.iter_mut() {
-            hud_visibility.is_visible = true;
+            *hud_visibility = Visibility::Inherited;
         }
         for mut text in text_query.iter_mut() {
             if text.sections[0].value != str {
@@ -114,7 +113,7 @@ fn objective_update(
             background_transform.scale.x = 0.;
         }
         for mut hud_visibility in hud_query.iter_mut() {
-            hud_visibility.is_visible = false;
+            *hud_visibility = Visibility::Hidden;
         }
         for mut text in text_query.iter_mut() {
             if text.sections[0].value != "" {

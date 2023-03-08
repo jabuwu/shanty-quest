@@ -2,6 +2,7 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 #[derive(Default, Resource)]
 struct OutroCutsceneState {
@@ -14,9 +15,9 @@ impl Plugin for OutroCutscenePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<OutroCutsceneState>()
             .add_cutscene::<OutroCutscene>()
-            .add_system_set(SystemSet::on_enter(AppState::OutroCutscene).with_system(init))
-            .add_system_set(SystemSet::on_update(AppState::OutroCutscene).with_system(skip))
-            .add_system_set(SystemSet::on_update(AppState::OutroCutscene).with_system(image_move));
+            .add_system(init.in_schedule(OnEnter(AppState::OutroCutscene)))
+            .add_system(skip.in_set(OnUpdate(AppState::OutroCutscene)))
+            .add_system(image_move.in_set(OnUpdate(AppState::OutroCutscene)));
     }
 }
 
@@ -68,10 +69,8 @@ fn init(
                     color: Color::WHITE,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Center,
-                vertical: VerticalAlign::Center,
-            }),
+            .with_alignment(TextAlignment::Center),
+            text_anchor: Anchor::Center,
             ..Default::default()
         })
         .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)))
@@ -260,10 +259,10 @@ fn step3(
 }
 
 fn cleanup(
-    mut app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
     mut game_state: ResMut<GameState>,
     world_locations: Res<WorldLocations>,
 ) {
     game_state.town = TownData::build("Republic of Roll", world_locations.as_ref());
-    app_state.set(AppState::TownOutside).unwrap();
+    app_state.set(AppState::TownOutside);
 }

@@ -29,7 +29,7 @@ fn town_ambience(
     mut state: Local<TownAmbienceState>,
     query: Query<Entity, With<TownAmbience>>,
 ) {
-    let playing = app_state.current().is_town();
+    let playing = app_state.0.is_town();
     if playing != state.last_playing {
         state.last_playing = playing;
         if playing {

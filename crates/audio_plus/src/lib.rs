@@ -4,8 +4,8 @@ use channels::add_audio_channels;
 use mixer::AudioPlusMixer;
 use source::AudioPlusSource;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, SystemLabel)]
-pub enum AudioPlusSystems {
+#[derive(Debug, Clone, PartialEq, Eq, Hash, SystemSet)]
+pub enum AudioPlusSet {
     UpdateAudioSources,
     Debug,
 }
@@ -16,8 +16,8 @@ impl Plugin for AudioPlusPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(AudioPlugin)
             .init_resource::<AudioPlusMixer>()
-            .add_system(source::update_audio_sources.label(AudioPlusSystems::UpdateAudioSources))
-            .add_system(debug.label(AudioPlusSystems::Debug));
+            .add_system(source::update_audio_sources.in_set(AudioPlusSet::UpdateAudioSources))
+            .add_system(debug.in_set(AudioPlusSet::Debug));
         add_audio_channels(app);
     }
 }

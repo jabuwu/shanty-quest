@@ -1,6 +1,10 @@
-use crate::{common::prelude::*, game::state::GameState, DEV_BUILD};
+use crate::{
+    common::{label::Label, prelude::*},
+    game::state::GameState,
+    DEV_BUILD,
+};
 use audio_plus::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
 
 use self::slider::VolumeSliderSpawnEvent;
 
@@ -22,13 +26,13 @@ impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(slider::VolumeSliderPlugin)
             .init_resource::<MenuState>()
-            .add_system_set(SystemSet::on_enter(AppState::MainMenu).with_system(menu_setup))
-            .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(menu_fade))
+            .add_system(menu_setup.in_schedule(OnEnter(AppState::MainMenu)))
+            .add_system(menu_fade.in_set(OnUpdate(AppState::MainMenu)))
             .add_system(menu_logo)
             .add_system(menu_shine)
             .add_system(menu_button)
             .add_system(menu_background_move)
-            .add_system_set(SystemSet::on_update(AppState::MainMenu).with_system(menu_outro_debug));
+            .add_system(menu_outro_debug.in_set(OnUpdate(AppState::MainMenu)));
     }
 }
 
@@ -223,10 +227,8 @@ fn menu_setup(
                     color: Color::BLACK,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Left,
-                vertical: VerticalAlign::Bottom,
-            }),
+            .with_alignment(TextAlignment::Left),
+            text_anchor: Anchor::BottomRight,
             ..Default::default()
         })
         .insert(
@@ -238,17 +240,15 @@ fn menu_setup(
     commands
         .spawn(Text2dBundle {
             text: Text::from_section(
-                "v1.1 (Bevy 0.9.1)",
+                "v1.2 (Bevy 0.10.0)",
                 TextStyle {
                     font: asset_library.font_bold.clone(),
                     font_size: 48.0,
                     color: Color::BLACK,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Left,
-                vertical: VerticalAlign::Bottom,
-            }),
+            .with_alignment(TextAlignment::Left),
+            text_anchor: Anchor::BottomRight,
             ..Default::default()
         })
         .insert(
@@ -348,12 +348,12 @@ fn menu_button(
 fn menu_fade(
     menu_state: Res<MenuState>,
     mut game_state: ResMut<GameState>,
-    mut app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
     screen_fade: Res<ScreenFade>,
 ) {
     if menu_state.play && screen_fade.faded_out() {
         *game_state = GameState::default();
-        app_state.set(AppState::IntroCutscene).unwrap();
+        app_state.set(AppState::IntroCutscene);
     }
 }
 
@@ -370,10 +370,10 @@ fn menu_background_move(mut query: Query<&mut Transform2, With<Background>>, tim
     }
 }
 
-fn menu_outro_debug(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
+fn menu_outro_debug(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<NextState<AppState>>) {
     if DEV_BUILD {
         if input.just_pressed(KeyCode::Key0) {
-            app_state.set(AppState::OutroCutscene).unwrap();
+            app_state.set(AppState::OutroCutscene);
             input.reset(KeyCode::Key0);
         }
     }

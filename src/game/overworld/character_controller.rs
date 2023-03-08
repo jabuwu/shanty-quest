@@ -2,8 +2,8 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
-pub enum CharacterControllerSystems {
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
+pub enum CharacterControllerSet {
     Update,
 }
 
@@ -14,8 +14,8 @@ impl Plugin for CharacterControllerPlugin {
         app.add_event::<KnockbackEvent>()
             .add_system(
                 character_controller_update
-                    .label(CharacterControllerSystems::Update)
-                    .before(OverworldCameraSystems::Update),
+                    .in_set(CharacterControllerSet::Update)
+                    .before(OverworldCameraSet::Update),
             )
             .add_system(character_controller_knockback);
     }

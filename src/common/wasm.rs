@@ -15,8 +15,8 @@ impl Plugin for WasmPlugin {
 }
 
 #[cfg(target_arch = "wasm32")]
-fn wasm_fullscreen(mut windows: ResMut<Windows>) {
-    if let Some(window) = windows.get_primary_mut() {
+fn wasm_fullscreen(mut window_query: Query<&mut Window>) {
+    if let Some(mut window) = window_query.get_single_mut().ok() {
         let web_window = web_sys::window().unwrap();
         let document_element = web_window.document().unwrap().document_element().unwrap();
         let client_width = document_element.client_width() as f32;
@@ -26,6 +26,6 @@ fn wasm_fullscreen(mut windows: ResMut<Windows>) {
         } else {
             (client_height * 1280. / 768., client_height)
         };
-        window.set_resolution(width, height);
+        window.resolution.set(width, height);
     }
 }

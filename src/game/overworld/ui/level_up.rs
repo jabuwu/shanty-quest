@@ -1,6 +1,6 @@
 use crate::common::prelude::*;
 use audio_plus::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
 
 #[derive(Default, Resource)]
 struct LevelUpState {
@@ -69,10 +69,8 @@ fn level_up_spawn(
                                     color: Color::WHITE,
                                 },
                             )
-                            .with_alignment(TextAlignment {
-                                horizontal: HorizontalAlign::Center,
-                                vertical: VerticalAlign::Center,
-                            }),
+                            .with_alignment(TextAlignment::Center),
+                            text_anchor: Anchor::Center,
                             ..Default::default()
                         })
                         .insert(
@@ -89,10 +87,8 @@ fn level_up_spawn(
                                     color: Color::WHITE,
                                 },
                             )
-                            .with_alignment(TextAlignment {
-                                horizontal: HorizontalAlign::Center,
-                                vertical: VerticalAlign::Center,
-                            }),
+                            .with_alignment(TextAlignment::Center),
+                            text_anchor: Anchor::Center,
                             ..Default::default()
                         })
                         .insert(

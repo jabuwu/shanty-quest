@@ -27,7 +27,7 @@ pub use super::{
     transform2::{DepthLayer, Transform2, Transform2Bundle},
     world_locations::{WorldLocationRect, WorldLocations, WorldLocationsSpawnEvent},
     y_depth::YDepth,
-    CommonPlugin, CommonSystems,
+    CommonPlugin, CommonSet,
 };
 
 pub use global_state::{Persistent, StateTime};

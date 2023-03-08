@@ -1,7 +1,4 @@
-use bevy::{
-    ecs::{schedule::StateData, system::Resource},
-    prelude::*,
-};
+use bevy::{ecs::system::Resource, prelude::*};
 pub use global_state_macros::GlobalState;
 use std::marker::PhantomData;
 
@@ -10,11 +7,11 @@ pub trait GlobalState {
 }
 
 pub trait AddGlobalState {
-    fn add_global_state<T: GlobalState + Default + StateData>(&mut self) -> &mut Self;
+    fn add_global_state<T: GlobalState + Default>(&mut self) -> &mut Self;
 }
 
 impl AddGlobalState for App {
-    fn add_global_state<T: GlobalState + Default + StateData>(&mut self) -> &mut Self {
+    fn add_global_state<T: GlobalState + Default>(&mut self) -> &mut Self {
         T::init_global_state(self);
         self
     }
@@ -57,7 +54,7 @@ where
 
 pub fn cleanup_entities(
     mut commands: Commands,
-    query: Query<Entity, (Without<Persistent>, Without<Parent>)>,
+    query: Query<Entity, (Without<Persistent>, Without<Parent>, Without<Window>)>,
 ) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();

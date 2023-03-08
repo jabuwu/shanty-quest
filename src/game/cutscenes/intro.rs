@@ -1,6 +1,6 @@
 use crate::common::prelude::*;
 use audio_plus::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
 
 #[derive(Default, Resource)]
 struct IntroCutsceneState {
@@ -13,9 +13,9 @@ impl Plugin for IntroCutscenePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<IntroCutsceneState>()
             .add_cutscene::<IntroCutscene>()
-            .add_system_set(SystemSet::on_enter(AppState::IntroCutscene).with_system(init))
-            .add_system_set(SystemSet::on_update(AppState::IntroCutscene).with_system(skip))
-            .add_system_set(SystemSet::on_update(AppState::IntroCutscene).with_system(image_move));
+            .add_system(init.in_schedule(OnEnter(AppState::IntroCutscene)))
+            .add_system(skip.in_set(OnUpdate(AppState::IntroCutscene)))
+            .add_system(image_move.in_set(OnUpdate(AppState::IntroCutscene)));
     }
 }
 
@@ -82,10 +82,8 @@ fn init(
                     color: Color::WHITE,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Center,
-                vertical: VerticalAlign::Center,
-            }),
+            .with_alignment(TextAlignment::Center),
+            text_anchor: Anchor::Center,
             ..Default::default()
         })
         .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)))
@@ -376,6 +374,6 @@ fn step5(
     }
 }
 
-fn cleanup(mut app_state: ResMut<State<AppState>>) {
-    app_state.set(AppState::Overworld).unwrap();
+fn cleanup(mut app_state: ResMut<NextState<AppState>>) {
+    app_state.set(AppState::Overworld);
 }

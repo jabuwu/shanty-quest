@@ -1,6 +1,6 @@
 use crate::common::prelude::*;
 use audio_plus::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
 use std::collections::VecDeque;
 
 pub struct DialoguePlugin;
@@ -134,7 +134,7 @@ fn dialogue_init(
             .with_children(|parent| {
                 parent
                     .spawn(SpriteBundle {
-                        visibility: Visibility { is_visible: false },
+                        visibility: Visibility::Hidden,
                         texture: asset_library.sprite_dialogue_bg.clone(),
                         ..Default::default()
                     })
@@ -157,10 +157,8 @@ fn dialogue_init(
                                 color: Color::rgb_u8(66, 53, 24),
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Left,
-                            vertical: VerticalAlign::Top,
-                        }),
+                        .with_alignment(TextAlignment::Left),
+                        text_anchor: Anchor::TopRight,
                         ..Default::default()
                     })
                     .insert(Transform2::from_xy(-540., 60.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT))
@@ -178,10 +176,8 @@ fn dialogue_init(
                                 color: Color::WHITE,
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Left,
-                            vertical: VerticalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Left),
+                        text_anchor: Anchor::CenterRight,
                         ..Default::default()
                     })
                     .insert(Transform2::from_xy(-550., 90.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT))
@@ -192,7 +188,7 @@ fn dialogue_init(
                 parent
                     .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_jagerossa.clone(),
-                        visibility: Visibility { is_visible: false },
+                        visibility: Visibility::Hidden,
                         ..Default::default()
                     })
                     .insert(
@@ -204,7 +200,7 @@ fn dialogue_init(
                 parent
                     .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_elvis.clone(),
-                        visibility: Visibility { is_visible: false },
+                        visibility: Visibility::Hidden,
                         ..Default::default()
                     })
                     .insert(
@@ -216,7 +212,7 @@ fn dialogue_init(
                 parent
                     .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_bowie.clone(),
-                        visibility: Visibility { is_visible: false },
+                        visibility: Visibility::Hidden,
                         ..Default::default()
                     })
                     .insert(
@@ -228,7 +224,7 @@ fn dialogue_init(
                 parent
                     .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_ringo.clone(),
-                        visibility: Visibility { is_visible: false },
+                        visibility: Visibility::Hidden,
                         ..Default::default()
                     })
                     .insert(
@@ -240,7 +236,7 @@ fn dialogue_init(
                 parent
                     .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_barkeep.clone(),
-                        visibility: Visibility { is_visible: false },
+                        visibility: Visibility::Hidden,
                         ..Default::default()
                     })
                     .insert(
@@ -252,7 +248,7 @@ fn dialogue_init(
                 parent
                     .spawn(SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_governor.clone(),
-                        visibility: Visibility { is_visible: false },
+                        visibility: Visibility::Hidden,
                         ..Default::default()
                     })
                     .insert(
@@ -317,7 +313,7 @@ fn dialogue_update(
             }
             dialogue.time += time.delta_seconds();
             for mut back_visibility in queries.p0().iter_mut() {
-                back_visibility.is_visible = true;
+                *back_visibility = Visibility::Inherited;
             }
             for mut fade_sprite in queries.p7().iter_mut() {
                 let a = fade_sprite.color.a();
@@ -330,7 +326,11 @@ fn dialogue_update(
                 dialogue_name.sections[0].value = String::from(entry.portrait.name());
             }
             for (mut portrait_visibility, portrait) in queries.p3().iter_mut() {
-                portrait_visibility.is_visible = entry.portrait == portrait.portrait;
+                *portrait_visibility = if entry.portrait == portrait.portrait {
+                    Visibility::Inherited
+                } else {
+                    Visibility::Hidden
+                };
             }
         } else {
             hide = true;
@@ -340,7 +340,7 @@ fn dialogue_update(
     }
     if hide {
         for mut back_visibility in queries.p0().iter_mut() {
-            back_visibility.is_visible = false;
+            *back_visibility = Visibility::Hidden;
         }
         for mut fade_sprite in queries.p7().iter_mut() {
             let a = fade_sprite.color.a();
@@ -357,7 +357,7 @@ fn dialogue_update(
             }
         }
         for (mut portrait_visibility, _) in queries.p3().iter_mut() {
-            portrait_visibility.is_visible = false;
+            *portrait_visibility = Visibility::Hidden;
         }
     }
 }

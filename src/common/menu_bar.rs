@@ -34,7 +34,7 @@ impl MenuBar {
 }
 
 pub fn menu_bar(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     input: Res<Input<KeyCode>>,
 ) {
@@ -44,7 +44,8 @@ pub fn menu_bar(
         }
     }
     if menu_bar.opened {
-        egui::TopBottomPanel::top("top_panel").show(egui_context.ctx_mut(), |ui| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
+        egui::TopBottomPanel::top("top_panel").show(egui_context.get_mut(), |ui| {
             egui::menu::bar(ui, |ui| {
                 ui.menu_button("Debug", |ui| {
                     for (label, open) in menu_bar.open.iter_mut() {

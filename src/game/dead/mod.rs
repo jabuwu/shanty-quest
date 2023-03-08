@@ -1,6 +1,7 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 #[derive(Default, Resource)]
 struct DeadState {
@@ -13,8 +14,8 @@ pub struct DeadPlugin;
 impl Plugin for DeadPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<DeadState>()
-            .add_system_set(SystemSet::on_enter(AppState::Dead).with_system(town_init))
-            .add_system_set(SystemSet::on_update(AppState::Dead).with_system(town_update));
+            .add_system(town_init.in_schedule(OnEnter(AppState::Dead)))
+            .add_system(town_update.in_set(OnUpdate(AppState::Dead)));
     }
 }
 
@@ -53,10 +54,8 @@ fn town_init(
                     color: Color::WHITE,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Center,
-                vertical: VerticalAlign::Center,
-            }),
+            .with_alignment(TextAlignment::Center),
+            text_anchor: Anchor::Center,
             ..Default::default()
         })
         .insert(Transform2::from_xy(0., -175.).with_depth(DEPTH_LAYER_DEATH_SCREEN));
@@ -66,7 +65,7 @@ fn town_update(
     mut state: ResMut<DeadState>,
     keys: Res<Input<KeyCode>>,
     mouse: Res<Input<MouseButton>>,
-    mut app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
     mut screen_fade: ResMut<ScreenFade>,
 ) {
     if !state.can_leave
@@ -77,9 +76,9 @@ fn town_update(
     }
     if state.can_leave && screen_fade.faded_out() {
         if state.can_respawn {
-            app_state.set(AppState::Overworld).unwrap();
+            app_state.set(AppState::Overworld);
         } else {
-            app_state.set(AppState::MainMenu).unwrap();
+            app_state.set(AppState::MainMenu);
         }
     }
 }

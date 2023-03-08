@@ -1,4 +1,4 @@
-use super::transform2::Transform2System;
+use super::transform2::Transform2Set;
 use crate::common::prelude::*;
 use bevy::prelude::*;
 
@@ -6,9 +6,10 @@ pub struct FollowCameraPlugin;
 
 impl Plugin for FollowCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_to_stage(
-            CoreStage::PostUpdate,
-            follow_camera.before(Transform2System::TransformPropagate),
+        app.add_system(
+            follow_camera
+                .in_base_set(CoreSet::PostUpdate)
+                .before(Transform2Set::TransformPropagate),
         );
     }
 }

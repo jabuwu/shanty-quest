@@ -1,5 +1,5 @@
 use asset_struct::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor, window::WindowResolution};
 use jam::common::prelude::*;
 
 const EASING_COUNT: usize = 30;
@@ -43,13 +43,12 @@ fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
+            primary_window: Some(Window {
                 title: "Easings".to_string(),
-                width: 1280.,
-                height: 720.,
+                resolution: WindowResolution::new(1280., 720.),
                 resizable: false,
                 ..default()
-            },
+            }),
             ..default()
         }))
         .add_plugin(CommonPlugin)
@@ -105,10 +104,8 @@ pub fn init(
                                 color: Color::WHITE,
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Center,
-                            vertical: VerticalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Center),
+                        text_anchor: Anchor::Center,
                         ..Default::default()
                     })
                     .insert(Transform2::from_xy(0., 100.));

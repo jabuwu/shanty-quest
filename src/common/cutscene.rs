@@ -1,13 +1,11 @@
 use crate::common::prelude::*;
-use bevy::{
-    ecs::schedule::{IntoSystemDescriptor, ShouldRun},
-    prelude::*,
-};
+use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use std::{
     any::{type_name, TypeId},
     collections::VecDeque,
     marker::PhantomData,
+    sync::{RwLock, RwLockWriteGuard},
 };
 
 pub trait CutsceneType: Cutscene + Default + Clone + Send + Sync + 'static {}
@@ -17,19 +15,29 @@ const UPDATE_BUFFER: u32 = 3;
 
 #[derive(Default, Debug, Resource)]
 pub struct Cutscenes {
+    // FIXME: the way cutscenes works is dreadful. it was a quick hack during the jam, made worse
+    // by Bevy's API forbidding our awful practices, but us doing it anyway. this class needs a
+    // serious overhaul, and it shouldn't be too difficult to do!
+    data: RwLock<CutscenesData>,
+}
+
+#[derive(Default, Debug)]
+pub struct CutscenesData {
     running_cutscene: Option<RunningCutscene>,
     backlog_cutscenes: VecDeque<(String, TypeId)>,
 }
 
 impl Cutscenes {
     fn queue(&mut self, name: String, type_id: TypeId) {
-        self.backlog_cutscenes.push_back((name, type_id));
+        let mut lock = self.data.write().unwrap();
+        lock.backlog_cutscenes.push_back((name, type_id));
     }
 
     fn try_run_next(&mut self) {
-        if matches!(self.running_cutscene, None) {
-            if let Some((name, type_id)) = self.backlog_cutscenes.pop_front() {
-                self.running_cutscene = Some(RunningCutscene {
+        let mut lock = self.data.write().unwrap();
+        if matches!(lock.running_cutscene, None) {
+            if let Some((name, type_id)) = lock.backlog_cutscenes.pop_front() {
+                lock.running_cutscene = Some(RunningCutscene {
                     name,
                     type_id,
                     started: false,
@@ -44,7 +52,8 @@ impl Cutscenes {
     }
 
     pub fn skipping(&self) -> bool {
-        if let Some(running_cutscene) = &self.running_cutscene {
+        let lock = self.data.read().unwrap();
+        if let Some(running_cutscene) = &lock.running_cutscene {
             running_cutscene.skip
         } else {
             false
@@ -52,12 +61,14 @@ impl Cutscenes {
     }
 
     pub fn running(&self) -> bool {
-        !matches!(self.running_cutscene, None)
+        let lock = self.data.read().unwrap();
+        !matches!(lock.running_cutscene, None)
     }
 
     pub fn clear(&mut self) {
-        self.running_cutscene = None;
-        self.backlog_cutscenes = VecDeque::new();
+        let mut lock = self.data.write().unwrap();
+        lock.running_cutscene = None;
+        lock.backlog_cutscenes = VecDeque::new();
     }
 }
 
@@ -121,20 +132,34 @@ impl AddAppCutscene for App {
             move |mut cutscene_state: ResMut<Cutscenes>,
                   mut state: ResMut<T>,
                   mut initial_values: ResMut<CutsceneInitialValues<T>>| {
-                if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
-                    if running_cutscene.type_id == TypeId::of::<T>() {
-                        if !running_cutscene.started {
-                            *state = initial_values.0.pop_front().unwrap();
-                            running_cutscene.started = true;
-                        } else if running_cutscene.step == step {
-                            cutscene_state.running_cutscene = None;
-                            cutscene_state.try_run_next();
-                        } else if running_cutscene.skip {
-                            if running_cutscene.updates == UPDATE_BUFFER {
-                                running_cutscene.reset();
-                                running_cutscene.step += 1;
+                let mut try_next_run = false;
+                let mut reset = false;
+                {
+                    let mut lock = cutscene_state.data.write().unwrap();
+                    if let Some(running_cutscene) = &mut lock.running_cutscene {
+                        if running_cutscene.type_id == TypeId::of::<T>() {
+                            if !running_cutscene.started {
+                                *state = initial_values.0.pop_front().unwrap();
+                                running_cutscene.started = true;
+                            } else if running_cutscene.step == step {
+                                lock.running_cutscene = None;
+                                try_next_run = true;
+                            } else if running_cutscene.skip {
+                                if running_cutscene.updates == UPDATE_BUFFER {
+                                    reset = true;
+                                    running_cutscene.step += 1;
+                                }
                             }
                         }
+                    }
+                }
+                if try_next_run {
+                    cutscene_state.try_run_next();
+                }
+                if reset {
+                    let mut lock = cutscene_state.data.write().unwrap();
+                    if let Some(running_cutscene) = &mut lock.running_cutscene {
+                        running_cutscene.reset();
                     }
                 }
             },
@@ -152,82 +177,84 @@ pub struct CutsceneBuilder<'a> {
 impl<'a> CutsceneBuilder<'a> {
     pub fn add_step<ParamsA, ParamsB>(
         &mut self,
-        init: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
-        update: impl IntoSystemDescriptor<ParamsB> + IntoSystemDescriptor<ParamsB>,
+        init: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
+        update: impl IntoSystemConfig<ParamsB> + IntoSystemConfig<ParamsB>,
     ) -> &mut Self {
         let type_id = self.type_id;
         let step = self.step;
-        self.app.add_system(init.with_run_criteria(
-            move |mut cutscene_state: ResMut<Cutscenes>| {
-                if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
+        self.app
+            .add_system(init.run_if(move |cutscene_state: Res<Cutscenes>| {
+                let mut lock = cutscene_state.data.write().unwrap();
+                if let Some(running_cutscene) = &mut lock.running_cutscene {
                     if running_cutscene.type_id == type_id
                         && running_cutscene.init
                         && running_cutscene.started
                         && running_cutscene.step == step
                     {
                         running_cutscene.init = false;
-                        return ShouldRun::Yes;
+                        return true;
                     }
                 }
-                ShouldRun::No
-            },
-        ));
-        self.app.add_system(update.with_run_criteria(
-            move |mut cutscene_state: ResMut<Cutscenes>| {
-                if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
+                false
+            }));
+        self.app
+            .add_system(update.run_if(move |cutscene_state: Res<Cutscenes>| {
+                let mut lock = cutscene_state.data.write().unwrap();
+                if let Some(running_cutscene) = &mut lock.running_cutscene {
                     if running_cutscene.type_id == type_id
                         && !running_cutscene.init
                         && running_cutscene.started
                         && running_cutscene.step == step
                     {
                         if running_cutscene.updates == UPDATE_BUFFER {
-                            return ShouldRun::Yes;
+                            return true;
                         } else {
                             running_cutscene.updates += 1;
                         }
                     }
                 }
-                ShouldRun::No
-            },
-        ));
+                false
+            }));
         self.step += 1;
         self
     }
 
     pub fn add_update_step<ParamsA>(
         &mut self,
-        update: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
+        update: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
     ) -> &mut Self {
         self.add_step(|| {}, update)
     }
 
     pub fn add_quick_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
+        init: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
     ) -> &mut Self {
         let step = self.step;
-        self.add_step(init, move |mut state: ResMut<Cutscenes>| {
-            Self::to_step(state.as_mut(), step + 1);
+        self.add_step(init, move |state: Res<Cutscenes>| {
+            let mut lock = state.data.write().unwrap();
+            Self::to_step(&mut lock, step + 1);
         });
         self
     }
 
     pub fn add_dialogue_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
+        init: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
     ) -> &mut Self {
         let step = self.step;
         self.add_step(
             init,
-            move |mut state: ResMut<Cutscenes>, time: Res<Time>, dialogue: Res<Dialogue>| {
-                let advance = if let Some(running_cutscene) = &mut state.running_cutscene {
+            move |state: Res<Cutscenes>, time: Res<Time>, dialogue: Res<Dialogue>| {
+                let mut lock = state.data.write().unwrap();
+                let advance = if let Some(running_cutscene) = &mut lock.running_cutscene {
                     running_cutscene.time += time.delta_seconds();
                     running_cutscene.time > 0.2 && !dialogue.visible()
                 } else {
                     false
                 };
                 if advance {
-                    Self::to_step(state.as_mut(), step + 1);
+                    Self::to_step(&mut lock, step + 1);
                 }
             },
         );
@@ -236,29 +263,27 @@ impl<'a> CutsceneBuilder<'a> {
 
     pub fn add_timed_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemDescriptor<ParamsA> + IntoSystemDescriptor<ParamsA>,
+        init: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
         seconds: f32,
     ) -> &mut Self {
         let step = self.step;
-        self.add_step(
-            init,
-            move |mut state: ResMut<Cutscenes>, time: Res<Time>| {
-                let advance = if let Some(running_cutscene) = &mut state.running_cutscene {
-                    running_cutscene.time += time.delta_seconds();
-                    running_cutscene.time > seconds
-                } else {
-                    false
-                };
-                if advance {
-                    Self::to_step(state.as_mut(), step + 1);
-                }
-            },
-        );
+        self.add_step(init, move |state: Res<Cutscenes>, time: Res<Time>| {
+            let mut lock = state.data.write().unwrap();
+            let advance = if let Some(running_cutscene) = &mut lock.running_cutscene {
+                running_cutscene.time += time.delta_seconds();
+                running_cutscene.time > seconds
+            } else {
+                false
+            };
+            if advance {
+                Self::to_step(&mut lock, step + 1);
+            }
+        });
         self
     }
 
-    fn to_step(state: &mut Cutscenes, step: usize) {
-        if let Some(running_cutscene) = &mut state.running_cutscene {
+    fn to_step(lock: &mut RwLockWriteGuard<CutscenesData>, step: usize) {
+        if let Some(running_cutscene) = &mut lock.running_cutscene {
             running_cutscene.reset();
             running_cutscene.step = step;
         }
@@ -311,15 +336,16 @@ fn cutscene_start<T>(
 
 fn cutscene_continue<T>(
     mut ev_cutscene_continue: EventReader<CutsceneContinueEvent<T>>,
-    mut cutscene_state: ResMut<Cutscenes>,
+    cutscene_state: Res<Cutscenes>,
 ) where
     T: CutsceneType,
 {
+    let mut lock = cutscene_state.data.write().unwrap();
     let mut continued = false;
     for _ in ev_cutscene_continue.iter() {
         if !continued {
             continued = true;
-            if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
+            if let Some(running_cutscene) = &mut lock.running_cutscene {
                 if running_cutscene.type_id == TypeId::of::<T>()
                     && running_cutscene.updates == UPDATE_BUFFER
                 {
@@ -333,12 +359,13 @@ fn cutscene_continue<T>(
 
 fn cutscene_skip<T>(
     mut ev_cutscene_skip: EventReader<CutsceneSkipEvent<T>>,
-    mut cutscene_state: ResMut<Cutscenes>,
+    cutscene_state: Res<Cutscenes>,
 ) where
     T: CutsceneType,
 {
+    let mut lock = cutscene_state.data.write().unwrap();
     for _ in ev_cutscene_skip.iter() {
-        if let Some(running_cutscene) = &mut cutscene_state.running_cutscene {
+        if let Some(running_cutscene) = &mut lock.running_cutscene {
             if running_cutscene.type_id == TypeId::of::<T>() {
                 running_cutscene.skip = true;
             }
@@ -347,15 +374,17 @@ fn cutscene_skip<T>(
 }
 
 fn cutscene_debug(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
-    mut cutscene_state: ResMut<Cutscenes>,
+    cutscene_state: Res<Cutscenes>,
 ) {
     menu_bar.item("Cutscenes", |open| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
         egui::Window::new("Cutscenes")
             .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
-                if let Some(cutscene) = &mut cutscene_state.running_cutscene {
+            .show(egui_context.get_mut(), |ui| {
+                let mut lock = cutscene_state.data.write().unwrap();
+                if let Some(cutscene) = &mut lock.running_cutscene {
                     ui.label(format!("Cutscene running: {}", cutscene.name));
                     ui.label(format!("Step: {}", cutscene.step));
                     if ui.button("Next").clicked() {

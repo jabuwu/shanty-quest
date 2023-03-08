@@ -2,6 +2,7 @@ use crate::common::prelude::*;
 use crate::game::data::town_data::{town_safe_name, TOWN_NAMES};
 use crate::game::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 pub struct TownPlugin;
 
@@ -62,10 +63,8 @@ fn town_spawn(
                                 color: Color::rgba(0., 0., 0., 0.95),
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Center,
-                            vertical: VerticalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Center),
+                        text_anchor: Anchor::Center,
                         ..Default::default()
                     })
                     .insert(Transform2::from_xy(0., 135.).with_depth(DEPTH_LAYER_TOWN_NAME));

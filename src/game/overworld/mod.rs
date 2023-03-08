@@ -32,8 +32,8 @@ impl Plugin for OverworldPlugin {
             .add_plugin(damage_rum::DamageRumPlugin)
             .add_event::<OverworldEnterEvent>()
             .add_event::<WorldAmbienceSoundStopEvent>()
-            .add_system_set(SystemSet::on_enter(AppState::Overworld).with_system(overworld_init))
-            .add_system_set(SystemSet::on_update(AppState::Overworld).with_system(overworld_update))
+            .add_system(overworld_init.in_schedule(OnEnter(AppState::Overworld)))
+            .add_system(overworld_update.in_set(OnUpdate(AppState::Overworld)))
             .add_system(overworld_init_after_ldtk)
             .add_system(overworld_sound_stop);
     }
@@ -90,10 +90,10 @@ fn overworld_init_after_ldtk(
     }
 }
 
-fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
+fn overworld_update(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<NextState<AppState>>) {
     if DEV_BUILD {
         if input.just_pressed(KeyCode::Key0) {
-            app_state.set(AppState::MainMenu).unwrap();
+            app_state.set(AppState::MainMenu);
             input.reset(KeyCode::Key0);
         }
     }

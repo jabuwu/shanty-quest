@@ -96,13 +96,13 @@ fn plank2_fade_out(mut screen_fade: ResMut<ScreenFade>) {
 fn plank2_cleanup(
     mut game_state: ResMut<GameState>,
     mut overworld_camera: ResMut<OverworldCamera>,
-    mut app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
     world_locations: Res<WorldLocations>,
 ) {
     overworld_camera.reset();
     game_state.quests.next();
     game_state.town = TownData::build("Iron Maiden's Cove", world_locations.as_ref());
-    app_state.set(AppState::TownOutside).unwrap();
+    app_state.set(AppState::TownOutside);
 }
 
 pub mod plank;

@@ -1,6 +1,6 @@
-use crate::common::prelude::*;
+use crate::common::{label::Label, prelude::*};
 use audio_plus::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
 
 pub struct VolumeSliderPlugin;
 
@@ -79,10 +79,8 @@ fn volume_slider_spawn(
                         color: Color::BLACK,
                     },
                 )
-                .with_alignment(TextAlignment {
-                    horizontal: HorizontalAlign::Center,
-                    vertical: VerticalAlign::Center,
-                }),
+                .with_alignment(TextAlignment::Center),
+                text_anchor: Anchor::Center,
                 ..Default::default()
             })
             .insert(

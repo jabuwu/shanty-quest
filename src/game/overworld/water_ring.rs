@@ -95,14 +95,15 @@ fn water_ring_update(
 }
 
 fn water_ring_debug(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     mut water_ring_settings: ResMut<WaterRingSettings>,
 ) {
     menu_bar.item("Water Ring VFX", |open| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
         egui::Window::new("Water Ring VFX")
             .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_context.get_mut(), |ui| {
                 ui.horizontal(|ui| {
                     ui.label("Life Time");
                     ui.add(egui::Slider::new(

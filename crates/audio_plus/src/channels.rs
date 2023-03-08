@@ -1,7 +1,7 @@
 use crate::{
     source::AudioPlusSource,
     voice::{AudioPlusVoiceHandle, AudioPlusVoiceState},
-    AudioPlusSystems,
+    AudioPlusSet,
 };
 use bevy::ecs::system::Resource;
 use bevy::prelude::*;
@@ -16,7 +16,7 @@ macro_rules! channels {
         pub fn add_audio_channels(app: &mut App) {
             $(
                 app.add_audio_channel::<$x>();
-                app.add_system(update_kira_channel::<$x>.after(AudioPlusSystems::UpdateAudioSources).before(AudioPlusSystems::Debug));
+                app.add_system(update_kira_channel::<$x>.after(AudioPlusSet::UpdateAudioSources).before(AudioPlusSet::Debug));
             )*
         }
     };

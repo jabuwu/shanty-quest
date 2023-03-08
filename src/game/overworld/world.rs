@@ -1,6 +1,7 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 pub struct WorldPlugin;
 
@@ -41,10 +42,8 @@ fn world_spawn(
                         color: Color::WHITE,
                     },
                 )
-                .with_alignment(TextAlignment {
-                    horizontal: HorizontalAlign::Center,
-                    vertical: VerticalAlign::Center,
-                }),
+                .with_alignment(TextAlignment::Center),
+                text_anchor: Anchor::Center,
                 ..Default::default()
             })
             .insert(Transform2::from_xy(700., -350.).with_depth(DEPTH_LAYER_CONTROLS));

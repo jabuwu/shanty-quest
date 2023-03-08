@@ -6,8 +6,8 @@ pub struct TavernPlugin;
 
 impl Plugin for TavernPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(SystemSet::on_enter(AppState::TownTavern).with_system(town_init))
-            .add_system_set(SystemSet::on_update(AppState::TownTavern).with_system(town_update));
+        app.add_system(town_init.in_schedule(OnEnter(AppState::TownTavern)))
+            .add_system(town_update.in_set(OnUpdate(AppState::TownTavern)));
     }
 }
 
@@ -45,18 +45,15 @@ fn town_init(mut commands: Commands, asset_library: Res<AssetLibrary>, game_stat
                         color: Color::WHITE,
                     },
                 )
-                .with_alignment(TextAlignment {
-                    horizontal: HorizontalAlign::Center,
-                    vertical: VerticalAlign::Center,
-                }),
+                .with_alignment(TextAlignment::Center),
                 ..Default::default()
             });
         });
 }
 
-fn town_update(mut keys: ResMut<Input<KeyCode>>, mut app_state: ResMut<State<AppState>>) {
+fn town_update(mut keys: ResMut<Input<KeyCode>>, mut app_state: ResMut<NextState<AppState>>) {
     if keys.just_pressed(KeyCode::Space) {
-        app_state.set(AppState::TownOutside).unwrap();
+        app_state.set(AppState::TownOutside);
         keys.reset(KeyCode::Space);
     }
 }

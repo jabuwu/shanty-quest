@@ -1,12 +1,12 @@
-use crate::common::prelude::*;
+use crate::common::{label::Label, prelude::*};
 use crate::game::prelude::*;
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
 const RING_SPAWN_INTEVAL: f32 = 0.15;
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
-pub enum BoatSystems {
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
+pub enum BoatSet {
     Spawn,
     Update,
 }
@@ -16,11 +16,11 @@ pub struct BoatPlugin;
 impl Plugin for BoatPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<BoatSpawnEvent>()
-            .add_system(boat_spawn.before(HealthbarSystems::Spawn))
+            .add_system(boat_spawn.before(HealthbarSet::Spawn))
             .add_system(
                 boat_update
-                    .label(BoatSystems::Update)
-                    .label(CharacterControllerSystems::Update),
+                    .in_set(BoatSet::Update)
+                    .in_set(CharacterControllerSet::Update),
             )
             .add_system(boat_attack)
             .add_system(boat_debug);
@@ -314,14 +314,15 @@ fn boat_attack(
 }
 
 fn boat_debug(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     mut query: Query<(&mut Boat, &Label)>,
 ) {
     menu_bar.item("Boats", |open| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
         egui::Window::new("Boats")
             .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_context.get_mut(), |ui| {
                 for (mut boat, label) in query.iter_mut() {
                     ui.label(&label.0);
                     ui.horizontal(|ui| {

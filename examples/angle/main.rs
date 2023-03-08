@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, window::WindowResolution};
 use jam::{
     common::prelude::*,
     game::overworld::{
@@ -14,13 +14,12 @@ fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
+            primary_window: Some(Window {
                 title: "Angle".to_string(),
-                width: 1280.,
-                height: 720.,
+                resolution: WindowResolution::new(1280., 720.),
                 resizable: false,
                 ..default()
-            },
+            }),
             ..default()
         }))
         .add_plugin(CommonPlugin)

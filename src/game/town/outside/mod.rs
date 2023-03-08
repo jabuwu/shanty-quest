@@ -1,7 +1,8 @@
-use crate::common::prelude::*;
+use crate::common::{label::Label, prelude::*};
 use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 use super::TownAmbience;
 
@@ -24,8 +25,8 @@ impl Plugin for OutsidePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<OutsideState>()
             .add_plugin(rum_refill::RumRefillPlugin)
-            .add_system_set(SystemSet::on_enter(AppState::TownOutside).with_system(outside_init))
-            .add_system_set(SystemSet::on_update(AppState::TownOutside).with_system(outside_leave))
+            .add_system(outside_init.in_schedule(OnEnter(AppState::TownOutside)))
+            .add_system(outside_leave.in_set(OnUpdate(AppState::TownOutside)))
             .add_system(outside_click)
             .add_system(outside_pulsing_icons)
             .add_system(outside_tavern_icon)
@@ -106,7 +107,7 @@ fn outside_init(
         );
     commands
         .spawn(VisibilityBundle {
-            visibility: Visibility { is_visible: false },
+            visibility: Visibility::Hidden,
             ..Default::default()
         })
         .insert(TransformBundle::default())
@@ -131,7 +132,7 @@ fn outside_init(
         });
     commands
         .spawn(VisibilityBundle {
-            visibility: Visibility { is_visible: false },
+            visibility: Visibility::Hidden,
             ..Default::default()
         })
         .insert(TransformBundle::default())
@@ -156,7 +157,7 @@ fn outside_init(
         });
     commands
         .spawn(VisibilityBundle {
-            visibility: Visibility { is_visible: false },
+            visibility: Visibility::Hidden,
             ..Default::default()
         })
         .insert(TransformBundle::default())
@@ -189,10 +190,8 @@ fn outside_init(
                     color: Color::BLACK,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Center,
-                vertical: VerticalAlign::Center,
-            }),
+            .with_alignment(TextAlignment::Center),
+            text_anchor: Anchor::Center,
             ..Default::default()
         })
         .insert(Clickable::new(CollisionShape::Rect {
@@ -214,10 +213,8 @@ fn outside_init(
                     color: Color::BLACK,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Center,
-                vertical: VerticalAlign::Center,
-            }),
+            .with_alignment(TextAlignment::Center),
+            text_anchor: Anchor::Center,
             ..Default::default()
         })
         .insert(Transform2::from_xy(0., 330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_NAME));
@@ -225,7 +222,7 @@ fn outside_init(
     commands
         .spawn(SpriteBundle {
             texture: asset_library.sprite_town_tavern_notify.clone(),
-            visibility: Visibility { is_visible: false },
+            visibility: Visibility::Hidden,
             ..Default::default()
         })
         .insert(
@@ -242,7 +239,7 @@ fn outside_init(
     commands
         .spawn(SpriteBundle {
             texture: asset_library.sprite_town_mayor_notify.clone(),
-            visibility: Visibility { is_visible: false },
+            visibility: Visibility::Hidden,
             ..Default::default()
         })
         .insert(
@@ -259,7 +256,7 @@ fn outside_init(
     commands
         .spawn(SpriteBundle {
             texture: asset_library.sprite_town_concert_hall_notify.clone(),
-            visibility: Visibility { is_visible: false },
+            visibility: Visibility::Hidden,
             ..Default::default()
         })
         .insert(
@@ -315,7 +312,7 @@ fn outside_click(
         if let Some(text) = text.as_mut() {
             text.sections[0].style.color = Color::BLACK;
         } else {
-            visibility.is_visible = false;
+            *visibility = Visibility::Hidden;
         }
         let hovered = clickable.hovered
             && highest_priority == clickable_item.click_priority
@@ -338,7 +335,7 @@ fn outside_click(
             if let Some(text) = text.as_mut() {
                 text.sections[0].style.color = Color::WHITE;
             } else {
-                visibility.is_visible = true;
+                *visibility = Visibility::Inherited;
             }
             if clickable.confirmed {
                 input.reset(MouseButton::Left);
@@ -383,15 +380,15 @@ fn outside_click(
 fn outside_leave(
     state: Res<OutsideState>,
     screen_fade: Res<ScreenFade>,
-    mut app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
     mut game_state: ResMut<GameState>,
 ) {
     if screen_fade.faded_out() {
         if matches!(state.leave, OutsideLeave::LeaveToOverworld) {
             game_state.checkpoint();
-            app_state.set(AppState::Overworld).unwrap();
+            app_state.set(AppState::Overworld);
         } else if matches!(state.leave, OutsideLeave::LeaveToConcertHall) {
-            app_state.set(AppState::TownConcertHall).unwrap();
+            app_state.set(AppState::TownConcertHall);
         }
     }
 }
@@ -407,7 +404,11 @@ fn outside_tavern_icon(
     game_state: Res<GameState>,
 ) {
     for mut visibility in query.iter_mut() {
-        visibility.is_visible = game_state.health != game_state.health_max;
+        *visibility = if game_state.health != game_state.health_max {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
     }
 }
 fn outside_mayor_icon(
@@ -415,7 +416,11 @@ fn outside_mayor_icon(
     game_state: Res<GameState>,
 ) {
     for mut visibility in query.iter_mut() {
-        visibility.is_visible = game_state.quests.must_talk_to_mayor();
+        *visibility = if game_state.quests.must_talk_to_mayor() {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
     }
 }
 fn outside_concert_hall_icon(
@@ -423,7 +428,11 @@ fn outside_concert_hall_icon(
     game_state: Res<GameState>,
 ) {
     for mut visibility in query.iter_mut() {
-        visibility.is_visible = game_state.skill_points > 0 && !game_state.has_all_unlocks();
+        *visibility = if game_state.skill_points > 0 && !game_state.has_all_unlocks() {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
     }
 }
 

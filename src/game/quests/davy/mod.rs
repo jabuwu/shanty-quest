@@ -95,11 +95,11 @@ fn davy2_fade_out(mut screen_fade: ResMut<ScreenFade>) {
 fn davy2_cleanup(
     mut game_state: ResMut<GameState>,
     mut overworld_camera: ResMut<OverworldCamera>,
-    mut app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
 ) {
     game_state.quests.next();
     overworld_camera.reset();
-    app_state.set(AppState::OutroCutscene).unwrap();
+    app_state.set(AppState::OutroCutscene);
 }
 
 pub mod davy;

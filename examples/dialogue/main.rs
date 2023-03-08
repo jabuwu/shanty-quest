@@ -1,5 +1,5 @@
 use asset_struct::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, window::WindowResolution};
 use jam::{
     common::prelude::*,
     game::overworld::character_controller::{CharacterController, CharacterControllerPlugin},
@@ -12,13 +12,12 @@ fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.3, 0.3, 0.3)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
+            primary_window: Some(Window {
                 title: "Dialogue".to_string(),
-                width: 1280.,
-                height: 720.,
+                resolution: WindowResolution::new(1280., 720.),
                 resizable: false,
                 ..default()
-            },
+            }),
             ..default()
         }))
         .add_plugin(CommonPlugin)

@@ -4,12 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = "^0.9.1"
-bevy_egui = "0.19"
+bevy = "0.10"
+bevy_egui = "0.20"
 rand = "0.8.5"
 serde = "1.0"
 ldtk2 = "0.7"
-bevy_kira_audio = "0.13.0"
+bevy_kira_audio = "0.15"
 audio_plus = { path = "./crates/audio_plus" }
 asset_struct = { path = "./crates/asset_struct" }
 global_state = { path = "./crates/global_state" }

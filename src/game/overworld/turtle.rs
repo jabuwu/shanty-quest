@@ -5,8 +5,8 @@ use bevy::prelude::*;
 const TURTLE_COLLISION_SIZE: Vec2 = Vec2::new(60., 60.);
 const TURTLE_HURTBOX_SIZE: Vec2 = Vec2::new(80., 80.);
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
-pub enum TurtleSystems {
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
+pub enum TurtleSet {
     Spawn,
 }
 
@@ -17,8 +17,8 @@ impl Plugin for TurtlePlugin {
         app.add_event::<TurtleSpawnEvent>()
             .add_system(
                 turtle_spawn
-                    .label(TurtleSystems::Spawn)
-                    .before(HealthbarSystems::Spawn),
+                    .in_set(TurtleSet::Spawn)
+                    .before(HealthbarSet::Spawn),
             )
             .add_system(turtle_move)
             .add_system(turtle_animate);

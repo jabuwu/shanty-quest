@@ -1,6 +1,7 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 const EXPERIENCE_UI_POSITION: Vec2 = Vec2::new(-435., -355.);
 const EXPERIENCE_UI_SCALE: f32 = 0.28;
@@ -95,10 +96,8 @@ fn experience_ui_spawn(
                                         color: Color::WHITE,
                                     },
                                 )
-                                .with_alignment(TextAlignment {
-                                    horizontal: HorizontalAlign::Left,
-                                    vertical: VerticalAlign::Bottom,
-                                }),
+                                .with_alignment(TextAlignment::Left),
+                                text_anchor: Anchor::BottomRight,
                                 ..Default::default()
                             })
                             .insert(
@@ -115,10 +114,8 @@ fn experience_ui_spawn(
                                         color: Color::WHITE,
                                     },
                                 )
-                                .with_alignment(TextAlignment {
-                                    horizontal: HorizontalAlign::Left,
-                                    vertical: VerticalAlign::Bottom,
-                                }),
+                                .with_alignment(TextAlignment::Left),
+                                text_anchor: Anchor::BottomRight,
                                 ..Default::default()
                             })
                             .insert(
@@ -147,10 +144,8 @@ fn experience_ui_spawn(
                                         color: Color::WHITE,
                                     },
                                 )
-                                .with_alignment(TextAlignment {
-                                    horizontal: HorizontalAlign::Center,
-                                    vertical: VerticalAlign::Center,
-                                }),
+                                .with_alignment(TextAlignment::Center),
+                                text_anchor: Anchor::Center,
                                 ..Default::default()
                             })
                             .insert(
@@ -193,7 +188,7 @@ fn experience_ui_skill_points_update(
     let skill_points = game_state.skill_points;
     if skill_points > 0 {
         for mut bg_visibility in bg_query.iter_mut() {
-            bg_visibility.is_visible = true;
+            *bg_visibility = Visibility::Inherited;
         }
         for mut text in text_query.iter_mut() {
             text.sections[0].value = format!(
@@ -204,7 +199,7 @@ fn experience_ui_skill_points_update(
         }
     } else {
         for mut bg_visibility in bg_query.iter_mut() {
-            bg_visibility.is_visible = false;
+            *bg_visibility = Visibility::Hidden;
         }
         for mut text in text_query.iter_mut() {
             text.sections[0].value = "".into();

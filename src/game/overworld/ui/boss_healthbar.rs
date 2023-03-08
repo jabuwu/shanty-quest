@@ -1,6 +1,7 @@
 use crate::common::prelude::*;
 use crate::game::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 const OFFSET: Vec2 = Vec2::new(0., 20.);
 const BORDER_SIZE: f32 = 10.;
@@ -46,7 +47,7 @@ fn boss_healthbar_spawn(
         }
         commands
             .spawn(VisibilityBundle {
-                visibility: Visibility { is_visible: false },
+                visibility: Visibility::Hidden,
                 ..Default::default()
             })
             .insert(TransformBundle::default())
@@ -80,10 +81,8 @@ fn boss_healthbar_spawn(
                                 color: Color::WHITE,
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Center,
-                            vertical: VerticalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Center),
+                        text_anchor: Anchor::Center,
                         ..Default::default()
                     })
                     .insert(
@@ -143,7 +142,11 @@ fn boss_healthbar_update(
     game_state: Res<GameState>,
 ) {
     for (entity, healthbar, children, mut visibility) in query.iter_mut() {
-        visibility.is_visible = !game_state.quests.pirate_dialogue();
+        *visibility = if !game_state.quests.pirate_dialogue() {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
         if let Ok(health) = health_query.get(healthbar.entity) {
             let health_percent = health.value / health.max;
             for child in children.iter() {

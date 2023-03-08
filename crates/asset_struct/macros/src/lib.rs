@@ -61,7 +61,7 @@ pub fn derive_asset_struct(input: TokenStream) -> TokenStream {
                 let mut assets: Vec<HandleUntyped> = vec![
                     #(#loaded_quotes,)*
                 ];
-                asset_server.get_group_load_state(assets.iter().map(|h| h.id))
+                asset_server.get_group_load_state(assets.iter().map(|h| h.id()))
             }
             fn load_progress(&self, asset_server: &Res<AssetServer>) -> f32 {
                 let mut assets: Vec<HandleUntyped> = vec![
@@ -69,7 +69,7 @@ pub fn derive_asset_struct(input: TokenStream) -> TokenStream {
                 ];
                 let mut progress = 0.;
                 for asset in assets.iter() {
-                    if matches!(asset_server.get_load_state(asset.id), bevy::asset::LoadState::Loaded) {
+                    if matches!(asset_server.get_load_state(asset.id()), bevy::asset::LoadState::Loaded) {
                         progress += 1.;
                     }
                 }

@@ -1,5 +1,5 @@
 use crate::common::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
 
 const CHECKPOINT_POSITION: Vec2 = Vec2::new(0., 220.);
 
@@ -52,10 +52,8 @@ fn checkpoint_spawn(
                                 color: Color::WHITE,
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Center,
-                            vertical: VerticalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Center),
+                        text_anchor: Anchor::Center,
                         ..Default::default()
                     })
                     .insert(

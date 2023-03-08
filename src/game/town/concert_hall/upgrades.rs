@@ -1,7 +1,8 @@
-use crate::common::prelude::*;
+use crate::common::{label::Label, prelude::*};
 use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 #[derive(Default, Resource)]
 pub struct UpgradesState {
@@ -215,10 +216,8 @@ fn upgrades_spawn(
                                 color: Color::WHITE,
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Right,
-                            vertical: VerticalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Right),
+                        text_anchor: Anchor::CenterLeft,
                         ..Default::default()
                     })
                     .insert(
@@ -235,10 +234,8 @@ fn upgrades_spawn(
                                 color: Color::BLACK,
                             },
                         )
-                        .with_alignment(TextAlignment {
-                            horizontal: HorizontalAlign::Center,
-                            vertical: VerticalAlign::Center,
-                        }),
+                        .with_alignment(TextAlignment::Center),
+                        text_anchor: Anchor::Center,
                         ..Default::default()
                     })
                     .insert(
@@ -305,10 +302,8 @@ fn upgrades_spawn(
                                                     color: Color::rgb_u8(52, 52, 52),
                                                 },
                                             )
-                                            .with_alignment(TextAlignment {
-                                                horizontal: HorizontalAlign::Left,
-                                                vertical: VerticalAlign::Center,
-                                            }),
+                                            .with_alignment(TextAlignment::Left),
+                                            text_anchor: Anchor::CenterRight,
                                             ..Default::default()
                                         })
                                         .insert(
@@ -386,7 +381,7 @@ fn upgrades_spawn(
                         color: Color::rgba(0., 0., 0., 0.36),
                         ..Default::default()
                     },
-                    visibility: Visibility { is_visible: false },
+                    visibility: Visibility::Hidden,
                     ..Default::default()
                 })
                 .insert(
@@ -405,10 +400,8 @@ fn upgrades_spawn(
                                     color: Color::WHITE,
                                 },
                             )
-                            .with_alignment(TextAlignment {
-                                horizontal: HorizontalAlign::Center,
-                                vertical: VerticalAlign::Center,
-                            }),
+                            .with_alignment(TextAlignment::Center),
+                            text_anchor: Anchor::Center,
                             ..Default::default()
                         })
                         .insert(
@@ -514,7 +507,11 @@ fn upgrades_buttons(
 
 fn upgrades_stars(mut query: Query<(&mut Visibility, &UpgradesStar)>, game_state: Res<GameState>) {
     for (mut visibility, star) in query.iter_mut() {
-        visibility.is_visible = star.upgrade.current_level(game_state.as_ref()) > star.level;
+        *visibility = if star.upgrade.current_level(game_state.as_ref()) > star.level {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
     }
 }
 
@@ -531,9 +528,9 @@ fn upgrades_description(
         let upgrade_text = upgrade.upgrade_text();
         for (mut bg_visibility, bg) in bg_query.iter_mut() {
             if bg.index < upgrade_text.len() as u32 {
-                bg_visibility.is_visible = true;
+                *bg_visibility = Visibility::Inherited;
             } else {
-                bg_visibility.is_visible = false;
+                *bg_visibility = Visibility::Hidden;
             }
         }
         for (mut text, txt) in text_query.iter_mut() {
@@ -549,7 +546,7 @@ fn upgrades_description(
         }
     } else {
         for (mut bg_visibility, _) in bg_query.iter_mut() {
-            bg_visibility.is_visible = false;
+            *bg_visibility = Visibility::Hidden;
         }
         for (mut text, _) in text_query.iter_mut() {
             if text.sections[0].value != "" {

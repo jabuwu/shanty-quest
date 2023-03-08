@@ -12,7 +12,7 @@ impl Plugin for OceanPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<OceanSpawnEvent>()
             .add_system(ocean_spawn)
-            .add_system(ocean_update.after(OverworldCameraSystems::Update))
+            .add_system(ocean_update.after(OverworldCameraSet::Update))
             .add_system(ocean_overlay_update)
             .add_system(ocean_debug);
     }
@@ -163,16 +163,17 @@ fn ocean_overlay_update(
 }
 
 fn ocean_debug(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     mut ocean_query: Query<&mut Transform2, With<Ocean>>,
     mut overlay_query: Query<(&mut OceanOverlay, &Children)>,
     mut children_query: Query<&mut Sprite>,
 ) {
     menu_bar.item("Ocean", |open| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
         egui::Window::new("Ocean")
             .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_context.get_mut(), |ui| {
                 for mut ocean_transform in ocean_query.iter_mut() {
                     ui.horizontal(|ui| {
                         ui.label("Scale");

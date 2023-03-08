@@ -9,7 +9,7 @@ pub struct PlankPlugin;
 impl Plugin for PlankPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<PlankSpawnEvent>()
-            .add_system(plank_spawn.before(BoatSystems::Spawn))
+            .add_system(plank_spawn.before(BoatSet::Spawn))
             .add_system(plank_move)
             .add_system(plank_invincibility)
             .add_system(plank_death_check);

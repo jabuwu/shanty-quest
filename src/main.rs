@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::window::WindowResolution;
 use bevy_egui::{egui, EguiContext};
 use jam::common::prelude::*;
 use jam::game::prelude::*;
@@ -10,13 +11,12 @@ fn main() {
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
-                    window: WindowDescriptor {
+                    primary_window: Some(Window {
                         title: "Shanty Quest: Treble at Sea".to_string(),
-                        width: 1280.,
-                        height: 768.,
+                        resolution: WindowResolution::new(1280., 768.),
                         resizable: false,
                         ..default()
-                    },
+                    }),
                     ..default()
                 })
                 .set(AssetPlugin {
@@ -34,15 +34,16 @@ fn main() {
 }
 
 fn stats(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     state_time: Res<StateTime<AppState>>,
     game_state: Res<GameState>,
 ) {
     menu_bar.item("Stats", |open| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
         egui::Window::new("Stats")
             .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_context.get_mut(), |ui| {
                 ui.label(format!("State Time: {}", state_time.time));
                 ui.label(format!("Game State: {:#?}", game_state));
             });
@@ -50,14 +51,15 @@ fn stats(
 }
 
 fn debug_dialogue(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     mut dialogue: ResMut<Dialogue>,
 ) {
     menu_bar.item("Dialogues", |open| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
         egui::Window::new("Dialogues")
             .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_context.get_mut(), |ui| {
                 macro_rules! dialogue_button_for {
                     ($ui:ident, $e:expr) => {
                         if $ui.button(stringify!($e)).clicked() {

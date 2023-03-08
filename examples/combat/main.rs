@@ -1,5 +1,5 @@
 use asset_struct::prelude::*;
-use bevy::prelude::*;
+use bevy::{prelude::*, window::WindowResolution};
 use bevy_egui::{egui, EguiContext};
 use jam::{
     common::prelude::*,
@@ -19,13 +19,12 @@ fn main() {
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
+            primary_window: Some(Window {
                 title: "Combat".to_string(),
-                width: 1280.,
-                height: 720.,
+                resolution: WindowResolution::new(1280., 720.),
                 resizable: false,
                 ..default()
-            },
+            }),
             ..default()
         }))
         .add_plugin(CommonPlugin)
@@ -80,7 +79,7 @@ struct DebugState {
 }
 
 fn debug(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut ev_octopus_spawn: EventWriter<OctopusSpawnEvent>,
     mut ev_turtle_spawn: EventWriter<TurtleSpawnEvent>,
     mut ev_jagerossa_spawn: EventWriter<JagerossaSpawnEvent>,
@@ -104,7 +103,8 @@ fn debug(
     for mut player_health in player_health_query.iter_mut() {
         player_health.value = player_health.max;
     }
-    egui::Window::new("Combat").show(egui_context.ctx_mut(), |ui| {
+    let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
+    egui::Window::new("Combat").show(egui_context.get_mut(), |ui| {
         ui.label("1) Octopus");
         ui.label("2) Turtle");
         ui.label("6) Jagerossa");

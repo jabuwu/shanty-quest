@@ -43,6 +43,6 @@ fn init1(
         .insert(Persistent);
 }
 
-fn cleanup(mut app_state: ResMut<State<AppState>>) {
-    app_state.set(AppState::Dead).unwrap();
+fn cleanup(mut app_state: ResMut<NextState<AppState>>) {
+    app_state.set(AppState::Dead);
 }

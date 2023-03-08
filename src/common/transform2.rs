@@ -2,8 +2,8 @@ use crate::common::prelude::*;
 use bevy::prelude::*;
 use bevy::transform::TransformSystem;
 
-#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
-pub enum Transform2System {
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
+pub enum Transform2Set {
     TransformPropagate,
 }
 
@@ -11,15 +11,11 @@ pub struct Transform2Plugin;
 
 impl Plugin for Transform2Plugin {
     fn build(&self, app: &mut App) {
-        app.add_system_to_stage(
-            CoreStage::PostUpdate,
+        app.add_system(
             update_transform2
-                .label(Transform2System::TransformPropagate)
+                .in_base_set(CoreSet::PostUpdate)
+                .in_set(Transform2Set::TransformPropagate)
                 .before(TransformSystem::TransformPropagate),
-        )
-        .add_system_to_stage(
-            CoreStage::PostUpdate,
-            update_transform2_depth.after(TransformSystem::TransformPropagate),
         );
     }
 }
@@ -122,26 +118,37 @@ pub struct Transform2Bundle {
     pub global_transform: GlobalTransform,
 }
 
-fn update_transform2(mut query: Query<(&Transform2, &mut Transform)>) {
-    for (transform2, mut transform) in query.iter_mut() {
-        transform.translation = Vec3::new(
-            transform2.translation.x,
-            transform2.translation.y,
-            transform2.depth_f32(),
-        );
-        transform.scale = Vec3::new(transform2.scale.x, transform2.scale.y, 1.0);
-        transform.rotation = Quat::from_rotation_z(transform2.rotation);
+fn update_transform2(
+    root_query: Query<Entity, Without<Parent>>,
+    children_query: Query<&Children>,
+    mut transform_query: Query<(&mut Transform, &Transform2)>,
+) {
+    for root in root_query.iter() {
+        update_transform2_recursive(root, &children_query, &mut transform_query, 0.);
     }
 }
 
-fn update_transform2_depth(mut query: Query<(&Transform2, &mut GlobalTransform)>) {
-    for (transform2, mut transform) in query.iter_mut() {
-        if transform2.pixel_perfect {
-            transform.translation_mut().x = transform.translation_mut().x.round();
-            transform.translation_mut().y = transform.translation_mut().y.round();
+fn update_transform2_recursive(
+    entity: Entity,
+    children_query: &Query<&Children>,
+    transform_query: &mut Query<(&mut Transform, &Transform2)>,
+    mut cumulative_depth: f32,
+) {
+    if let Some((mut transform, transform2)) = transform_query.get_mut(entity).ok() {
+        transform.translation.x = transform2.translation.x;
+        transform.translation.y = transform2.translation.y;
+        transform.scale = Vec3::new(transform2.scale.x, transform2.scale.y, 1.0);
+        transform.rotation = Quat::from_rotation_z(transform2.rotation);
+        if transform2.depth_layer == DepthLayer::Inherit {
+            transform.translation.z = transform2.depth_f32();
+        } else {
+            transform.translation.z = transform2.depth_f32() - cumulative_depth;
         }
-        if transform2.depth_layer != DepthLayer::Inherit {
-            transform.translation_mut().z = transform2.depth_f32();
+        cumulative_depth += transform.translation.z;
+    }
+    if let Some(children) = children_query.get(entity).ok() {
+        for child in children.iter() {
+            update_transform2_recursive(*child, children_query, transform_query, cumulative_depth);
         }
     }
 }

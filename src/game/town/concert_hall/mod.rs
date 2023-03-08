@@ -2,6 +2,7 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 use self::boat_preview::BoatPreviewSpawnEvent;
 use self::upgrades::UpgradesSpawnEvent;
@@ -19,12 +20,8 @@ impl Plugin for ConcertHallPlugin {
             .add_plugin(band_selection::BandSelectionPlugin)
             .add_plugin(boat_preview::BoatPreviewPlugin)
             .add_plugin(upgrades::UpgradesPlugin)
-            .add_system_set(
-                SystemSet::on_enter(AppState::TownConcertHall).with_system(concert_hall_init),
-            )
-            .add_system_set(
-                SystemSet::on_update(AppState::TownConcertHall).with_system(concert_hall_leave),
-            );
+            .add_system(concert_hall_init.in_schedule(OnEnter(AppState::TownConcertHall)))
+            .add_system(concert_hall_leave.in_set(OnUpdate(AppState::TownConcertHall)));
     }
 }
 
@@ -72,10 +69,8 @@ fn concert_hall_init(
                     color: Color::BLACK,
                 },
             )
-            .with_alignment(TextAlignment {
-                horizontal: HorizontalAlign::Center,
-                vertical: VerticalAlign::Center,
-            }),
+            .with_alignment(TextAlignment::Center),
+            text_anchor: Anchor::Center,
             ..Default::default()
         })
         .insert(Clickable::new(CollisionShape::Rect {
@@ -105,7 +100,7 @@ fn concert_hall_init(
 
 fn concert_hall_leave(
     mut query: Query<(&mut Text, &Clickable), With<Leave>>,
-    mut app_state: ResMut<State<AppState>>,
+    mut app_state: ResMut<NextState<AppState>>,
     mut state: ResMut<ConcertHallState>,
     mut screen_fade: ResMut<ScreenFade>,
     mut sound_query: ParamSet<(
@@ -137,7 +132,7 @@ fn concert_hall_leave(
         }
     }
     if screen_fade.faded_out() && state.leave {
-        app_state.set(AppState::TownOutside).unwrap();
+        app_state.set(AppState::TownOutside);
     }
 }
 

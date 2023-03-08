@@ -1,4 +1,4 @@
-use crate::common::prelude::*;
+use crate::common::{label::Label, prelude::*};
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
@@ -11,14 +11,15 @@ impl Plugin for EntityDebugPlugin {
 }
 
 fn entity_debug(
-    mut egui_context: ResMut<EguiContext>,
+    mut egui_query: Query<&mut EguiContext>,
     mut menu_bar: ResMut<MenuBar>,
     mut query: Query<(&Label, Option<&mut Transform2>)>,
 ) {
     menu_bar.item("Labeled Entities", |open| {
+        let Some(mut egui_context) = egui_query.get_single_mut().ok() else { return };
         egui::Window::new("Labeled Entities")
             .open(open)
-            .show(egui_context.ctx_mut(), |ui| {
+            .show(egui_context.get_mut(), |ui| {
                 for (label, mut transform2) in query.iter_mut() {
                     ui.label(&label.0);
                     if let Some(transform2) = transform2.as_mut() {

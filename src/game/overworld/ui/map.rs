@@ -2,6 +2,7 @@ use crate::common::prelude::*;
 use crate::game::prelude::*;
 use audio_plus::prelude::*;
 use bevy::prelude::*;
+use bevy::sprite::Anchor;
 
 pub struct MapPlugin;
 
@@ -10,7 +11,7 @@ impl Plugin for MapPlugin {
         app.add_system(map_update_player)
             .add_system(map_update_objective)
             .add_cutscene::<MapCutscene>()
-            .add_system_set(SystemSet::on_update(AppState::Overworld).with_system(map_input));
+            .add_system(map_input.in_set(OnUpdate(AppState::Overworld)));
     }
 }
 
@@ -131,10 +132,8 @@ fn map_open(
                                                 color: Color::BLACK,
                                             },
                                         )
-                                        .with_alignment(TextAlignment {
-                                            horizontal: HorizontalAlign::Center,
-                                            vertical: VerticalAlign::Center,
-                                        }),
+                                        .with_alignment(TextAlignment::Center),
+                                        text_anchor: Anchor::Center,
                                         ..Default::default()
                                     })
                                     .insert(

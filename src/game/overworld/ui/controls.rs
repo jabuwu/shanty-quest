@@ -84,7 +84,7 @@ fn controls_ui_spawn(
                         parent
                             .spawn(SpriteBundle {
                                 texture: asset_library.sprite_controls_map.clone(),
-                                visibility: Visibility { is_visible: false },
+                                visibility: Visibility::Hidden,
                                 ..Default::default()
                             })
                             .insert(
@@ -145,6 +145,10 @@ pub fn controls_ui_update_map(
     game_state: Res<GameState>,
 ) {
     for mut visibility in query.iter_mut() {
-        visibility.is_visible = game_state.dangerous_seas;
+        *visibility = if game_state.dangerous_seas {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
     }
 }
