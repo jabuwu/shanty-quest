@@ -60,25 +60,21 @@ fn overworld_init(
     screen_fade.fade_in(1.);
     ev_overworld_enter.send_default();
     *overworld_camera = OverworldCamera::default();
-    commands
-        .spawn(Camera2dBundle::default())
-        .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
+    commands.spawn((
+        Camera2dBundle::default(),
+        Transform2::new().with_depth((DepthLayer::Camera, 0.)),
+    ));
     ev_player_spawn.send_default();
     ev_world_load.send_default();
-    commands
-        .spawn_empty()
-        .insert(
-            AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_ambient.clone())
-                .as_looping(),
-        )
-        .insert(WorldAmbienceSound);
-    commands
-        .spawn_empty()
-        .insert(
-            AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_music.clone())
-                .as_looping(),
-        )
-        .insert(WorldAmbienceSound);
+    commands.spawn((
+        AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_ambient.clone())
+            .as_looping(),
+        WorldAmbienceSound,
+    ));
+    commands.spawn((
+        AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_music.clone()).as_looping(),
+        WorldAmbienceSound,
+    ));
 }
 
 fn overworld_init_after_ldtk(

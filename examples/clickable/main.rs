@@ -30,19 +30,20 @@ pub fn init(
 ) {
     asset_library.load_assets(&asset_server);
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(64., 64.).into(),
                 color: Color::DARK_GRAY,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 0.))
-        .insert(Clickable::new(CollisionShape::Rect {
+        },
+        Transform2::from_xy(0., 0.),
+        Clickable::new(CollisionShape::Rect {
             size: Vec2::new(64., 64.),
-        }));
+        }),
+    ));
 }
 
 pub fn update(mut query: Query<(&mut Sprite, &mut Transform2, &Clickable)>) {

@@ -45,21 +45,20 @@ fn damage_rum_spawn(
     for event in ev_spawn.iter() {
         let bottles = 2 + rand::random::<u32>() % 5;
         for _ in 0..bottles {
-            commands
-                .spawn(SpriteBundle {
+            commands.spawn((
+                SpriteBundle {
                     sprite: Sprite {
                         color: Color::rgba(1., 1., 1., 0.),
                         ..Default::default()
                     },
                     texture: asset_library.sprite_rum_bottle.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::from_translation(event.position)
-                        .with_depth((DepthLayer::Entity, 1.))
-                        .with_scale(Vec2::ONE * 0.25),
-                )
-                .insert(DamageRum::new());
+                },
+                Transform2::from_translation(event.position)
+                    .with_depth((DepthLayer::Entity, 1.))
+                    .with_scale(Vec2::ONE * 0.25),
+                DamageRum::new(),
+            ));
         }
     }
 }

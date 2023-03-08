@@ -49,18 +49,17 @@ fn concert_hall_init(
     ev_upgrades_spawn.send_default();
     ev_boat_preview_spawn.send_default();
     screen_fade.fade_in(0.5);
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             texture: asset_library.sprite_town_bg_hole.clone(),
             ..Default::default()
-        })
-        .insert(
-            Transform2::new()
-                .with_depth((DepthLayer::Front, 0.))
-                .with_scale(Vec2::ONE * 0.5),
-        );
-    commands
-        .spawn(Text2dBundle {
+        },
+        Transform2::new()
+            .with_depth((DepthLayer::Front, 0.))
+            .with_scale(Vec2::ONE * 0.5),
+    ));
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 "Back to Town".to_owned(),
                 TextStyle {
@@ -72,24 +71,21 @@ fn concert_hall_init(
             .with_alignment(TextAlignment::Center),
             text_anchor: Anchor::Center,
             ..Default::default()
-        })
-        .insert(Clickable::new(CollisionShape::Rect {
+        },
+        Clickable::new(CollisionShape::Rect {
             size: Vec2::new(350., 150.),
-        }))
-        .insert(Transform2::from_xy(0., -320.).with_depth(DEPTH_LAYER_UPGRADES_LEAVE_TEXT))
-        .insert(Leave);
-    commands
-        .spawn_empty()
-        .insert(AudioPlusSource::new(
-            asset_library.sound_effects.sfx_town_outside_click.clone(),
-        ))
-        .insert(ClickSound);
-    commands
-        .spawn_empty()
-        .insert(AudioPlusSource::new(
-            asset_library.sound_effects.sfx_town_outside_hover.clone(),
-        ))
-        .insert(HoverSound);
+        }),
+        Transform2::from_xy(0., -320.).with_depth(DEPTH_LAYER_UPGRADES_LEAVE_TEXT),
+        Leave,
+    ));
+    commands.spawn((
+        AudioPlusSource::new(asset_library.sound_effects.sfx_town_outside_click.clone()),
+        ClickSound,
+    ));
+    commands.spawn((
+        AudioPlusSource::new(asset_library.sound_effects.sfx_town_outside_hover.clone()),
+        HoverSound,
+    ));
     if !game_state.quests.upgrades_dialogue {
         for (p, t) in UPGRADE_MENU.iter() {
             dialogue.add_text(*p, String::from(*t));

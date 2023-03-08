@@ -52,35 +52,37 @@ pub fn init(
     asset_library.load_assets(&asset_server);
     commands.spawn(Camera2dBundle::default());
     let player_entity = commands
-        .spawn(SpriteBundle {
-            sprite: Sprite {
-                custom_size: Vec2::new(32., 32.).into(),
-                color: Color::GREEN,
+        .spawn((
+            SpriteBundle {
+                sprite: Sprite {
+                    custom_size: Vec2::new(32., 32.).into(),
+                    color: Color::GREEN,
+                    ..Default::default()
+                },
                 ..Default::default()
             },
-            ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 0.))
-        .insert(Collision {
-            shape: CollisionShape::Rect {
-                size: Vec2::new(32., 32.),
+            Transform2::from_xy(0., 0.),
+            Collision {
+                shape: CollisionShape::Rect {
+                    size: Vec2::new(32., 32.),
+                },
+                flags: 1,
             },
-            flags: 1,
-        })
-        .insert(CharacterController {
-            movement: Vec2::ZERO,
-            speed: 300.,
-            ..Default::default()
-        })
-        .insert(Hitbox {
-            shape: CollisionShape::Rect {
-                size: Vec2::new(32., 32.),
+            CharacterController {
+                movement: Vec2::ZERO,
+                speed: 300.,
+                ..Default::default()
             },
-            for_entity: None,
-            flags: 1,
-        })
-        .insert(Player)
-        .insert(Health::new(3.))
+            Hitbox {
+                shape: CollisionShape::Rect {
+                    size: Vec2::new(32., 32.),
+                },
+                for_entity: None,
+                flags: 1,
+            },
+            Player,
+            Health::new(3.),
+        ))
         .id();
     ev_healthbar_spawn.send(HealthbarSpawnEvent {
         entity: Some(player_entity),
@@ -91,35 +93,37 @@ pub fn init(
         let x = (100. + rand::random::<f32>() * 400.) * if rand::random() { 1. } else { -1. };
         let y = (100. + rand::random::<f32>() * 200.) * if rand::random() { 1. } else { -1. };
         let crate_entity = commands
-            .spawn(SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Vec2::new(20., 20.).into(),
-                    color: Color::ORANGE,
+            .spawn((
+                SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Vec2::new(20., 20.).into(),
+                        color: Color::ORANGE,
+                        ..Default::default()
+                    },
                     ..Default::default()
                 },
-                ..Default::default()
-            })
-            .insert(Transform2::from_xy(x, y))
-            .insert(Collision {
-                shape: CollisionShape::Rect {
-                    size: Vec2::new(20., 20.),
+                Transform2::from_xy(x, y),
+                Collision {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(20., 20.),
+                    },
+                    flags: 1,
                 },
-                flags: 1,
-            })
-            .insert(CharacterController {
-                movement: Vec2::ZERO,
-                speed: 300.,
-                ..Default::default()
-            })
-            .insert(Hitbox {
-                shape: CollisionShape::Rect {
-                    size: Vec2::new(20., 20.),
+                CharacterController {
+                    movement: Vec2::ZERO,
+                    speed: 300.,
+                    ..Default::default()
                 },
-                for_entity: None,
-                flags: 1,
-            })
-            .insert(Crate)
-            .insert(Health::new(3.))
+                Hitbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(20., 20.),
+                    },
+                    for_entity: None,
+                    flags: 1,
+                },
+                Crate,
+                Health::new(3.),
+            ))
             .id();
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
             entity: Some(crate_entity),
@@ -140,18 +144,18 @@ fn player_control(
         character_controller.movement = Vec2::ZERO;
         if mouse_buttons.just_pressed(MouseButton::Left) {
             let velocity = (mouse.position - transform.translation).normalize() * 900.;
-            commands
-                .spawn(SpriteBundle {
+            commands.spawn((
+                SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(8., 8.).into(),
                         color: Color::BLACK,
                         ..Default::default()
                     },
                     ..Default::default()
-                })
-                .insert(Transform2::from_translation(transform.translation))
-                .insert(Bullet { velocity })
-                .insert(Hurtbox {
+                },
+                Transform2::from_translation(transform.translation),
+                Bullet { velocity },
+                Hurtbox {
                     shape: CollisionShape::Rect {
                         size: Vec2::new(8., 8.),
                     },
@@ -160,7 +164,8 @@ fn player_control(
                     flags: 1,
                     knockback_type: HurtboxKnockbackType::None,
                     damage: 1.,
-                });
+                },
+            ));
         }
         if keys.pressed(KeyCode::W) {
             character_controller.movement.y += 1.;

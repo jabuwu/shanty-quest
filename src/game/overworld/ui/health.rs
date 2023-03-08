@@ -49,46 +49,45 @@ fn health_ui_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new().without_pixel_perfect())
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                FollowCamera { offset: Vec2::ZERO },
+                Transform2::new().without_pixel_perfect(),
+            ))
             .with_children(|parent| {
                 parent
-                    .spawn(Transform2Bundle {
-                        transform2: Transform2::from_translation(HEALTH_UI_POSITION)
-                            .with_scale(Vec2::ONE * HEALTH_UI_SCALE),
-                        ..Default::default()
-                    })
-                    .insert(VisibilityBundle::default())
+                    .spawn((
+                        Transform2Bundle {
+                            transform2: Transform2::from_translation(HEALTH_UI_POSITION)
+                                .with_scale(Vec2::ONE * HEALTH_UI_SCALE),
+                            ..Default::default()
+                        },
+                        VisibilityBundle::default(),
+                    ))
                     .with_children(|parent| {
                         let amt = 10;
                         let mut rng = StdRng::from_seed(Default::default());
                         for i in 0..amt {
                             let settings = random_bottle_settings();
                             let brightness = 0.7 + rng.gen::<f32>() * 0.3;
-                            parent
-                                .spawn(SpriteSheetBundle {
+                            parent.spawn((
+                                SpriteSheetBundle {
                                     sprite: TextureAtlasSprite {
                                         color: Color::rgb(brightness, brightness, brightness),
                                         ..Default::default()
                                     },
                                     texture_atlas: asset_library.sprite_health_bottle_atlas.clone(),
                                     ..Default::default()
-                                })
-                                .insert(
-                                    Transform2::from_translation(Vec2::new(
-                                        i as f32 * 45.,
-                                        settings.y,
-                                    ))
+                                },
+                                Transform2::from_translation(Vec2::new(i as f32 * 45., settings.y))
                                     .with_scale(settings.scale)
                                     .with_rotation(settings.rotation)
                                     .with_depth((
                                         DEPTH_LAYER_UI_HEALTH_BOTTLE.0,
                                         DEPTH_LAYER_UI_HEALTH_BOTTLE.1 + brightness * 0.01,
                                     )),
-                                )
-                                .insert(HealthBottle {
+                                HealthBottle {
                                     threshold: if i == 0 { 0.001 } else { i as f32 / amt as f32 },
                                     threshold_half: if i == amt - 1 {
                                         1.
@@ -98,7 +97,8 @@ fn health_ui_spawn(
                                     },
                                     last_health: 1.,
                                     settings,
-                                });
+                                },
+                            ));
                         }
                     });
             });

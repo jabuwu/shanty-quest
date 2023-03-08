@@ -24,14 +24,12 @@ fn plank_trigger_world_spawn(
     for _ in ev_spawn.iter() {
         let triggers = world_locations.get_multiple_rect("PlankTrigger");
         for trigger in triggers {
-            commands
-                .spawn(TransformBundle::default())
-                .insert(
-                    Transform2::from_translation(trigger.position)
-                        .with_depth((DepthLayer::Entity, 0.)),
-                )
-                .insert(Trigger::new(CollisionShape::Rect { size: trigger.size }))
-                .insert(PlankTrigger);
+            commands.spawn((
+                TransformBundle::default(),
+                Transform2::from_translation(trigger.position).with_depth((DepthLayer::Entity, 0.)),
+                Trigger::new(CollisionShape::Rect { size: trigger.size }),
+                PlankTrigger,
+            ));
         }
     }
 }

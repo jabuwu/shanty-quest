@@ -31,17 +31,17 @@ fn dash_attack_fire(
     for (mut dash_attack, boat, entity, global_transform) in query.iter_mut() {
         if dash_attack.shoot {
             let audio_entity = commands
-                .spawn(Transform2Bundle {
-                    transform2: Transform2::from_translation(
-                        global_transform.translation().truncate(),
-                    ),
-                    ..Default::default()
-                })
-                .insert(
+                .spawn((
+                    Transform2Bundle {
+                        transform2: Transform2::from_translation(
+                            global_transform.translation().truncate(),
+                        ),
+                        ..Default::default()
+                    },
                     AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_dash.clone())
                         .as_playing(),
-                )
-                .insert(TimeToLive { seconds: 3. })
+                    TimeToLive { seconds: 3. },
+                ))
                 .id();
             commands
                 .entity(entity)

@@ -65,36 +65,37 @@ fn shockwave_fire(
     for (mut shockwave, entity, global_transform) in query.iter_mut() {
         if shockwave.shoot {
             let stats = shockwave.level.stats();
-            commands
-                .spawn(Transform2Bundle {
+            commands.spawn((
+                Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),
                     ..Default::default()
-                })
-                .insert(
-                    AudioPlusSource::new(
-                        asset_library
-                            .sound_effects
-                            .sfx_overworld_attack_shockwave
-                            .clone(),
-                    )
-                    .as_playing(),
+                },
+                AudioPlusSource::new(
+                    asset_library
+                        .sound_effects
+                        .sfx_overworld_attack_shockwave
+                        .clone(),
                 )
-                .insert(TimeToLive { seconds: 3. });
+                .as_playing(),
+                TimeToLive { seconds: 3. },
+            ));
             let child_entity = commands
-                .spawn(Transform2Bundle {
-                    ..Default::default()
-                })
-                .insert(VisibilityBundle::default())
-                .insert(ShockwaveWave {
-                    time_alive: 0.,
-                    stats,
-                })
-                .insert(TimeToLive::new(0.75))
+                .spawn((
+                    Transform2Bundle {
+                        ..Default::default()
+                    },
+                    VisibilityBundle::default(),
+                    ShockwaveWave {
+                        time_alive: 0.,
+                        stats,
+                    },
+                    TimeToLive::new(0.75),
+                ))
                 .with_children(|parent| {
-                    parent
-                        .spawn(SpriteBundle {
+                    parent.spawn((
+                        SpriteBundle {
                             sprite: Sprite {
                                 custom_size: Vec2::new(1., 1.).into(),
                                 color: Color::WHITE,
@@ -102,15 +103,16 @@ fn shockwave_fire(
                             },
                             texture: asset_library.sprite_shockwave_vfx.clone(),
                             ..Default::default()
-                        })
-                        .insert(Transform2::new().with_depth(DEPTH_LAYER_SHOCKWAVE))
-                        .insert(ShockwaveSprite);
-                    parent
-                        .spawn(Transform2Bundle {
+                        },
+                        Transform2::new().with_depth(DEPTH_LAYER_SHOCKWAVE),
+                        ShockwaveSprite,
+                    ));
+                    parent.spawn((
+                        Transform2Bundle {
                             ..Default::default()
-                        })
-                        .insert(Transform2::new().with_depth((DepthLayer::Front, 0.98)))
-                        .insert(Hurtbox {
+                        },
+                        Transform2::new().with_depth((DepthLayer::Front, 0.98)),
+                        Hurtbox {
                             shape: CollisionShape::Rect {
                                 size: Vec2::new(400., 400.) * stats.scale,
                             },
@@ -121,8 +123,9 @@ fn shockwave_fire(
                                 stats.knockback_intensity,
                             ),
                             damage: stats.damage,
-                        })
-                        .insert(TimeToLive { seconds: 0.05 });
+                        },
+                        TimeToLive { seconds: 0.05 },
+                    ));
                 })
                 .id();
             commands.entity(entity).add_child(child_entity);

@@ -46,35 +46,32 @@ fn healthbar_spawn(mut ev_spawn: EventReader<HealthbarSpawnEvent>, mut commands:
         entity
             .insert(Healthbar { size: event.size })
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Some(event.size + HEALTHBAR_BORDER),
                             color: Color::BLACK,
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(event.offset)
-                            .with_depth(DEPTH_LAYER_HEALTHBAR_BORDER),
-                    );
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                    Transform2::from_translation(event.offset)
+                        .with_depth(DEPTH_LAYER_HEALTHBAR_BORDER),
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Some(event.size),
                             color: Color::RED,
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(event.offset)
-                            .with_depth(DEPTH_LAYER_HEALTHBAR),
-                    )
-                    .insert(HealthbarValue {
+                    },
+                    Transform2::from_translation(event.offset).with_depth(DEPTH_LAYER_HEALTHBAR),
+                    HealthbarValue {
                         offset: event.offset,
-                    });
+                    },
+                ));
             });
     }
 }

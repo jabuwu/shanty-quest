@@ -80,108 +80,107 @@ fn outside_init(
 ) {
     screen_fade.fade_in(0.5);
     *state = OutsideState::default();
-    commands
-        .spawn(Camera2dBundle::default())
-        .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
-    commands
-        .spawn_empty()
-        .insert(AudioPlusSource::new(
-            asset_library.sound_effects.sfx_town_outside_hover.clone(),
-        ))
-        .insert(HoverSound);
-    commands
-        .spawn_empty()
-        .insert(AudioPlusSource::new(
-            asset_library.sound_effects.sfx_town_outside_click.clone(),
-        ))
-        .insert(ClickSound);
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        Camera2dBundle::default(),
+        Transform2::new().with_depth((DepthLayer::Camera, 0.)),
+    ));
+    commands.spawn((
+        AudioPlusSource::new(asset_library.sound_effects.sfx_town_outside_hover.clone()),
+        HoverSound,
+    ));
+    commands.spawn((
+        AudioPlusSource::new(asset_library.sound_effects.sfx_town_outside_click.clone()),
+        ClickSound,
+    ));
+    commands.spawn((
+        SpriteBundle {
             texture: asset_library.sprite_town_bg.clone(),
             ..Default::default()
-        })
-        .insert(
-            Transform2::new()
-                .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_BG)
-                .with_scale(Vec2::ONE * 0.5),
-        );
+        },
+        Transform2::new()
+            .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_BG)
+            .with_scale(Vec2::ONE * 0.5),
+    ));
     commands
-        .spawn(VisibilityBundle {
-            visibility: Visibility::Hidden,
-            ..Default::default()
-        })
-        .insert(TransformBundle::default())
-        .insert(Transform2::from_xy(-493., -84.))
-        .insert(ClickableItem {
-            click_priority: 1,
-            action: ClickableAction::Tavern,
-            last_hover: false,
-        })
-        .insert(Clickable::new(CollisionShape::Rect {
-            size: Vec2::new(300., 350.),
-        }))
+        .spawn((
+            VisibilityBundle {
+                visibility: Visibility::Hidden,
+                ..Default::default()
+            },
+            TransformBundle::default(),
+            Transform2::from_xy(-493., -84.),
+            ClickableItem {
+                click_priority: 1,
+                action: ClickableAction::Tavern,
+                last_hover: false,
+            },
+            Clickable::new(CollisionShape::Rect {
+                size: Vec2::new(300., 350.),
+            }),
+        ))
         .with_children(|parent| {
-            parent
-                .spawn(SpriteBundle {
+            parent.spawn((
+                SpriteBundle {
                     texture: asset_library.sprite_town_tavern_outline.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::from_xy(0., 30.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
-                );
+                },
+                Transform2::from_xy(0., 30.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
+            ));
         });
     commands
-        .spawn(VisibilityBundle {
-            visibility: Visibility::Hidden,
-            ..Default::default()
-        })
-        .insert(TransformBundle::default())
-        .insert(Transform2::from_xy(369., 0.))
-        .insert(ClickableItem {
-            click_priority: 0,
-            action: ClickableAction::Mayor,
-            last_hover: false,
-        })
-        .insert(Clickable::new(CollisionShape::Rect {
-            size: Vec2::new(550., 300.),
-        }))
+        .spawn((
+            VisibilityBundle {
+                visibility: Visibility::Hidden,
+                ..Default::default()
+            },
+            TransformBundle::default(),
+            Transform2::from_xy(369., 0.),
+            ClickableItem {
+                click_priority: 0,
+                action: ClickableAction::Mayor,
+                last_hover: false,
+            },
+            Clickable::new(CollisionShape::Rect {
+                size: Vec2::new(550., 300.),
+            }),
+        ))
         .with_children(|parent| {
-            parent
-                .spawn(SpriteBundle {
+            parent.spawn((
+                SpriteBundle {
                     texture: asset_library.sprite_town_mayor_outline.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::from_xy(0., 43.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
-                );
+                },
+                Transform2::from_xy(0., 43.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
+            ));
         });
     commands
-        .spawn(VisibilityBundle {
-            visibility: Visibility::Hidden,
-            ..Default::default()
-        })
-        .insert(TransformBundle::default())
-        .insert(Transform2::from_xy(-229., 72.))
-        .insert(ClickableItem {
-            click_priority: 0,
-            action: ClickableAction::ConcertHall,
-            last_hover: false,
-        })
-        .insert(Clickable::new(CollisionShape::Rect {
-            size: Vec2::new(500., 425.),
-        }))
+        .spawn((
+            VisibilityBundle {
+                visibility: Visibility::Hidden,
+                ..Default::default()
+            },
+            TransformBundle::default(),
+            Transform2::from_xy(-229., 72.),
+            ClickableItem {
+                click_priority: 0,
+                action: ClickableAction::ConcertHall,
+                last_hover: false,
+            },
+            Clickable::new(CollisionShape::Rect {
+                size: Vec2::new(500., 425.),
+            }),
+        ))
         .with_children(|parent| {
-            parent
-                .spawn(SpriteBundle {
+            parent.spawn((
+                SpriteBundle {
                     texture: asset_library.sprite_town_concert_hall_outline.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::from_xy(115., -5.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
-                );
+                },
+                Transform2::from_xy(115., -5.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_HIGHLIGHT),
+            ));
         });
-    commands
-        .spawn(Text2dBundle {
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 "Exit Town".to_owned(),
                 TextStyle {
@@ -193,18 +192,19 @@ fn outside_init(
             .with_alignment(TextAlignment::Center),
             text_anchor: Anchor::Center,
             ..Default::default()
-        })
-        .insert(Clickable::new(CollisionShape::Rect {
+        },
+        Clickable::new(CollisionShape::Rect {
             size: Vec2::new(350., 150.),
-        }))
-        .insert(ClickableItem {
+        }),
+        ClickableItem {
             click_priority: 0,
             action: ClickableAction::Leave,
             last_hover: false,
-        })
-        .insert(Transform2::from_xy(470., -330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_EXIT));
-    commands
-        .spawn(Text2dBundle {
+        },
+        Transform2::from_xy(470., -330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_EXIT),
+    ));
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 game_state.town.name.clone(),
                 TextStyle {
@@ -216,59 +216,57 @@ fn outside_init(
             .with_alignment(TextAlignment::Center),
             text_anchor: Anchor::Center,
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_NAME));
+        },
+        Transform2::from_xy(0., 330.).with_depth(DEPTH_LAYER_TOWN_OUTSIDE_NAME),
+    ));
 
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             texture: asset_library.sprite_town_tavern_notify.clone(),
             visibility: Visibility::Hidden,
             ..Default::default()
-        })
-        .insert(
-            Transform2::from_xy(-554., 180.)
-                .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
-                .with_scale(Vec2::ONE * 0.5),
-        )
-        .insert(Label("Tavern Icon".to_owned()))
-        .insert(TavernIcon)
-        .insert(PulsingIcon {
+        },
+        Transform2::from_xy(-554., 180.)
+            .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
+            .with_scale(Vec2::ONE * 0.5),
+        Label("Tavern Icon".to_owned()),
+        TavernIcon,
+        PulsingIcon {
             scale: Vec2::ONE * 0.5,
-        });
+        },
+    ));
 
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             texture: asset_library.sprite_town_mayor_notify.clone(),
             visibility: Visibility::Hidden,
             ..Default::default()
-        })
-        .insert(
-            Transform2::from_xy(260., 180.)
-                .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
-                .with_scale(Vec2::ONE * 0.5),
-        )
-        .insert(Label("Mayor Icon".to_owned()))
-        .insert(MayorIcon)
-        .insert(PulsingIcon {
+        },
+        Transform2::from_xy(260., 180.)
+            .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
+            .with_scale(Vec2::ONE * 0.5),
+        Label("Mayor Icon".to_owned()),
+        MayorIcon,
+        PulsingIcon {
             scale: Vec2::ONE * 0.5,
-        });
+        },
+    ));
 
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             texture: asset_library.sprite_town_concert_hall_notify.clone(),
             visibility: Visibility::Hidden,
             ..Default::default()
-        })
-        .insert(
-            Transform2::from_xy(-197., 311.)
-                .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
-                .with_scale(Vec2::ONE * 0.5),
-        )
-        .insert(Label("Concert Hall Icon".to_owned()))
-        .insert(ConcertHallIcon)
-        .insert(PulsingIcon {
+        },
+        Transform2::from_xy(-197., 311.)
+            .with_depth(DEPTH_LAYER_TOWN_OUTSIDE_ICON)
+            .with_scale(Vec2::ONE * 0.5),
+        Label("Concert Hall Icon".to_owned()),
+        ConcertHallIcon,
+        PulsingIcon {
             scale: Vec2::ONE * 0.5,
-        });
+        },
+    ));
     if game_state.quests.end() && !game_state.quests.endgame_town_dialogue {
         for (p, t) in JAGEROSSA_AFTER_VICTORY.iter() {
             dialogue.add_text(*p, String::from(*t));

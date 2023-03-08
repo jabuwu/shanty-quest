@@ -31,13 +31,11 @@ fn volume_control(
         }
     }
     if play_sample {
-        commands
-            .spawn_empty()
-            .insert(
-                AudioPlusSource::new(asset_library.sound_effects.sfx_audio_preview.clone())
-                    .as_playing(),
-            )
-            .insert(Persistent)
-            .insert(TimeToLive { seconds: 3. });
+        commands.spawn((
+            AudioPlusSource::new(asset_library.sound_effects.sfx_audio_preview.clone())
+                .as_playing(),
+            Persistent,
+            TimeToLive { seconds: 3. },
+        ));
     }
 }

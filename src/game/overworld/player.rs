@@ -40,13 +40,14 @@ fn player_spawn(
 ) {
     for _ in ev_spawn.iter() {
         let entity = commands
-            .spawn_empty()
-            .insert(Player {
-                disabled: false,
-                invincibility: 0.,
-                dead: false,
-            })
-            .insert(AudioPlusListener)
+            .spawn((
+                Player {
+                    disabled: false,
+                    invincibility: 0.,
+                    dead: false,
+                },
+                AudioPlusListener,
+            ))
             .id();
         ev_boat_spawn.send(BoatSpawnEvent {
             entity: Some(entity),
@@ -215,8 +216,8 @@ fn player_damage(
                     health.damage(event.damage);
                     game_state.health = health.value;
                     let sound = commands
-                        .spawn(Transform2Bundle::default())
-                        .insert(
+                        .spawn((
+                            Transform2Bundle::default(),
                             AudioPlusSource::new(
                                 asset_library
                                     .sound_effects
@@ -224,8 +225,8 @@ fn player_damage(
                                     .clone(),
                             )
                             .as_playing(),
-                        )
-                        .insert(TimeToLive { seconds: 3. })
+                            TimeToLive { seconds: 3. },
+                        ))
                         .id();
                     commands.entity(entity).add_child(sound);
                 }

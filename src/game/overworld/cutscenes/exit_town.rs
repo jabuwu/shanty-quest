@@ -38,7 +38,7 @@ fn init1(
     asset_library: Res<AssetLibrary>,
 ) {
     *state = ExitTownCutsceneState::default();
-    commands.spawn_empty().insert(
+    commands.spawn(
         AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_town_exit.clone())
             .as_playing(),
     );

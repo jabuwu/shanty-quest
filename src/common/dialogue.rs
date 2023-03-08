@@ -108,47 +108,47 @@ fn dialogue_init(
     asset_library: Res<AssetLibrary>,
 ) {
     for _ in ev_dialogue_init.iter() {
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 sprite: Sprite {
                     color: Color::rgba(1., 1., 1., 0.),
                     ..Default::default()
                 },
                 texture: asset_library.sprite_dialogue_fade.clone(),
                 ..Default::default()
-            })
-            .insert(Transform2::new().with_depth(DEPTH_LAYER_DIALOGUE_FADE))
-            .insert(DialogueFade)
-            .insert(Persistent)
-            .insert(FollowCamera { offset: Vec2::ZERO });
+            },
+            Transform2::new().with_depth(DEPTH_LAYER_DIALOGUE_FADE),
+            DialogueFade,
+            Persistent,
+            FollowCamera { offset: Vec2::ZERO },
+        ));
         commands
-            .spawn(Transform2Bundle {
-                transform2: Transform2::from_xy(0., -240.),
-                ..Default::default()
-            })
-            .insert(VisibilityBundle::default())
-            .insert(FollowCamera {
-                offset: Vec2::new(0., -240.),
-            })
-            .insert(Persistent)
+            .spawn((
+                Transform2Bundle {
+                    transform2: Transform2::from_xy(0., -240.),
+                    ..Default::default()
+                },
+                VisibilityBundle::default(),
+                FollowCamera {
+                    offset: Vec2::new(0., -240.),
+                },
+                Persistent,
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         visibility: Visibility::Hidden,
                         texture: asset_library.sprite_dialogue_bg.clone(),
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::new()
-                            .with_scale(Vec2::ONE * 1.4)
-                            .with_depth(DEPTH_LAYER_DIALOGUE_BACK),
-                    )
-                    .insert(DialogueBack)
-                    .insert(AudioPlusSource::new(
-                        asset_library.sound_effects.sfx_dialogue_proceed.clone(),
-                    ));
-                parent
-                    .spawn(Text2dBundle {
+                    },
+                    Transform2::new()
+                        .with_scale(Vec2::ONE * 1.4)
+                        .with_depth(DEPTH_LAYER_DIALOGUE_BACK),
+                    DialogueBack,
+                    AudioPlusSource::new(asset_library.sound_effects.sfx_dialogue_proceed.clone()),
+                ));
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             "",
                             TextStyle {
@@ -160,14 +160,13 @@ fn dialogue_init(
                         .with_alignment(TextAlignment::Left),
                         text_anchor: Anchor::TopRight,
                         ..Default::default()
-                    })
-                    .insert(Transform2::from_xy(-540., 60.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT))
-                    .insert(DialogueText)
-                    .insert(AudioPlusSource::new(
-                        asset_library.sound_effects.sfx_dialogue_start.clone(),
-                    ));
-                parent
-                    .spawn(Text2dBundle {
+                    },
+                    Transform2::from_xy(-540., 60.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT),
+                    DialogueText,
+                    AudioPlusSource::new(asset_library.sound_effects.sfx_dialogue_start.clone()),
+                ));
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             "",
                             TextStyle {
@@ -179,84 +178,77 @@ fn dialogue_init(
                         .with_alignment(TextAlignment::Left),
                         text_anchor: Anchor::CenterRight,
                         ..Default::default()
-                    })
-                    .insert(Transform2::from_xy(-550., 90.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT))
-                    .insert(DialogueName)
-                    .insert(AudioPlusSource::new(
-                        asset_library.sound_effects.sfx_dialogue_repeat.clone(),
-                    ));
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                    Transform2::from_xy(-550., 90.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT),
+                    DialogueName,
+                    AudioPlusSource::new(asset_library.sound_effects.sfx_dialogue_repeat.clone()),
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_jagerossa.clone(),
                         visibility: Visibility::Hidden,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
-                    )
-                    .insert(DialoguePortraitComp {
+                    },
+                    Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    DialoguePortraitComp {
                         portrait: DialoguePortrait::Jagerossa,
-                    });
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_elvis.clone(),
                         visibility: Visibility::Hidden,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
-                    )
-                    .insert(DialoguePortraitComp {
+                    },
+                    Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    DialoguePortraitComp {
                         portrait: DialoguePortrait::Plank,
-                    });
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_bowie.clone(),
                         visibility: Visibility::Hidden,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
-                    )
-                    .insert(DialoguePortraitComp {
+                    },
+                    Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    DialoguePortraitComp {
                         portrait: DialoguePortrait::Davy,
-                    });
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_ringo.clone(),
                         visibility: Visibility::Hidden,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
-                    )
-                    .insert(DialoguePortraitComp {
+                    },
+                    Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    DialoguePortraitComp {
                         portrait: DialoguePortrait::Ringo,
-                    });
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_barkeep.clone(),
                         visibility: Visibility::Hidden,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
-                    )
-                    .insert(DialoguePortraitComp {
+                    },
+                    Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    DialoguePortraitComp {
                         portrait: DialoguePortrait::Barkeep,
-                    });
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         texture: asset_library.sprite_dialogue_portrait_governor.clone(),
                         visibility: Visibility::Hidden,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
-                    )
-                    .insert(DialoguePortraitComp {
+                    },
+                    Transform2::from_xy(350., 280.).with_depth(DEPTH_LAYER_DIALOGUE_PORTRAIT),
+                    DialoguePortraitComp {
                         portrait: DialoguePortrait::Mayor,
-                    });
+                    },
+                ));
             });
     }
 }

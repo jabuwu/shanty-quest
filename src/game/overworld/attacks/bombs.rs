@@ -73,23 +73,22 @@ fn bombs_fire(
     for (boat_entity, mut bombs, boat, global_transform) in query.iter_mut() {
         if bombs.shoot {
             let stats = bombs.level.stats();
-            commands
-                .spawn(Transform2Bundle {
+            commands.spawn((
+                Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),
                     ..Default::default()
-                })
-                .insert(
-                    AudioPlusSource::new(
-                        asset_library
-                            .sound_effects
-                            .sfx_overworld_attack_bombs
-                            .clone(),
-                    )
-                    .as_playing(),
+                },
+                AudioPlusSource::new(
+                    asset_library
+                        .sound_effects
+                        .sfx_overworld_attack_bombs
+                        .clone(),
                 )
-                .insert(TimeToLive { seconds: 3. });
+                .as_playing(),
+                TimeToLive { seconds: 3. },
+            ));
             for _ in 0..stats.spawn_amount {
                 let time_to_live = 1.5 + rand::random::<f32>() * 0.35;
                 let throw_direction =
@@ -99,41 +98,37 @@ fn bombs_fire(
                     * (stats.velocity_min
                         + rand::random::<f32>() * (stats.velocity_max - stats.velocity_min))
                     + boat.movement.clamp(Vec2::NEG_ONE, Vec2::ONE) * 150.;
-                commands
-                    .spawn(SpriteSheetBundle {
+                commands.spawn((
+                    SpriteSheetBundle {
                         texture_atlas: asset_library.sprite_bomb_atlas.clone(),
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(position)
-                            .with_depth((DepthLayer::Entity, 0.0))
-                            .with_scale(Vec2::ONE * 0.75),
-                    )
-                    .insert(YDepth::default())
-                    .insert(Bomb {
+                    },
+                    Transform2::from_translation(position)
+                        .with_depth((DepthLayer::Entity, 0.0))
+                        .with_scale(Vec2::ONE * 0.75),
+                    YDepth::default(),
+                    Bomb {
                         velocity,
                         life_time: time_to_live,
                         life_time_max: time_to_live,
                         parent: boat_entity,
                         hurt_flags: bombs.hurt_flags,
                         stats,
-                    });
+                    },
+                ));
             }
-            commands
-                .spawn(TransformBundle::default())
-                .insert(Transform2::from_translation(
-                    global_transform.translation().truncate(),
-                ))
-                .insert(
-                    AudioPlusSource::new(
-                        asset_library
-                            .sound_effects
-                            .sfx_overworld_attack_bomb_throw
-                            .clone(),
-                    )
-                    .as_playing(),
+            commands.spawn((
+                TransformBundle::default(),
+                Transform2::from_translation(global_transform.translation().truncate()),
+                AudioPlusSource::new(
+                    asset_library
+                        .sound_effects
+                        .sfx_overworld_attack_bomb_throw
+                        .clone(),
                 )
-                .insert(TimeToLive { seconds: 4. });
+                .as_playing(),
+                TimeToLive { seconds: 4. },
+            ));
         }
         bombs.shoot = false;
     }
@@ -151,20 +146,18 @@ fn bomb_move(
         bomb.life_time -= time.delta_seconds();
         if bomb.life_time < 0. {
             commands.entity(entity).despawn();
-            commands
-                .spawn(SpriteBundle {
+            commands.spawn((
+                SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(150., 150.).into(),
                         ..Default::default()
                     },
                     texture: asset_library.sprite_bomb_explosion.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::from_translation(global_transform.translation().truncate())
-                        .with_depth((DepthLayer::Entity, 0.)),
-                )
-                .insert(Hurtbox {
+                },
+                Transform2::from_translation(global_transform.translation().truncate())
+                    .with_depth((DepthLayer::Entity, 0.)),
+                Hurtbox {
                     shape: CollisionShape::Rect {
                         size: Vec2::new(180., 180.),
                     },
@@ -175,24 +168,22 @@ fn bomb_move(
                         bomb.stats.knockback_intensity,
                     ),
                     damage: bomb.stats.damage,
-                })
-                .insert(YDepth::default())
-                .insert(TimeToLive { seconds: 0.05 });
-            commands
-                .spawn(TransformBundle::default())
-                .insert(Transform2::from_translation(
-                    global_transform.translation().truncate(),
-                ))
-                .insert(
-                    AudioPlusSource::new(
-                        asset_library
-                            .sound_effects
-                            .sfx_overworld_attack_bomb_explode
-                            .clone(),
-                    )
-                    .as_playing(),
+                },
+                YDepth::default(),
+                TimeToLive { seconds: 0.05 },
+            ));
+            commands.spawn((
+                TransformBundle::default(),
+                Transform2::from_translation(global_transform.translation().truncate()),
+                AudioPlusSource::new(
+                    asset_library
+                        .sound_effects
+                        .sfx_overworld_attack_bomb_explode
+                        .clone(),
                 )
-                .insert(TimeToLive { seconds: 4. });
+                .as_playing(),
+                TimeToLive { seconds: 4. },
+            ));
         }
     }
 }

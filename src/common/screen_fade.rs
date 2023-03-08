@@ -64,18 +64,19 @@ impl ScreenFade {
 struct ScreenFadeComp;
 
 fn screen_fade_init(mut commands: Commands) {
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(50000., 50000.).into(),
                 color: Color::BLACK,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::new().with_depth(DEPTH_LAYER_SCREEN_FADE))
-        .insert(ScreenFadeComp)
-        .insert(Persistent);
+        },
+        Transform2::new().with_depth(DEPTH_LAYER_SCREEN_FADE),
+        ScreenFadeComp,
+        Persistent,
+    ));
 }
 
 fn screen_fade_update(

@@ -47,72 +47,75 @@ pub fn init(
 ) {
     asset_library.load_assets(&asset_server);
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(32., 32.).into(),
                 color: Color::GREEN,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(70., 0.))
-        .insert(Collision {
+        },
+        Transform2::from_xy(70., 0.),
+        Collision {
             shape: CollisionShape::Rect {
                 size: Vec2::new(32., 32.),
             },
             flags: 1,
-        })
-        .insert(CharacterController {
+        },
+        CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
             ..Default::default()
-        })
-        .insert(Player);
-    commands
-        .spawn(SpriteBundle {
+        },
+        Player,
+    ));
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(32., 32.).into(),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(100., 0.))
-        .insert(Collision {
+        },
+        Transform2::from_xy(100., 0.),
+        Collision {
             shape: CollisionShape::Rect {
                 size: Vec2::new(32., 32.),
             },
             flags: COLLISION_FLAG,
-        })
-        .insert(CharacterController {
+        },
+        CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
             ..Default::default()
-        })
-        .insert(MovingBox { right: true });
-    commands
-        .spawn(SpriteBundle {
+        },
+        MovingBox { right: true },
+    ));
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(32., 32.).into(),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(30., 40.))
-        .insert(Collision {
+        },
+        Transform2::from_xy(30., 40.),
+        Collision {
             shape: CollisionShape::Rect {
                 size: Vec2::new(32., 32.),
             },
             flags: COLLISION_FLAG,
-        })
-        .insert(CharacterController {
+        },
+        CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
             ..Default::default()
-        })
-        .insert(MovingBox { right: false });
+        },
+        MovingBox { right: false },
+    ));
 }
 
 fn player_move(

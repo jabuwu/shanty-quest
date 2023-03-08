@@ -33,22 +33,18 @@ fn town_ambience(
     if playing != state.last_playing {
         state.last_playing = playing;
         if playing {
-            commands
-                .spawn_empty()
-                .insert(
-                    AudioPlusSource::new(asset_library.sound_effects.sfx_town_ambient.clone())
-                        .as_looping(),
-                )
-                .insert(Persistent)
-                .insert(TownAmbience);
-            commands
-                .spawn_empty()
-                .insert(
-                    AudioPlusSource::new(asset_library.sound_effects.sfx_town_music.clone())
-                        .as_looping(),
-                )
-                .insert(Persistent)
-                .insert(TownAmbience);
+            commands.spawn((
+                AudioPlusSource::new(asset_library.sound_effects.sfx_town_ambient.clone())
+                    .as_looping(),
+                Persistent,
+                TownAmbience,
+            ));
+            commands.spawn((
+                AudioPlusSource::new(asset_library.sound_effects.sfx_town_music.clone())
+                    .as_looping(),
+                Persistent,
+                TownAmbience,
+            ));
         } else {
             for entity in query.iter() {
                 commands.entity(entity).despawn_recursive();

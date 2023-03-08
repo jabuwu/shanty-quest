@@ -210,8 +210,7 @@ fn enemy_spawns(
                     let position = camera_position + random_spawn_offset();
                     match spawn_chance.1 {
                         EnemySpawn::Octopus(level) => {
-                            let entity =
-                                commands.spawn_empty().insert(SpawnedEntity::default()).id();
+                            let entity = commands.spawn(SpawnedEntity::default()).id();
                             ev_octopus_spawn.send(OctopusSpawnEvent {
                                 entity: Some(entity),
                                 position,
@@ -219,8 +218,7 @@ fn enemy_spawns(
                             });
                         }
                         EnemySpawn::Turtle(level) => {
-                            let entity =
-                                commands.spawn_empty().insert(SpawnedEntity::default()).id();
+                            let entity = commands.spawn(SpawnedEntity::default()).id();
                             ev_turtle_spawn.send(TurtleSpawnEvent {
                                 entity: Some(entity),
                                 position,

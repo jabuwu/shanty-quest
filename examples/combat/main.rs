@@ -65,9 +65,10 @@ pub fn init(
     asset_library.load_assets(&asset_server);
     asset_library.create_texture_atlases(texture_atlases.as_mut());
     asset_library.create_sound_effects();
-    commands
-        .spawn(Camera2dBundle::default())
-        .insert(Transform2::new().with_depth((DepthLayer::Camera, 0.)));
+    commands.spawn((
+        Camera2dBundle::default(),
+        Transform2::new().with_depth((DepthLayer::Camera, 0.)),
+    ));
     ev_player_spawn.send_default();
     ev_ocean_spawn.send_default();
 }
@@ -163,11 +164,11 @@ fn debug(
         }
         local.stress_pressed = !local.stress_pressed;
         for _ in 0..100 {
-            commands
-                .spawn(Transform2Bundle {
+            commands.spawn((
+                Transform2Bundle {
                     ..Default::default()
-                })
-                .insert(Hurtbox {
+                },
+                Hurtbox {
                     shape: CollisionShape::Rect {
                         size: Vec2::new(9999999., 9999999.),
                     },
@@ -178,7 +179,8 @@ fn debug(
                     //flags: DAMAGE_FLAG_PLAYER,
                     knockback_type: HurtboxKnockbackType::None,
                     damage: 999.,
-                });
+                },
+            ));
         }
     }
     if input.just_pressed(KeyCode::Key1) {

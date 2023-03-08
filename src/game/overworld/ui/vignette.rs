@@ -22,13 +22,15 @@ fn vignette_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new().without_pixel_perfect())
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                FollowCamera { offset: Vec2::ZERO },
+                Transform2::new().without_pixel_perfect(),
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(1280., 768.).into(),
                             color: Color::rgba(0., 0., 0., VIGNETTE_INTENSITY),
@@ -36,12 +38,11 @@ fn vignette_spawn(
                         },
                         texture: asset_library.sprite_screen_edges.clone(),
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(0., 0.)
-                            .with_depth(DEPTH_LAYER_VIGNETTE)
-                            .without_pixel_perfect(),
-                    );
+                    },
+                    Transform2::from_xy(0., 0.)
+                        .with_depth(DEPTH_LAYER_VIGNETTE)
+                        .without_pixel_perfect(),
+                ));
             });
     }
 }

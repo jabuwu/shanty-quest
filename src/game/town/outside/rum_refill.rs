@@ -56,59 +56,60 @@ fn init1(
     *state = RumRefillState::default();
     let health = game_state.health / game_state.health_max;
     state.index = 1 + (health * 8.).round() as u32;
-    commands
-        .spawn(Transform2Bundle::default())
-        .insert(
-            AudioPlusSource::new(
-                asset_library
-                    .sound_effects
-                    .sfx_town_rum_refill_jingle
-                    .clone(),
-            )
-            .as_playing(),
+    commands.spawn((
+        Transform2Bundle::default(),
+        AudioPlusSource::new(
+            asset_library
+                .sound_effects
+                .sfx_town_rum_refill_jingle
+                .clone(),
         )
-        .insert(TimeToLive { seconds: 3. });
+        .as_playing(),
+        TimeToLive { seconds: 3. },
+    ));
     commands
-        .spawn(TransformBundle::default())
-        .insert(VisibilityBundle::default())
-        .insert(Transform2::new().with_scale(Vec2::ONE * 1.5))
-        .insert(RumRefillParent)
+        .spawn((
+            TransformBundle::default(),
+            VisibilityBundle::default(),
+            Transform2::new().with_scale(Vec2::ONE * 1.5),
+            RumRefillParent,
+        ))
         .with_children(|parent| {
-            parent
-                .spawn(SpriteBundle {
+            parent.spawn((
+                SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(9999., 9999.).into(),
                         color: Color::rgba(1., 1., 1., 0.),
                         ..Default::default()
                     },
                     ..Default::default()
-                })
-                .insert(Transform2::new().with_depth(DEPTH_LAYER_TOWN_OUTSIDE_RUM_REFILL_BG))
-                .insert(RumRefillBg);
+                },
+                Transform2::new().with_depth(DEPTH_LAYER_TOWN_OUTSIDE_RUM_REFILL_BG),
+                RumRefillBg,
+            ));
             for i in 0..10 {
                 let x = (i as f32 - 4.5) * 40.;
                 let brightness = 0.6 + rand::random::<f32>() * 0.4;
                 let to = Vec2::new(x, 0.);
                 let from = Vec2::new(x + 100., 0.);
-                parent
-                    .spawn(SpriteSheetBundle {
+                parent.spawn((
+                    SpriteSheetBundle {
                         sprite: TextureAtlasSprite {
                             color: Color::rgba(brightness, brightness, brightness, 0.),
                             ..Default::default()
                         },
                         texture_atlas: asset_library.sprite_health_bottle_atlas.clone(),
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(to)
-                            .with_rotation(rand::random::<f32>() * 0.2 - 0.1)
-                            .with_scale(Vec2::ONE * (1. + rand::random::<f32>() * 0.2 - 0.1))
-                            .with_depth((
-                                DEPTH_LAYER_TOWN_OUTSIDE_RUM_REFILL_BOTTLE.0,
-                                DEPTH_LAYER_TOWN_OUTSIDE_RUM_REFILL_BOTTLE.1 + brightness * 0.001,
-                            )),
-                    )
-                    .insert(RumRefillBottle { index: i, to, from });
+                    },
+                    Transform2::from_translation(to)
+                        .with_rotation(rand::random::<f32>() * 0.2 - 0.1)
+                        .with_scale(Vec2::ONE * (1. + rand::random::<f32>() * 0.2 - 0.1))
+                        .with_depth((
+                            DEPTH_LAYER_TOWN_OUTSIDE_RUM_REFILL_BOTTLE.0,
+                            DEPTH_LAYER_TOWN_OUTSIDE_RUM_REFILL_BOTTLE.1 + brightness * 0.001,
+                        )),
+                    RumRefillBottle { index: i, to, from },
+                ));
             }
         });
 }
@@ -160,18 +161,17 @@ fn update2(
         } else {
             state.time = 0.
         }
-        commands
-            .spawn(Transform2Bundle::default())
-            .insert(
-                AudioPlusSource::new(
-                    asset_library
-                        .sound_effects
-                        .sfx_town_rum_refill_clank
-                        .clone(),
-                )
-                .as_playing(),
+        commands.spawn((
+            Transform2Bundle::default(),
+            AudioPlusSource::new(
+                asset_library
+                    .sound_effects
+                    .sfx_town_rum_refill_clank
+                    .clone(),
             )
-            .insert(TimeToLive { seconds: 3. });
+            .as_playing(),
+            TimeToLive { seconds: 3. },
+        ));
     }
 }
 

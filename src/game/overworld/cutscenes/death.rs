@@ -28,19 +28,18 @@ fn init1(
     mut commands: Commands,
 ) {
     screen_fade.fade_out(0.3);
-    commands
-        .spawn(Transform2Bundle::default())
-        .insert(
-            AudioPlusSource::new(
-                asset_library
-                    .sound_effects
-                    .sfx_overworld_player_died
-                    .clone(),
-            )
-            .as_playing(),
+    commands.spawn((
+        Transform2Bundle::default(),
+        AudioPlusSource::new(
+            asset_library
+                .sound_effects
+                .sfx_overworld_player_died
+                .clone(),
         )
-        .insert(TimeToLive { seconds: 8. })
-        .insert(Persistent);
+        .as_playing(),
+        TimeToLive { seconds: 8. },
+        Persistent,
+    ));
 }
 
 fn cleanup(mut app_state: ResMut<NextState<AppState>>) {

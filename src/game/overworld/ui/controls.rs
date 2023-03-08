@@ -35,64 +35,65 @@ fn controls_ui_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new().without_pixel_perfect())
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                FollowCamera { offset: Vec2::ZERO },
+                Transform2::new().without_pixel_perfect(),
+            ))
             .with_children(|parent| {
                 parent
-                    .spawn(Transform2Bundle {
-                        transform2: Transform2::from_translation(CONTROLS_UI_POSITION)
-                            .with_scale(Vec2::ONE * CONTROLS_UI_SCALE),
-                        ..Default::default()
-                    })
-                    .insert(VisibilityBundle::default())
+                    .spawn((
+                        Transform2Bundle {
+                            transform2: Transform2::from_translation(CONTROLS_UI_POSITION)
+                                .with_scale(Vec2::ONE * CONTROLS_UI_SCALE),
+                            ..Default::default()
+                        },
+                        VisibilityBundle::default(),
+                    ))
                     .with_children(|parent| {
-                        parent
-                            .spawn(SpriteBundle {
+                        parent.spawn((
+                            SpriteBundle {
                                 texture: asset_library.sprite_controls_dash.clone(),
                                 ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_xy(0., 0.)
-                                    .with_scale(Vec2::ONE * 0.5)
-                                    .with_depth(DEPTH_LAYER_UI_CONTROLS),
-                            )
-                            .insert(ControlsUiDash);
+                            },
+                            Transform2::from_xy(0., 0.)
+                                .with_scale(Vec2::ONE * 0.5)
+                                .with_depth(DEPTH_LAYER_UI_CONTROLS),
+                            ControlsUiDash,
+                        ));
                         parent
-                            .spawn(SpriteSheetBundle {
-                                texture_atlas: asset_library.sprite_controls_jam_atlas.clone(),
-                                ..Default::default()
-                            })
-                            .insert(
+                            .spawn((
+                                SpriteSheetBundle {
+                                    texture_atlas: asset_library.sprite_controls_jam_atlas.clone(),
+                                    ..Default::default()
+                                },
                                 Transform2::from_xy(240., 0.)
                                     .with_scale(Vec2::ONE * 0.5)
                                     .with_depth(DEPTH_LAYER_UI_CONTROLS),
-                            )
-                            .insert(ControlsUiJam)
+                                ControlsUiJam,
+                            ))
                             .with_children(|parent| {
-                                parent
-                                    .spawn(SpriteBundle {
+                                parent.spawn((
+                                    SpriteBundle {
                                         texture: asset_library.sprite_controls_jam_key.clone(),
                                         ..Default::default()
-                                    })
-                                    .insert(
-                                        Transform2::from_xy(-100., 145.)
-                                            .with_depth(DEPTH_LAYER_UI_CONTROLS_KEY),
-                                    );
+                                    },
+                                    Transform2::from_xy(-100., 145.)
+                                        .with_depth(DEPTH_LAYER_UI_CONTROLS_KEY),
+                                ));
                             });
-                        parent
-                            .spawn(SpriteBundle {
+                        parent.spawn((
+                            SpriteBundle {
                                 texture: asset_library.sprite_controls_map.clone(),
                                 visibility: Visibility::Hidden,
                                 ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_xy(480., 0.)
-                                    .with_scale(Vec2::ONE * 0.5)
-                                    .with_depth(DEPTH_LAYER_UI_CONTROLS),
-                            )
-                            .insert(ControlsUiMap);
+                            },
+                            Transform2::from_xy(480., 0.)
+                                .with_scale(Vec2::ONE * 0.5)
+                                .with_depth(DEPTH_LAYER_UI_CONTROLS),
+                            ControlsUiMap,
+                        ));
                     });
             });
     }

@@ -58,11 +58,11 @@ fn forward_cannons_fire(
         if forward_cannons.shoot {
             let stats = forward_cannons.level.stats();
             let audio_entity = commands
-                .spawn(Transform2Bundle {
-                    transform2: Transform2::new(),
-                    ..Default::default()
-                })
-                .insert(
+                .spawn((
+                    Transform2Bundle {
+                        transform2: Transform2::new(),
+                        ..Default::default()
+                    },
                     AudioPlusSource::new(
                         asset_library
                             .sound_effects
@@ -70,8 +70,8 @@ fn forward_cannons_fire(
                             .clone(),
                     )
                     .as_playing(),
-                )
-                .insert(TimeToLive { seconds: 3. })
+                    TimeToLive { seconds: 3. },
+                ))
                 .id();
             commands.entity(boat_entity).add_child(audio_entity);
             let forward = Vec2::from_angle(boat.direction);
@@ -79,21 +79,19 @@ fn forward_cannons_fire(
             let velocity = forward * stats.speed;
             let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
             scale *= stats.scale;
-            commands
-                .spawn(SpriteBundle {
+            commands.spawn((
+                SpriteBundle {
                     sprite: Sprite {
                         color: Color::BLACK,
                         ..Default::default()
                     },
                     texture: asset_library.sprite_bullet_note.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::from_translation(position)
-                        .with_depth((DepthLayer::Entity, 0.0))
-                        .with_scale(scale.truncate()),
-                )
-                .insert(Hurtbox {
+                },
+                Transform2::from_translation(position)
+                    .with_depth((DepthLayer::Entity, 0.0))
+                    .with_scale(scale.truncate()),
+                Hurtbox {
                     shape: CollisionShape::Rect {
                         size: Vec2::new(14., 14.) * stats.scale,
                     },
@@ -104,10 +102,11 @@ fn forward_cannons_fire(
                         velocity * stats.knockback_intensity,
                     ),
                     damage: stats.damage,
-                })
-                .insert(YDepth::default())
-                .insert(ForwardCannonBall { velocity })
-                .insert(TimeToLive::new(1.0));
+                },
+                YDepth::default(),
+                ForwardCannonBall { velocity },
+                TimeToLive::new(1.0),
+            ));
         }
         forward_cannons.shoot = false;
     }

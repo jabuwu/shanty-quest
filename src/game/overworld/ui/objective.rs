@@ -32,43 +32,43 @@ fn objective_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new().without_pixel_perfect())
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                FollowCamera { offset: Vec2::ZERO },
+                Transform2::new().without_pixel_perfect(),
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(1., 90.).into(),
                             color: Color::rgba(0., 0., 0., 0.36),
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(625., 320.)
-                            .with_depth(DEPTH_LAYER_UI_OBJECTIVE_BACKGROUND)
-                            .without_pixel_perfect(),
-                    )
-                    .insert(ObjectiveBackground);
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                    Transform2::from_xy(625., 320.)
+                        .with_depth(DEPTH_LAYER_UI_OBJECTIVE_BACKGROUND)
+                        .without_pixel_perfect(),
+                    ObjectiveBackground,
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             ..Default::default()
                         },
                         texture: asset_library.sprite_objective_bg.clone(),
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(530., 335.)
-                            .with_depth(DEPTH_LAYER_UI_OBJECTIVE_TEXT)
-                            .with_scale(Vec2::ONE * 0.5)
-                            .without_pixel_perfect(),
-                    )
-                    .insert(ObjectiveHud);
-                parent
-                    .spawn(Text2dBundle {
+                    },
+                    Transform2::from_xy(530., 335.)
+                        .with_depth(DEPTH_LAYER_UI_OBJECTIVE_TEXT)
+                        .with_scale(Vec2::ONE * 0.5)
+                        .without_pixel_perfect(),
+                    ObjectiveHud,
+                ));
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             "",
                             TextStyle {
@@ -80,11 +80,10 @@ fn objective_spawn(
                         .with_alignment(TextAlignment::Right),
                         text_anchor: Anchor::TopLeft,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(616., 312.).with_depth(DEPTH_LAYER_UI_OBJECTIVE_TEXT),
-                    )
-                    .insert(ObjectiveText);
+                    },
+                    Transform2::from_xy(616., 312.).with_depth(DEPTH_LAYER_UI_OBJECTIVE_TEXT),
+                    ObjectiveText,
+                ));
             });
     }
 }

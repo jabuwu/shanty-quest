@@ -39,22 +39,22 @@ fn town_spawn(
             commands.spawn_empty()
         };
         entity
-            .insert(SpriteBundle {
-                texture: asset_library.sprite_overworld_city.clone(),
-                ..Default::default()
-            })
-            .insert(
+            .insert((
+                SpriteBundle {
+                    texture: asset_library.sprite_overworld_city.clone(),
+                    ..Default::default()
+                },
                 Transform2::from_translation(event.town.position)
                     .with_depth((DepthLayer::Entity, 0.)),
-            )
-            .insert(Town {
-                town: event.town.clone(),
-                block_timer: 0.,
-            })
-            .insert(YDepth::default())
+                Town {
+                    town: event.town.clone(),
+                    block_timer: 0.,
+                },
+                YDepth::default(),
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(Text2dBundle {
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             event.town.name.clone(),
                             TextStyle {
@@ -66,8 +66,9 @@ fn town_spawn(
                         .with_alignment(TextAlignment::Center),
                         text_anchor: Anchor::Center,
                         ..Default::default()
-                    })
-                    .insert(Transform2::from_xy(0., 135.).with_depth(DEPTH_LAYER_TOWN_NAME));
+                    },
+                    Transform2::from_xy(0., 135.).with_depth(DEPTH_LAYER_TOWN_NAME),
+                ));
             });
     }
 }

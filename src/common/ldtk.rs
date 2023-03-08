@@ -52,16 +52,17 @@ fn ldtk_spawn(mut ev_spawn: EventReader<LdtkSpawnEvent>, mut commands: Commands)
         } else {
             commands.spawn_empty()
         };
-        ldtk_entity
-            .insert(Transform2Bundle {
+        ldtk_entity.insert((
+            Transform2Bundle {
                 transform2: Transform2::from_translation(event.position),
                 ..Default::default()
-            })
-            .insert(VisibilityBundle::default())
-            .insert(Ldtk {
+            },
+            VisibilityBundle::default(),
+            Ldtk {
                 asset: event.asset.clone(),
                 state: LdtkState::Unloaded,
-            });
+            },
+        ));
     }
 }
 
@@ -99,14 +100,16 @@ fn ldtk_load(
                 }
                 for level in ldtk_map.levels.iter() {
                     let level_entity = commands
-                        .spawn(Transform2Bundle {
-                            transform2: Transform2::from_xy(
-                                level.world_x as f32,
-                                level.world_y as f32 * -1.0,
-                            ),
-                            ..Default::default()
-                        })
-                        .insert(VisibilityBundle::default())
+                        .spawn((
+                            Transform2Bundle {
+                                transform2: Transform2::from_xy(
+                                    level.world_x as f32,
+                                    level.world_y as f32 * -1.0,
+                                ),
+                                ..Default::default()
+                            },
+                            VisibilityBundle::default(),
+                        ))
                         .id();
                     commands.entity(map_entity).push_children(&[level_entity]);
                     for (idx, layer) in level
@@ -121,14 +124,16 @@ fn ldtk_load(
                             continue;
                         }
                         let layer_entity = commands
-                            .spawn(Transform2Bundle {
-                                transform2: Transform2::from_xy(0.0, 0.0).with_depth((
-                                    DepthLayer::Environment,
-                                    0.5 - idx as f32 / 100.0,
-                                )),
-                                ..Default::default()
-                            })
-                            .insert(VisibilityBundle::default())
+                            .spawn((
+                                Transform2Bundle {
+                                    transform2: Transform2::from_xy(0.0, 0.0).with_depth((
+                                        DepthLayer::Environment,
+                                        0.5 - idx as f32 / 100.0,
+                                    )),
+                                    ..Default::default()
+                                },
+                                VisibilityBundle::default(),
+                            ))
                             .id();
                         commands.entity(level_entity).push_children(&[layer_entity]);
                         match layer.layer_instance_type.as_str() {
@@ -211,15 +216,14 @@ fn ldtk_load(
                     let (mut pos, mut size) = rect.to_position_size();
                     pos *= 100.;
                     size *= 100.;
-                    commands
-                        .spawn(TransformBundle::default())
-                        .insert(
-                            Transform2::from_translation(pos).with_depth((DepthLayer::Front, 1.)),
-                        )
-                        .insert(Collision {
+                    commands.spawn((
+                        TransformBundle::default(),
+                        Transform2::from_translation(pos).with_depth((DepthLayer::Front, 1.)),
+                        Collision {
                             shape: CollisionShape::Rect { size },
                             flags: COLLISION_FLAG,
-                        });
+                        },
+                    ));
                 }
                 ev_world_locations_spawn.send_default();
                 ldtk.state = LdtkState::Loaded;
@@ -245,14 +249,13 @@ fn ldtk_spawn_tile(
         _ => (),
     }
     commands
-        .spawn(SpriteSheetBundle {
-            sprite,
-            texture_atlas: texture_atlases[&tileset_uid].clone(),
-            ..Default::default()
-        })
-        .insert(Transform2::from_xy(
-            tile.px[0] as f32,
-            tile.px[1] as f32 * -1.0,
+        .spawn((
+            SpriteSheetBundle {
+                sprite,
+                texture_atlas: texture_atlases[&tileset_uid].clone(),
+                ..Default::default()
+            },
+            Transform2::from_xy(tile.px[0] as f32, tile.px[1] as f32 * -1.0),
         ))
         .id()
 }

@@ -42,7 +42,7 @@ fn init1(
 ) {
     *state = EnterTownCutsceneState::default();
     screen_fade.fade_out(ENTER_TOWN_TIME_SECONDS);
-    commands.spawn_empty().insert(
+    commands.spawn(
         AudioPlusSource::new(asset_library.sound_effects.sfx_overworld_town_enter.clone())
             .as_playing(),
     );

@@ -28,43 +28,44 @@ fn marker_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new().without_pixel_perfect())
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                FollowCamera { offset: Vec2::ZERO },
+                Transform2::new().without_pixel_perfect(),
+            ))
             .with_children(|parent| {
                 parent
-                    .spawn(SpriteBundle {
-                        sprite: Sprite {
-                            color: Color::rgba(1., 1., 1., 0.),
+                    .spawn((
+                        SpriteBundle {
+                            sprite: Sprite {
+                                color: Color::rgba(1., 1., 1., 0.),
+                                ..Default::default()
+                            },
+                            texture: asset_library.sprite_world_quest_marker_icon.clone(),
                             ..Default::default()
                         },
-                        texture: asset_library.sprite_world_quest_marker_icon.clone(),
-                        ..Default::default()
-                    })
-                    .insert(
                         Transform2::from_xy(0., 0.)
                             .with_depth(DEPTH_LAYER_UI_MARKER_ICON)
                             .with_scale(Vec2::ONE * 0.25)
                             .without_pixel_perfect(),
-                    )
-                    .insert(MarkerIcon)
+                        MarkerIcon,
+                    ))
                     .with_children(|parent| {
-                        parent
-                            .spawn(SpriteBundle {
+                        parent.spawn((
+                            SpriteBundle {
                                 sprite: Sprite {
                                     color: Color::rgba(1., 1., 1., 0.),
                                     ..Default::default()
                                 },
                                 texture: asset_library.sprite_world_quest_marker_arrow.clone(),
                                 ..Default::default()
-                            })
-                            .insert(MarkerArrow)
-                            .insert(
-                                Transform2::from_xy(0., 0.)
-                                    .with_depth(DEPTH_LAYER_UI_MARKER_ARROW)
-                                    .without_pixel_perfect(),
-                            );
+                            },
+                            MarkerArrow,
+                            Transform2::from_xy(0., 0.)
+                                .with_depth(DEPTH_LAYER_UI_MARKER_ARROW)
+                                .without_pixel_perfect(),
+                        ));
                     });
             });
     }

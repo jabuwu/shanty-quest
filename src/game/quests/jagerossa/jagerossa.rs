@@ -61,22 +61,23 @@ fn jagerossa_spawn(
     for _ in ev_spawn.iter() {
         let stats = jagerossa_stats_by_health(1.);
         let entity = commands
-            .spawn_empty()
-            .insert(Jagerossa {
-                target: world_locations.get_single_position("JagerossaMoveTo"),
-                angle: 0.,
-                adjust_angle_chance: TimedChance::new(),
-                backoff_time: 1.5,
-                backoff_dir: Vec2::new(1., -1.),
-                backoff_chance: TimedChance::new(),
-            })
-            .insert(AutoDamage {
-                despawn: true,
-                experience: 1.,
-                experience_count: 5,
-                experience_infinite_distance: true,
-                ..Default::default()
-            })
+            .spawn((
+                Jagerossa {
+                    target: world_locations.get_single_position("JagerossaMoveTo"),
+                    angle: 0.,
+                    adjust_angle_chance: TimedChance::new(),
+                    backoff_time: 1.5,
+                    backoff_dir: Vec2::new(1., -1.),
+                    backoff_chance: TimedChance::new(),
+                },
+                AutoDamage {
+                    despawn: true,
+                    experience: 1.,
+                    experience_count: 5,
+                    experience_infinite_distance: true,
+                    ..Default::default()
+                },
+            ))
             .id();
         overworld_camera.entity_focus(entity);
         ev_boss_healthbar_spawn.send(BossHealthbarSpawnEvent {

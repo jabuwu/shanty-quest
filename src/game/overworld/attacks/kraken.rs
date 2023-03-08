@@ -77,23 +77,22 @@ fn kraken_fire(
     for (boat_entity, mut kraken, global_transform) in query.iter_mut() {
         if kraken.shoot {
             let stats = kraken.level.stats();
-            commands
-                .spawn(Transform2Bundle {
+            commands.spawn((
+                Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),
                     ..Default::default()
-                })
-                .insert(
-                    AudioPlusSource::new(
-                        asset_library
-                            .sound_effects
-                            .sfx_overworld_attack_kraken
-                            .clone(),
-                    )
-                    .as_playing(),
+                },
+                AudioPlusSource::new(
+                    asset_library
+                        .sound_effects
+                        .sfx_overworld_attack_kraken
+                        .clone(),
                 )
-                .insert(TimeToLive { seconds: 3. });
+                .as_playing(),
+                TimeToLive { seconds: 3. },
+            ));
             for i in 0..(stats.close_tentacles + stats.far_tentacles) {
                 let close_tentacle = i < stats.close_tentacles;
                 let (distance_min, distance_max) = if close_tentacle {
@@ -110,18 +109,16 @@ fn kraken_fire(
                         * (distance_min + rand::random::<f32>() * (distance_max - distance_min));
                 let (scale, _, _) = global_transform.to_scale_rotation_translation();
                 let submerge_time = if close_tentacle { 0. } else { 1.0 };
-                commands
-                    .spawn(SpriteSheetBundle {
+                commands.spawn((
+                    SpriteSheetBundle {
                         texture_atlas: asset_library.sprite_tentacle_atlas.clone(),
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(position)
-                            .with_depth((DepthLayer::Entity, 0.0))
-                            .with_scale(scale.truncate()),
-                    )
-                    .insert(YDepth { offset: 20. })
-                    .insert(Tentacle {
+                    },
+                    Transform2::from_translation(position)
+                        .with_depth((DepthLayer::Entity, 0.0))
+                        .with_scale(scale.truncate()),
+                    YDepth { offset: 20. },
+                    Tentacle {
                         submerge_time,
                         submerge_time_max: submerge_time,
                         spawned_hurtbox: false,
@@ -129,7 +126,8 @@ fn kraken_fire(
                         hurt_flags: kraken.hurt_flags,
                         time_to_live: if close_tentacle { 1.5 } else { 3.0 },
                         stats,
-                    });
+                    },
+                ));
             }
         }
         kraken.shoot = false;
@@ -150,21 +148,18 @@ fn tentacle_update(
         }
         if tentacle.submerge_time <= 0. && !tentacle.spawned_hurtbox {
             if rand::random() {
-                commands
-                    .spawn(TransformBundle::default())
-                    .insert(Transform2::from_translation(
-                        global_transform.translation().truncate(),
-                    ))
-                    .insert(
-                        AudioPlusSource::new(
-                            asset_library
-                                .sound_effects
-                                .sfx_overworld_attack_tentacle
-                                .clone(),
-                        )
-                        .as_playing(),
+                commands.spawn((
+                    TransformBundle::default(),
+                    Transform2::from_translation(global_transform.translation().truncate()),
+                    AudioPlusSource::new(
+                        asset_library
+                            .sound_effects
+                            .sfx_overworld_attack_tentacle
+                            .clone(),
                     )
-                    .insert(TimeToLive { seconds: 4. });
+                    .as_playing(),
+                    TimeToLive { seconds: 4. },
+                ));
             }
             commands.entity(entity).insert(Hurtbox {
                 shape: CollisionShape::Rect {

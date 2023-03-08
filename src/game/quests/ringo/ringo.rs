@@ -78,20 +78,21 @@ fn ringo_spawn(
         let stats = ringo_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
-            .spawn_empty()
-            .insert(Ringo {
-                target: world_locations.get_single_position("RingoMoveTo"),
-                angle: 0.,
-                dash_chance: TimedChance::new(),
-                charge_time: 0.,
-            })
-            .insert(AutoDamage {
-                despawn: true,
-                experience: 5.,
-                experience_count: 15,
-                experience_infinite_distance: true,
-                ..Default::default()
-            })
+            .spawn((
+                Ringo {
+                    target: world_locations.get_single_position("RingoMoveTo"),
+                    angle: 0.,
+                    dash_chance: TimedChance::new(),
+                    charge_time: 0.,
+                },
+                AutoDamage {
+                    despawn: true,
+                    experience: 5.,
+                    experience_count: 15,
+                    experience_infinite_distance: true,
+                    ..Default::default()
+                },
+            ))
             .id();
         ev_boss_healthbar_spawn.send(BossHealthbarSpawnEvent {
             name: "Captain Ringo Yarr".to_owned(),

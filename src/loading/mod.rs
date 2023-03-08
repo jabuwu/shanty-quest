@@ -33,8 +33,8 @@ fn loading_init(
     asset_library.create_texture_atlases(texture_atlas_assets.as_mut());
     asset_library.create_sound_effects();
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn(Text2dBundle {
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 "Loading".to_owned(),
                 TextStyle {
@@ -46,34 +46,35 @@ fn loading_init(
             .with_alignment(TextAlignment::Center),
             text_anchor: Anchor::Center,
             ..Default::default()
-        })
-        .insert(Transform2::new().with_depth((DepthLayer::Front, 0.)))
-        .insert(LoadingText);
-    commands
-        .spawn(SpriteBundle {
+        },
+        Transform2::new().with_depth((DepthLayer::Front, 0.)),
+        LoadingText,
+    ));
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(160., 12.).into(),
                 color: Color::BLACK,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., -70.).with_depth((DepthLayer::Front, 0.)));
-    commands
-        .spawn(SpriteBundle {
+        },
+        Transform2::from_xy(0., -70.).with_depth((DepthLayer::Front, 0.)),
+    ));
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(160., 12.).into(),
                 color: Color::WHITE,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(
-            Transform2::from_xy(0., -70.)
-                .with_scale(Vec2::new(0., 1.))
-                .with_depth((DepthLayer::Front, 0.1)),
-        )
-        .insert(LoadingProgress);
+        },
+        Transform2::from_xy(0., -70.)
+            .with_scale(Vec2::new(0., 1.))
+            .with_depth((DepthLayer::Front, 0.1)),
+        LoadingProgress,
+    ));
 }
 
 fn loading_update(

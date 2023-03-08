@@ -196,18 +196,18 @@ fn upgrades_spawn(
     for _ in ev_upgrades_spawn.iter() {
         *state = UpgradesState::default();
         commands
-            .spawn(SpriteBundle {
-                texture: asset_library.sprite_upgrades_bg.clone(),
-                ..Default::default()
-            })
-            .insert(
+            .spawn((
+                SpriteBundle {
+                    texture: asset_library.sprite_upgrades_bg.clone(),
+                    ..Default::default()
+                },
                 Transform2::from_xy(-200., 0.)
                     .with_scale(Vec2::ONE * 0.3)
                     .with_depth(DEPTH_LAYER_UPGRADES_BG),
-            )
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(Text2dBundle {
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             "",
                             TextStyle {
@@ -219,13 +219,12 @@ fn upgrades_spawn(
                         .with_alignment(TextAlignment::Right),
                         text_anchor: Anchor::CenterLeft,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(940., 740.).with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
-                    )
-                    .insert(UpgradesSkillPoints);
-                parent
-                    .spawn(Text2dBundle {
+                    },
+                    Transform2::from_xy(940., 740.).with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
+                    UpgradesSkillPoints,
+                ));
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             "Level up to unlock additional skill points.",
                             TextStyle {
@@ -237,14 +236,11 @@ fn upgrades_spawn(
                         .with_alignment(TextAlignment::Center),
                         text_anchor: Anchor::Center,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_xy(-10., -730.)
-                            .with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
-                    );
+                    },
+                    Transform2::from_xy(-10., -730.).with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
+                ));
                 parent
-                    .spawn(Transform2Bundle::default())
-                    .insert(VisibilityBundle::default())
+                    .spawn((Transform2Bundle::default(), VisibilityBundle::default()))
                     .with_children(|parent| {
                         for i in 0..6 {
                             let row = (i / 2) as f32;
@@ -255,45 +251,44 @@ fn upgrades_spawn(
                             let display_info = upgrade_type.display_info(asset_library.as_ref());
                             let locked = upgrade_type.current_level(game_state.as_ref()) == 0;
                             parent
-                                .spawn(SpriteSheetBundle {
-                                    texture_atlas: asset_library
-                                        .sprite_upgrades_ability_bg_atlas
-                                        .clone(),
-                                    ..Default::default()
-                                })
-                                .insert(
+                                .spawn((
+                                    SpriteSheetBundle {
+                                        texture_atlas: asset_library
+                                            .sprite_upgrades_ability_bg_atlas
+                                            .clone(),
+                                        ..Default::default()
+                                    },
                                     Transform2::from_xy(x, y)
                                         .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_BG),
-                                )
-                                .insert(UpgradesAbilityBg {
-                                    locked,
-                                    upgrade: upgrade_type,
-                                })
-                                .insert(Clickable {
-                                    shape: CollisionShape::Rect {
-                                        size: Vec2::new(1050., 400.),
+                                    UpgradesAbilityBg {
+                                        locked,
+                                        upgrade: upgrade_type,
                                     },
-                                    use_global: true,
-                                    offset: Vec2::new(0., -20.),
-                                    ..Default::default()
-                                })
+                                    Clickable {
+                                        shape: CollisionShape::Rect {
+                                            size: Vec2::new(1050., 400.),
+                                        },
+                                        use_global: true,
+                                        offset: Vec2::new(0., -20.),
+                                        ..Default::default()
+                                    },
+                                ))
                                 .with_children(|parent| {
                                     if !locked {
-                                        parent
-                                            .spawn(SpriteBundle {
+                                        parent.spawn((
+                                            SpriteBundle {
                                                 texture: display_info.texture.clone(),
                                                 ..Default::default()
-                                            })
-                                            .insert(
-                                                Transform2::from_translation(
-                                                    Vec2::new(-335., 95.) + display_info.offset,
-                                                )
-                                                .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_ICON),
+                                            },
+                                            Transform2::from_translation(
+                                                Vec2::new(-335., 95.) + display_info.offset,
                                             )
-                                            .insert(Label(String::from(display_info.name)));
+                                            .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_ICON),
+                                            Label(String::from(display_info.name)),
+                                        ));
                                     }
-                                    parent
-                                        .spawn(Text2dBundle {
+                                    parent.spawn((
+                                        Text2dBundle {
                                             text: Text::from_section(
                                                 if locked { "Locked" } else { display_info.name },
                                                 TextStyle {
@@ -305,33 +300,31 @@ fn upgrades_spawn(
                                             .with_alignment(TextAlignment::Left),
                                             text_anchor: Anchor::CenterRight,
                                             ..Default::default()
-                                        })
-                                        .insert(
-                                            Transform2::from_xy(-210., 68.)
-                                                .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_TEXT),
-                                        );
-                                    parent
-                                        .spawn(SpriteSheetBundle {
+                                        },
+                                        Transform2::from_xy(-210., 68.)
+                                            .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_TEXT),
+                                    ));
+                                    parent.spawn((
+                                        SpriteSheetBundle {
                                             texture_atlas: asset_library
                                                 .sprite_upgrades_button_atlas
                                                 .clone(),
                                             ..Default::default()
-                                        })
-                                        .insert(
-                                            Transform2::from_xy(420., 68.)
-                                                .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_BUTTON),
-                                        )
-                                        .insert(UpgradesButton {
+                                        },
+                                        Transform2::from_xy(420., 68.)
+                                            .with_depth(DEPTH_LAYER_UPGRADES_ABILITY_BUTTON),
+                                        UpgradesButton {
                                             locked,
                                             upgrade: upgrade_type,
-                                        })
-                                        .insert(Clickable {
+                                        },
+                                        Clickable {
                                             shape: CollisionShape::Rect {
                                                 size: Vec2::new(132., 111.),
                                             },
                                             use_global: true,
                                             ..Default::default()
-                                        });
+                                        },
+                                    ));
                                     if !locked {
                                         for j in 0..5 {
                                             let mut x = -417. + (j as f32) * 212.;
@@ -352,21 +345,20 @@ fn upgrades_spawn(
                                                     x -= 3.;
                                                 }
                                             }
-                                            parent
-                                                .spawn(SpriteBundle {
+                                            parent.spawn((
+                                                SpriteBundle {
                                                     texture: asset_library
                                                         .sprite_upgrades_star
                                                         .clone(),
                                                     ..Default::default()
-                                                })
-                                                .insert(
-                                                    Transform2::from_xy(x, -107.)
-                                                        .with_depth(DEPTH_LAYER_UPGRADES_STAR),
-                                                )
-                                                .insert(UpgradesStar {
+                                                },
+                                                Transform2::from_xy(x, -107.)
+                                                    .with_depth(DEPTH_LAYER_UPGRADES_STAR),
+                                                UpgradesStar {
                                                     level: j,
                                                     upgrade: upgrade_type,
-                                                });
+                                                },
+                                            ));
                                         }
                                     }
                                 });
@@ -375,23 +367,23 @@ fn upgrades_spawn(
             });
         for y in 0..3 {
             commands
-                .spawn(SpriteBundle {
-                    sprite: Sprite {
-                        custom_size: Vec2::new(300., 40.).into(),
-                        color: Color::rgba(0., 0., 0., 0.36),
+                .spawn((
+                    SpriteBundle {
+                        sprite: Sprite {
+                            custom_size: Vec2::new(300., 40.).into(),
+                            color: Color::rgba(0., 0., 0., 0.36),
+                            ..Default::default()
+                        },
+                        visibility: Visibility::Hidden,
                         ..Default::default()
                     },
-                    visibility: Visibility::Hidden,
-                    ..Default::default()
-                })
-                .insert(
                     Transform2::from_xy(390., -10. + (y as f32) * -55.)
                         .with_depth(DEPTH_LAYER_UPGRADES_INFO_BG),
-                )
-                .insert(UpgradesDescriptionBg { index: y })
+                    UpgradesDescriptionBg { index: y },
+                ))
                 .with_children(|parent| {
-                    parent
-                        .spawn(Text2dBundle {
+                    parent.spawn((
+                        Text2dBundle {
                             text: Text::from_section(
                                 "",
                                 TextStyle {
@@ -403,11 +395,10 @@ fn upgrades_spawn(
                             .with_alignment(TextAlignment::Center),
                             text_anchor: Anchor::Center,
                             ..Default::default()
-                        })
-                        .insert(
-                            Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_UPGRADES_INFO_TEXT),
-                        )
-                        .insert(UpgradesDescriptionText { index: y });
+                        },
+                        Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_UPGRADES_INFO_TEXT),
+                        UpgradesDescriptionText { index: y },
+                    ));
                 });
         }
     }
@@ -493,13 +484,11 @@ fn upgrades_buttons(
             button.upgrade.increase_level(game_state.as_mut());
             if game_state.skill_points != 0 {
                 game_state.skill_points -= 1;
-                commands
-                    .spawn_empty()
-                    .insert(
-                        AudioPlusSource::new(asset_library.sound_effects.sfx_town_upgrade.clone())
-                            .as_playing(),
-                    )
-                    .insert(TimeToLive { seconds: 3. });
+                commands.spawn((
+                    AudioPlusSource::new(asset_library.sound_effects.sfx_town_upgrade.clone())
+                        .as_playing(),
+                    TimeToLive { seconds: 3. },
+                ));
             }
         }
     }

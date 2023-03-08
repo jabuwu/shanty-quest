@@ -50,44 +50,45 @@ fn experience_ui_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new().without_pixel_perfect())
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                FollowCamera { offset: Vec2::ZERO },
+                Transform2::new().without_pixel_perfect(),
+            ))
             .with_children(|parent| {
                 parent
-                    .spawn(Transform2Bundle {
-                        transform2: Transform2::from_translation(EXPERIENCE_UI_POSITION)
-                            .with_scale(Vec2::ONE * EXPERIENCE_UI_SCALE),
-                        ..Default::default()
-                    })
-                    .insert(VisibilityBundle::default())
+                    .spawn((
+                        Transform2Bundle {
+                            transform2: Transform2::from_translation(EXPERIENCE_UI_POSITION)
+                                .with_scale(Vec2::ONE * EXPERIENCE_UI_SCALE),
+                            ..Default::default()
+                        },
+                        VisibilityBundle::default(),
+                    ))
                     .with_children(|parent| {
-                        parent
-                            .spawn(SpriteBundle {
+                        parent.spawn((
+                            SpriteBundle {
                                 texture: asset_library.sprite_experience_bar_bg.clone(),
                                 ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_xy(7., -5.)
-                                    .with_depth(DEPTH_LAYER_UI_EXPERIENCE_BAR_BACK),
-                            );
-                        parent
-                            .spawn(SpriteBundle {
+                            },
+                            Transform2::from_xy(7., -5.)
+                                .with_depth(DEPTH_LAYER_UI_EXPERIENCE_BAR_BACK),
+                        ));
+                        parent.spawn((
+                            SpriteBundle {
                                 sprite: Sprite {
                                     custom_size: Vec2::new(586., 50.).into(),
                                     color: Color::rgb_u8(255, 209, 22),
                                     ..Default::default()
                                 },
                                 ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_xy(0., 0.)
-                                    .with_depth(DEPTH_LAYER_UI_EXPERIENCE_BAR),
-                            )
-                            .insert(ExperienceUiBar);
-                        parent
-                            .spawn(Text2dBundle {
+                            },
+                            Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_UI_EXPERIENCE_BAR),
+                            ExperienceUiBar,
+                        ));
+                        parent.spawn((
+                            Text2dBundle {
                                 text: Text::from_section(
                                     "Lvl",
                                     TextStyle {
@@ -99,13 +100,12 @@ fn experience_ui_spawn(
                                 .with_alignment(TextAlignment::Left),
                                 text_anchor: Anchor::BottomRight,
                                 ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_translation(EXPERIENCE_UI_LEVEL_LABEL_POSITION)
-                                    .with_depth(DEPTH_LAYER_UI_EXPERIENCE_LEVEL),
-                            );
-                        parent
-                            .spawn(Text2dBundle {
+                            },
+                            Transform2::from_translation(EXPERIENCE_UI_LEVEL_LABEL_POSITION)
+                                .with_depth(DEPTH_LAYER_UI_EXPERIENCE_LEVEL),
+                        ));
+                        parent.spawn((
+                            Text2dBundle {
                                 text: Text::from_section(
                                     "",
                                     TextStyle {
@@ -117,25 +117,23 @@ fn experience_ui_spawn(
                                 .with_alignment(TextAlignment::Left),
                                 text_anchor: Anchor::BottomRight,
                                 ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_translation(EXPERIENCE_UI_LEVEL_POSITION)
-                                    .with_depth(DEPTH_LAYER_UI_EXPERIENCE_LEVEL),
-                            )
-                            .insert(ExperienceUiLevelText);
-                        parent
-                            .spawn(SpriteBundle {
+                            },
+                            Transform2::from_translation(EXPERIENCE_UI_LEVEL_POSITION)
+                                .with_depth(DEPTH_LAYER_UI_EXPERIENCE_LEVEL),
+                            ExperienceUiLevelText,
+                        ));
+                        parent.spawn((
+                            SpriteBundle {
                                 texture: asset_library.sprite_experience_skill_point_bg.clone(),
                                 ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_translation(EXPERIENCE_UI_SKILLPOINT_POSITION)
-                                    .with_depth(DEPTH_LAYER_UI_EXPERIENCE_SKILLPOINT_BG)
-                                    .with_scale(Vec2::ONE * EXPERIENCE_UI_SKILLPOINT_BG_SIZE),
-                            )
-                            .insert(ExperienceUiSkillPointsBg);
-                        parent
-                            .spawn(Text2dBundle {
+                            },
+                            Transform2::from_translation(EXPERIENCE_UI_SKILLPOINT_POSITION)
+                                .with_depth(DEPTH_LAYER_UI_EXPERIENCE_SKILLPOINT_BG)
+                                .with_scale(Vec2::ONE * EXPERIENCE_UI_SKILLPOINT_BG_SIZE),
+                            ExperienceUiSkillPointsBg,
+                        ));
+                        parent.spawn((
+                            Text2dBundle {
                                 text: Text::from_section(
                                     "",
                                     TextStyle {
@@ -147,14 +145,13 @@ fn experience_ui_spawn(
                                 .with_alignment(TextAlignment::Center),
                                 text_anchor: Anchor::Center,
                                 ..Default::default()
-                            })
-                            .insert(
-                                Transform2::from_translation(
-                                    EXPERIENCE_UI_SKILLPOINT_POSITION + Vec2::new(60., -10.),
-                                )
-                                .with_depth(DEPTH_LAYER_UI_EXPERIENCE_SKILLPOINT_TEXT),
+                            },
+                            Transform2::from_translation(
+                                EXPERIENCE_UI_SKILLPOINT_POSITION + Vec2::new(60., -10.),
                             )
-                            .insert(ExperienceUiSkillPointsText);
+                            .with_depth(DEPTH_LAYER_UI_EXPERIENCE_SKILLPOINT_TEXT),
+                            ExperienceUiSkillPointsText,
+                        ));
                     });
             });
     }

@@ -26,30 +26,32 @@ pub struct Blue;
 
 pub fn init(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(64., 64.).into(),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 0.))
-        .insert(Red)
-        .insert(YDepth::default());
-    commands
-        .spawn(SpriteBundle {
+        },
+        Transform2::from_xy(0., 0.),
+        Red,
+        YDepth::default(),
+    ));
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(64., 64.).into(),
                 color: Color::BLUE,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 0.))
-        .insert(Blue)
-        .insert(YDepth::default());
+        },
+        Transform2::from_xy(0., 0.),
+        Blue,
+        YDepth::default(),
+    ));
 }
 
 pub fn move_red(

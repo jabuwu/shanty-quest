@@ -34,9 +34,12 @@ pub fn init(
     asset_server: Res<AssetServer>,
 ) {
     asset_library.load_assets(&asset_server);
-    commands.spawn(Camera2dBundle::default()).insert(Timed {
-        chance: TimedChance::new(),
-    });
+    commands.spawn((
+        Camera2dBundle::default(),
+        Timed {
+            chance: TimedChance::new(),
+        },
+    ));
 }
 
 pub fn update(mut query: Query<&mut Timed>, time: Res<Time>) {

@@ -68,23 +68,22 @@ fn shotgun_cannons_fire(
     for (boat_entity, mut shotgun_cannons, boat, global_transform) in query.iter_mut() {
         if shotgun_cannons.shoot {
             let stats = shotgun_cannons.level.stats();
-            commands
-                .spawn(Transform2Bundle {
+            commands.spawn((
+                Transform2Bundle {
                     transform2: Transform2::from_translation(
                         global_transform.translation().truncate(),
                     ),
                     ..Default::default()
-                })
-                .insert(
-                    AudioPlusSource::new(
-                        asset_library
-                            .sound_effects
-                            .sfx_overworld_attack_shotgun_cannons
-                            .clone(),
-                    )
-                    .as_playing(),
+                },
+                AudioPlusSource::new(
+                    asset_library
+                        .sound_effects
+                        .sfx_overworld_attack_shotgun_cannons
+                        .clone(),
                 )
-                .insert(TimeToLive { seconds: 3. });
+                .as_playing(),
+                TimeToLive { seconds: 3. },
+            ));
             for shoot_side in 0..2 {
                 let forward = Vec2::from_angle(boat.direction);
                 let mult = if shoot_side == 0 { 1. } else { -1. };
@@ -98,16 +97,16 @@ fn shotgun_cannons_fire(
                     let velocity = Vec2::from_angle(angle) * 900.;
                     let (mut scale, _, _) = global_transform.to_scale_rotation_translation();
                     scale *= stats.scale * 0.5;
-                    commands
-                        .spawn(SpriteBundle {
+                    commands.spawn((
+                        SpriteBundle {
                             sprite: Sprite {
                                 color: Color::BLACK,
                                 ..Default::default()
                             },
                             texture: asset_library.sprite_bullet_note.clone(),
                             ..Default::default()
-                        })
-                        .insert(Hurtbox {
+                        },
+                        Hurtbox {
                             shape: CollisionShape::Rect {
                                 size: Vec2::new(32., 32.) * stats.scale,
                             },
@@ -116,14 +115,13 @@ fn shotgun_cannons_fire(
                             flags: shotgun_cannons.hurt_flags,
                             knockback_type: HurtboxKnockbackType::None,
                             damage: stats.damage,
-                        })
-                        .insert(
-                            Transform2::from_translation(position)
-                                .with_depth((DepthLayer::Entity, 0.5))
-                                .with_scale(scale.truncate()),
-                        )
-                        .insert(ShotgunCannonBall { velocity })
-                        .insert(TimeToLive::new(stats.time_to_live));
+                        },
+                        Transform2::from_translation(position)
+                            .with_depth((DepthLayer::Entity, 0.5))
+                            .with_scale(scale.truncate()),
+                        ShotgunCannonBall { velocity },
+                        TimeToLive::new(stats.time_to_live),
+                    ));
                 }
             }
         }

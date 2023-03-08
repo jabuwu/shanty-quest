@@ -46,33 +46,34 @@ fn boss_healthbar_spawn(
             commands.entity(entity).despawn_recursive();
         }
         commands
-            .spawn(VisibilityBundle {
-                visibility: Visibility::Hidden,
-                ..Default::default()
-            })
-            .insert(TransformBundle::default())
-            .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new().without_pixel_perfect())
-            .insert(BossHealthbar {
-                entity: event.entity,
-            })
+            .spawn((
+                VisibilityBundle {
+                    visibility: Visibility::Hidden,
+                    ..Default::default()
+                },
+                TransformBundle::default(),
+                FollowCamera { offset: Vec2::ZERO },
+                Transform2::new().without_pixel_perfect(),
+                BossHealthbar {
+                    entity: event.entity,
+                },
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(250., 26.).into(),
                             color: Color::rgba(0., 0., 0., 0.9),
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(Vec2::new(0., 332.) + OFFSET)
-                            .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME_BACKGROUND)
-                            .without_pixel_perfect(),
-                    );
-                parent
-                    .spawn(Text2dBundle {
+                    },
+                    Transform2::from_translation(Vec2::new(0., 332.) + OFFSET)
+                        .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME_BACKGROUND)
+                        .without_pixel_perfect(),
+                ));
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             event.name.clone(),
                             TextStyle {
@@ -84,40 +85,37 @@ fn boss_healthbar_spawn(
                         .with_alignment(TextAlignment::Center),
                         text_anchor: Anchor::Center,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(Vec2::new(0., 332.) + OFFSET)
-                            .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME),
-                    );
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                    Transform2::from_translation(Vec2::new(0., 332.) + OFFSET)
+                        .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_NAME),
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(650., 30.).into(),
                             color: Color::BLACK,
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(Vec2::new(0., 304.) + OFFSET)
-                            .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_BORDER)
-                            .without_pixel_perfect(),
-                    );
-                parent
-                    .spawn(SpriteBundle {
+                    },
+                    Transform2::from_translation(Vec2::new(0., 304.) + OFFSET)
+                        .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR_BORDER)
+                        .without_pixel_perfect(),
+                ));
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(650. - BORDER_SIZE, 30. - BORDER_SIZE).into(),
                             color: Color::RED,
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(Vec2::new(0., 304.) + OFFSET)
-                            .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR)
-                            .without_pixel_perfect(),
-                    )
-                    .insert(BossHealthbarBar);
+                    },
+                    Transform2::from_translation(Vec2::new(0., 304.) + OFFSET)
+                        .with_depth(DEPTH_LAYER_UI_BOSS_HEALTHBAR)
+                        .without_pixel_perfect(),
+                    BossHealthbarBar,
+                ));
             });
     }
 }

@@ -45,16 +45,18 @@ fn ocean_spawn(
             commands.spawn_empty()
         };
         ocean_entity
-            .insert(SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Vec2::new(50000., 50000.).into(),
-                    color: Color::rgb_u8(0, 167, 217),
+            .insert((
+                SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Vec2::new(50000., 50000.).into(),
+                        color: Color::rgb_u8(0, 167, 217),
+                        ..Default::default()
+                    },
                     ..Default::default()
                 },
-                ..Default::default()
-            })
-            .insert(Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_OCEAN))
-            .insert(Ocean)
+                Transform2::from_xy(0., 0.).with_depth(DEPTH_LAYER_OCEAN),
+                Ocean,
+            ))
             .with_children(|parent| {
                 for layer in 0..=1 {
                     let (texture, offset, opacity, wavey, parallax) = if layer == 0 {
@@ -75,18 +77,20 @@ fn ocean_spawn(
                         )
                     };
                     parent
-                        .spawn(Transform2Bundle::default())
-                        .insert(VisibilityBundle::default())
-                        .insert(OceanOverlay {
-                            time: 0.,
-                            wavey,
-                            parallax,
-                        })
+                        .spawn((
+                            Transform2Bundle::default(),
+                            VisibilityBundle::default(),
+                            OceanOverlay {
+                                time: 0.,
+                                wavey,
+                                parallax,
+                            },
+                        ))
                         .with_children(|parent| {
                             for x in -10..=10 {
                                 for y in -10..=10 {
-                                    parent
-                                        .spawn(SpriteBundle {
+                                    parent.spawn((
+                                        SpriteBundle {
                                             sprite: Sprite {
                                                 custom_size: Vec2::new(OCEAN_WIDTH, OCEAN_HEIGHT)
                                                     .into(),
@@ -95,14 +99,13 @@ fn ocean_spawn(
                                             },
                                             texture: texture.clone(),
                                             ..Default::default()
-                                        })
-                                        .insert(
-                                            Transform2::from_xy(
-                                                x as f32 * OCEAN_WIDTH + offset.x,
-                                                y as f32 * OCEAN_HEIGHT + offset.y,
-                                            )
-                                            .with_depth(DEPTH_LAYER_OCEAN_OVERLAY),
-                                        );
+                                        },
+                                        Transform2::from_xy(
+                                            x as f32 * OCEAN_WIDTH + offset.x,
+                                            y as f32 * OCEAN_HEIGHT + offset.y,
+                                        )
+                                        .with_depth(DEPTH_LAYER_OCEAN_OVERLAY),
+                                    ));
                                 }
                             }
                         });

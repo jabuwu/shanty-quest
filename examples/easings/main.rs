@@ -75,27 +75,30 @@ pub fn init(
         let x = (i % 10) as f32 * 120. - 550.;
         let y = (i / 10) as f32 * -200. + 170.;
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(Transform2::from_xy(x, y))
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                Transform2::from_xy(x, y),
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(16., 16.).into(),
                             color: Color::RED,
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(EasingComp {
+                    },
+                    EasingComp {
                         function: *easing,
                         time: 0.,
                         cooldown: 0.,
-                    })
-                    .insert(Transform2::new());
-                parent
-                    .spawn(Text2dBundle {
+                    },
+                    Transform2::new(),
+                ));
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             format!("{:?}", *easing),
                             TextStyle {
@@ -107,8 +110,9 @@ pub fn init(
                         .with_alignment(TextAlignment::Center),
                         text_anchor: Anchor::Center,
                         ..Default::default()
-                    })
-                    .insert(Transform2::from_xy(0., 100.));
+                    },
+                    Transform2::from_xy(0., 100.),
+                ));
             });
     }
 }

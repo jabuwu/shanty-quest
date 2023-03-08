@@ -37,25 +37,24 @@ pub fn experience_spawn(
         for _ in 0..event.count {
             let angle = Vec2::from_angle(rand::random::<f32>() * std::f32::consts::TAU);
             let velocity = angle * (50. + rand::random::<f32>() * 200.);
-            commands
-                .spawn(SpriteBundle {
+            commands.spawn((
+                SpriteBundle {
                     sprite: Sprite {
                         custom_size: Vec2::new(10., 10.).into(),
                         ..Default::default()
                     },
                     texture: asset_library.sprite_exp_particle.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::from_translation(event.position + angle * 20.)
-                        .with_depth(DEPTH_LAYER_EXPERIENCE)
-                        .with_scale(Vec2::ONE * (1. + event.amount / 2.5)),
-                )
-                .insert(Experience {
+                },
+                Transform2::from_translation(event.position + angle * 20.)
+                    .with_depth(DEPTH_LAYER_EXPERIENCE)
+                    .with_scale(Vec2::ONE * (1. + event.amount / 2.5)),
+                Experience {
                     amount: event.amount,
                     velocity,
                     infinite_distance: event.infinite_distance,
-                });
+                },
+            ));
         }
     }
 }
@@ -82,14 +81,14 @@ pub fn experience_consume(
         }
         if difference.length() < 50. {
             let sound = commands
-                .spawn(Transform2Bundle::default())
-                .insert(
+                .spawn((
+                    Transform2Bundle::default(),
                     AudioPlusSource::new(
                         asset_library.sound_effects.sfx_overworld_experience.clone(),
                     )
                     .as_playing(),
-                )
-                .insert(TimeToLive { seconds: 3. })
+                    TimeToLive { seconds: 3. },
+                ))
                 .id();
             commands.entity(player_entity).add_child(sound);
             if game_state.add_experience(experience.amount) {

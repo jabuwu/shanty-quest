@@ -34,14 +34,15 @@ fn town_init(
     state.can_respawn = game_state.restore_checkpoint();
     state.can_leave = false;
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             texture: asset_library.sprite_dead.clone(),
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 100.).with_depth(DEPTH_LAYER_DEATH_SCREEN));
-    commands
-        .spawn(Text2dBundle {
+        },
+        Transform2::from_xy(0., 100.).with_depth(DEPTH_LAYER_DEATH_SCREEN),
+    ));
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 if state.can_respawn {
                     "Yer swimmin' with the fishes now\nLeft click to respawn at last town"
@@ -57,8 +58,9 @@ fn town_init(
             .with_alignment(TextAlignment::Center),
             text_anchor: Anchor::Center,
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., -175.).with_depth(DEPTH_LAYER_DEATH_SCREEN));
+        },
+        Transform2::from_xy(0., -175.).with_depth(DEPTH_LAYER_DEATH_SCREEN),
+    ));
 }
 
 fn town_update(

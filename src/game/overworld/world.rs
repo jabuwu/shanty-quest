@@ -32,8 +32,8 @@ fn world_spawn(
             position: Vec2::new(0., 0.),
         });
 
-        commands
-            .spawn(Text2dBundle {
+        commands.spawn((
+            Text2dBundle {
                 text: Text::from_section(
                     "Hold left mouse button to move!\nPress space to dash!\nPress F to start jamming!",
                     TextStyle {
@@ -45,7 +45,8 @@ fn world_spawn(
                 .with_alignment(TextAlignment::Center),
                 text_anchor: Anchor::Center,
                 ..Default::default()
-            })
-            .insert(Transform2::from_xy(700., -350.).with_depth(DEPTH_LAYER_CONTROLS));
+            },
+            Transform2::from_xy(700., -350.).with_depth(DEPTH_LAYER_CONTROLS),
+        ));
     }
 }

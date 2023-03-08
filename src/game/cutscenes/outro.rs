@@ -59,8 +59,8 @@ fn init(
     ev_cutscene_start.send_default();
 
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn(Text2dBundle {
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 "".to_owned(),
                 TextStyle {
@@ -72,10 +72,11 @@ fn init(
             .with_alignment(TextAlignment::Center),
             text_anchor: Anchor::Center,
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)))
-        .insert(CutsceneText);
-    commands.spawn_empty().insert(
+        },
+        Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)),
+        CutsceneText,
+    ));
+    commands.spawn(
         AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro_music.clone())
             .as_looping(),
     );
@@ -141,24 +142,21 @@ fn step1(
         if let Ok(mut text) = query.get_single_mut() {
             text.sections[0].value = "And there ya go, laddie! That is when the sea trebled! When a Pirate Lord combined all the magical instruments and became a Pirate King!".to_owned();
         }
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_xy(200., -50.)
-                    .with_scale(Vec2::ONE * 0.65)
-                    .with_depth((DepthLayer::Entity, 0.0))
-                    .without_pixel_perfect(),
-            )
-            .insert(CutsceneImage {
+            },
+            Transform2::from_xy(200., -50.)
+                .with_scale(Vec2::ONE * 0.65)
+                .with_depth((DepthLayer::Entity, 0.0))
+                .without_pixel_perfect(),
+            CutsceneImage {
                 velocity: Vec2::new(-6., -6.),
-            })
-            .insert(
-                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro1.clone())
-                    .as_playing(),
-            );
+            },
+            AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro1.clone())
+                .as_playing(),
+        ));
     }
 }
 fn step1_fade_out(mut screen_fade: ResMut<ScreenFade>, state: Res<OutroCutsceneState>) {
@@ -179,7 +177,7 @@ fn step2_start_audio(
                 "Now he be raiding the coast with the most horrible noise known to mankind..."
                     .to_owned();
         }
-        commands.spawn_empty().insert(
+        commands.spawn(
             AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro2.clone())
                 .as_playing(),
         );
@@ -197,20 +195,19 @@ fn step2(
         screen_fade.fade_in(1.5);
     }
     if !cutscenes.skipping() {
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.cutscene_image_outro2.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_xy(0., -50.)
-                    .with_scale(Vec2::ONE * 0.42)
-                    .with_depth((DepthLayer::Entity, 0.4))
-                    .without_pixel_perfect(),
-            )
-            .insert(CutsceneImage {
+            },
+            Transform2::from_xy(0., -50.)
+                .with_scale(Vec2::ONE * 0.42)
+                .with_depth((DepthLayer::Entity, 0.4))
+                .without_pixel_perfect(),
+            CutsceneImage {
                 velocity: Vec2::new(0., -15.),
-            });
+            },
+        ));
     }
 }
 
@@ -237,24 +234,21 @@ fn step3(
             "Buy Ol' Nipper here another jug o' rum and I'll yapper until the sunrise! Har-har!"
                 .to_owned();
         }
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_xy(-150., -100.)
-                    .with_scale(Vec2::ONE * 0.65)
-                    .with_depth((DepthLayer::Entity, 0.5))
-                    .without_pixel_perfect(),
-            )
-            .insert(CutsceneImage {
+            },
+            Transform2::from_xy(-150., -100.)
+                .with_scale(Vec2::ONE * 0.65)
+                .with_depth((DepthLayer::Entity, 0.5))
+                .without_pixel_perfect(),
+            CutsceneImage {
                 velocity: Vec2::new(8., 6.),
-            })
-            .insert(
-                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro3.clone())
-                    .as_playing(),
-            );
+            },
+            AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_outro3.clone())
+                .as_playing(),
+        ));
     }
 }
 

@@ -36,11 +36,13 @@ fn boat_preview_spawn(
 ) {
     for _ in ev_boat_preview_spawn.iter() {
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(Transform2::from_translation(PREVIEW_POSITION).with_scale(Vec2::ONE * 0.75))
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                Transform2::from_translation(PREVIEW_POSITION).with_scale(Vec2::ONE * 0.75),
+            ))
             .with_children(|parent| {
-                let boat_entity = parent.spawn_empty().insert(BoatPreview).id();
+                let boat_entity = parent.spawn(BoatPreview).id();
                 ev_boat_spawn.send(BoatSpawnEvent {
                     entity: Some(boat_entity),
                     position: Vec2::ZERO,

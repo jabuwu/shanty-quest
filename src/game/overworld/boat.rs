@@ -68,17 +68,17 @@ fn boat_spawn(
 ) {
     for event in ev_spawn.iter() {
         let sprite_entity = commands
-            .spawn(SpriteSheetBundle {
-                texture_atlas: event.texture_atlas.clone(),
-                ..Default::default()
-            })
-            .insert(
+            .spawn((
+                SpriteSheetBundle {
+                    texture_atlas: event.texture_atlas.clone(),
+                    ..Default::default()
+                },
                 Transform2::new()
                     .with_depth((DepthLayer::Entity, 0.))
                     .with_scale(Vec2::new(0.6, 0.6)),
-            )
-            .insert(BoatSprite)
-            .insert(YDepth::default())
+                BoatSprite,
+                YDepth::default(),
+            ))
             .id();
         let mut boat_entity = if let Some(entity) = event.entity {
             commands.entity(entity)
@@ -91,77 +91,79 @@ fn boat_spawn(
             DAMAGE_FLAG_PLAYER
         };
         boat_entity
-            .insert(TransformBundle::default())
-            .insert(VisibilityBundle::default())
-            .insert(Transform2::from_translation(event.position))
-            .insert(Boat {
-                movement: Vec2::ZERO,
-                direction: std::f32::consts::PI * -0.5,
-                speed: event.speed,
-                facing: Facing::South,
-                ring_timer: RING_SPAWN_INTEVAL,
-                attacks: event.attack,
-                shoot_cooldown: 0.,
-                shoot_cooldown_threshold: event.attack_cooldown,
-                shoot: false,
-                dash_cooldown: 0.,
-                dash: false,
-                opacity: 1.,
-            })
-            .insert(Collision {
-                shape: CollisionShape::Rect {
-                    size: Vec2::new(100., 100.),
+            .insert((
+                TransformBundle::default(),
+                VisibilityBundle::default(),
+                Transform2::from_translation(event.position),
+                Boat {
+                    movement: Vec2::ZERO,
+                    direction: std::f32::consts::PI * -0.5,
+                    speed: event.speed,
+                    facing: Facing::South,
+                    ring_timer: RING_SPAWN_INTEVAL,
+                    attacks: event.attack,
+                    shoot_cooldown: 0.,
+                    shoot_cooldown_threshold: event.attack_cooldown,
+                    shoot: false,
+                    dash_cooldown: 0.,
+                    dash: false,
+                    opacity: 1.,
                 },
-                flags: COLLISION_FLAG,
-            })
-            .insert(CharacterController {
-                movement: Vec2::ZERO,
-                speed: event.speed,
-                knockback_resistance: event.knockback_resistance,
-                arena_adjustment: true,
-                ..Default::default()
-            })
-            .insert(ForwardCannons {
-                shoot: false,
-                hurt_flags,
-                level: ForwardCannonsLevel(event.attack.forward_cannons),
-            })
-            .insert(ShotgunCannons {
-                shoot: false,
-                hurt_flags,
-                level: ShotgunCannonsLevel(event.attack.shotgun_cannons),
-            })
-            .insert(Shockwave {
-                shoot: false,
-                hurt_flags,
-                level: ShockwaveLevel(event.attack.shockwave),
-            })
-            .insert(Bombs {
-                shoot: false,
-                hurt_flags,
-                level: BombsLevel(event.attack.bombs),
-            })
-            .insert(Kraken {
-                shoot: false,
-                hurt_flags,
-                level: KrakenLevel(event.attack.kraken),
-            })
-            .insert(DashAttack {
-                shoot: false,
-                hurt_flags,
-            })
-            .insert(Health::new_with_max(event.health, event.health_max))
-            .insert(Hitbox {
-                shape: CollisionShape::Rect {
-                    size: Vec2::new(120., 120.),
+                Collision {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(100., 100.),
+                    },
+                    flags: COLLISION_FLAG,
                 },
-                for_entity: None,
-                flags: if event.player {
-                    DAMAGE_FLAG_PLAYER
-                } else {
-                    DAMAGE_FLAG_ENEMY
+                CharacterController {
+                    movement: Vec2::ZERO,
+                    speed: event.speed,
+                    knockback_resistance: event.knockback_resistance,
+                    arena_adjustment: true,
+                    ..Default::default()
                 },
-            })
+                ForwardCannons {
+                    shoot: false,
+                    hurt_flags,
+                    level: ForwardCannonsLevel(event.attack.forward_cannons),
+                },
+                ShotgunCannons {
+                    shoot: false,
+                    hurt_flags,
+                    level: ShotgunCannonsLevel(event.attack.shotgun_cannons),
+                },
+                Shockwave {
+                    shoot: false,
+                    hurt_flags,
+                    level: ShockwaveLevel(event.attack.shockwave),
+                },
+                Bombs {
+                    shoot: false,
+                    hurt_flags,
+                    level: BombsLevel(event.attack.bombs),
+                },
+                Kraken {
+                    shoot: false,
+                    hurt_flags,
+                    level: KrakenLevel(event.attack.kraken),
+                },
+                DashAttack {
+                    shoot: false,
+                    hurt_flags,
+                },
+                Health::new_with_max(event.health, event.health_max),
+                Hitbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(120., 120.),
+                    },
+                    for_entity: None,
+                    flags: if event.player {
+                        DAMAGE_FLAG_PLAYER
+                    } else {
+                        DAMAGE_FLAG_ENEMY
+                    },
+                },
+            ))
             .add_child(sprite_entity);
         if event.healthbar {
             ev_healthbar_spawn.send(HealthbarSpawnEvent {

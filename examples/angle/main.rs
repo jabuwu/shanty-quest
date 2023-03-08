@@ -35,28 +35,29 @@ pub struct PointToMouse;
 
 pub fn init(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(64., 8.).into(),
                 color: Color::GREEN,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 0.))
-        .insert(Collision {
+        },
+        Transform2::from_xy(0., 0.),
+        Collision {
             shape: CollisionShape::Rect {
                 size: Vec2::new(32., 32.),
             },
             flags: 1,
-        })
-        .insert(CharacterController {
+        },
+        CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
             ..Default::default()
-        })
-        .insert(PointToMouse);
+        },
+        PointToMouse,
+    ));
 }
 
 fn update(mut query: Query<&mut Transform2, With<PointToMouse>>, mouse: Res<Mouse>) {

@@ -28,40 +28,41 @@ fn rubble_spawn(
 ) {
     for event in ev_spawn.iter() {
         let entity = commands
-            .spawn(TransformBundle::default())
-            .insert(VisibilityBundle::default())
-            .insert(Transform2::from_translation(event.position))
-            .insert(Rubble)
-            .insert(Health::new(1.))
-            .insert(Hitbox {
-                shape: CollisionShape::Rect {
-                    size: Vec2::new(128., 128.),
+            .spawn((
+                TransformBundle::default(),
+                VisibilityBundle::default(),
+                Transform2::from_translation(event.position),
+                Rubble,
+                Health::new(1.),
+                Hitbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(128., 128.),
+                    },
+                    for_entity: None,
+                    flags: DAMAGE_FLAG_ENVIRONMENT,
                 },
-                for_entity: None,
-                flags: DAMAGE_FLAG_ENVIRONMENT,
-            })
-            .insert(Collision {
-                shape: CollisionShape::Rect {
-                    size: Vec2::new(128., 128.),
+                Collision {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(128., 128.),
+                    },
+                    flags: COLLISION_FLAG,
                 },
-                flags: COLLISION_FLAG,
-            })
-            .insert(AutoDamage {
-                despawn: true,
-                ..Default::default()
-            })
+                AutoDamage {
+                    despawn: true,
+                    ..Default::default()
+                },
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         texture: asset_library.sprite_rubble.clone(),
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::new()
-                            .with_scale(Vec2::new(0.25, 0.25))
-                            .with_depth((DepthLayer::Entity, 0.)),
-                    )
-                    .insert(YDepth::default());
+                    },
+                    Transform2::new()
+                        .with_scale(Vec2::new(0.25, 0.25))
+                        .with_depth((DepthLayer::Entity, 0.)),
+                    YDepth::default(),
+                ));
             })
             .id();
         ev_healthbar_spawn.send(HealthbarSpawnEvent {

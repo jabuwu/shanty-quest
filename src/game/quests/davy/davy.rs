@@ -65,19 +65,20 @@ fn davy_spawn(
         let stats = davy_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
-            .spawn_empty()
-            .insert(Davy {
-                target: world_locations.get_single_position("DavyMoveTo"),
-                angle: 0.,
-                adjust_angle_chance: TimedChance::new(),
-            })
-            .insert(AutoDamage {
-                despawn: true,
-                experience: 5.,
-                experience_count: 30,
-                experience_infinite_distance: true,
-                ..Default::default()
-            })
+            .spawn((
+                Davy {
+                    target: world_locations.get_single_position("DavyMoveTo"),
+                    angle: 0.,
+                    adjust_angle_chance: TimedChance::new(),
+                },
+                AutoDamage {
+                    despawn: true,
+                    experience: 5.,
+                    experience_count: 30,
+                    experience_infinite_distance: true,
+                    ..Default::default()
+                },
+            ))
             .id();
         overworld_camera.entity_focus(entity);
         ev_boss_healthbar_spawn.send(BossHealthbarSpawnEvent {

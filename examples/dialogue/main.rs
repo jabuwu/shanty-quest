@@ -50,28 +50,29 @@ pub fn init(
     dialogue.add_text(DialoguePortrait::Jagerossa, "3) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
     dialogue.add_text(DialoguePortrait::Jagerossa, "4) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
     dialogue.add_text(DialoguePortrait::Jagerossa, "5) this is really long example dialogue text\nthis is really long example dialogue text\nthis is really long example dialogue text".to_owned());
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Vec2::new(32., 32.).into(),
                 color: Color::GREEN,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 0.))
-        .insert(Collision {
+        },
+        Transform2::from_xy(0., 0.),
+        Collision {
             shape: CollisionShape::Rect {
                 size: Vec2::new(32., 32.),
             },
             flags: 1,
-        })
-        .insert(CharacterController {
+        },
+        CharacterController {
             movement: Vec2::ZERO,
             speed: 300.,
             ..Default::default()
-        })
-        .insert(Player);
+        },
+        Player,
+    ));
 }
 
 fn player_move(

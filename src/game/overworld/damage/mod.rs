@@ -159,21 +159,18 @@ fn damage_auto_die(
             }
             if event.damage > auto_damage.invincibility_amount {
                 if auto_damage.invincibility_amount == 0. {
-                    commands
-                        .spawn(TransformBundle::default())
-                        .insert(Transform2::from_translation(
-                            transform.translation().truncate(),
-                        ))
-                        .insert(
-                            AudioPlusSource::new(
-                                asset_library
-                                    .sound_effects
-                                    .sfx_overworld_enemy_damage
-                                    .clone(),
-                            )
-                            .as_playing(),
+                    commands.spawn((
+                        TransformBundle::default(),
+                        Transform2::from_translation(transform.translation().truncate()),
+                        AudioPlusSource::new(
+                            asset_library
+                                .sound_effects
+                                .sfx_overworld_enemy_damage
+                                .clone(),
                         )
-                        .insert(TimeToLive { seconds: 3. });
+                        .as_playing(),
+                        TimeToLive { seconds: 3. },
+                    ));
                 }
                 if !cutscenes.running() {
                     health.damage(event.damage - auto_damage.invincibility_amount);

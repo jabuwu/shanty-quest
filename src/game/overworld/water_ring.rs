@@ -52,26 +52,24 @@ fn water_ring_spawn(
             Facing::East => water_ring_settings.spawn_offset,
             _ => Vec2::ZERO,
         };
-        commands
-            .spawn_empty()
-            .insert(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.sprite_water_ring_vfx.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_translation(event.position + (event.scale * offset))
-                    .with_scale(Vec2::new(
-                        water_ring_settings.start_scale,
-                        water_ring_settings.start_scale,
-                    ))
-                    .with_rotation(event.angle)
-                    .with_depth(DEPTH_LAYER_BOAT_TRAIL),
-            )
-            .insert(WaterRing {
+            },
+            Transform2::from_translation(event.position + (event.scale * offset))
+                .with_scale(Vec2::new(
+                    water_ring_settings.start_scale,
+                    water_ring_settings.start_scale,
+                ))
+                .with_rotation(event.angle)
+                .with_depth(DEPTH_LAYER_BOAT_TRAIL),
+            WaterRing {
                 start_scale: water_ring_settings.start_scale,
                 life_time: water_ring_settings.max_life_time,
                 max_life_time: water_ring_settings.max_life_time,
-            });
+            },
+        ));
     }
 }
 

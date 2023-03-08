@@ -72,8 +72,8 @@ fn init(
     ev_cutscene_start.send_default();
 
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn(Text2dBundle {
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 "".to_owned(),
                 TextStyle {
@@ -85,10 +85,11 @@ fn init(
             .with_alignment(TextAlignment::Center),
             text_anchor: Anchor::Center,
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)))
-        .insert(CutsceneText);
-    commands.spawn_empty().insert(
+        },
+        Transform2::from_xy(0., -300.).with_depth((DepthLayer::Front, 1.)),
+        CutsceneText,
+    ));
+    commands.spawn(
         AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro_music.clone())
             .as_looping(),
     );
@@ -161,24 +162,21 @@ fn step1_image(
         if let Ok(mut text) = query.get_single_mut() {
             text.sections[0].value = "Well, ya oiled me tongue with a jug o' rum so lemme tell ya the story of treble at sea! Eh? How the Pirate Lords became... Lords?!".to_owned();
         }
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_xy(200., -50.)
-                    .with_scale(Vec2::ONE * 0.65)
-                    .with_depth((DepthLayer::Entity, 0.0))
-                    .without_pixel_perfect(),
-            )
-            .insert(CutsceneImage {
+            },
+            Transform2::from_xy(200., -50.)
+                .with_scale(Vec2::ONE * 0.65)
+                .with_depth((DepthLayer::Entity, 0.0))
+                .without_pixel_perfect(),
+            CutsceneImage {
                 velocity: Vec2::new(-6., -6.),
-            })
-            .insert(
-                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro1.clone())
-                    .as_playing(),
-            );
+            },
+            AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro1.clone())
+                .as_playing(),
+        ));
     }
 }
 
@@ -199,7 +197,7 @@ fn step2_start_audio(
             text.sections[0].value =
             "Royal Navy beat those scurvy dogs 'gain and again! Driven them to seek Rockdorado and the fabled lost weapons... Find them they did!".to_owned();
         }
-        commands.spawn_empty().insert(
+        commands.spawn(
             AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro2.clone())
                 .as_playing(),
         );
@@ -218,20 +216,19 @@ fn step2_image(
     cutscenes: Res<Cutscenes>,
 ) {
     if !cutscenes.skipping() {
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.cutscene_image_intro2.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_xy(245., 145.)
-                    .with_scale(Vec2::ONE * 0.44)
-                    .with_depth((DepthLayer::Entity, 0.1))
-                    .without_pixel_perfect(),
-            )
-            .insert(CutsceneImage {
+            },
+            Transform2::from_xy(245., 145.)
+                .with_scale(Vec2::ONE * 0.44)
+                .with_depth((DepthLayer::Entity, 0.1))
+                .without_pixel_perfect(),
+            CutsceneImage {
                 velocity: Vec2::new(-20., -6.),
-            });
+            },
+        ));
     }
 }
 
@@ -253,20 +250,19 @@ fn step3_image(
     cutscenes: Res<Cutscenes>,
 ) {
     if !cutscenes.skipping() {
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.cutscene_image_intro3.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_xy(0., -100.)
-                    .with_scale(Vec2::ONE * 0.4)
-                    .with_depth((DepthLayer::Entity, 0.3))
-                    .without_pixel_perfect(),
-            )
-            .insert(CutsceneImage {
+            },
+            Transform2::from_xy(0., -100.)
+                .with_scale(Vec2::ONE * 0.4)
+                .with_depth((DepthLayer::Entity, 0.3))
+                .without_pixel_perfect(),
+            CutsceneImage {
                 velocity: Vec2::new(0., 4.),
-            });
+            },
+        ));
     }
 }
 
@@ -281,7 +277,7 @@ fn step3_start_audio(
             text.sections[0].value =
             "Each Cap'n grabbed an instrument!\nHah. Gave 'em terrible powers of horrid noise, magical projectiles, power over sea monsters! With that, they smashed the Royal Navy ta bits!".to_owned();
         }
-        commands.spawn_empty().insert(
+        commands.spawn(
             AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro3.clone())
                 .as_playing(),
         );
@@ -310,24 +306,21 @@ fn step4(
             text.sections[0].value =
             "But, right as rum, pirates be pirates. Each Lord wished to get more powa, to get all other instruments! That's how this Pirate Lords War started...".to_owned();
         }
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.cutscene_image_intro4.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_xy(0., 180.)
-                    .with_scale(Vec2::ONE * 0.42)
-                    .with_depth((DepthLayer::Entity, 0.4))
-                    .without_pixel_perfect(),
-            )
-            .insert(CutsceneImage {
+            },
+            Transform2::from_xy(0., 180.)
+                .with_scale(Vec2::ONE * 0.42)
+                .with_depth((DepthLayer::Entity, 0.4))
+                .without_pixel_perfect(),
+            CutsceneImage {
                 velocity: Vec2::new(0., -15.),
-            })
-            .insert(
-                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro4.clone())
-                    .as_playing(),
-            );
+            },
+            AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro4.clone())
+                .as_playing(),
+        ));
     }
 }
 
@@ -353,24 +346,21 @@ fn step5(
             text.sections[0].value =
             "That's why the rum ships sail less and less... Now! Buy me another jug or I'll yapper no more tales.".to_owned();
         }
-        commands
-            .spawn(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 texture: asset_library.cutscene_image_intro1.clone(),
                 ..Default::default()
-            })
-            .insert(
-                Transform2::from_xy(-150., -100.)
-                    .with_scale(Vec2::ONE * 0.65)
-                    .with_depth((DepthLayer::Entity, 0.5))
-                    .without_pixel_perfect(),
-            )
-            .insert(CutsceneImage {
+            },
+            Transform2::from_xy(-150., -100.)
+                .with_scale(Vec2::ONE * 0.65)
+                .with_depth((DepthLayer::Entity, 0.5))
+                .without_pixel_perfect(),
+            CutsceneImage {
                 velocity: Vec2::new(8., 6.),
-            })
-            .insert(
-                AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro5.clone())
-                    .as_playing(),
-            );
+            },
+            AudioPlusSource::new(asset_library.sound_effects.sfx_cutscene_intro5.clone())
+                .as_playing(),
+        ));
     }
 }
 

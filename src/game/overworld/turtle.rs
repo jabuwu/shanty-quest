@@ -120,62 +120,63 @@ fn turtle_spawn(
         };
         let info = event.level.info(asset_library.as_ref());
         entity
-            .insert(TransformBundle::default())
-            .insert(VisibilityBundle::default())
-            .insert(Transform2::from_translation(event.position))
-            .insert(Turtle {
-                relative_angle: rand::random::<f32>() * std::f32::consts::TAU,
-                sprite_angle: 0.,
-            })
-            .insert(YDepth::default())
-            .insert(Health::new(info.health))
-            .insert(Hitbox {
-                shape: CollisionShape::Rect {
-                    size: Vec2::new(80., 80.) * info.scale,
+            .insert((
+                TransformBundle::default(),
+                VisibilityBundle::default(),
+                Transform2::from_translation(event.position),
+                Turtle {
+                    relative_angle: rand::random::<f32>() * std::f32::consts::TAU,
+                    sprite_angle: 0.,
                 },
-                for_entity: None,
-                flags: DAMAGE_FLAG_ENEMY,
-            })
-            .insert(Hurtbox {
-                shape: CollisionShape::Rect {
-                    size: TURTLE_HURTBOX_SIZE,
+                YDepth::default(),
+                Health::new(info.health),
+                Hitbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(80., 80.) * info.scale,
+                    },
+                    for_entity: None,
+                    flags: DAMAGE_FLAG_ENEMY,
                 },
-                for_entity: None,
-                auto_despawn: false,
-                flags: DAMAGE_FLAG_PLAYER,
-                knockback_type: HurtboxKnockbackType::None,
-                damage: 1.,
-            })
-            .insert(Collision {
-                shape: CollisionShape::Rect {
-                    size: TURTLE_COLLISION_SIZE * info.scale,
+                Hurtbox {
+                    shape: CollisionShape::Rect {
+                        size: TURTLE_HURTBOX_SIZE,
+                    },
+                    for_entity: None,
+                    auto_despawn: false,
+                    flags: DAMAGE_FLAG_PLAYER,
+                    knockback_type: HurtboxKnockbackType::None,
+                    damage: 1.,
                 },
-                flags: COLLISION_FLAG,
-            })
-            .insert(CharacterController {
-                movement: Vec2::ZERO,
-                speed: info.speed,
-                knockback_resistance: info.knockback_resistence,
-                ..Default::default()
-            })
-            .insert(AutoDamage {
-                despawn: true,
-                experience: info.experience,
-                experience_count: info.experience_count,
-                ..Default::default()
-            })
+                Collision {
+                    shape: CollisionShape::Rect {
+                        size: TURTLE_COLLISION_SIZE * info.scale,
+                    },
+                    flags: COLLISION_FLAG,
+                },
+                CharacterController {
+                    movement: Vec2::ZERO,
+                    speed: info.speed,
+                    knockback_resistance: info.knockback_resistence,
+                    ..Default::default()
+                },
+                AutoDamage {
+                    despawn: true,
+                    experience: info.experience,
+                    experience_count: info.experience_count,
+                    ..Default::default()
+                },
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteSheetBundle {
+                parent.spawn((
+                    SpriteSheetBundle {
                         texture_atlas: info.atlas,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::new()
-                            .with_depth((DepthLayer::Entity, 0.))
-                            .with_scale(Vec2::ONE * info.scale),
-                    )
-                    .insert(TurtleSprite);
+                    },
+                    Transform2::new()
+                        .with_depth((DepthLayer::Entity, 0.))
+                        .with_scale(Vec2::ONE * info.scale),
+                    TurtleSprite,
+                ));
             });
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
             entity: Some(entity.id()),

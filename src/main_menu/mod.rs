@@ -84,141 +84,130 @@ fn menu_setup(
     screen_fade.fade_in(1.);
     ev_volume_slider_spawn.send_default();
     commands.spawn(Camera2dBundle::default());
-    commands
-        .spawn_empty()
-        .insert(
-            AudioPlusSource::new(asset_library.sound_effects.sfx_menu_ambient.clone()).as_looping(),
-        )
-        .insert(Sound);
-    commands
-        .spawn_empty()
-        .insert(
-            AudioPlusSource::new(asset_library.sound_effects.sfx_menu_music.clone()).as_looping(),
-        )
-        .insert(Sound);
+    commands.spawn((
+        AudioPlusSource::new(asset_library.sound_effects.sfx_menu_ambient.clone()).as_looping(),
+        Sound,
+    ));
+    commands.spawn((
+        AudioPlusSource::new(asset_library.sound_effects.sfx_menu_music.clone()).as_looping(),
+        Sound,
+    ));
     let hover_audio = commands
-        .spawn_empty()
-        .insert(AudioPlusSource::new(
+        .spawn(AudioPlusSource::new(
             asset_library.sound_effects.sfx_menu_button_hover.clone(),
         ))
         .id();
     let click_audio = commands
-        .spawn_empty()
-        .insert(AudioPlusSource::new(
+        .spawn(AudioPlusSource::new(
             asset_library.sound_effects.sfx_menu_button_click.clone(),
         ))
         .id();
     let click_confirm_audio = commands
-        .spawn_empty()
-        .insert(AudioPlusSource::new(
+        .spawn(AudioPlusSource::new(
             asset_library
                 .sound_effects
                 .sfx_menu_button_click_confirm
                 .clone(),
         ))
         .id();
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             texture: asset_library.menu_sprite_back.clone(),
             ..Default::default()
-        })
-        .insert(
-            Transform2::new()
-                .with_scale(Vec2::ONE * 0.73)
-                .with_depth((DepthLayer::Front, 0.))
-                .without_pixel_perfect(),
-        )
-        .insert(Background);
-    commands
-        .spawn(SpriteBundle {
+        },
+        Transform2::new()
+            .with_scale(Vec2::ONE * 0.73)
+            .with_depth((DepthLayer::Front, 0.))
+            .without_pixel_perfect(),
+        Background,
+    ));
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 color: Color::rgba(1., 1., 1., 0.),
                 ..Default::default()
             },
             texture: asset_library.menu_sprite_logo.clone(),
             ..Default::default()
-        })
-        .insert(Transform2::from_xy(0., 90.).with_depth((DepthLayer::Front, 0.2)))
-        .insert(Label("Logo".to_owned()))
-        .insert(Logo { x: 0. });
-    commands
-        .spawn(SpriteBundle {
+        },
+        Transform2::from_xy(0., 90.).with_depth((DepthLayer::Front, 0.2)),
+        Label("Logo".to_owned()),
+        Logo { x: 0. },
+    ));
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 color: Color::rgba(1., 1., 1., 0.),
                 ..Default::default()
             },
             texture: asset_library.menu_sprite_shine.clone(),
             ..Default::default()
-        })
-        .insert(
-            Transform2::from_xy(0., 90.)
-                .with_scale(LOGO_SCALE * 0.8)
-                .with_depth((DepthLayer::Front, 0.1)),
-        )
-        .insert(Shine { x: 0. })
-        .insert(Label("Shine".to_owned()));
+        },
+        Transform2::from_xy(0., 90.)
+            .with_scale(LOGO_SCALE * 0.8)
+            .with_depth((DepthLayer::Front, 0.1)),
+        Shine { x: 0. },
+        Label("Shine".to_owned()),
+    ));
     commands
-        .spawn(SpriteBundle {
-            texture: asset_library.menu_sprite_button_back.clone(),
-            ..Default::default()
-        })
-        .insert(Button {
-            shape: CollisionShape::Rect {
-                size: Vec2::new(406., 159.) * BUTTON_SCALE,
+        .spawn((
+            SpriteBundle {
+                texture: asset_library.menu_sprite_button_back.clone(),
+                ..Default::default()
             },
-            last_hover: false,
-            clicked: false,
-            audio_hover: hover_audio,
-            audio_click: click_audio,
-            audio_click_confirm: click_confirm_audio,
-        })
-        .insert(
+            Button {
+                shape: CollisionShape::Rect {
+                    size: Vec2::new(406., 159.) * BUTTON_SCALE,
+                },
+                last_hover: false,
+                clicked: false,
+                audio_hover: hover_audio,
+                audio_click: click_audio,
+                audio_click_confirm: click_confirm_audio,
+            },
             Transform2::from_translation(BUTTON_POSITION)
                 .with_scale(Vec2::ONE * BUTTON_SCALE)
                 .with_depth((DepthLayer::Front, 0.3)),
-        )
-        .insert(Label("Play Button".to_owned()))
+            Label("Play Button".to_owned()),
+        ))
         .with_children(|parent| {
-            parent
-                .spawn(SpriteBundle {
+            parent.spawn((
+                SpriteBundle {
                     texture: asset_library.menu_sprite_button_play_normal.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::new()
-                        .with_scale(BUTTON_TEXT_SCALE)
-                        .with_depth((DepthLayer::Front, 0.4)),
-                )
-                .insert(ButtonText {
+                },
+                Transform2::new()
+                    .with_scale(BUTTON_TEXT_SCALE)
+                    .with_depth((DepthLayer::Front, 0.4)),
+                ButtonText {
                     normal: asset_library.menu_sprite_button_play_normal.clone(),
                     hover: asset_library.menu_sprite_button_play_hover.clone(),
                     press: asset_library.menu_sprite_button_play_press.clone(),
-                });
-            parent
-                .spawn(SpriteBundle {
+                },
+            ));
+            parent.spawn((
+                SpriteBundle {
                     texture: asset_library.menu_sprite_skull.clone(),
                     ..Default::default()
-                })
-                .insert(
-                    Transform2::from_xy(-210., 12.)
-                        .with_scale(Vec2::ONE * 1.2)
-                        .with_depth((DepthLayer::Front, 0.4)),
-                );
+                },
+                Transform2::from_xy(-210., 12.)
+                    .with_scale(Vec2::ONE * 1.2)
+                    .with_depth((DepthLayer::Front, 0.4)),
+            ));
         });
 
-    commands
-        .spawn(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             texture: asset_library.menu_fullscreen_recommended.clone(),
             ..Default::default()
-        })
-        .insert(
-            Transform2::from_xy(553., -321.)
-                .with_depth((DepthLayer::Front, 0.2))
-                .with_scale(Vec2::ONE * 0.32),
-        );
+        },
+        Transform2::from_xy(553., -321.)
+            .with_depth((DepthLayer::Front, 0.2))
+            .with_scale(Vec2::ONE * 0.32),
+    ));
 
-    commands
-        .spawn(Text2dBundle {
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 "A game for Bevy Jam #2",
                 TextStyle {
@@ -230,15 +219,14 @@ fn menu_setup(
             .with_alignment(TextAlignment::Left),
             text_anchor: Anchor::BottomRight,
             ..Default::default()
-        })
-        .insert(
-            Transform2::from_xy(-632., -378.)
-                .with_depth((DepthLayer::Front, 0.2))
-                .with_scale(Vec2::ONE * 0.5),
-        );
+        },
+        Transform2::from_xy(-632., -378.)
+            .with_depth((DepthLayer::Front, 0.2))
+            .with_scale(Vec2::ONE * 0.5),
+    ));
 
-    commands
-        .spawn(Text2dBundle {
+    commands.spawn((
+        Text2dBundle {
             text: Text::from_section(
                 "v1.2 (Bevy 0.10.0)",
                 TextStyle {
@@ -250,12 +238,11 @@ fn menu_setup(
             .with_alignment(TextAlignment::Left),
             text_anchor: Anchor::BottomRight,
             ..Default::default()
-        })
-        .insert(
-            Transform2::from_xy(-632., -352.)
-                .with_depth((DepthLayer::Front, 0.2))
-                .with_scale(Vec2::ONE * 0.5),
-        );
+        },
+        Transform2::from_xy(-632., -352.)
+            .with_depth((DepthLayer::Front, 0.2))
+            .with_scale(Vec2::ONE * 0.5),
+    ));
 }
 
 fn menu_logo(mut query: Query<(&mut Logo, &mut Transform2, &mut Sprite)>, time: Res<Time>) {

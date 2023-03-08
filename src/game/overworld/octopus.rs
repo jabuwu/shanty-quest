@@ -129,63 +129,64 @@ fn octopus_spawn(
             experience_count,
         } = event.level.info(asset_library.as_ref());
         entity
-            .insert(TransformBundle::default())
-            .insert(VisibilityBundle::default())
-            .insert(Transform2::from_translation(event.position))
-            .insert(Octopus {
-                wander_chance: TimedChance::new(),
-                wander_time: 0.,
-                wander_direction: Vec2::X,
-            })
-            .insert(YDepth::default())
-            .insert(Health::new(health))
-            .insert(Hitbox {
-                shape: CollisionShape::Rect {
-                    size: Vec2::new(60., 60.) * scale,
+            .insert((
+                TransformBundle::default(),
+                VisibilityBundle::default(),
+                Transform2::from_translation(event.position),
+                Octopus {
+                    wander_chance: TimedChance::new(),
+                    wander_time: 0.,
+                    wander_direction: Vec2::X,
                 },
-                for_entity: None,
-                flags: DAMAGE_FLAG_ENEMY,
-            })
-            .insert(Hurtbox {
-                shape: CollisionShape::Rect {
-                    size: OCTOPUS_HURTBOX_SIZE * scale,
+                YDepth::default(),
+                Health::new(health),
+                Hitbox {
+                    shape: CollisionShape::Rect {
+                        size: Vec2::new(60., 60.) * scale,
+                    },
+                    for_entity: None,
+                    flags: DAMAGE_FLAG_ENEMY,
                 },
-                for_entity: None,
-                auto_despawn: false,
-                flags: DAMAGE_FLAG_PLAYER,
-                knockback_type: HurtboxKnockbackType::None,
-                damage: 1.,
-            })
-            .insert(Collision {
-                shape: CollisionShape::Rect {
-                    size: OCTOPUS_COLLISION_SIZE,
+                Hurtbox {
+                    shape: CollisionShape::Rect {
+                        size: OCTOPUS_HURTBOX_SIZE * scale,
+                    },
+                    for_entity: None,
+                    auto_despawn: false,
+                    flags: DAMAGE_FLAG_PLAYER,
+                    knockback_type: HurtboxKnockbackType::None,
+                    damage: 1.,
                 },
-                flags: COLLISION_FLAG,
-            })
-            .insert(CharacterController {
-                movement: Vec2::ZERO,
-                speed: speed,
-                knockback_resistance: knockback_resistence,
-                ..Default::default()
-            })
-            .insert(AutoDamage {
-                despawn: true,
-                experience,
-                experience_count,
-                ..Default::default()
-            })
+                Collision {
+                    shape: CollisionShape::Rect {
+                        size: OCTOPUS_COLLISION_SIZE,
+                    },
+                    flags: COLLISION_FLAG,
+                },
+                CharacterController {
+                    movement: Vec2::ZERO,
+                    speed: speed,
+                    knockback_resistance: knockback_resistence,
+                    ..Default::default()
+                },
+                AutoDamage {
+                    despawn: true,
+                    experience,
+                    experience_count,
+                    ..Default::default()
+                },
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteSheetBundle {
+                parent.spawn((
+                    SpriteSheetBundle {
                         texture_atlas: atlas,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::new()
-                            .with_depth((DepthLayer::Entity, 0.))
-                            .with_scale(Vec2::ONE * scale),
-                    )
-                    .insert(OctopusSprite);
+                    },
+                    Transform2::new()
+                        .with_depth((DepthLayer::Entity, 0.))
+                        .with_scale(Vec2::ONE * scale),
+                    OctopusSprite,
+                ));
             });
         ev_healthbar_spawn.send(HealthbarSpawnEvent {
             entity: Some(entity.id()),

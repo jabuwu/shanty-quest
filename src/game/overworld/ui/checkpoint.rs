@@ -22,28 +22,29 @@ fn checkpoint_spawn(
 ) {
     for _ in ev_spawn.iter() {
         commands
-            .spawn(VisibilityBundle::default())
-            .insert(TransformBundle::default())
-            .insert(FollowCamera { offset: Vec2::ZERO })
-            .insert(Transform2::new().without_pixel_perfect())
-            .insert(TimeToLive { seconds: 1.5 })
+            .spawn((
+                VisibilityBundle::default(),
+                TransformBundle::default(),
+                FollowCamera { offset: Vec2::ZERO },
+                Transform2::new().without_pixel_perfect(),
+                TimeToLive { seconds: 1.5 },
+            ))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Vec2::new(400., 90.).into(),
                             color: Color::rgba(0., 0., 0., 0.36),
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(CHECKPOINT_POSITION)
-                            .with_depth(DEPTH_LAYER_CHECKPOINT_BACKGROUND)
-                            .without_pixel_perfect(),
-                    );
-                parent
-                    .spawn(Text2dBundle {
+                    },
+                    Transform2::from_translation(CHECKPOINT_POSITION)
+                        .with_depth(DEPTH_LAYER_CHECKPOINT_BACKGROUND)
+                        .without_pixel_perfect(),
+                ));
+                parent.spawn((
+                    Text2dBundle {
                         text: Text::from_section(
                             "Checkpoint",
                             TextStyle {
@@ -55,11 +56,10 @@ fn checkpoint_spawn(
                         .with_alignment(TextAlignment::Center),
                         text_anchor: Anchor::Center,
                         ..Default::default()
-                    })
-                    .insert(
-                        Transform2::from_translation(CHECKPOINT_POSITION)
-                            .with_depth(DEPTH_LAYER_CHECKPOINT_TEXT),
-                    );
+                    },
+                    Transform2::from_translation(CHECKPOINT_POSITION)
+                        .with_depth(DEPTH_LAYER_CHECKPOINT_TEXT),
+                ));
             });
     }
 }

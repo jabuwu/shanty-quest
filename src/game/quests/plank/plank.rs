@@ -69,23 +69,24 @@ fn plank_spawn(
         let stats = plank_stats_by_health(1.);
         ev_enemies_despawn.send_default();
         let entity = commands
-            .spawn_empty()
-            .insert(Plank {
-                target: world_locations.get_single_position("PlankMoveTo"),
-                angle: 0.,
-                adjust_angle_chance: TimedChance::new(),
-                backoff_time: 2.0,
-                backoff_dir: Vec2::new(-1., 0.),
-                backoff_chance: TimedChance::new(),
-                backoff_stop: false,
-            })
-            .insert(AutoDamage {
-                despawn: true,
-                experience: 5.,
-                experience_count: 10,
-                experience_infinite_distance: true,
-                ..Default::default()
-            })
+            .spawn((
+                Plank {
+                    target: world_locations.get_single_position("PlankMoveTo"),
+                    angle: 0.,
+                    adjust_angle_chance: TimedChance::new(),
+                    backoff_time: 2.0,
+                    backoff_dir: Vec2::new(-1., 0.),
+                    backoff_chance: TimedChance::new(),
+                    backoff_stop: false,
+                },
+                AutoDamage {
+                    despawn: true,
+                    experience: 5.,
+                    experience_count: 10,
+                    experience_infinite_distance: true,
+                    ..Default::default()
+                },
+            ))
             .id();
         ev_boss_healthbar_spawn.send(BossHealthbarSpawnEvent {
             name: "Captain Plank Presley".to_owned(),
