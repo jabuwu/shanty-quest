@@ -1,11 +1,11 @@
-use crate::{common::prelude::*, game::prelude::BoatSet};
+use crate::{common::prelude::*, game::prelude::BoatSystem};
 use audio_plus::AudioPlusPlugin;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use global_state::prelude::*;
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub enum CommonSet {
+pub enum CommonSystem {
     SafeToStateChange,
 }
 
@@ -37,7 +37,7 @@ impl Plugin for CommonPlugin {
             .add_global_state::<app_state::AppState>()
             .init_resource::<asset_library::AssetLibrary>()
             .add_system(nan_fix.in_base_set(CoreSet::PreUpdate))
-            .add_system(safe_to_state_change.after(BoatSet::Spawn));
+            .add_system(safe_to_state_change.after(BoatSystem::Spawn));
     }
 }
 

@@ -96,8 +96,8 @@ impl Plugin for EnemySpawnsPlugin {
             .add_event::<DespawnSpawnedEntitiesEvent>()
             .add_system(
                 enemy_spawns
-                    .before(OctopusSet::Spawn)
-                    .before(TurtleSet::Spawn),
+                    .before(OctopusSystem::Spawn)
+                    .before(TurtleSystem::Spawn),
             )
             .add_system(enemy_spawns_despawn);
     }

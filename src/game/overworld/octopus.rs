@@ -6,7 +6,7 @@ const OCTOPUS_COLLISION_SIZE: Vec2 = Vec2::new(60., 60.);
 const OCTOPUS_HURTBOX_SIZE: Vec2 = Vec2::new(80., 80.);
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub enum OctopusSet {
+pub enum OctopusSystem {
     Spawn,
 }
 
@@ -17,8 +17,8 @@ impl Plugin for OctopusPlugin {
         app.add_event::<OctopusSpawnEvent>()
             .add_system(
                 octopus_spawn
-                    .in_set(OctopusSet::Spawn)
-                    .before(HealthbarSet::Spawn),
+                    .in_set(OctopusSystem::Spawn)
+                    .before(HealthbarSystem::Spawn),
             )
             .add_system(octopus_move)
             .add_system(octopus_animate);

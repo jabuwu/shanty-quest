@@ -28,7 +28,7 @@ pub struct ExitTownCutscene {
 
 impl Cutscene for ExitTownCutscene {
     fn build(cutscene: &mut CutsceneBuilder) {
-        cutscene.add_step(init1, update1.before(OverworldCameraSet::Update));
+        cutscene.add_step(init1, update1.before(OverworldCameraSystem::Update));
     }
 }
 

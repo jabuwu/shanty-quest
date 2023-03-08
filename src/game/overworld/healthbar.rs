@@ -5,7 +5,7 @@ use bevy::prelude::*;
 const HEALTHBAR_BORDER: Vec2 = Vec2::new(8., 8.);
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub enum HealthbarSet {
+pub enum HealthbarSystem {
     Spawn,
 }
 
@@ -14,7 +14,7 @@ pub struct HealthbarPlugin;
 impl Plugin for HealthbarPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<HealthbarSpawnEvent>()
-            .add_system(healthbar_spawn.in_set(HealthbarSet::Spawn))
+            .add_system(healthbar_spawn.in_set(HealthbarSystem::Spawn))
             .add_system(healthbar_update);
     }
 }

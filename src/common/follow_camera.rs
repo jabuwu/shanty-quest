@@ -1,4 +1,4 @@
-use super::transform2::Transform2Set;
+use super::transform2::Transform2System;
 use crate::common::prelude::*;
 use bevy::prelude::*;
 
@@ -9,7 +9,7 @@ impl Plugin for FollowCameraPlugin {
         app.add_system(
             follow_camera
                 .in_base_set(CoreSet::PostUpdate)
-                .before(Transform2Set::TransformPropagate),
+                .before(Transform2System::TransformPropagate),
         );
     }
 }

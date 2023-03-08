@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy::transform::TransformSystem;
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub enum Transform2Set {
+pub enum Transform2System {
     TransformPropagate,
 }
 
@@ -14,7 +14,7 @@ impl Plugin for Transform2Plugin {
         app.add_system(
             update_transform2
                 .in_base_set(CoreSet::PostUpdate)
-                .in_set(Transform2Set::TransformPropagate)
+                .in_set(Transform2System::TransformPropagate)
                 .before(TransformSystem::TransformPropagate),
         );
     }

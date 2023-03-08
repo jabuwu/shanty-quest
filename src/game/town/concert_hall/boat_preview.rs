@@ -12,11 +12,11 @@ pub struct BoatPreviewPlugin;
 impl Plugin for BoatPreviewPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<BoatPreviewSpawnEvent>()
-            .add_system(boat_preview_spawn.before(BoatSet::Spawn))
+            .add_system(boat_preview_spawn.before(BoatSystem::Spawn))
             .add_system(
                 boat_preview_update
-                    .after(BoatSet::Update)
-                    .before(OverworldCameraSet::Update),
+                    .after(BoatSystem::Update)
+                    .before(OverworldCameraSystem::Update),
             );
     }
 }

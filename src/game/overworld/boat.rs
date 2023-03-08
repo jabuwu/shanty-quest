@@ -6,7 +6,7 @@ use bevy_egui::{egui, EguiContext};
 const RING_SPAWN_INTEVAL: f32 = 0.15;
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub enum BoatSet {
+pub enum BoatSystem {
     Spawn,
     Update,
 }
@@ -16,11 +16,11 @@ pub struct BoatPlugin;
 impl Plugin for BoatPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<BoatSpawnEvent>()
-            .add_system(boat_spawn.before(HealthbarSet::Spawn))
+            .add_system(boat_spawn.before(HealthbarSystem::Spawn))
             .add_system(
                 boat_update
-                    .in_set(BoatSet::Update)
-                    .in_set(CharacterControllerSet::Update),
+                    .in_set(BoatSystem::Update)
+                    .in_set(CharacterControllerSystem::Update),
             )
             .add_system(boat_attack)
             .add_system(boat_debug);

@@ -9,7 +9,7 @@ pub struct DavyPlugin;
 impl Plugin for DavyPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<DavySpawnEvent>()
-            .add_system(davy_spawn.before(BoatSet::Spawn))
+            .add_system(davy_spawn.before(BoatSystem::Spawn))
             .add_system(davy_move)
             .add_system(davy_invincibility)
             .add_system(davy_death_check);

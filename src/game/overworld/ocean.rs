@@ -12,7 +12,7 @@ impl Plugin for OceanPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<OceanSpawnEvent>()
             .add_system(ocean_spawn)
-            .add_system(ocean_update.after(OverworldCameraSet::Update))
+            .add_system(ocean_update.after(OverworldCameraSystem::Update))
             .add_system(ocean_overlay_update)
             .add_system(ocean_debug);
     }

@@ -7,7 +7,7 @@ const CAMERA_SIZE: Vec2 = Vec2::new(1280., 768.);
 const WORLD_LIMITS: (Vec2, Vec2) = (Vec2::new(-400., -12000.), Vec2::new(12000., 400.));
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemSet)]
-pub enum OverworldCameraSet {
+pub enum OverworldCameraSystem {
     Update,
 }
 
@@ -16,7 +16,7 @@ pub struct OverworldCameraPlugin;
 impl Plugin for OverworldCameraPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<OverworldCamera>()
-            .add_system(overworld_camera_update.in_set(OverworldCameraSet::Update));
+            .add_system(overworld_camera_update.in_set(OverworldCameraSystem::Update));
     }
 }
 

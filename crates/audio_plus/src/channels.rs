@@ -1,7 +1,7 @@
 use crate::{
     source::AudioPlusSource,
     voice::{AudioPlusVoiceHandle, AudioPlusVoiceState},
-    AudioPlusSet,
+    AudioPlusSystem,
 };
 use bevy::ecs::system::Resource;
 use bevy::prelude::*;

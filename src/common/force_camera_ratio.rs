@@ -1,7 +1,7 @@
 use bevy::{prelude::*, transform::TransformSystem};
 use global_state::Persistent;
 
-use super::transform2::Transform2Set;
+use super::transform2::Transform2System;
 
 const DESIRED_SIZE: Vec2 = Vec2::new(1280., 768.);
 const RATIO_BAR_SIZE: f32 = 100000.;
@@ -22,7 +22,7 @@ impl Plugin for ForceRatioPlugin {
                     .in_set(ForceRatioSystem::Update)
                     .in_base_set(CoreSet::PostUpdate)
                     .before(TransformSystem::TransformPropagate)
-                    .after(Transform2Set::TransformPropagate),
+                    .after(Transform2System::TransformPropagate),
             );
     }
 }

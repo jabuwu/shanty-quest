@@ -9,7 +9,7 @@ pub struct RingoPlugin;
 impl Plugin for RingoPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<RingoSpawnEvent>()
-            .add_system(ringo_spawn.before(BoatSet::Spawn))
+            .add_system(ringo_spawn.before(BoatSystem::Spawn))
             .add_system(ringo_move)
             .add_system(ringo_invincibility)
             .add_system(ringo_death_check);
