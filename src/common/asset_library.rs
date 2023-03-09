@@ -99,6 +99,8 @@ pub struct AssetLibrary {
     pub menu_sprite_volume: Handle<Image>,
     #[asset("sprites/FullscreenRecommended.png")]
     pub menu_fullscreen_recommended: Handle<Image>,
+    #[asset("sprites/Fullscreen.png")]
+    pub menu_fullscreen: Handle<Image>,
     #[asset("sprites/slider_back.png")]
     pub menu_slider_back: Handle<Image>,
     #[asset("sprites/slider_knob.png")]

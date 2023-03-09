@@ -4,7 +4,7 @@ use crate::{
     DEV_BUILD,
 };
 use audio_plus::prelude::*;
-use bevy::{prelude::*, sprite::Anchor};
+use bevy::{prelude::*, sprite::Anchor, window::WindowMode};
 
 use self::slider::VolumeSliderSpawnEvent;
 
@@ -32,7 +32,8 @@ impl Plugin for MainMenuPlugin {
             .add_system(menu_shine)
             .add_system(menu_button)
             .add_system(menu_background_move)
-            .add_system(menu_outro_debug.in_set(OnUpdate(AppState::MainMenu)));
+            .add_system(menu_outro_debug.in_set(OnUpdate(AppState::MainMenu)))
+            .add_system(menu_fullscreen);
     }
 }
 
@@ -68,6 +69,9 @@ struct Shine {
 
 #[derive(Component)]
 struct Background;
+
+#[derive(Component)]
+struct Fullscreen;
 
 fn menu_setup(
     mut menu_state: ResMut<MenuState>,
@@ -196,6 +200,7 @@ fn menu_setup(
             ));
         });
 
+    #[cfg(not(target_arch = "wasm32"))]
     commands.spawn((
         SpriteBundle {
             texture: asset_library.menu_fullscreen_recommended.clone(),
@@ -204,6 +209,27 @@ fn menu_setup(
         Transform2::from_xy(553., -321.)
             .with_depth((DepthLayer::Front, 0.2))
             .with_scale(Vec2::ONE * 0.32),
+    ));
+
+    #[cfg(not(target_arch = "wasm32"))]
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::WHITE,
+                custom_size: Some(Vec2::splat(40.)),
+                ..Default::default()
+            },
+            texture: asset_library.menu_fullscreen.clone(),
+            ..Default::default()
+        },
+        Transform2::from_xy(640. - 40., -384. + 30.).with_depth((DepthLayer::Front, 0.2)),
+        Clickable {
+            shape: CollisionShape::Rect {
+                size: Vec2::splat(40.),
+            },
+            ..Default::default()
+        },
+        Fullscreen,
     ));
 
     commands.spawn((
@@ -362,6 +388,30 @@ fn menu_outro_debug(mut input: ResMut<Input<KeyCode>>, mut app_state: ResMut<Nex
         if input.just_pressed(KeyCode::Key0) {
             app_state.set(AppState::OutroCutscene);
             input.reset(KeyCode::Key0);
+        }
+    }
+}
+
+fn menu_fullscreen(
+    mut fullscreen_query: Query<(&mut Sprite, &Clickable), With<Fullscreen>>,
+    mut window_query: Query<&mut Window>,
+) {
+    for (mut fullscreen_sprite, fullscreen_clickable) in fullscreen_query.iter_mut() {
+        fullscreen_sprite
+            .color
+            .set_a(if fullscreen_clickable.hovered {
+                1.
+            } else {
+                0.6
+            });
+        if fullscreen_clickable.confirmed {
+            if let Some(mut window) = window_query.get_single_mut().ok() {
+                if window.mode == WindowMode::BorderlessFullscreen {
+                    window.mode = WindowMode::Windowed;
+                } else {
+                    window.mode = WindowMode::BorderlessFullscreen;
+                }
+            }
         }
     }
 }
