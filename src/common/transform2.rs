@@ -11,9 +11,9 @@ pub struct Transform2Plugin;
 
 impl Plugin for Transform2Plugin {
     fn build(&self, app: &mut App) {
-        app.add_system(
+        app.add_systems(
+            PostUpdate,
             update_transform2
-                .in_base_set(CoreSet::PostUpdate)
                 .in_set(Transform2System::TransformPropagate)
                 .before(TransformSystem::TransformPropagate),
         );

@@ -94,12 +94,15 @@ impl Plugin for EnemySpawnsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<EnemySpawnsState>()
             .add_event::<DespawnSpawnedEntitiesEvent>()
-            .add_system(
-                enemy_spawns
-                    .before(OctopusSystem::Spawn)
-                    .before(TurtleSystem::Spawn),
-            )
-            .add_system(enemy_spawns_despawn);
+            .add_systems(
+                Update,
+                (
+                    enemy_spawns
+                        .before(OctopusSystem::Spawn)
+                        .before(TurtleSystem::Spawn),
+                    enemy_spawns_despawn,
+                ),
+            );
     }
 }
 
@@ -108,7 +111,7 @@ pub struct SpawnedEntity {
     frames: u32,
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct DespawnSpawnedEntitiesEvent;
 
 const DESPAWN_BUFFER_DISTANCE: f32 = 200.;
@@ -155,7 +158,7 @@ fn enemy_spawns(
     mut state: ResMut<EnemySpawnsState>,
     time: Res<Time>,
 ) {
-    if cutscenes.running() && matches!(app_state.0, AppState::Overworld) {
+    if cutscenes.running() && matches!(app_state.get(), AppState::Overworld) {
         return;
     }
     let camera_position = if let Ok(camera_transform) = queries.p0().get_single() {

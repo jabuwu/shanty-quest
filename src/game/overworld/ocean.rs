@@ -10,15 +10,19 @@ pub struct OceanPlugin;
 
 impl Plugin for OceanPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<OceanSpawnEvent>()
-            .add_system(ocean_spawn)
-            .add_system(ocean_update.after(OverworldCameraSystem::Update))
-            .add_system(ocean_overlay_update)
-            .add_system(ocean_debug);
+        app.add_event::<OceanSpawnEvent>().add_systems(
+            Update,
+            (
+                ocean_spawn,
+                ocean_update.after(OverworldCameraSystem::Update),
+                ocean_overlay_update,
+                ocean_debug,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct OceanSpawnEvent {
     pub entity: Option<Entity>,
 }

@@ -13,31 +13,35 @@ pub struct CommonPlugin;
 
 impl Plugin for CommonPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(EguiPlugin)
-            .add_plugin(AudioPlusPlugin)
-            .add_plugin(menu_bar::MenuBarPlugin)
-            .add_plugin(mouse::MousePlugin)
-            .add_plugin(assets::AssetsPlugin)
-            .add_plugin(transform2::Transform2Plugin)
-            .add_plugin(ldtk::LdtkPlugin)
-            .add_plugin(entity_debug::EntityDebugPlugin)
-            .add_plugin(y_depth::YDepthPlugin)
-            .add_plugin(collision::CollisionPlugin)
-            .add_plugin(time_to_live::TimeToLivePlugin)
-            .add_plugin(clickable::ClickablePlugin)
-            .add_plugin(screen_fade::ScreenFadePlugin)
-            .add_plugin(cutscene::CutscenePlugin)
-            .add_plugin(dialogue::DialoguePlugin)
-            .add_plugin(follow_camera::FollowCameraPlugin)
-            .add_plugin(world_locations::WorldLocationsPlugin)
-            .add_plugin(map_builder::MapBuilderPlugin)
-            .add_plugin(force_camera_ratio::ForceRatioPlugin)
-            .add_plugin(wasm::WasmPlugin)
-            .add_plugin(volume_control::VolumeControlPlugin)
-            .add_global_state::<app_state::AppState>()
-            .init_resource::<asset_library::AssetLibrary>()
-            .add_system(nan_fix.in_base_set(CoreSet::PreUpdate))
-            .add_system(safe_to_state_change.after(BoatSystem::Spawn));
+        app.add_plugins((
+            EguiPlugin,
+            AudioPlusPlugin,
+            menu_bar::MenuBarPlugin,
+            mouse::MousePlugin,
+            assets::AssetsPlugin,
+            transform2::Transform2Plugin,
+            ldtk::LdtkPlugin,
+            entity_debug::EntityDebugPlugin,
+            y_depth::YDepthPlugin,
+            collision::CollisionPlugin,
+            time_to_live::TimeToLivePlugin,
+            clickable::ClickablePlugin,
+            screen_fade::ScreenFadePlugin,
+            cutscene::CutscenePlugin,
+            dialogue::DialoguePlugin,
+        ))
+        .add_plugins((
+            follow_camera::FollowCameraPlugin,
+            world_locations::WorldLocationsPlugin,
+            map_builder::MapBuilderPlugin,
+            force_camera_ratio::ForceRatioPlugin,
+            wasm::WasmPlugin,
+            volume_control::VolumeControlPlugin,
+        ))
+        .add_global_state::<app_state::AppState>()
+        .init_resource::<asset_library::AssetLibrary>()
+        .add_systems(PreUpdate, nan_fix)
+        .add_systems(Update, safe_to_state_change.after(BoatSystem::Spawn));
     }
 }
 

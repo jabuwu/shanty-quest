@@ -16,6 +16,7 @@ No new gameplay features will be added. The repo is updated only for Bevy update
 [1.0](https://github.com/jabuwu/shanty-quest/tree/1.0) - The original game, the version on [itch.io](https://jabuwu.itch.io/shanty-quest)  
 [bevy-0.9.1](https://github.com/jabuwu/shanty-quest/tree/bevy-0.9.1) - Updated to Bevy 0.9.1  
 [bevy-0.10](https://github.com/jabuwu/shanty-quest/tree/bevy-0.10) - Updated to Bevy 0.10  
+[bevy-0.11](https://github.com/jabuwu/shanty-quest/tree/bevy-0.11) - Updated to Bevy 0.11 
 
 ## License
 Code is licensed under dual MIT / Apache-2.0 but with no attribution necessary  

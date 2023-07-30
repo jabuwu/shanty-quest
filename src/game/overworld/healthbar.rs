@@ -13,13 +13,17 @@ pub struct HealthbarPlugin;
 
 impl Plugin for HealthbarPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<HealthbarSpawnEvent>()
-            .add_system(healthbar_spawn.in_set(HealthbarSystem::Spawn))
-            .add_system(healthbar_update);
+        app.add_event::<HealthbarSpawnEvent>().add_systems(
+            Update,
+            (
+                healthbar_spawn.in_set(HealthbarSystem::Spawn),
+                healthbar_update,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct HealthbarSpawnEvent {
     pub entity: Option<Entity>,
     pub offset: Vec2,

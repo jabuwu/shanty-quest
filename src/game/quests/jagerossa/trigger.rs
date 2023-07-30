@@ -8,8 +8,10 @@ pub struct JagerossaTriggerPlugin;
 
 impl Plugin for JagerossaTriggerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(jagerossa_trigger_world_spawn)
-            .add_system(jagerossa_trigger_check);
+        app.add_systems(
+            Update,
+            (jagerossa_trigger_world_spawn, jagerossa_trigger_check),
+        );
     }
 }
 

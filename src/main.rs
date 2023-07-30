@@ -1,3 +1,6 @@
+use std::time::Duration;
+
+use bevy::asset::ChangeWatcher;
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
 use bevy_egui::{egui, EguiContext};
@@ -20,16 +23,21 @@ fn main() {
                     ..default()
                 })
                 .set(AssetPlugin {
-                    watch_for_changes: DEV_BUILD,
+                    watch_for_changes: if DEV_BUILD {
+                        ChangeWatcher::with_delay(Duration::from_millis(500))
+                    } else {
+                        None
+                    },
                     ..Default::default()
                 }),
         )
-        .add_plugin(jam::common::CommonPlugin)
-        .add_plugin(jam::loading::LoadingPlugin)
-        .add_plugin(jam::main_menu::MainMenuPlugin)
-        .add_plugin(jam::game::GamePlugin)
-        .add_system(stats)
-        .add_system(debug_dialogue)
+        .add_plugins((
+            jam::common::CommonPlugin,
+            jam::loading::LoadingPlugin,
+            jam::main_menu::MainMenuPlugin,
+            jam::game::GamePlugin,
+        ))
+        .add_systems(Update, (stats, debug_dialogue))
         .run();
 }
 

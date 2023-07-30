@@ -6,12 +6,11 @@ pub struct DamageRumPlugin;
 impl Plugin for DamageRumPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<DamageRumSpawnEvent>()
-            .add_system(damage_rum_spawn)
-            .add_system(damage_rum_update);
+            .add_systems(Update, (damage_rum_spawn, damage_rum_update));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct DamageRumSpawnEvent {
     pub position: Vec2,
 }

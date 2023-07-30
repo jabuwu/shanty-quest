@@ -7,12 +7,11 @@ pub struct BandSelectionPlugin;
 impl Plugin for BandSelectionPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<BandSelectionSpawnEvent>()
-            .add_system(band_selection_spawn)
-            .add_system(band_selection_drag);
+            .add_systems(Update, (band_selection_spawn, band_selection_drag));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct BandSelectionSpawnEvent;
 
 #[derive(Component)]

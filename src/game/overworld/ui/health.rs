@@ -11,12 +11,11 @@ pub struct HealthUiPlugin;
 impl Plugin for HealthUiPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<HealthUiSpawnEvent>()
-            .add_system(health_ui_spawn)
-            .add_system(health_ui_bottle_update);
+            .add_systems(Update, (health_ui_spawn, health_ui_bottle_update));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct HealthUiSpawnEvent;
 
 #[derive(Component)]

@@ -8,15 +8,19 @@ pub struct JagerossaPlugin;
 
 impl Plugin for JagerossaPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<JagerossaSpawnEvent>()
-            .add_system(jagerossa_spawn.before(BoatSystem::Spawn))
-            .add_system(jagerossa_move)
-            .add_system(jagerossa_invincibility)
-            .add_system(jagerossa_death_check);
+        app.add_event::<JagerossaSpawnEvent>().add_systems(
+            Update,
+            (
+                jagerossa_spawn.before(BoatSystem::Spawn),
+                jagerossa_move,
+                jagerossa_invincibility,
+                jagerossa_death_check,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct JagerossaSpawnEvent;
 
 #[derive(Component)]

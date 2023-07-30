@@ -18,10 +18,9 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(CommonPlugin)
-        .add_plugin(quest1::Q1A1Plugin)
-        .add_startup_system(init)
-        .add_system(my_system)
+        .add_plugins((CommonPlugin, quest1::Q1A1Plugin))
+        .add_systems(Startup, init)
+        .add_systems(Update, my_system)
         .run();
 }
 

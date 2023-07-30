@@ -11,9 +11,9 @@ pub fn derive_global_state(input: TokenStream) -> TokenStream {
         for variant in enm.variants.iter() {
             let variant_ident = &variant.ident;
             quotes.push(quote! {
-                app.add_system(global_state::cleanup_entities.in_schedule(bevy::ecs::schedule::OnExit(#ident::#variant_ident)));
-                app.add_system(global_state::reset_state_time::<#ident>.in_schedule(bevy::ecs::schedule::OnExit(#ident::#variant_ident)));
-                app.add_system(global_state::update_state_time::<#ident>.in_set(bevy::ecs::schedule::OnUpdate(#ident::#variant_ident)));
+                app.add_systems(bevy::ecs::schedule::OnExit(#ident::#variant_ident), global_state::cleanup_entities);
+                app.add_systems(bevy::ecs::schedule::OnExit(#ident::#variant_ident), global_state::reset_state_time::<#ident>);
+                app.add_systems(Update, global_state::update_state_time::<#ident>.run_if(in_state(#ident::#variant_ident)));
             });
         }
     }

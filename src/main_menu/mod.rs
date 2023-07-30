@@ -24,16 +24,21 @@ pub struct MainMenuPlugin;
 
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(slider::VolumeSliderPlugin)
+        app.add_plugins(slider::VolumeSliderPlugin)
             .init_resource::<MenuState>()
-            .add_system(menu_setup.in_schedule(OnEnter(AppState::MainMenu)))
-            .add_system(menu_fade.in_set(OnUpdate(AppState::MainMenu)))
-            .add_system(menu_logo)
-            .add_system(menu_shine)
-            .add_system(menu_button)
-            .add_system(menu_background_move)
-            .add_system(menu_outro_debug.in_set(OnUpdate(AppState::MainMenu)))
-            .add_system(menu_fullscreen);
+            .add_systems(OnEnter(AppState::MainMenu), menu_setup)
+            .add_systems(
+                Update,
+                (
+                    menu_fade.run_if(in_state(AppState::MainMenu)),
+                    menu_logo,
+                    menu_shine,
+                    menu_button,
+                    menu_background_move,
+                    menu_outro_debug.run_if(in_state(AppState::MainMenu)),
+                    menu_fullscreen,
+                ),
+            );
     }
 }
 
@@ -243,7 +248,7 @@ fn menu_setup(
                 },
             )
             .with_alignment(TextAlignment::Left),
-            text_anchor: Anchor::BottomRight,
+            text_anchor: Anchor::BottomLeft,
             ..Default::default()
         },
         Transform2::from_xy(-632., -378.)
@@ -254,7 +259,7 @@ fn menu_setup(
     commands.spawn((
         Text2dBundle {
             text: Text::from_section(
-                "v1.2 (Bevy 0.10.0)",
+                "v1.3 (Bevy 0.11.0)",
                 TextStyle {
                     font: asset_library.font_bold.clone(),
                     font_size: 48.0,
@@ -262,7 +267,7 @@ fn menu_setup(
                 },
             )
             .with_alignment(TextAlignment::Left),
-            text_anchor: Anchor::BottomRight,
+            text_anchor: Anchor::BottomLeft,
             ..Default::default()
         },
         Transform2::from_xy(-632., -352.)

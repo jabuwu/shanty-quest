@@ -1,7 +1,7 @@
 use bevy::{
     asset::{AssetLoader, LoadContext, LoadedAsset},
     prelude::*,
-    reflect::TypeUuid,
+    reflect::{TypePath, TypeUuid},
     utils::BoxedFuture,
 };
 use serde::Deserialize;
@@ -15,7 +15,7 @@ impl Plugin for LdtkAssetPlugin {
     }
 }
 
-#[derive(Debug, Deserialize, TypeUuid)]
+#[derive(Debug, Deserialize, TypeUuid, TypePath)]
 #[uuid = "b953a81b-1523-4a1a-a99d-5db6ccdd1533"]
 pub struct LdtkAsset {
     pub map: ldtk2::Ldtk,

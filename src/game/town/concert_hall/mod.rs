@@ -17,11 +17,16 @@ pub struct ConcertHallPlugin;
 impl Plugin for ConcertHallPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ConcertHallState>()
-            .add_plugin(band_selection::BandSelectionPlugin)
-            .add_plugin(boat_preview::BoatPreviewPlugin)
-            .add_plugin(upgrades::UpgradesPlugin)
-            .add_system(concert_hall_init.in_schedule(OnEnter(AppState::TownConcertHall)))
-            .add_system(concert_hall_leave.in_set(OnUpdate(AppState::TownConcertHall)));
+            .add_plugins((
+                band_selection::BandSelectionPlugin,
+                boat_preview::BoatPreviewPlugin,
+                upgrades::UpgradesPlugin,
+            ))
+            .add_systems(OnEnter(AppState::TownConcertHall), concert_hall_init)
+            .add_systems(
+                Update,
+                concert_hall_leave.run_if(in_state(AppState::TownConcertHall)),
+            );
     }
 }
 

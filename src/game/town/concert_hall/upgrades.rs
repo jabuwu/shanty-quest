@@ -16,16 +16,21 @@ impl Plugin for UpgradesPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UpgradesState>()
             .add_event::<UpgradesSpawnEvent>()
-            .add_system(upgrades_spawn)
-            .add_system(upgrades_skill_points)
-            .add_system(upgrades_ability_bg)
-            .add_system(upgrades_buttons)
-            .add_system(upgrades_stars)
-            .add_system(upgrades_description);
+            .add_systems(
+                Update,
+                (
+                    upgrades_spawn,
+                    upgrades_skill_points,
+                    upgrades_ability_bg,
+                    upgrades_buttons,
+                    upgrades_stars,
+                    upgrades_description,
+                ),
+            );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct UpgradesSpawnEvent;
 
 #[derive(Component)]
@@ -217,7 +222,7 @@ fn upgrades_spawn(
                             },
                         )
                         .with_alignment(TextAlignment::Right),
-                        text_anchor: Anchor::CenterLeft,
+                        text_anchor: Anchor::CenterRight,
                         ..Default::default()
                     },
                     Transform2::from_xy(940., 740.).with_depth(DEPTH_LAYER_UPGRADES_SKILLPOINT),
@@ -298,7 +303,7 @@ fn upgrades_spawn(
                                                 },
                                             )
                                             .with_alignment(TextAlignment::Left),
-                                            text_anchor: Anchor::CenterRight,
+                                            text_anchor: Anchor::CenterLeft,
                                             ..Default::default()
                                         },
                                         Transform2::from_xy(-210., 68.)

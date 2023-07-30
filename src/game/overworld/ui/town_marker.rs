@@ -7,12 +7,11 @@ pub struct TownMarkerPlugin;
 impl Plugin for TownMarkerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<TownMarkerSpawnEvent>()
-            .add_system(town_marker_spawn)
-            .add_system(town_marker_update);
+            .add_systems(Update, (town_marker_spawn, town_marker_update));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct TownMarkerSpawnEvent;
 
 #[derive(Component)]

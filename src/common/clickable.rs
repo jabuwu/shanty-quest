@@ -5,7 +5,7 @@ pub struct ClickablePlugin;
 
 impl Plugin for ClickablePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(clickable_update);
+        app.add_systems(Update, clickable_update);
     }
 }
 

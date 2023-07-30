@@ -20,10 +20,9 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(CommonPlugin)
+        .add_plugins((CommonPlugin, UpgradesPlugin))
         .init_resource::<GameState>()
-        .add_plugin(UpgradesPlugin)
-        .add_startup_system(init)
+        .add_systems(Startup, init)
         .run();
 }
 

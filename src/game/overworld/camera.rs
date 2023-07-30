@@ -15,8 +15,10 @@ pub struct OverworldCameraPlugin;
 
 impl Plugin for OverworldCameraPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<OverworldCamera>()
-            .add_system(overworld_camera_update.in_set(OverworldCameraSystem::Update));
+        app.init_resource::<OverworldCamera>().add_systems(
+            Update,
+            overworld_camera_update.in_set(OverworldCameraSystem::Update),
+        );
     }
 }
 

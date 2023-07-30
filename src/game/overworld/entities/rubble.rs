@@ -6,13 +6,17 @@ pub struct RubblePlugin;
 
 impl Plugin for RubblePlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<RubbleSpawnEvent>()
-            .add_system(rubble_spawn.before(HealthbarSystem::Spawn))
-            .add_system(rubble_world_spawn);
+        app.add_event::<RubbleSpawnEvent>().add_systems(
+            Update,
+            (
+                rubble_spawn.before(HealthbarSystem::Spawn),
+                rubble_world_spawn,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct RubbleSpawnEvent {
     pub position: Vec2,
 }

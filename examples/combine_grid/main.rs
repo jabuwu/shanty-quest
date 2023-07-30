@@ -18,9 +18,8 @@ fn main() {
     App::new()
         .init_resource::<State>()
         .add_plugins(DefaultPlugins)
-        .add_startup_system(init)
-        .add_startup_system(draw_combiner)
-        .add_system(draw_combined)
+        .add_systems(Startup, (init, draw_combiner))
+        .add_systems(Update, draw_combined)
         .run();
 }
 

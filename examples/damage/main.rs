@@ -22,13 +22,14 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(CommonPlugin)
-        .add_plugin(CharacterControllerPlugin)
-        .add_plugin(DamagePlugin)
-        .add_plugin(HealthbarPlugin)
-        .add_startup_system(init)
-        .add_system(player_control)
-        .add_system(bullet_update)
+        .add_plugins((
+            CommonPlugin,
+            CharacterControllerPlugin,
+            DamagePlugin,
+            HealthbarPlugin,
+        ))
+        .add_systems(Startup, init)
+        .add_systems(Update, (player_control, bullet_update))
         .run();
 }
 

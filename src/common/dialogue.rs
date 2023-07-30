@@ -9,12 +9,11 @@ impl Plugin for DialoguePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Dialogue>()
             .add_event::<DialogueInitEvent>()
-            .add_system(dialogue_init)
-            .add_system(dialogue_update);
+            .add_systems(Update, (dialogue_init, dialogue_update));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct DialogueInitEvent;
 
 #[derive(Default, Resource)]
@@ -158,7 +157,7 @@ fn dialogue_init(
                             },
                         )
                         .with_alignment(TextAlignment::Left),
-                        text_anchor: Anchor::TopRight,
+                        text_anchor: Anchor::TopLeft,
                         ..Default::default()
                     },
                     Transform2::from_xy(-540., 60.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT),
@@ -176,7 +175,7 @@ fn dialogue_init(
                             },
                         )
                         .with_alignment(TextAlignment::Left),
-                        text_anchor: Anchor::CenterRight,
+                        text_anchor: Anchor::CenterLeft,
                         ..Default::default()
                     },
                     Transform2::from_xy(-550., 90.).with_depth(DEPTH_LAYER_DIALOGUE_TEXT),

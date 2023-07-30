@@ -11,17 +11,19 @@ pub struct BoatPreviewPlugin;
 
 impl Plugin for BoatPreviewPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<BoatPreviewSpawnEvent>()
-            .add_system(boat_preview_spawn.before(BoatSystem::Spawn))
-            .add_system(
+        app.add_event::<BoatPreviewSpawnEvent>().add_systems(
+            Update,
+            (
+                boat_preview_spawn.before(BoatSystem::Spawn),
                 boat_preview_update
                     .after(BoatSystem::Update)
                     .before(OverworldCameraSystem::Update),
-            );
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct BoatPreviewSpawnEvent;
 
 #[derive(Component)]

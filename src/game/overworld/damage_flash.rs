@@ -6,11 +6,11 @@ pub struct DamageFlashPlugin;
 impl Plugin for DamageFlashPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<DamageFlashSpawnEvent>()
-            .add_system(damage_flash_spawn);
+            .add_systems(Update, damage_flash_spawn);
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct DamageFlashSpawnEvent;
 
 fn damage_flash_spawn(mut ev_spawn: EventReader<DamageFlashSpawnEvent>, mut commands: Commands) {

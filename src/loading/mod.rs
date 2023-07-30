@@ -18,8 +18,8 @@ pub struct LoadingPlugin;
 impl Plugin for LoadingPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<LoadingState>()
-            .add_system(loading_init.in_schedule(OnEnter(AppState::Loading)))
-            .add_system(loading_update.in_set(OnUpdate(AppState::Loading)));
+            .add_systems(OnEnter(AppState::Loading), loading_init)
+            .add_systems(Update, loading_update.run_if(in_state(AppState::Loading)));
     }
 }
 

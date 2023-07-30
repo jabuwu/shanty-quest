@@ -11,8 +11,8 @@ impl Plugin for ScreenFadePlugin {
             speed: 0.,
             state: ScreenFadeState::Fading,
         })
-        .add_startup_system(screen_fade_init)
-        .add_system(screen_fade_update);
+        .add_systems(Startup, screen_fade_init)
+        .add_systems(Update, screen_fade_update);
     }
 }
 

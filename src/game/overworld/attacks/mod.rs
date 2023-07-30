@@ -4,12 +4,14 @@ pub struct AttacksPlugin;
 
 impl Plugin for AttacksPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(forward_cannons::ForwardCannonsPlugin)
-            .add_plugin(shotgun_cannons::ShotgunCannonsPlugin)
-            .add_plugin(shockwave::ShockwavePlugin)
-            .add_plugin(dash_attack::DashAttackPlugin)
-            .add_plugin(bombs::BombsPlugin)
-            .add_plugin(kraken::KrakenPlugin);
+        app.add_plugins((
+            forward_cannons::ForwardCannonsPlugin,
+            shotgun_cannons::ShotgunCannonsPlugin,
+            shockwave::ShockwavePlugin,
+            dash_attack::DashAttackPlugin,
+            bombs::BombsPlugin,
+            kraken::KrakenPlugin,
+        ));
     }
 }
 

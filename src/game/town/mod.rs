@@ -6,11 +6,8 @@ pub struct TownPlugin;
 
 impl Plugin for TownPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(outside::OutsidePlugin)
-            .add_plugin(concert_hall::ConcertHallPlugin)
-            .add_plugin(mayor::MayorPlugin)
-            .add_plugin(tavern::TavernPlugin)
-            .add_system(town_ambience);
+        app.add_plugins((outside::OutsidePlugin, concert_hall::ConcertHallPlugin))
+            .add_systems(Update, town_ambience);
     }
 }
 
@@ -29,7 +26,7 @@ fn town_ambience(
     mut state: Local<TownAmbienceState>,
     query: Query<Entity, With<TownAmbience>>,
 ) {
-    let playing = app_state.0.is_town();
+    let playing = app_state.get().is_town();
     if playing != state.last_playing {
         state.last_playing = playing;
         if playing {
@@ -54,6 +51,4 @@ fn town_ambience(
 }
 
 pub mod concert_hall;
-pub mod mayor;
 pub mod outside;
-pub mod tavern;

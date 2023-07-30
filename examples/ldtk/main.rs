@@ -17,8 +17,8 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(jam::common::CommonPlugin)
-        .add_startup_system(init)
+        .add_plugins(jam::common::CommonPlugin)
+        .add_systems(Startup, init)
         .run();
 }
 

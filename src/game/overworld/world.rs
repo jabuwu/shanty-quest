@@ -7,11 +7,12 @@ pub struct WorldPlugin;
 
 impl Plugin for WorldPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<WorldLoadEvent>().add_system(world_spawn);
+        app.add_event::<WorldLoadEvent>()
+            .add_systems(Update, world_spawn);
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct WorldLoadEvent;
 
 #[derive(Component)]

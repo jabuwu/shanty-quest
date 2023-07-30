@@ -4,7 +4,7 @@ pub struct AssetsPlugin;
 
 impl Plugin for AssetsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(ldtk::LdtkAssetPlugin);
+        app.add_plugins(ldtk::LdtkAssetPlugin);
     }
 }
 

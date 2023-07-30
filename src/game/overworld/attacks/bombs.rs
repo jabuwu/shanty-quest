@@ -7,9 +7,7 @@ pub struct BombsPlugin;
 
 impl Plugin for BombsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(bombs_fire)
-            .add_system(bomb_move)
-            .add_system(bomb_animate);
+        app.add_systems(Update, (bombs_fire, bomb_move, bomb_animate));
     }
 }
 

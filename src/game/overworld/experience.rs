@@ -8,12 +8,11 @@ pub struct ExperiencePlugin;
 impl Plugin for ExperiencePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ExperienceSpawnEvent>()
-            .add_system(experience_spawn)
-            .add_system(experience_consume);
+            .add_systems(Update, (experience_spawn, experience_consume));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct ExperienceSpawnEvent {
     pub amount: f32,
     pub position: Vec2,

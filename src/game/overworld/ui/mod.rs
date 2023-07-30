@@ -15,23 +15,25 @@ pub struct OverworldUiPlugin;
 impl Plugin for OverworldUiPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<OverworldUiSpawnEvent>()
-            .add_plugin(map::MapPlugin)
-            .add_plugin(marker::MarkerPlugin)
-            .add_plugin(town_marker::TownMarkerPlugin)
-            .add_plugin(objective::ObjectivePlugin)
-            .add_plugin(boss_healthbar::BossHealthbarPlugin)
-            .add_plugin(checkpoint::CheckpointPlugin)
-            .add_plugin(health::HealthUiPlugin)
-            .add_plugin(controls::ControlsUiPlugin)
-            .add_plugin(experience::ExperienceUiPlugin)
-            .add_plugin(level_up::LevelUpPlugin)
-            .add_plugin(health_aura::HealthAuraPlugin)
-            .add_plugin(vignette::VignettePlugin)
-            .add_system(overworld_ui_spawn);
+            .add_plugins((
+                map::MapPlugin,
+                marker::MarkerPlugin,
+                town_marker::TownMarkerPlugin,
+                objective::ObjectivePlugin,
+                boss_healthbar::BossHealthbarPlugin,
+                checkpoint::CheckpointPlugin,
+                health::HealthUiPlugin,
+                controls::ControlsUiPlugin,
+                experience::ExperienceUiPlugin,
+                level_up::LevelUpPlugin,
+                health_aura::HealthAuraPlugin,
+                vignette::VignettePlugin,
+            ))
+            .add_systems(Update, overworld_ui_spawn);
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct OverworldUiSpawnEvent;
 
 fn overworld_ui_spawn(

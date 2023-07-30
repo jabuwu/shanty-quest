@@ -6,8 +6,7 @@ pub struct DangerousSeasTriggerPlugin;
 
 impl Plugin for DangerousSeasTriggerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(dangerous_seas_world_spawn)
-            .add_system(dangerous_seas_check);
+        app.add_systems(Update, (dangerous_seas_world_spawn, dangerous_seas_check));
     }
 }
 

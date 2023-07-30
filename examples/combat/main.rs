@@ -27,30 +27,34 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(CommonPlugin)
-        .add_plugin(jam::game::overworld::player::PlayerPlugin)
-        .add_plugin(jam::game::overworld::character_controller::CharacterControllerPlugin)
-        .add_plugin(jam::game::overworld::boat::BoatPlugin)
-        .add_plugin(jam::game::overworld::healthbar::HealthbarPlugin)
-        .add_plugin(jam::game::overworld::damage::DamagePlugin)
-        .add_plugin(jam::game::overworld::cutscenes::CutscenesPlugin)
-        .add_plugin(jam::game::overworld::water_ring::WaterRingPlugin)
-        .add_plugin(jam::game::overworld::camera::OverworldCameraPlugin)
-        .add_plugin(jam::game::overworld::ocean::OceanPlugin)
-        .add_plugin(jam::game::overworld::attacks::AttacksPlugin)
-        .add_plugin(jam::game::overworld::octopus::OctopusPlugin)
-        .add_plugin(jam::game::overworld::turtle::TurtlePlugin)
-        .add_plugin(jam::game::overworld::enemy_spawns::EnemySpawnsPlugin)
-        .add_plugin(jam::game::overworld::threat_level::ThreatLevelPlugin)
-        .add_plugin(jam::game::overworld::experience::ExperiencePlugin)
-        .add_plugin(jam::game::overworld::ui::OverworldUiPlugin)
-        .add_plugin(jam::game::overworld::damage_flash::DamageFlashPlugin)
-        .add_plugin(jam::game::overworld::damage_rum::DamageRumPlugin)
-        .add_plugin(jam::game::quests::QuestsPlugin)
-        .add_plugin(jam::game::town::outside::rum_refill::RumRefillPlugin)
+        .add_plugins((
+            CommonPlugin,
+            jam::game::overworld::player::PlayerPlugin,
+            jam::game::overworld::character_controller::CharacterControllerPlugin,
+            jam::game::overworld::boat::BoatPlugin,
+            jam::game::overworld::healthbar::HealthbarPlugin,
+            jam::game::overworld::damage::DamagePlugin,
+            jam::game::overworld::cutscenes::CutscenesPlugin,
+            jam::game::overworld::water_ring::WaterRingPlugin,
+            jam::game::overworld::camera::OverworldCameraPlugin,
+            jam::game::overworld::ocean::OceanPlugin,
+            jam::game::overworld::attacks::AttacksPlugin,
+            jam::game::overworld::octopus::OctopusPlugin,
+            jam::game::overworld::turtle::TurtlePlugin,
+            jam::game::overworld::enemy_spawns::EnemySpawnsPlugin,
+            jam::game::overworld::threat_level::ThreatLevelPlugin,
+        ))
+        .add_plugins((
+            jam::game::overworld::experience::ExperiencePlugin,
+            jam::game::overworld::ui::OverworldUiPlugin,
+            jam::game::overworld::damage_flash::DamageFlashPlugin,
+            jam::game::overworld::damage_rum::DamageRumPlugin,
+            jam::game::quests::QuestsPlugin,
+            jam::game::town::outside::rum_refill::RumRefillPlugin,
+        ))
         .init_resource::<jam::game::state::GameState>()
-        .add_startup_system(init)
-        .add_system(debug)
+        .add_systems(Startup, init)
+        .add_systems(Update, debug)
         .run();
 }
 
@@ -184,9 +188,9 @@ fn debug(
         }
     }
     if input.just_pressed(KeyCode::Key1) {
-        let level = if input.pressed(KeyCode::LShift) {
+        let level = if input.pressed(KeyCode::ShiftLeft) {
             OctopusLevel::Hard
-        } else if input.pressed(KeyCode::LControl) {
+        } else if input.pressed(KeyCode::ControlLeft) {
             OctopusLevel::Medium
         } else {
             OctopusLevel::Easy
@@ -199,9 +203,9 @@ fn debug(
         });
     }
     if input.just_pressed(KeyCode::Key2) {
-        let level = if input.pressed(KeyCode::LShift) {
+        let level = if input.pressed(KeyCode::ShiftLeft) {
             TurtleLevel::Hard
-        } else if input.pressed(KeyCode::LControl) {
+        } else if input.pressed(KeyCode::ControlLeft) {
             TurtleLevel::Medium
         } else {
             TurtleLevel::Easy
@@ -217,9 +221,9 @@ fn debug(
         if overworld_camera.is_arena_enabled() {
             overworld_camera.arena_disable();
         } else {
-            if input.pressed(KeyCode::LShift) {
+            if input.pressed(KeyCode::ShiftLeft) {
                 overworld_camera.arena_enable(player_position, Vec2::new(1280. * 1.3, 768. * 1.3));
-            } else if input.pressed(KeyCode::LControl) {
+            } else if input.pressed(KeyCode::ControlLeft) {
                 overworld_camera.arena_enable(player_position, Vec2::new(1280. * 1.1, 768. * 1.1));
             } else {
                 overworld_camera.arena_enable(player_position, Vec2::new(1280., 768.));

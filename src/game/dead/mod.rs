@@ -14,8 +14,8 @@ pub struct DeadPlugin;
 impl Plugin for DeadPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<DeadState>()
-            .add_system(town_init.in_schedule(OnEnter(AppState::Dead)))
-            .add_system(town_update.in_set(OnUpdate(AppState::Dead)));
+            .add_systems(OnEnter(AppState::Dead), town_init)
+            .add_systems(Update, town_update.run_if(in_state(AppState::Dead)));
     }
 }
 

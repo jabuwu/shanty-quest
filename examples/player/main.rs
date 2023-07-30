@@ -14,14 +14,16 @@ fn main() {
             ..default()
         }))
         .init_resource::<GameState>()
-        .add_plugin(jam::common::CommonPlugin)
-        .add_plugin(jam::game::overworld::player::PlayerPlugin)
-        .add_plugin(jam::game::overworld::damage::DamagePlugin)
-        .add_plugin(jam::game::overworld::healthbar::HealthbarPlugin)
-        .add_plugin(jam::game::overworld::cutscenes::CutscenesPlugin)
-        .add_plugin(jam::game::overworld::boat::BoatPlugin)
-        .add_plugin(jam::game::overworld::water_ring::WaterRingPlugin)
-        .add_startup_system(init)
+        .add_plugins((
+            jam::common::CommonPlugin,
+            jam::game::overworld::player::PlayerPlugin,
+            jam::game::overworld::damage::DamagePlugin,
+            jam::game::overworld::healthbar::HealthbarPlugin,
+            jam::game::overworld::cutscenes::CutscenesPlugin,
+            jam::game::overworld::boat::BoatPlugin,
+            jam::game::overworld::water_ring::WaterRingPlugin,
+        ))
+        .add_systems(Startup, init)
         .run();
 }
 

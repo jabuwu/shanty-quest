@@ -4,7 +4,7 @@ pub struct TimeToLivePlugin;
 
 impl Plugin for TimeToLivePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(ttl_update);
+        app.add_systems(Update, ttl_update);
     }
 }
 

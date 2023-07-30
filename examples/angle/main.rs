@@ -22,11 +22,13 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(CommonPlugin)
-        .add_plugin(CharacterControllerPlugin)
-        .add_plugin(OverworldCameraPlugin)
-        .add_startup_system(init)
-        .add_system(update)
+        .add_plugins((
+            CommonPlugin,
+            CharacterControllerPlugin,
+            OverworldCameraPlugin,
+        ))
+        .add_systems(Startup, init)
+        .add_systems(Update, update)
         .run();
 }
 

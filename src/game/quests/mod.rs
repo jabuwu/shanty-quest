@@ -17,14 +17,16 @@ impl Plugin for QuestsPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<QuestMayorEvent>()
             .add_event::<QuestBarkeepEvent>()
-            .add_plugin(jagerossa::JagerossaQuestPlugin)
-            .add_plugin(davy::DavyQuestPlugin)
-            .add_plugin(ringo::RingoQuestPlugin)
-            .add_plugin(plank::PlankQuestPlugin)
-            .add_system(quests_debug)
-            .add_system(quests_mayor)
-            .add_system(quests_barkeep)
-            .add_system(quests_skip);
+            .add_plugins((
+                jagerossa::JagerossaQuestPlugin,
+                davy::DavyQuestPlugin,
+                ringo::RingoQuestPlugin,
+                plank::PlankQuestPlugin,
+            ))
+            .add_systems(
+                Update,
+                (quests_debug, quests_mayor, quests_barkeep, quests_skip),
+            );
     }
 }
 
@@ -39,10 +41,10 @@ pub struct Quests {
     pub upgrades_dialogue: bool,
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct QuestMayorEvent;
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct QuestBarkeepEvent;
 
 impl Quests {
@@ -443,7 +445,7 @@ pub fn quests_skip(
     if input.just_pressed(KeyCode::L) {
         game_state.skill_points += 1;
     }
-    if app_state.0 != AppState::Overworld {
+    if *app_state.get() != AppState::Overworld {
         return;
     }
     if input.just_pressed(KeyCode::F2) {

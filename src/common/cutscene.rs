@@ -98,7 +98,7 @@ impl Plugin for CutscenePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<Cutscenes>()
             .init_resource::<Cutscenes>()
-            .add_system(cutscene_debug);
+            .add_systems(Update, cutscene_debug);
     }
 }
 
@@ -118,9 +118,14 @@ impl AddAppCutscene for App {
         self.add_event::<CutsceneStartEvent<T>>();
         self.add_event::<CutsceneContinueEvent<T>>();
         self.add_event::<CutsceneSkipEvent<T>>();
-        self.add_system(cutscene_start::<T>);
-        self.add_system(cutscene_continue::<T>);
-        self.add_system(cutscene_skip::<T>);
+        self.add_systems(
+            Update,
+            (
+                cutscene_start::<T>,
+                cutscene_continue::<T>,
+                cutscene_skip::<T>,
+            ),
+        );
         let mut builder = CutsceneBuilder {
             app: self,
             type_id: TypeId::of::<T>(),
@@ -128,7 +133,8 @@ impl AddAppCutscene for App {
         };
         T::build(&mut builder);
         let step = builder.step;
-        self.add_system(
+        self.add_systems(
+            Update,
             move |mut cutscene_state: ResMut<Cutscenes>,
                   mut state: ResMut<T>,
                   mut initial_values: ResMut<CutsceneInitialValues<T>>| {
@@ -177,13 +183,14 @@ pub struct CutsceneBuilder<'a> {
 impl<'a> CutsceneBuilder<'a> {
     pub fn add_step<ParamsA, ParamsB>(
         &mut self,
-        init: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
-        update: impl IntoSystemConfig<ParamsB> + IntoSystemConfig<ParamsB>,
+        init: impl IntoSystemConfigs<ParamsA> + IntoSystemConfigs<ParamsA>,
+        update: impl IntoSystemConfigs<ParamsB> + IntoSystemConfigs<ParamsB>,
     ) -> &mut Self {
         let type_id = self.type_id;
         let step = self.step;
-        self.app
-            .add_system(init.run_if(move |cutscene_state: Res<Cutscenes>| {
+        self.app.add_systems(
+            Update,
+            init.run_if(move |cutscene_state: Res<Cutscenes>| {
                 let mut lock = cutscene_state.data.write().unwrap();
                 if let Some(running_cutscene) = &mut lock.running_cutscene {
                     if running_cutscene.type_id == type_id
@@ -196,9 +203,11 @@ impl<'a> CutsceneBuilder<'a> {
                     }
                 }
                 false
-            }));
-        self.app
-            .add_system(update.run_if(move |cutscene_state: Res<Cutscenes>| {
+            }),
+        );
+        self.app.add_systems(
+            Update,
+            update.run_if(move |cutscene_state: Res<Cutscenes>| {
                 let mut lock = cutscene_state.data.write().unwrap();
                 if let Some(running_cutscene) = &mut lock.running_cutscene {
                     if running_cutscene.type_id == type_id
@@ -214,21 +223,22 @@ impl<'a> CutsceneBuilder<'a> {
                     }
                 }
                 false
-            }));
+            }),
+        );
         self.step += 1;
         self
     }
 
     pub fn add_update_step<ParamsA>(
         &mut self,
-        update: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
+        update: impl IntoSystemConfigs<ParamsA> + IntoSystemConfigs<ParamsA>,
     ) -> &mut Self {
         self.add_step(|| {}, update)
     }
 
     pub fn add_quick_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
+        init: impl IntoSystemConfigs<ParamsA> + IntoSystemConfigs<ParamsA>,
     ) -> &mut Self {
         let step = self.step;
         self.add_step(init, move |state: Res<Cutscenes>| {
@@ -240,7 +250,7 @@ impl<'a> CutsceneBuilder<'a> {
 
     pub fn add_dialogue_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
+        init: impl IntoSystemConfigs<ParamsA> + IntoSystemConfigs<ParamsA>,
     ) -> &mut Self {
         let step = self.step;
         self.add_step(
@@ -263,7 +273,7 @@ impl<'a> CutsceneBuilder<'a> {
 
     pub fn add_timed_step<ParamsA>(
         &mut self,
-        init: impl IntoSystemConfig<ParamsA> + IntoSystemConfig<ParamsA>,
+        init: impl IntoSystemConfigs<ParamsA> + IntoSystemConfigs<ParamsA>,
         seconds: f32,
     ) -> &mut Self {
         let step = self.step;
@@ -294,12 +304,12 @@ pub trait Cutscene {
     fn build(cutscene: &mut CutsceneBuilder);
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct CutsceneStartEvent<T>(pub T)
 where
     T: CutsceneType;
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct CutsceneContinueEvent<T>
 where
     T: CutsceneType,
@@ -307,7 +317,7 @@ where
     _phantom: PhantomData<T>,
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct CutsceneSkipEvent<T>
 where
     T: CutsceneType,

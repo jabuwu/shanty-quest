@@ -17,9 +17,9 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(CommonPlugin)
-        .add_startup_system(init)
-        .add_system(update)
+        .add_plugins(CommonPlugin)
+        .add_systems(Startup, init)
+        .add_systems(Update, update)
         .run();
 }
 

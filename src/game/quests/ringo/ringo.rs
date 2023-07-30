@@ -8,15 +8,19 @@ pub struct RingoPlugin;
 
 impl Plugin for RingoPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<RingoSpawnEvent>()
-            .add_system(ringo_spawn.before(BoatSystem::Spawn))
-            .add_system(ringo_move)
-            .add_system(ringo_invincibility)
-            .add_system(ringo_death_check);
+        app.add_event::<RingoSpawnEvent>().add_systems(
+            Update,
+            (
+                ringo_spawn.before(BoatSystem::Spawn),
+                ringo_move,
+                ringo_invincibility,
+                ringo_death_check,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct RingoSpawnEvent;
 
 #[derive(Component)]

@@ -14,18 +14,20 @@ pub struct OctopusPlugin;
 
 impl Plugin for OctopusPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<OctopusSpawnEvent>()
-            .add_system(
-                octopus_spawn
+        app.add_event::<OctopusSpawnEvent>().add_systems(
+            Update,
+            (
+                (octopus_spawn
                     .in_set(OctopusSystem::Spawn)
-                    .before(HealthbarSystem::Spawn),
-            )
-            .add_system(octopus_move)
-            .add_system(octopus_animate);
+                    .before(HealthbarSystem::Spawn),),
+                octopus_move,
+                octopus_animate,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct OctopusSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,

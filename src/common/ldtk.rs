@@ -13,11 +13,11 @@ pub struct LdtkPlugin;
 impl Plugin for LdtkPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<LdtkSpawnEvent>()
-            .add_system(ldtk_spawn)
-            .add_system(ldtk_load);
+            .add_systems(Update, (ldtk_spawn, ldtk_load));
     }
 }
 
+#[derive(Event)]
 pub struct LdtkSpawnEvent {
     pub entity: Option<Entity>,
     pub asset: Handle<LdtkAsset>,

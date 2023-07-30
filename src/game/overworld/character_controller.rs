@@ -11,13 +11,15 @@ pub struct CharacterControllerPlugin;
 
 impl Plugin for CharacterControllerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<KnockbackEvent>()
-            .add_system(
+        app.add_event::<KnockbackEvent>().add_systems(
+            Update,
+            (
                 character_controller_update
                     .in_set(CharacterControllerSystem::Update)
                     .before(OverworldCameraSystem::Update),
-            )
-            .add_system(character_controller_knockback);
+                character_controller_knockback,
+            ),
+        );
     }
 }
 
@@ -31,7 +33,7 @@ pub struct CharacterController {
     pub arena_adjustment: bool,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Event, Clone, Copy)]
 pub struct KnockbackEvent {
     pub entity: Entity,
     pub force: Vec2,

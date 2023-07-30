@@ -15,9 +15,14 @@ impl Plugin for OutroCutscenePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<OutroCutsceneState>()
             .add_cutscene::<OutroCutscene>()
-            .add_system(init.in_schedule(OnEnter(AppState::OutroCutscene)))
-            .add_system(skip.in_set(OnUpdate(AppState::OutroCutscene)))
-            .add_system(image_move.in_set(OnUpdate(AppState::OutroCutscene)));
+            .add_systems(OnEnter(AppState::OutroCutscene), init)
+            .add_systems(
+                Update,
+                (
+                    skip.run_if(in_state(AppState::OutroCutscene)),
+                    image_move.run_if(in_state(AppState::OutroCutscene)),
+                ),
+            );
     }
 }
 

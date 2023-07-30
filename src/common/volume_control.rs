@@ -6,7 +6,7 @@ pub struct VolumeControlPlugin;
 
 impl Plugin for VolumeControlPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(volume_control);
+        app.add_systems(Update, volume_control);
     }
 }
 

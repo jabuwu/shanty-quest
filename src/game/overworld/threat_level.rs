@@ -8,8 +8,7 @@ pub struct ThreatLevelPlugin;
 impl Plugin for ThreatLevelPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ThreatLevel>()
-            .add_system(threat_level_update)
-            .add_system(threat_level_debug);
+            .add_systems(Update, (threat_level_update, threat_level_debug));
     }
 }
 

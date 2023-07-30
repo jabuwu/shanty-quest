@@ -8,41 +8,50 @@ pub struct OverworldPlugin;
 
 impl Plugin for OverworldPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(player::PlayerPlugin)
-            .add_plugin(world::WorldPlugin)
-            .add_plugin(town::TownPlugin)
-            .add_plugin(boat::BoatPlugin)
-            .add_plugin(water_ring::WaterRingPlugin)
-            .add_plugin(ocean::OceanPlugin)
-            .add_plugin(healthbar::HealthbarPlugin)
-            .add_plugin(character_controller::CharacterControllerPlugin)
-            .add_plugin(attacks::AttacksPlugin)
-            .add_plugin(damage::DamagePlugin)
-            .add_plugin(cutscenes::CutscenesPlugin)
-            .add_plugin(octopus::OctopusPlugin)
-            .add_plugin(ui::OverworldUiPlugin)
-            .add_plugin(camera::OverworldCameraPlugin)
-            .add_plugin(entities::EntitiesPlugin)
-            .add_plugin(trigger::TriggerPlugin)
-            .add_plugin(enemy_spawns::EnemySpawnsPlugin)
-            .add_plugin(threat_level::ThreatLevelPlugin)
-            .add_plugin(turtle::TurtlePlugin)
-            .add_plugin(experience::ExperiencePlugin)
-            .add_plugin(damage_flash::DamageFlashPlugin)
-            .add_plugin(damage_rum::DamageRumPlugin)
-            .add_event::<OverworldEnterEvent>()
-            .add_event::<WorldAmbienceSoundStopEvent>()
-            .add_system(overworld_init.in_schedule(OnEnter(AppState::Overworld)))
-            .add_system(overworld_update.in_set(OnUpdate(AppState::Overworld)))
-            .add_system(overworld_init_after_ldtk)
-            .add_system(overworld_sound_stop);
+        app.add_plugins((
+            player::PlayerPlugin,
+            world::WorldPlugin,
+            town::TownPlugin,
+            boat::BoatPlugin,
+            water_ring::WaterRingPlugin,
+            ocean::OceanPlugin,
+            healthbar::HealthbarPlugin,
+            character_controller::CharacterControllerPlugin,
+            attacks::AttacksPlugin,
+            damage::DamagePlugin,
+            cutscenes::CutscenesPlugin,
+            octopus::OctopusPlugin,
+            ui::OverworldUiPlugin,
+            camera::OverworldCameraPlugin,
+            entities::EntitiesPlugin,
+        ))
+        .add_plugins((
+            trigger::TriggerPlugin,
+            enemy_spawns::EnemySpawnsPlugin,
+            threat_level::ThreatLevelPlugin,
+            turtle::TurtlePlugin,
+            experience::ExperiencePlugin,
+            damage_flash::DamageFlashPlugin,
+            damage_rum::DamageRumPlugin,
+        ))
+        .add_event::<OverworldEnterEvent>()
+        .add_event::<WorldAmbienceSoundStopEvent>()
+        .add_systems(OnEnter(AppState::Overworld), overworld_init)
+        .add_systems(
+            Update,
+            (
+                overworld_update.run_if(in_state(AppState::Overworld)),
+                overworld_init_after_ldtk,
+                overworld_sound_stop,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone)]
+#[derive(Event, Default, Clone)]
 pub struct OverworldEnterEvent;
 
-#[derive(Default, Clone)]
+#[derive(Event, Default, Clone)]
 pub struct WorldAmbienceSoundStopEvent;
 
 #[derive(Component)]

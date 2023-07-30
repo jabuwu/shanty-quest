@@ -10,8 +10,7 @@ impl Plugin for RingoQuestPlugin {
     fn build(&self, app: &mut App) {
         app.add_cutscene::<Ringo1Cutscene>()
             .add_cutscene::<Ringo2Cutscene>()
-            .add_plugin(ringo::RingoPlugin)
-            .add_plugin(trigger::RingoTriggerPlugin);
+            .add_plugins((ringo::RingoPlugin, trigger::RingoTriggerPlugin));
     }
 }
 

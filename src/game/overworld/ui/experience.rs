@@ -20,15 +20,19 @@ pub struct ExperienceUiPlugin;
 
 impl Plugin for ExperienceUiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<ExperienceUiSpawnEvent>()
-            .add_system(experience_ui_spawn)
-            .add_system(experience_ui_bar_update)
-            .add_system(experience_ui_level_update)
-            .add_system(experience_ui_skill_points_update);
+        app.add_event::<ExperienceUiSpawnEvent>().add_systems(
+            Update,
+            (
+                experience_ui_spawn,
+                experience_ui_bar_update,
+                experience_ui_level_update,
+                experience_ui_skill_points_update,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct ExperienceUiSpawnEvent;
 
 #[derive(Component)]
@@ -98,7 +102,7 @@ fn experience_ui_spawn(
                                     },
                                 )
                                 .with_alignment(TextAlignment::Left),
-                                text_anchor: Anchor::BottomRight,
+                                text_anchor: Anchor::BottomLeft,
                                 ..Default::default()
                             },
                             Transform2::from_translation(EXPERIENCE_UI_LEVEL_LABEL_POSITION)
@@ -115,7 +119,7 @@ fn experience_ui_spawn(
                                     },
                                 )
                                 .with_alignment(TextAlignment::Left),
-                                text_anchor: Anchor::BottomRight,
+                                text_anchor: Anchor::BottomLeft,
                                 ..Default::default()
                             },
                             Transform2::from_translation(EXPERIENCE_UI_LEVEL_POSITION)

@@ -7,9 +7,7 @@ pub struct KrakenPlugin;
 
 impl Plugin for KrakenPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(kraken_fire)
-            .add_system(tentacle_update)
-            .add_system(tentacle_animate);
+        app.add_systems(Update, (kraken_fire, tentacle_update, tentacle_animate));
     }
 }
 

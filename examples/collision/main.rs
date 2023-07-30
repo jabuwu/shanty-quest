@@ -17,9 +17,9 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(jam::common::CommonPlugin)
-        .add_startup_system(init)
-        .add_system(player_update)
+        .add_plugins(jam::common::CommonPlugin)
+        .add_systems(Startup, init)
+        .add_systems(Update, player_update)
         .run();
 }
 

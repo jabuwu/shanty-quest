@@ -20,10 +20,9 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(CommonPlugin)
-        .add_plugin(CharacterControllerPlugin)
-        .add_startup_system(init)
-        .add_system(player_move)
+        .add_plugins((CommonPlugin, CharacterControllerPlugin))
+        .add_systems(Startup, init)
+        .add_systems(Update, player_move)
         .run();
 }
 

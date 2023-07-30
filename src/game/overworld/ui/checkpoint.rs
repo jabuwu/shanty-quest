@@ -8,11 +8,11 @@ pub struct CheckpointPlugin;
 impl Plugin for CheckpointPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<CheckpointSpawnEvent>()
-            .add_system(checkpoint_spawn);
+            .add_systems(Update, checkpoint_spawn);
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct CheckpointSpawnEvent;
 
 fn checkpoint_spawn(

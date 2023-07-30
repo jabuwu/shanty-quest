@@ -8,10 +8,15 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(map_update_player)
-            .add_system(map_update_objective)
-            .add_cutscene::<MapCutscene>()
-            .add_system(map_input.in_set(OnUpdate(AppState::Overworld)));
+        app.add_systems(
+            Update,
+            (
+                map_update_player,
+                map_update_objective,
+                map_input.run_if(in_state(AppState::Overworld)),
+            ),
+        )
+        .add_cutscene::<MapCutscene>();
     }
 }
 

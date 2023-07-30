@@ -8,15 +8,19 @@ pub struct ControlsUiPlugin;
 
 impl Plugin for ControlsUiPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<ControlsUiSpawnEvent>()
-            .add_system(controls_ui_spawn)
-            .add_system(controls_ui_update_dash)
-            .add_system(controls_ui_update_jam)
-            .add_system(controls_ui_update_map);
+        app.add_event::<ControlsUiSpawnEvent>().add_systems(
+            Update,
+            (
+                controls_ui_spawn,
+                controls_ui_update_dash,
+                controls_ui_update_jam,
+                controls_ui_update_map,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct ControlsUiSpawnEvent;
 
 #[derive(Component)]

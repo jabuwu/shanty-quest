@@ -7,12 +7,11 @@ pub struct VolumeSliderPlugin;
 impl Plugin for VolumeSliderPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<VolumeSliderSpawnEvent>()
-            .add_system(volume_slider_spawn)
-            .add_system(volume_slider_update);
+            .add_systems(Update, (volume_slider_spawn, volume_slider_update));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct VolumeSliderSpawnEvent;
 
 #[derive(Component)]

@@ -9,12 +9,11 @@ pub struct TownPlugin;
 impl Plugin for TownPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<TownSpawnEvent>()
-            .add_system(town_spawn)
-            .add_system(town_world_spawn)
-            .add_system(town_update);
+            .add_systems(Update, (town_spawn, town_world_spawn, town_update));
     }
 }
 
+#[derive(Event)]
 pub struct TownSpawnEvent {
     pub entity: Option<Entity>,
     pub town: TownData,

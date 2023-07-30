@@ -7,12 +7,11 @@ pub struct HealthAuraPlugin;
 impl Plugin for HealthAuraPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<HealthAuraSpawnEvent>()
-            .add_system(health_aura_spawn)
-            .add_system(health_aura_update);
+            .add_systems(Update, (health_aura_spawn, health_aura_update));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct HealthAuraSpawnEvent;
 
 #[derive(Component)]

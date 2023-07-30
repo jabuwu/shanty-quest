@@ -8,8 +8,7 @@ pub struct DavyTriggerPlugin;
 
 impl Plugin for DavyTriggerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(davy_trigger_world_spawn)
-            .add_system(davy_trigger_check);
+        app.add_systems(Update, (davy_trigger_world_spawn, davy_trigger_check));
     }
 }
 

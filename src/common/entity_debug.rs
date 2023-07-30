@@ -6,7 +6,7 @@ pub struct EntityDebugPlugin;
 
 impl Plugin for EntityDebugPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(entity_debug);
+        app.add_systems(Update, entity_debug);
     }
 }
 

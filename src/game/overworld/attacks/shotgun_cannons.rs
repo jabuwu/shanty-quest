@@ -7,8 +7,7 @@ pub struct ShotgunCannonsPlugin;
 
 impl Plugin for ShotgunCannonsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(shotgun_cannons_fire)
-            .add_system(shotgun_cannon_ball_move);
+        app.add_systems(Update, (shotgun_cannons_fire, shotgun_cannon_ball_move));
     }
 }
 

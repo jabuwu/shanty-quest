@@ -10,8 +10,7 @@ impl Plugin for DavyQuestPlugin {
     fn build(&self, app: &mut App) {
         app.add_cutscene::<Davy1Cutscene>()
             .add_cutscene::<Davy2Cutscene>()
-            .add_plugin(davy::DavyPlugin)
-            .add_plugin(trigger::DavyTriggerPlugin);
+            .add_plugins((davy::DavyPlugin, trigger::DavyTriggerPlugin));
     }
 }
 

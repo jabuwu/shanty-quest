@@ -8,11 +8,11 @@ pub struct VignettePlugin;
 impl Plugin for VignettePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<VignetteSpawnEvent>()
-            .add_system(vignette_spawn);
+            .add_systems(Update, vignette_spawn);
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct VignetteSpawnEvent;
 
 fn vignette_spawn(

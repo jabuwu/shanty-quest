@@ -12,12 +12,11 @@ pub struct DamagePlugin;
 impl Plugin for DamagePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<DamageEvent>()
-            .add_system(damage_check)
-            .add_system(damage_auto_die);
+            .add_systems(Update, (damage_check, damage_auto_die));
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Event, Clone, Copy)]
 pub struct DamageEvent {
     pub hit: Entity,
     pub hurt: Entity,

@@ -10,8 +10,7 @@ impl Plugin for PlankQuestPlugin {
     fn build(&self, app: &mut App) {
         app.add_cutscene::<Plank1Cutscene>()
             .add_cutscene::<Plank2Cutscene>()
-            .add_plugin(plank::PlankPlugin)
-            .add_plugin(trigger::PlankTriggerPlugin);
+            .add_plugins((plank::PlankPlugin, trigger::PlankTriggerPlugin));
     }
 }
 

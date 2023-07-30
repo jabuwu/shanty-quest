@@ -12,19 +12,24 @@ impl Plugin for BossHealthbarPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<BossHealthbarSpawnEvent>()
             .add_event::<BossHealthbarDespawnEvent>()
-            .add_system(boss_healthbar_spawn)
-            .add_system(boss_healthbar_despawn)
-            .add_system(boss_healthbar_update);
+            .add_systems(
+                Update,
+                (
+                    boss_healthbar_spawn,
+                    boss_healthbar_despawn,
+                    boss_healthbar_update,
+                ),
+            );
     }
 }
 
-#[derive(Clone)]
+#[derive(Event, Clone)]
 pub struct BossHealthbarSpawnEvent {
     pub name: String,
     pub entity: Entity,
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct BossHealthbarDespawnEvent;
 
 #[derive(Component)]

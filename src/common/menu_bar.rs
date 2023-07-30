@@ -8,7 +8,7 @@ pub struct MenuBarPlugin;
 
 impl Plugin for MenuBarPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<MenuBar>().add_system(menu_bar);
+        app.init_resource::<MenuBar>().add_systems(Update, menu_bar);
     }
 }
 

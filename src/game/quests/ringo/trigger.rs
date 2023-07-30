@@ -8,8 +8,7 @@ pub struct RingoTriggerPlugin;
 
 impl Plugin for RingoTriggerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(ringo_trigger_world_spawn)
-            .add_system(ringo_trigger_check);
+        app.add_systems(Update, (ringo_trigger_world_spawn, ringo_trigger_check));
     }
 }
 

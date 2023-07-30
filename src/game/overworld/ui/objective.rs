@@ -8,12 +8,11 @@ pub struct ObjectivePlugin;
 impl Plugin for ObjectivePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ObjectiveSpawnEvent>()
-            .add_system(objective_spawn)
-            .add_system(objective_update);
+            .add_systems(Update, (objective_spawn, objective_update));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct ObjectiveSpawnEvent;
 
 #[derive(Component)]
@@ -78,7 +77,7 @@ fn objective_spawn(
                             },
                         )
                         .with_alignment(TextAlignment::Right),
-                        text_anchor: Anchor::TopLeft,
+                        text_anchor: Anchor::TopRight,
                         ..Default::default()
                     },
                     Transform2::from_xy(616., 312.).with_depth(DEPTH_LAYER_UI_OBJECTIVE_TEXT),

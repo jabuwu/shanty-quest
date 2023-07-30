@@ -14,18 +14,20 @@ pub struct TurtlePlugin;
 
 impl Plugin for TurtlePlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<TurtleSpawnEvent>()
-            .add_system(
-                turtle_spawn
+        app.add_event::<TurtleSpawnEvent>().add_systems(
+            Update,
+            (
+                (turtle_spawn
                     .in_set(TurtleSystem::Spawn)
-                    .before(HealthbarSystem::Spawn),
-            )
-            .add_system(turtle_move)
-            .add_system(turtle_animate);
+                    .before(HealthbarSystem::Spawn)),
+                turtle_move,
+                turtle_animate,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct TurtleSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,

@@ -16,11 +16,11 @@ pub struct ForceRatioPlugin;
 
 impl Plugin for ForceRatioPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(force_ratio_setup.in_set(ForceRatioSystem::Setup))
-            .add_system(
+        app.add_systems(Startup, force_ratio_setup.in_set(ForceRatioSystem::Setup))
+            .add_systems(
+                PostUpdate,
                 force_ratio_update
                     .in_set(ForceRatioSystem::Update)
-                    .in_base_set(CoreSet::PostUpdate)
                     .before(TransformSystem::TransformPropagate)
                     .after(Transform2System::TransformPropagate),
             );

@@ -10,17 +10,21 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<PlayerSpawnEvent>()
-            .add_system(player_spawn.before(BoatSystem::Spawn))
-            .add_system(player_controls.before(BoatSystem::Update))
-            .add_system(player_enter_town)
-            .add_system(player_upgrade_attack)
-            .add_system(player_invincibility)
-            .add_system(player_damage);
+        app.add_event::<PlayerSpawnEvent>().add_systems(
+            Update,
+            (
+                player_spawn.before(BoatSystem::Spawn),
+                player_controls.before(BoatSystem::Update),
+                player_enter_town,
+                player_upgrade_attack,
+                player_invincibility,
+                player_damage,
+            ),
+        );
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct PlayerSpawnEvent;
 
 #[derive(Component)]

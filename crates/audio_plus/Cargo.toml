@@ -7,8 +7,8 @@ edition = "2021"
 resolver = "2"
 
 [dependencies]
-bevy = "0.10"
-bevy_kira_audio = "0.15"
+bevy = "0.11"
+bevy_kira_audio = "0.16"
 rand = "0.8.5"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
@@ -16,5 +16,5 @@ wasm-bindgen = "0.2.82"
 
 [dev-dependencies]
 examples_common = { path = "crates/examples_common" }
-bevy_egui = "0.15"
+bevy_egui = "0.21"
 

@@ -6,7 +6,7 @@ pub struct TriggerPlugin;
 
 impl Plugin for TriggerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(trigger_check);
+        app.add_systems(Update, trigger_check);
     }
 }
 

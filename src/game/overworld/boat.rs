@@ -15,19 +15,21 @@ pub struct BoatPlugin;
 
 impl Plugin for BoatPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<BoatSpawnEvent>()
-            .add_system(boat_spawn.before(HealthbarSystem::Spawn))
-            .add_system(
+        app.add_event::<BoatSpawnEvent>().add_systems(
+            Update,
+            (
+                boat_spawn.before(HealthbarSystem::Spawn),
                 boat_update
                     .in_set(BoatSystem::Update)
                     .in_set(CharacterControllerSystem::Update),
-            )
-            .add_system(boat_attack)
-            .add_system(boat_debug);
+                boat_attack,
+                boat_debug,
+            ),
+        );
     }
 }
 
-#[derive(Clone)]
+#[derive(Event, Clone)]
 pub struct BoatSpawnEvent {
     pub entity: Option<Entity>,
     pub position: Vec2,

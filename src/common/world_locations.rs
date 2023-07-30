@@ -9,7 +9,7 @@ impl Plugin for WorldLocationsPlugin {
     }
 }
 
-#[derive(Default, Clone)]
+#[derive(Event, Default, Clone)]
 pub struct WorldLocationsSpawnEvent;
 
 #[derive(Default, Resource)]

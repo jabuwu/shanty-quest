@@ -7,12 +7,11 @@ pub struct MarkerPlugin;
 impl Plugin for MarkerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<MarkerSpawnEvent>()
-            .add_system(marker_spawn)
-            .add_system(marker_update);
+            .add_systems(Update, (marker_spawn, marker_update));
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct MarkerSpawnEvent;
 
 #[derive(Component)]

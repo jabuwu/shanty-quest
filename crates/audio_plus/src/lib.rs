@@ -14,10 +14,15 @@ pub struct AudioPlusPlugin;
 
 impl Plugin for AudioPlusPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(AudioPlugin)
+        app.add_plugins(AudioPlugin)
             .init_resource::<AudioPlusMixer>()
-            .add_system(source::update_audio_sources.in_set(AudioPlusSystem::UpdateAudioSources))
-            .add_system(debug.in_set(AudioPlusSystem::Debug));
+            .add_systems(
+                Update,
+                (
+                    source::update_audio_sources.in_set(AudioPlusSystem::UpdateAudioSources),
+                    debug.in_set(AudioPlusSystem::Debug),
+                ),
+            );
         add_audio_channels(app);
     }
 }

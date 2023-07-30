@@ -19,13 +19,14 @@ impl Plugin for WaterRingPlugin {
             spawn_offset: Vec2::new(-10.0, -20.0),
         })
         .add_event::<WaterRingSpawnEvent>()
-        .add_system(water_ring_spawn)
-        .add_system(water_ring_update)
-        .add_system(water_ring_debug);
+        .add_systems(
+            Update,
+            (water_ring_spawn, water_ring_update, water_ring_debug),
+        );
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Event, Clone, Copy)]
 pub struct WaterRingSpawnEvent {
     pub position: Vec2,
     pub scale: Vec2,

@@ -6,8 +6,7 @@ pub struct DashAttackPlugin;
 
 impl Plugin for DashAttackPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(dash_attack_fire)
-            .add_system(dash_attack_update);
+        app.add_systems(Update, (dash_attack_fire, dash_attack_update));
     }
 }
 

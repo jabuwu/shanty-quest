@@ -7,8 +7,7 @@ pub struct ForwardCannonsPlugin;
 
 impl Plugin for ForwardCannonsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(forward_cannons_fire)
-            .add_system(forward_cannon_ball_move);
+        app.add_systems(Update, (forward_cannons_fire, forward_cannon_ball_move));
     }
 }
 

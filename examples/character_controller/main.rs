@@ -23,12 +23,13 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(CommonPlugin)
-        .add_plugin(CharacterControllerPlugin)
-        .add_plugin(OverworldCameraPlugin)
-        .add_startup_system(init)
-        .add_system(player_move)
-        .add_system(box_move)
+        .add_plugins((
+            CommonPlugin,
+            CharacterControllerPlugin,
+            OverworldCameraPlugin,
+        ))
+        .add_systems(Startup, init)
+        .add_systems(Update, (player_move, box_move))
         .run();
 }
 

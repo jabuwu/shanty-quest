@@ -7,4 +7,4 @@ edition = "2021"
 quote = "1.0"
 syn = "1.0"
 global_state_macros = { path = "./macros" }
-bevy = "0.10"
+bevy = "0.11"

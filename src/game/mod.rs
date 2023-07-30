@@ -4,12 +4,13 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<state::GameState>()
-            .add_plugin(cutscenes::CutscenesPlugin)
-            .add_plugin(overworld::OverworldPlugin)
-            .add_plugin(town::TownPlugin)
-            .add_plugin(quests::QuestsPlugin)
-            .add_plugin(dead::DeadPlugin);
+        app.init_resource::<state::GameState>().add_plugins((
+            cutscenes::CutscenesPlugin,
+            overworld::OverworldPlugin,
+            town::TownPlugin,
+            quests::QuestsPlugin,
+            dead::DeadPlugin,
+        ));
     }
 }
 

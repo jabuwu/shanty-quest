@@ -5,7 +5,7 @@ pub struct YDepthPlugin;
 
 impl Plugin for YDepthPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(y_depth);
+        app.add_systems(Update, y_depth);
     }
 }
 

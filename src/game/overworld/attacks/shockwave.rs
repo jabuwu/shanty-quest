@@ -7,7 +7,7 @@ pub struct ShockwavePlugin;
 
 impl Plugin for ShockwavePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(shockwave_fire).add_system(shockwave_update);
+        app.add_systems(Update, (shockwave_fire, shockwave_update));
     }
 }
 
@@ -109,9 +109,9 @@ fn shockwave_fire(
                     ));
                     parent.spawn((
                         Transform2Bundle {
+                            transform2: Transform2::new().with_depth((DepthLayer::Front, 0.98)),
                             ..Default::default()
                         },
-                        Transform2::new().with_depth((DepthLayer::Front, 0.98)),
                         Hurtbox {
                             shape: CollisionShape::Rect {
                                 size: Vec2::new(400., 400.) * stats.scale,

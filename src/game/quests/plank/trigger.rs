@@ -8,8 +8,7 @@ pub struct PlankTriggerPlugin;
 
 impl Plugin for PlankTriggerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(plank_trigger_world_spawn)
-            .add_system(plank_trigger_check);
+        app.add_systems(Update, (plank_trigger_world_spawn, plank_trigger_check));
     }
 }
 

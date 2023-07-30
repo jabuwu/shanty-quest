@@ -9,8 +9,7 @@ impl Plugin for JagerossaQuestPlugin {
     fn build(&self, app: &mut App) {
         app.add_cutscene::<Jagerossa1Cutscene>()
             .add_cutscene::<Jagerossa2Cutscene>()
-            .add_plugin(jagerossa::JagerossaPlugin)
-            .add_plugin(trigger::JagerossaTriggerPlugin);
+            .add_plugins((jagerossa::JagerossaPlugin, trigger::JagerossaTriggerPlugin));
     }
 }
 

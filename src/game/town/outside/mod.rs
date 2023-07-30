@@ -24,14 +24,19 @@ pub struct OutsidePlugin;
 impl Plugin for OutsidePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<OutsideState>()
-            .add_plugin(rum_refill::RumRefillPlugin)
-            .add_system(outside_init.in_schedule(OnEnter(AppState::TownOutside)))
-            .add_system(outside_leave.in_set(OnUpdate(AppState::TownOutside)))
-            .add_system(outside_click)
-            .add_system(outside_pulsing_icons)
-            .add_system(outside_tavern_icon)
-            .add_system(outside_mayor_icon)
-            .add_system(outside_concert_hall_icon);
+            .add_plugins(rum_refill::RumRefillPlugin)
+            .add_systems(OnEnter(AppState::TownOutside), outside_init)
+            .add_systems(
+                Update,
+                (
+                    outside_leave.run_if(in_state(AppState::TownOutside)),
+                    outside_click,
+                    outside_pulsing_icons,
+                    outside_tavern_icon,
+                    outside_mayor_icon,
+                    outside_concert_hall_icon,
+                ),
+            );
     }
 }
 

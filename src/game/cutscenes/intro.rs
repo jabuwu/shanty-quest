@@ -13,9 +13,14 @@ impl Plugin for IntroCutscenePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<IntroCutsceneState>()
             .add_cutscene::<IntroCutscene>()
-            .add_system(init.in_schedule(OnEnter(AppState::IntroCutscene)))
-            .add_system(skip.in_set(OnUpdate(AppState::IntroCutscene)))
-            .add_system(image_move.in_set(OnUpdate(AppState::IntroCutscene)));
+            .add_systems(OnEnter(AppState::IntroCutscene), init)
+            .add_systems(
+                Update,
+                (
+                    skip.run_if(in_state(AppState::IntroCutscene)),
+                    image_move.run_if(in_state(AppState::IntroCutscene)),
+                ),
+            );
     }
 }
 

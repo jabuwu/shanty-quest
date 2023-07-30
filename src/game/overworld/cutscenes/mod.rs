@@ -4,11 +4,13 @@ pub struct CutscenesPlugin;
 
 impl Plugin for CutscenesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(enter_town::EnterTownCutscenePlugin)
-            .add_plugin(exit_town::ExitTownCutscenePlugin)
-            .add_plugin(example_dialogue::ExampleDialogueCutscenePlugin)
-            .add_plugin(death::DeathCutscenePlugin)
-            .add_plugin(dangerous_seas::DangerousSeasCutscenePlugin);
+        app.add_plugins((
+            enter_town::EnterTownCutscenePlugin,
+            exit_town::ExitTownCutscenePlugin,
+            example_dialogue::ExampleDialogueCutscenePlugin,
+            death::DeathCutscenePlugin,
+            dangerous_seas::DangerousSeasCutscenePlugin,
+        ));
     }
 }
 

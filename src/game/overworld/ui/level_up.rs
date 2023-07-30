@@ -15,11 +15,11 @@ impl Plugin for LevelUpPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<LevelUpState>()
             .add_event::<LevelUpSpawnEvent>()
-            .add_system(level_up_spawn);
+            .add_systems(Update, level_up_spawn);
     }
 }
 
-#[derive(Default, Clone, Copy)]
+#[derive(Event, Default, Clone, Copy)]
 pub struct LevelUpSpawnEvent;
 
 fn level_up_spawn(
